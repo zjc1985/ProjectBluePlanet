@@ -1,15 +1,9 @@
+//branch function testing
 var map = new BMap.Map("l-map");
 map.enableScrollWheelZoom();
 var point = new BMap.Point(116.404, 39.915);
 map.centerAndZoom(point, 15);
 addContextMenu(map);
-
-//var beijingPosition=new BMap.Point(116.432045,39.910683),
-//hangzhouPosition=new BMap.Point(120.129721,30.314429),
-//taiwanPosition=new BMap.Point(121.491121,25.127053);
-//
-//var curveLine=addCurveLine(map,beijingPosition,hangzhouPosition);
-
 
 function addContextMenu(map){
 	var contextMenu = new BMap.ContextMenu();

@@ -129,6 +129,7 @@ function addOneMark(map, p) {
 	marker.addEventListener("dragend", function(){
 		if(marker.prevMarker!=null){
 			redrawOneMarker(marker.prevMarker,map);
+			redrawOneMarker(marker,map);
 		}else{
 			redrawOneMarker(marker,map);
 		}
@@ -221,7 +222,6 @@ function redrawOneMarker(marker,map){
 		//redraw Curve Line
 		map.removeOverlay(marker.connectedCurveLine);
 		marker.connectedCurveLine=addCurveLine(map,marker.getPosition(),marker.connectedMarkers.getPosition());
-		redrawOneMarker(marker.connectedMarkers,map);
 	}
 }
 

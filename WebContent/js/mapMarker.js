@@ -1,4 +1,3 @@
-//branch function testing
 var map = new BMap.Map("l-map");
 map.enableScrollWheelZoom();
 var point = new BMap.Point(116.404, 39.915);
@@ -43,8 +42,8 @@ function addCurveLine(map,fromPoint,toPoint){
 	var points = [fromPoint,toPoint];
 
 	var curve = new BMapLib.CurveLine(points, {strokeColor:"blue", strokeWeight:5, strokeOpacity:0.5}); //创建弧线对象
-	map.addOverlay(curve); //添加到地图中
-	curve.disableEditing(); //开启编辑功能
+	map.addOverlay(curve);
+	curve.disableEditing(); 
 	return curve;
 }
 
@@ -100,7 +99,7 @@ function addOneMark(map, p) {
 	marker.enableDragging();
 	marker.addEventListener("click", function() {
 		var sContent = "lat:" + marker.getPosition().lat + " lng:"
-				+ marker.getPosition().lng + " isClick:" + marker.isClick;
+				+ marker.getPosition().lng + " isClick:" + marker.isCurveLineClick;
 
 		var infoWindow = new BMap.InfoWindow(sContent);
 		marker.openInfoWindow(infoWindow);
@@ -108,26 +107,32 @@ function addOneMark(map, p) {
 		//add curveline if clicked
 		var clickedMarker=null;
 		for(var i in map.getOverlays()){
-			if(map.getOverlays()[i] instanceof MapMarker && map.getOverlays()[i].isClick==true){
+			if(map.getOverlays()[i] instanceof MapMarker && map.getOverlays()[i].isCurveLineClick==true){
 				clickedMarker=map.getOverlays()[i];
 				break;
 			}
 		}
 		
-		if(clickedMarker!=null){
-			var curveLine=addCurveLine(map,clickedMarker.getPosition(),marker.getPosition());
-			marker.connectedCurveLine.push(curveLine);
-			marker.connectedMarkers.push(clickedMarker);
+		if(clickedMarker!=null){	
+			marker.prevMarker=clickedMarker;
+			clickedMarker.connectedMarkers=marker;
 			
-			//clickedMarker.connectedCurveLine.push(curveLine);
-			//clickedMarker.connectedMarkers.push(marker);
-			clickedMarker.isClick=false;
-		}
-		
+			redrawOneMarker(clickedMarker,map);
+			
+			var curveLine=addCurveLine(map,clickedMarker.getPosition(),marker.getPosition());			
+			marker.prevCurveLine=curveLine;
+			clickedMarker.connectedCurveLine=curveLine;
+			
+			clickedMarker.isCurveLineClick=false;
+		}		
 	});
 	
 	marker.addEventListener("dragend", function(){
-		marker.redrawCurveLine(map);
+		if(marker.prevMarker!=null){
+			redrawOneMarker(marker.prevMarker,map);
+		}else{
+			redrawOneMarker(marker,map);
+		}
 	});
 	addContextMenu2Marker(map,marker);
 	map.addOverlay(marker);
@@ -144,7 +149,7 @@ function addContextMenu2Marker(map,marker){
 	{
 		text : 'add curveLine',
 		callback : function() {
-			marker.isClick=true;
+			marker.isCurveLineClick=true;
 			alert("please click another marker to add curveline");
 		}
 	} ];
@@ -192,30 +197,31 @@ function removeAllSearchResults(map){
 
 function MapMarker(point) {
 	BMap.Marker.call(this, point);
-	this.isClick = false;
-	this.connectedMarkers=new Array();
-	this.connectedCurveLine=new Array();
+	this.isCurveLineClick = false;
+	//next Marker and curveLine
+	this.connectedMarkers=null;
+	this.connectedCurveLine=null;
+	
+	//pre Marker and curveLine
+	this.prevMarker=null;
+	this.prevCurveLine=null;
 }
 MapMarker.prototype = new BMap.Marker();
-MapMarker.prototype.redrawCurveLine=function(map){
-	
-	for(var i in map.getOverlays()){
-		if(map.getOverlays()[i] instanceof MapMarker){
-			redrawOneMarker(map.getOverlays()[i],map);
-		}
+MapMarker.prototype.addNextMarker=function(marker){
+	if(this.connectedCurveLine!=null){
+		this.connectedMarkers.prevMarker=null;
 	}
+	this.connectedMarkers=marker;
 };
 
 function redrawOneMarker(marker,map){
-	//remove old curveLine
-	for(var i in marker.connectedCurveLine){
-		map.removeOverlay(marker.connectedCurveLine[i]);
-	}
-	//TODO may stack one of the marker and can not init new array
-	marker.connectedCurveLine=new Array();
-	//redraw new
-	for(var i in marker.connectedMarkers){
-		marker.connectedCurveLine.push(addCurveLine(map,marker.getPosition(),marker.connectedMarkers[i].getPosition()));
+	if(marker.connectedMarkers==null){
+		return;
+	}else{
+		//redraw Curve Line
+		map.removeOverlay(marker.connectedCurveLine);
+		marker.connectedCurveLine=addCurveLine(map,marker.getPosition(),marker.connectedMarkers.getPosition());
+		redrawOneMarker(marker.connectedMarkers,map);
 	}
 }
 

@@ -114,14 +114,13 @@ function addOneMark(map, p) {
 		}
 		
 		if(clickedMarker!=null){	
-			marker.prevMarker=clickedMarker;
-			clickedMarker.connectedMarkers=marker;
+			clickedMarker.addNextMarker(marker);
 			
 			redrawOneMarker(clickedMarker,map);
 			
-			var curveLine=addCurveLine(map,clickedMarker.getPosition(),marker.getPosition());			
-			marker.prevCurveLine=curveLine;
-			clickedMarker.connectedCurveLine=curveLine;
+			//var curveLine=addCurveLine(map,clickedMarker.getPosition(),marker.getPosition());			
+			//marker.prevCurveLine=curveLine;
+			//clickedMarker.connectedCurveLine=curveLine;
 			
 			clickedMarker.isCurveLineClick=false;
 		}		
@@ -212,6 +211,7 @@ MapMarker.prototype.addNextMarker=function(marker){
 		this.connectedMarkers.prevMarker=null;
 	}
 	this.connectedMarkers=marker;
+	marker.prevMarker=this;
 };
 
 function redrawOneMarker(marker,map){

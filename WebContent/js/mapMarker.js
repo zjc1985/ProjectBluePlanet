@@ -41,10 +41,17 @@ function addContextMenu(map){
 function addCurveLine(map,fromPoint,toPoint){
 	var points = [fromPoint,toPoint];
 
-	var curve = new BMapLib.CurveLine(points, {strokeColor:"blue", strokeWeight:5, strokeOpacity:0.5}); //创建弧线对象
+	var curve = new BMapLib.CurveLine(points, {strokeColor:"blue", strokeWeight:7, strokeOpacity:0.5}); //创建弧线对象
 	map.addOverlay(curve);
 	curve.disableEditing(); 
 	return curve;
+}
+
+function drawLine(map,fromPoint,toPoint){
+	var points =[fromPoint,toPoint];
+	var polyline=new BMap.Polyline(points,{strokeColor:"green", strokeWeight:3, strokeOpacity:0.5});
+	map.addOverlay(polyline);
+	return polyline;
 }
 
 function createOneSearchMarker(p,index){
@@ -116,26 +123,50 @@ function addOneMark(map, p) {
 		if(clickedMarker!=null){	
 			clickedMarker.addNextMarker(marker);
 			
-			redrawOneMarker(clickedMarker,map);
-			
-			//var curveLine=addCurveLine(map,clickedMarker.getPosition(),marker.getPosition());			
-			//marker.prevCurveLine=curveLine;
-			//clickedMarker.connectedCurveLine=curveLine;
-			
 			clickedMarker.isCurveLineClick=false;
-		}		
+		}
+		
+		//add line if clicked
+		var fromMarker=null;
+		for(var i in map.getOverlays()){
+			if(map.getOverlays()[i] instanceof MapMarker && map.getOverlays()[i].isPolyLineClick==true){
+				fromMarker=map.getOverlays()[i];
+				break;
+			}
+		}
+		if(fromMarker!=null){
+			fromMarker.addTreeChildMarker(marker);
+			fromMarker.isPolyLineClick=false;
+		}
 	});
 	
 	marker.addEventListener("dragend", function(){
+		//redraw curveLine
 		if(marker.prevMarker!=null){
 			redrawOneMarker(marker.prevMarker,map);
 			redrawOneMarker(marker,map);
 		}else{
 			redrawOneMarker(marker,map);
 		}
+		
+		if(marker.parentMarker!=null){
+			
+			redrawTreeNode(map,marker.parentMarker);
+			redrawTreeNode(map,marker);
+		}else{
+			redrawTreeNode(map,marker);
+		}
 	});
 	addContextMenu2Marker(map,marker);
 	map.addOverlay(marker);
+}
+
+function redrawTreeNode(map,marker){
+	for (var j in marker.childNodeArray){
+		map.removeOverlay(marker.childNodeArray[j].line);
+		marker.childNodeArray[j].line=drawLine(map,marker.getPosition(),
+				marker.childNodeArray[j].entity.getPosition());
+	}
 }
 
 function addContextMenu2Marker(map,marker){
@@ -152,7 +183,14 @@ function addContextMenu2Marker(map,marker){
 			marker.isCurveLineClick=true;
 			alert("please click another marker to add curveline");
 		}
-	} ];
+	} ,
+	{
+		text:"add line",
+		callback:function(){
+			marker.isPolyLineClick=true;
+			alert("please click another marker to add line");
+		}
+	}];
 	for ( var i = 0; i < txtMenuItem.length; i++) {
 		contextMenu.addItem(new BMap.MenuItem(txtMenuItem[i].text,
 				txtMenuItem[i].callback, 100));
@@ -195,24 +233,45 @@ function removeAllSearchResults(map){
 }
 
 
+function Node(){
+	this.entity=null;
+	this.line=null;
+}
+
 function MapMarker(point) {
 	BMap.Marker.call(this, point);
 	this.isCurveLineClick = false;
+	this.isPolyLineClick=false;
 	//next Marker and curveLine
 	this.connectedMarkers=null;
 	this.connectedCurveLine=null;
 	
 	//pre Marker and curveLine
 	this.prevMarker=null;
-	this.prevCurveLine=null;
+	//this.prevCurveLine=null;
+	
+	this.childNodeArray=new Array();
+	this.parentMarker=null;
 }
 MapMarker.prototype = new BMap.Marker();
+
+MapMarker.prototype.addTreeChildMarker=function(marker){
+	var node=new Node();
+	node.entity=marker;
+	node.line=drawLine(map,this.getPosition(),marker.getPosition());
+	this.childNodeArray.push(node);
+	marker.parentMarker=this;
+};
+//logic add and redraw
 MapMarker.prototype.addNextMarker=function(marker){
-	if(this.connectedCurveLine!=null){
+	if(this.connectedMarkers!=null){
 		this.connectedMarkers.prevMarker=null;
 	}
+	
 	this.connectedMarkers=marker;
 	marker.prevMarker=this;
+	
+	redrawOneMarker(this,map);
 };
 
 function redrawOneMarker(marker,map){
@@ -252,7 +311,4 @@ function searchLocation(){
 	
 	var local = new BMap.LocalSearch("全国", searchOptions);
 	local.search(searchKey);
-	//map.centerAndZoom(local.getResults()[0].getPoi(0).point, 15);
-	
-	//alert("searchKey:"+searchKey+"marker number: "+count);
 }

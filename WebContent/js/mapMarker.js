@@ -171,6 +171,18 @@ function addContextMenu2Marker(map,marker){
 			marker.needSubLine=true;
 			alert("please click another marker to add sub line");
 		}
+	},
+	{
+		text:"collapse sub Marker",
+		callback:function(){
+			marker.collapseSubMarkers();
+		}
+	},
+	{
+		text:"show sub Marker",
+		callback:function(){
+			marker.showSubMarkers();
+		}
 	}];
 	for ( var i = 0; i < txtMenuItem.length; i++) {
 		contextMenu.addItem(new BMap.MenuItem(txtMenuItem[i].text,
@@ -229,11 +241,59 @@ function MapMarker(point) {
 	
 	//pre Marker and curveLine
 	this.prevMainMarker=null;
-	
+	//node type array
 	this.subMarkersArray=new Array();
 	this.parentSubMarker=null;
+	
+	this.isHideAllSubMarkers=false;
 }
 MapMarker.prototype = new BMap.Marker();
+
+MapMarker.prototype.areSubMarkersHide=function(){
+	return this.isHideAllSubMarkers;
+};
+
+MapMarker.prototype.collapseSubMarkers=function(){
+	this.isHideAllSubMarkers=true;
+	for(var i in this.subMarkersArray){
+		if(this.subMarkersArray==null||this.subMarkersArray.length==0){
+			continue;
+		}
+		
+		//hide marker
+		if(this.subMarkersArray[i].entity!=null){
+			this.subMarkersArray[i].entity.hide();
+		}
+		//hide line
+		if(this.subMarkersArray[i].line!=null){
+			this.subMarkersArray[i].line.hide();
+		}
+		//hide sub sub markers if it sub marker has
+		this.subMarkersArray[i].entity.collapseSubMarkers();
+	}
+	
+};
+
+MapMarker.prototype.showSubMarkers=function(){
+	this.isHideAllSubMarkers=false;
+	for(var i in this.subMarkersArray){
+		if(this.subMarkersArray==null||this.subMarkersArray.length==0){
+			continue;
+		}
+		
+		//hide marker
+		if(this.subMarkersArray[i].entity!=null){
+			this.subMarkersArray[i].entity.show();
+		}
+		//hide line
+		if(this.subMarkersArray[i].line!=null){
+			this.subMarkersArray[i].line.show();
+		}
+		//hide sub sub markers if it sub marker has
+		this.subMarkersArray[i].entity.showSubMarkers();
+	}
+	
+};
 
 MapMarker.prototype.redrawConnectedLines=function(){
 	//redraw curveLine
@@ -273,6 +333,9 @@ function redrawTreeNode(marker,map){
 		map.removeOverlay(marker.subMarkersArray[j].line);
 		marker.subMarkersArray[j].line=drawLine(map,marker.getPosition(),
 				marker.subMarkersArray[j].entity.getPosition());
+		if(marker.areSubMarkersHide()){
+			marker.subMarkersArray[j].line.hide();
+		}
 	}
 }
 

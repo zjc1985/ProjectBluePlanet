@@ -1,6 +1,6 @@
 var map = new BMap.Map("l-map");
 map.enableScrollWheelZoom();
-var point = new BMap.Point(116.404, 39.915);
+var point = new BMap.Point(121.507447,31.244375);
 map.centerAndZoom(point, 15);
 addContextMenu(map);
 
@@ -67,7 +67,6 @@ function createOneSearchMarker(p,index){
 //添加信息窗口
 function addInfoWindow(marker,poi,index){
     var maxLen = 10;
-    var name = null;
     if(poi.type == BMAP_POI_TYPE_NORMAL){
         name = "地址：  ";
     }else if(poi.type == BMAP_POI_TYPE_BUSSTOP){
@@ -106,7 +105,7 @@ function addOneMark(map, p) {
 	marker.enableDragging();
 	marker.addEventListener("click", function() {
 		var sContent = "lat:" + marker.getPosition().lat + " lng:"
-				+ marker.getPosition().lng + " isClick:" + marker.isCurveLineClick;
+				+ marker.getPosition().lng + " isClick:" + marker.needMainLine;
 
 		var infoWindow = new BMap.InfoWindow(sContent);
 		marker.openInfoWindow(infoWindow);
@@ -114,7 +113,7 @@ function addOneMark(map, p) {
 		//add curveline if clicked
 		var clickedMarker=null;
 		for(var i in map.getOverlays()){
-			if(map.getOverlays()[i] instanceof MapMarker && map.getOverlays()[i].isCurveLineClick==true){
+			if(map.getOverlays()[i] instanceof MapMarker && map.getOverlays()[i].needMainLine==true){
 				clickedMarker=map.getOverlays()[i];
 				break;
 			}
@@ -123,72 +122,54 @@ function addOneMark(map, p) {
 		if(clickedMarker!=null){	
 			clickedMarker.addNextMarker(marker);
 			
-			clickedMarker.isCurveLineClick=false;
+			clickedMarker.needMainLine=false;
 		}
 		
 		//add line if clicked
 		var fromMarker=null;
 		for(var i in map.getOverlays()){
-			if(map.getOverlays()[i] instanceof MapMarker && map.getOverlays()[i].isPolyLineClick==true){
+			if(map.getOverlays()[i] instanceof MapMarker && map.getOverlays()[i].needSubLine==true){
 				fromMarker=map.getOverlays()[i];
 				break;
 			}
 		}
 		if(fromMarker!=null){
 			fromMarker.addTreeChildMarker(marker);
-			fromMarker.isPolyLineClick=false;
+			fromMarker.needSubLine=false;
 		}
 	});
 	
 	marker.addEventListener("dragend", function(){
-		//redraw curveLine
-		if(marker.prevMarker!=null){
-			redrawOneMarker(marker.prevMarker,map);
-			redrawOneMarker(marker,map);
-		}else{
-			redrawOneMarker(marker,map);
-		}
-		
-		if(marker.parentMarker!=null){
-			
-			redrawTreeNode(map,marker.parentMarker);
-			redrawTreeNode(map,marker);
-		}else{
-			redrawTreeNode(map,marker);
-		}
+		marker.redrawConnectedLines();
 	});
+	
 	addContextMenu2Marker(map,marker);
 	map.addOverlay(marker);
 }
 
-function redrawTreeNode(map,marker){
-	for (var j in marker.childNodeArray){
-		map.removeOverlay(marker.childNodeArray[j].line);
-		marker.childNodeArray[j].line=drawLine(map,marker.getPosition(),
-				marker.childNodeArray[j].entity.getPosition());
-	}
-}
+
 
 function addContextMenu2Marker(map,marker){
 	var contextMenu = new BMap.ContextMenu();
 	var txtMenuItem = [ {
 		text : 'delete marker',
 		callback : function(target) {
+			//TODO
 			map.removeOverlay(marker);
 		}
 	} ,
 	{
-		text : 'add curveLine',
+		text : 'add main line',
 		callback : function() {
-			marker.isCurveLineClick=true;
-			alert("please click another marker to add curveline");
+			marker.needMainLine=true;
+			alert("please click another marker to add main line");
 		}
 	} ,
 	{
-		text:"add line",
+		text:"add sub line",
 		callback:function(){
-			marker.isPolyLineClick=true;
-			alert("please click another marker to add line");
+			marker.needSubLine=true;
+			alert("please click another marker to add sub line");
 		}
 	}];
 	for ( var i = 0; i < txtMenuItem.length; i++) {
@@ -240,47 +221,68 @@ function Node(){
 
 function MapMarker(point) {
 	BMap.Marker.call(this, point);
-	this.isCurveLineClick = false;
-	this.isPolyLineClick=false;
+	this.needMainLine = false;
+	this.needSubLine=false;
 	//next Marker and curveLine
-	this.connectedMarkers=null;
-	this.connectedCurveLine=null;
+	this.connectedMainMarker=null;
+	this.connectedMainLine=null;
 	
 	//pre Marker and curveLine
-	this.prevMarker=null;
-	//this.prevCurveLine=null;
+	this.prevMainMarker=null;
 	
-	this.childNodeArray=new Array();
-	this.parentMarker=null;
+	this.subMarkersArray=new Array();
+	this.parentSubMarker=null;
 }
 MapMarker.prototype = new BMap.Marker();
+
+MapMarker.prototype.redrawConnectedLines=function(){
+	//redraw curveLine
+	if(this.prevMainMarker!=null){
+		redrawOneMarker(this.prevMainMarker,map);
+	}
+	redrawOneMarker(this,map);
+	
+	//redraw line
+	if(this.parentSubMarker!=null){	
+		redrawTreeNode(this.parentSubMarker,map);
+	}
+	redrawTreeNode(this,map);
+};
 
 MapMarker.prototype.addTreeChildMarker=function(marker){
 	var node=new Node();
 	node.entity=marker;
 	node.line=drawLine(map,this.getPosition(),marker.getPosition());
-	this.childNodeArray.push(node);
-	marker.parentMarker=this;
+	this.subMarkersArray.push(node);
+	marker.parentSubMarker=this;
 };
 //logic add and redraw
 MapMarker.prototype.addNextMarker=function(marker){
-	if(this.connectedMarkers!=null){
-		this.connectedMarkers.prevMarker=null;
+	if(this.connectedMainMarker!=null){
+		this.connectedMainMarker.prevMainMarker=null;
 	}
 	
-	this.connectedMarkers=marker;
-	marker.prevMarker=this;
+	this.connectedMainMarker=marker;
+	marker.prevMainMarker=this;
 	
 	redrawOneMarker(this,map);
 };
 
+function redrawTreeNode(marker,map){
+	for (var j in marker.subMarkersArray){
+		map.removeOverlay(marker.subMarkersArray[j].line);
+		marker.subMarkersArray[j].line=drawLine(map,marker.getPosition(),
+				marker.subMarkersArray[j].entity.getPosition());
+	}
+}
+
 function redrawOneMarker(marker,map){
-	if(marker.connectedMarkers==null){
+	if(marker.connectedMainMarker==null){
 		return;
 	}else{
 		//redraw Curve Line
-		map.removeOverlay(marker.connectedCurveLine);
-		marker.connectedCurveLine=addCurveLine(map,marker.getPosition(),marker.connectedMarkers.getPosition());
+		map.removeOverlay(marker.connectedMainLine);
+		marker.connectedMainLine=addCurveLine(map,marker.getPosition(),marker.connectedMainMarker.getPosition());
 	}
 }
 

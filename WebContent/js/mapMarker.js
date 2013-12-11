@@ -1,7 +1,6 @@
-//branch function testing
 var map = new BMap.Map("l-map");
 map.enableScrollWheelZoom();
-var point = new BMap.Point(116.404, 39.915);
+var point = new BMap.Point(121.507447,31.244375);
 map.centerAndZoom(point, 15);
 addContextMenu(map);
 
@@ -42,10 +41,17 @@ function addContextMenu(map){
 function addCurveLine(map,fromPoint,toPoint){
 	var points = [fromPoint,toPoint];
 
-	var curve = new BMapLib.CurveLine(points, {strokeColor:"blue", strokeWeight:5, strokeOpacity:0.5}); //创建弧线对象
-	map.addOverlay(curve); //添加到地图中
-	curve.disableEditing(); //开启编辑功能
+	var curve = new BMapLib.CurveLine(points, {strokeColor:"blue", strokeWeight:7, strokeOpacity:0.5}); //创建弧线对象
+	map.addOverlay(curve);
+	curve.disableEditing(); 
 	return curve;
+}
+
+function drawLine(map,fromPoint,toPoint){
+	var points =[fromPoint,toPoint];
+	var polyline=new BMap.Polyline(points,{strokeColor:"green", strokeWeight:3, strokeOpacity:0.5});
+	map.addOverlay(polyline);
+	return polyline;
 }
 
 function createOneSearchMarker(p,index){
@@ -61,7 +67,6 @@ function createOneSearchMarker(p,index){
 //添加信息窗口
 function addInfoWindow(marker,poi,index){
     var maxLen = 10;
-    var name = null;
     if(poi.type == BMAP_POI_TYPE_NORMAL){
         name = "地址：  ";
     }else if(poi.type == BMAP_POI_TYPE_BUSSTOP){
@@ -100,7 +105,7 @@ function addOneMark(map, p) {
 	marker.enableDragging();
 	marker.addEventListener("click", function() {
 		var sContent = "lat:" + marker.getPosition().lat + " lng:"
-				+ marker.getPosition().lng + " isClick:" + marker.isClick;
+				+ marker.getPosition().lng + " isClick:" + marker.needMainLine;
 
 		var infoWindow = new BMap.InfoWindow(sContent);
 		marker.openInfoWindow(infoWindow);
@@ -108,46 +113,77 @@ function addOneMark(map, p) {
 		//add curveline if clicked
 		var clickedMarker=null;
 		for(var i in map.getOverlays()){
-			if(map.getOverlays()[i] instanceof MapMarker && map.getOverlays()[i].isClick==true){
+			if(map.getOverlays()[i] instanceof MapMarker && map.getOverlays()[i].needMainLine==true){
 				clickedMarker=map.getOverlays()[i];
 				break;
 			}
 		}
 		
-		if(clickedMarker!=null){
-			var curveLine=addCurveLine(map,clickedMarker.getPosition(),marker.getPosition());
-			marker.connectedCurveLine.push(curveLine);
-			marker.connectedMarkers.push(clickedMarker);
+		if(clickedMarker!=null){	
+			clickedMarker.addNextMarker(marker);
 			
-			//clickedMarker.connectedCurveLine.push(curveLine);
-			//clickedMarker.connectedMarkers.push(marker);
-			clickedMarker.isClick=false;
+			clickedMarker.needMainLine=false;
 		}
 		
+		//add line if clicked
+		var fromMarker=null;
+		for(var i in map.getOverlays()){
+			if(map.getOverlays()[i] instanceof MapMarker && map.getOverlays()[i].needSubLine==true){
+				fromMarker=map.getOverlays()[i];
+				break;
+			}
+		}
+		if(fromMarker!=null){
+			fromMarker.addTreeChildMarker(marker);
+			fromMarker.needSubLine=false;
+		}
 	});
 	
 	marker.addEventListener("dragend", function(){
-		marker.redrawCurveLine(map);
+		marker.redrawConnectedLines();
 	});
+	
 	addContextMenu2Marker(map,marker);
 	map.addOverlay(marker);
 }
+
+
 
 function addContextMenu2Marker(map,marker){
 	var contextMenu = new BMap.ContextMenu();
 	var txtMenuItem = [ {
 		text : 'delete marker',
 		callback : function(target) {
+			//TODO
 			map.removeOverlay(marker);
 		}
 	} ,
 	{
-		text : 'add curveLine',
+		text : 'add main line',
 		callback : function() {
-			marker.isClick=true;
-			alert("please click another marker to add curveline");
+			marker.needMainLine=true;
+			alert("please click another marker to add main line");
 		}
-	} ];
+	} ,
+	{
+		text:"add sub line",
+		callback:function(){
+			marker.needSubLine=true;
+			alert("please click another marker to add sub line");
+		}
+	},
+	{
+		text:"collapse sub Marker",
+		callback:function(){
+			marker.collapseSubMarkers();
+		}
+	},
+	{
+		text:"show sub Marker",
+		callback:function(){
+			marker.showSubMarkers();
+		}
+	}];
 	for ( var i = 0; i < txtMenuItem.length; i++) {
 		contextMenu.addItem(new BMap.MenuItem(txtMenuItem[i].text,
 				txtMenuItem[i].callback, 100));
@@ -190,32 +226,126 @@ function removeAllSearchResults(map){
 }
 
 
+function Node(){
+	this.entity=null;
+	this.line=null;
+}
+
 function MapMarker(point) {
 	BMap.Marker.call(this, point);
-	this.isClick = false;
-	this.connectedMarkers=new Array();
-	this.connectedCurveLine=new Array();
+	this.needMainLine = false;
+	this.needSubLine=false;
+	//next Marker and curveLine
+	this.connectedMainMarker=null;
+	this.connectedMainLine=null;
+	
+	//pre Marker and curveLine
+	this.prevMainMarker=null;
+	//node type array
+	this.subMarkersArray=new Array();
+	this.parentSubMarker=null;
+	
+	this.isHideAllSubMarkers=false;
 }
 MapMarker.prototype = new BMap.Marker();
-MapMarker.prototype.redrawCurveLine=function(map){
-	
-	for(var i in map.getOverlays()){
-		if(map.getOverlays()[i] instanceof MapMarker){
-			redrawOneMarker(map.getOverlays()[i],map);
-		}
-	}
+
+MapMarker.prototype.areSubMarkersHide=function(){
+	return this.isHideAllSubMarkers;
 };
 
-function redrawOneMarker(marker,map){
-	//remove old curveLine
-	for(var i in marker.connectedCurveLine){
-		map.removeOverlay(marker.connectedCurveLine[i]);
+MapMarker.prototype.collapseSubMarkers=function(){
+	this.isHideAllSubMarkers=true;
+	for(var i in this.subMarkersArray){
+		if(this.subMarkersArray==null||this.subMarkersArray.length==0){
+			continue;
+		}
+		
+		//hide marker
+		if(this.subMarkersArray[i].entity!=null){
+			this.subMarkersArray[i].entity.hide();
+		}
+		//hide line
+		if(this.subMarkersArray[i].line!=null){
+			this.subMarkersArray[i].line.hide();
+		}
+		//hide sub sub markers if it sub marker has
+		this.subMarkersArray[i].entity.collapseSubMarkers();
 	}
-	//TODO may stack one of the marker and can not init new array
-	marker.connectedCurveLine=new Array();
-	//redraw new
-	for(var i in marker.connectedMarkers){
-		marker.connectedCurveLine.push(addCurveLine(map,marker.getPosition(),marker.connectedMarkers[i].getPosition()));
+	
+};
+
+MapMarker.prototype.showSubMarkers=function(){
+	this.isHideAllSubMarkers=false;
+	for(var i in this.subMarkersArray){
+		if(this.subMarkersArray==null||this.subMarkersArray.length==0){
+			continue;
+		}
+		
+		//hide marker
+		if(this.subMarkersArray[i].entity!=null){
+			this.subMarkersArray[i].entity.show();
+		}
+		//hide line
+		if(this.subMarkersArray[i].line!=null){
+			this.subMarkersArray[i].line.show();
+		}
+		//hide sub sub markers if it sub marker has
+		this.subMarkersArray[i].entity.showSubMarkers();
+	}
+	
+};
+
+MapMarker.prototype.redrawConnectedLines=function(){
+	//redraw curveLine
+	if(this.prevMainMarker!=null){
+		redrawOneMarker(this.prevMainMarker,map);
+	}
+	redrawOneMarker(this,map);
+	
+	//redraw line
+	if(this.parentSubMarker!=null){	
+		redrawTreeNode(this.parentSubMarker,map);
+	}
+	redrawTreeNode(this,map);
+};
+
+MapMarker.prototype.addTreeChildMarker=function(marker){
+	var node=new Node();
+	node.entity=marker;
+	node.line=drawLine(map,this.getPosition(),marker.getPosition());
+	this.subMarkersArray.push(node);
+	marker.parentSubMarker=this;
+};
+//logic add and redraw
+MapMarker.prototype.addNextMarker=function(marker){
+	if(this.connectedMainMarker!=null){
+		this.connectedMainMarker.prevMainMarker=null;
+	}
+	
+	this.connectedMainMarker=marker;
+	marker.prevMainMarker=this;
+	
+	redrawOneMarker(this,map);
+};
+
+function redrawTreeNode(marker,map){
+	for (var j in marker.subMarkersArray){
+		map.removeOverlay(marker.subMarkersArray[j].line);
+		marker.subMarkersArray[j].line=drawLine(map,marker.getPosition(),
+				marker.subMarkersArray[j].entity.getPosition());
+		if(marker.areSubMarkersHide()){
+			marker.subMarkersArray[j].line.hide();
+		}
+	}
+}
+
+function redrawOneMarker(marker,map){
+	if(marker.connectedMainMarker==null){
+		return;
+	}else{
+		//redraw Curve Line
+		map.removeOverlay(marker.connectedMainLine);
+		marker.connectedMainLine=addCurveLine(map,marker.getPosition(),marker.connectedMainMarker.getPosition());
 	}
 }
 
@@ -246,7 +376,4 @@ function searchLocation(){
 	
 	var local = new BMap.LocalSearch("全国", searchOptions);
 	local.search(searchKey);
-	//map.centerAndZoom(local.getResults()[0].getPoi(0).point, 15);
-	
-	//alert("searchKey:"+searchKey+"marker number: "+count);
 }

@@ -104,9 +104,13 @@ function addOneMark(map, p) {
 	var marker = new MapMarker(p);
 	marker.enableDragging();
 	marker.addEventListener("click", function() {
-		var sContent = "lat:" + marker.getPosition().lat + " lng:"
-				+ marker.getPosition().lng + " isClick:" + marker.needMainLine;
-
+		
+		
+		var sContent = '<img src="./resource/SampleInfo.jpg" />';
+			
+			
+		sContent+="<br/>"+"lat:" + marker.getPosition().lat + " lng:"
+			+ marker.getPosition().lng;
 		var infoWindow = new BMap.InfoWindow(sContent);
 		marker.openInfoWindow(infoWindow);
 		
@@ -231,8 +235,19 @@ function Node(){
 	this.line=null;
 }
 
+function MarkerContent(){
+	this.title="Default Title";
+	this.category="food";
+	this.likeNum=236;
+	this.address="Default Address";
+	this.textContent="Default content";
+}
+
 function MapMarker(point) {
 	BMap.Marker.call(this, point);
+	
+	this.content=new MarkerContent();
+	
 	this.needMainLine = false;
 	this.needSubLine=false;
 	//next Marker and curveLine

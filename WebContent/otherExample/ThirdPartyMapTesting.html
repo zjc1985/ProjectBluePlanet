@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style type="text/css">
+html, body,#map { width:100%;height:100%;padding:0px;margin:0px;}
+</style>
+
+<title>Insert title here</title>
+<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.1/leaflet.css" />
+
+<script src="http://cdn.leafletjs.com/leaflet-0.7.1/leaflet.js"></script>
+<script src="../js/L.LineUtil.PolylineDecorator.js"></script>
+<script src="../js/L.RotatedMarker.js"></script>
+<script src="../js/L.Symbol.js"></script>
+<script src="../js/L.PolylineDecorator.js"></script>
+</head>
+<body>
+
+<div id="map"></div>
+
+
+</body>
+</html>
+
+
+<script type="text/javascript">
+var map = L.map('map').setView([57, -19], 5);
+L.tileLayer('http://{s}.tiles.mapbox.com/v3/lionhart586.gkihab1d/{z}/{x}/{y}.png', {
+    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>',
+    maxZoom: 18
+}).addTo(map);
+
+//--- Arrow, with animation to demonstrate the use of setPatterns ---
+var arrow = L.polyline([[57, -19], [60, -12]], {}).addTo(map);
+var arrowHead = L.polylineDecorator(arrow).addTo(map);
+
+var arrowOffset = 0;
+var anim = window.setInterval(function() {
+    arrowHead.setPatterns([
+        {offset: arrowOffset+'%', repeat: 0, symbol: L.Symbol.arrowHead({pixelSize: 15, polygon: false, pathOptions: {stroke: true}})}
+    ])
+    if(++arrowOffset > 100)
+        arrowOffset = 0;
+}, 200);
+
+// --- Example with a rotated marker --- 
+var pathPattern = L.polylineDecorator(
+    [ [ 42.9, -15 ], [ 44.18, -11.4 ], [ 45.77, -8.0 ], [ 47.61, -6.4 ], [ 49.41, -6.1 ], [ 51.01, -7.2 ] ],
+    {
+        patterns: [
+            { offset: 0, repeat: 10, symbol: L.Symbol.dash({pixelSize: 5, pathOptions: {color: '#000', weight: 1, opacity: 0.2}}) },
+            { offset: '16%', repeat: '36%', symbol: L.Symbol.marker({rotate: true, markerOptions: {
+                icon: L.icon({
+                    iconUrl: 'icon_plane.png',
+                    iconAnchor: [16, 16] 
+                })
+            }})}
+        ]
+    }
+).addTo(map);
+
+//--- Multi-pattern without Polyline ---    
+var pathPattern = L.polylineDecorator(
+    [ [ 49.543519, -12.469833 ], [ 49.808981, -12.895285 ], [ 50.056511, -13.555761 ], [ 50.217431, -14.758789 ], [ 50.476537, -15.226512 ], [ 50.377111, -15.706069 ], [ 50.200275, -16.000263 ], [ 49.860606, -15.414253 ], [ 49.672607, -15.710152 ], [ 49.863344, -16.451037 ], [ 49.774564, -16.875042 ], [ 49.498612, -17.106036 ], [ 49.435619, -17.953064 ], [ 49.041792, -19.118781 ], [ 48.548541, -20.496888 ], [ 47.930749, -22.391501 ], [ 47.547723, -23.781959 ], [ 47.095761, -24.941630 ], [ 46.282478, -25.178463 ], [ 45.409508, -25.601434 ], [ 44.833574, -25.346101 ], [ 44.039720, -24.988345 ] ],
+    {
+        patterns: [
+            { offset: 12, repeat: 25, symbol: L.Symbol.dash({pixelSize: 10, pathOptions: {color: '#f00', weight: 2}}) },
+            { offset: 0, repeat: 25, symbol: L.Symbol.dash({pixelSize: 0}) }
+        ]
+    }
+).addTo(map);
+
+</script>

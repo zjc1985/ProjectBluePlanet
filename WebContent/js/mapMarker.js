@@ -4,6 +4,10 @@ var point = new BMap.Point(121.507447,31.244375);
 map.centerAndZoom(point, 15);
 addContextMenu(map);
 
+map.addControl(new BMap.NavigationControl(
+		{anchor: BMAP_ANCHOR_BOTTOM_RIGHT, 
+		 type: BMAP_NAVIGATION_CONTROL_ZOOM})); 
+
 function addContextMenu(map){
 	var contextMenu = new BMap.ContextMenu();
 	var txtMenuItem = [ {

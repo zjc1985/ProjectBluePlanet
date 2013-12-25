@@ -91,17 +91,12 @@ var arrowLine = new ArrowLine(new BMap.Point(116.405, 39.920),
 		  new BMap.Point(116.425,39.93936),
 		  20,
 		  30);
-
+/*
 window.setInterval(function(){
-	if(arrowLine.endPoint<39.9){
-		arrowLine.endPoint.lat+0.01;
-		arrowLine.redraw();
-	}else{
-		arrowLine.endPoint.lat=39.71936;
-		arrowLine.redraw();
-	}
-},2000);
-
+	arrowLine.endPoint.lat+=0.0001;
+	arrowLine.redraw();
+},200);
+*/
 function ArrowLine(startPoint,endPoint,length,angleValue){
 	this.startPoint=startPoint;
 	this.endPoint=endPoint;
@@ -184,44 +179,44 @@ function myDrawArrowFunction(startPoint, endPoint, length, angleValue) {
 	return points;
 }
 
-function addArrow(polyline, length, angleValue) { // ���Ƽ�ͷ�ĺ���
-	var linePoint = polyline.getPath();// �ߵ���괮
+function addArrow(polyline, length, angleValue) { // 锟斤拷锟狡硷拷头锟侥猴拷锟斤拷
+	var linePoint = polyline.getPath();// 锟竭碉拷锟斤拷甏�
 	var arrowCount = linePoint.length;
-	for ( var i = 1; i < arrowCount; i++) { // �ڹյ㴦���Ƽ�ͷ
+	for ( var i = 1; i < arrowCount; i++) { // 锟节拐点处锟斤拷锟狡硷拷头
 		var pixelStart = map.pointToPixel(linePoint[i - 1]);
 		var pixelEnd = map.pointToPixel(linePoint[i]);
-		var angle = angleValue;// ��ͷ�����ߵļн�
-		var r = length; // r/Math.sin(angle)����ͷ����
-		var delta = 0; // ����б�ʣ���ֱʱ��б��
-		var param = 0; // �����࿼��
-		var pixelTemX, pixelTemY;// ��ʱ�����
-		var pixelX, pixelY, pixelX1, pixelY1;// ��ͷ������
-		if (pixelEnd.x - pixelStart.x == 0) { // б�ʲ�������ʱ
+		var angle = angleValue;// 锟斤拷头锟斤拷锟斤拷锟竭的夹斤拷
+		var r = length; // r/Math.sin(angle)锟斤拷锟斤拷头锟斤拷锟斤拷
+		var delta = 0; // 锟斤拷锟斤拷斜锟绞ｏ拷锟斤拷直时锟斤拷斜锟斤拷
+		var param = 0; // 锟斤拷锟斤拷锟洁考锟斤拷
+		var pixelTemX, pixelTemY;// 锟斤拷时锟斤拷锟斤拷锟�
+		var pixelX, pixelY, pixelX1, pixelY1;// 锟斤拷头锟斤拷锟斤拷锟斤拷
+		if (pixelEnd.x - pixelStart.x == 0) { // 斜锟绞诧拷锟斤拷锟斤拷锟斤拷时
 			pixelTemX = pixelEnd.x;
 			if (pixelEnd.y > pixelStart.y) {
 				pixelTemY = pixelEnd.y - r;
 			} else {
 				pixelTemY = pixelEnd.y + r;
 			}
-			// ��ֱ֪���������������꼰����һ���ǣ�������һ��������㷨
+			// 锟斤拷知直锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷锟疥及锟斤拷锟斤拷一锟斤拷锟角ｏ拷锟斤拷锟斤拷锟斤拷一锟斤拷锟斤拷锟斤拷锟斤拷惴�
 			pixelX = pixelTemX - r * Math.tan(angle);
 			pixelX1 = pixelTemX + r * Math.tan(angle);
 			pixelY = pixelY1 = pixelTemY;
-		} else // б�ʴ���ʱ
+		} else // 斜锟绞达拷锟斤拷时
 		{
 			delta = (pixelEnd.y - pixelStart.y) / (pixelEnd.x - pixelStart.x);
 			param = Math.sqrt(delta * delta + 1);
 
-			if ((pixelEnd.x - pixelStart.x) < 0) // �ڶ���������
+			if ((pixelEnd.x - pixelStart.x) < 0) // 锟节讹拷锟斤拷锟斤拷锟斤拷锟斤拷
 			{
 				pixelTemX = pixelEnd.x + r / param;
 				pixelTemY = pixelEnd.y + delta * r / param;
-			} else// ��һ��������
+			} else// 锟斤拷一锟斤拷锟斤拷锟斤拷锟斤拷
 			{
 				pixelTemX = pixelEnd.x - r / param;
 				pixelTemY = pixelEnd.y - delta * r / param;
 			}
-			// ��ֱ֪���������������꼰����һ���ǣ�������һ��������㷨
+			// 锟斤拷知直锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷锟疥及锟斤拷锟斤拷一锟斤拷锟角ｏ拷锟斤拷锟斤拷锟斤拷一锟斤拷锟斤拷锟斤拷锟斤拷惴�
 			pixelX = pixelTemX + Math.tan(angle) * r * delta / param;
 			pixelY = pixelTemY - Math.tan(angle) * r / param;
 

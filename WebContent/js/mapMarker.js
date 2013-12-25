@@ -43,12 +43,15 @@ function addContextMenu(map){
 }
 
 function addCurveLine(map,fromPoint,toPoint){
-	var points = [fromPoint,toPoint];
-
-	var curve = new BMapLib.CurveLine(points, {strokeColor:"blue", strokeWeight:7, strokeOpacity:0.5}); //创建弧线对象
-	map.addOverlay(curve);
-	curve.disableEditing(); 
-	return curve;
+	//var points = [fromPoint,toPoint];
+	//var curve = new BMapLib.CurveLine(points, {strokeColor:"blue", strokeWeight:7, strokeOpacity:0.5}); //创建弧线对象
+	//map.addOverlay(curve);
+	//curve.disableEditing(); 
+	//return curve;
+	
+	var arrowline=new ArrowLine(fromPoint,toPoint,30,30);
+	arrowline.draw(map);
+	return arrowline;
 }
 
 function drawLine(map,fromPoint,toPoint){
@@ -363,7 +366,9 @@ function redrawOneMarker(marker,map){
 		return;
 	}else{
 		//redraw Curve Line
-		map.removeOverlay(marker.connectedMainLine);
+		if(marker.connectedMainLine!=null){
+			marker.connectedMainLine.remove(map);
+		}
 		marker.connectedMainLine=addCurveLine(map,marker.getPosition(),marker.connectedMainMarker.getPosition());
 	}
 }

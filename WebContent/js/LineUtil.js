@@ -6,15 +6,15 @@ function ArrowLine(startPoint,endPoint,length,angleValue){
 	
 	this.line=new BMap.Polyline([ startPoint, endPoint ], {
 		strokeColor : "blue",
-		strokeWeight : 3,
-		strokeOpacity : 0.5
+		strokeWeight : 5,
+		strokeOpacity : 0.8
 	});
 	
 	this.arrow=new BMap.Polyline(myDrawArrowFunction(startPoint,endPoint,length,angleValue),
 			{
 		strokeColor : "blue",
-		strokeWeight : 3,
-		strokeOpacity : 0.5
+		strokeWeight : 4,
+		strokeOpacity : 0.7
 	});
 	
 	this.remove=function(map){

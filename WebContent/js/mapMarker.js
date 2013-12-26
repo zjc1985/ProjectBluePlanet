@@ -8,6 +8,48 @@ map.addControl(new BMap.NavigationControl(
 		{anchor: BMAP_ANCHOR_BOTTOM_RIGHT, 
 		 type: BMAP_NAVIGATION_CONTROL_ZOOM})); 
 
+
+
+
+function addSampleTrip(){
+	var m1=addOneMark(map, new BMap.Point(121.32698,31.201231));
+	m1.content.title="ä¸Šæµ·è™¹æ¡¥ç«è½¦ç«™";
+	var m2=addOneMark(map, new BMap.Point(120.573931,30.543156));
+	m2.content.title="æ¡ä¹¡ç«è½¦ç«™";
+	
+	var m3=addOneMark(map, new BMap.Point(120.500623,30.737927));
+	m3.content.title="æ¡ä¹¡ä¹Œé•‡æ±½è½¦ç«™";
+	
+	var m4=addOneMark(map, new BMap.Point(120.498325,30.754291));
+	m4.content.title="è¥¿æ …ä¸œå¤§é—¨";
+	
+	var m5=addOneMark(map, new BMap.Point(120.493284,30.754858));
+	m5.content.title="è£•ç”Ÿé¤å…";
+	
+	var m6=addOneMark(map, new BMap.Point(120.492619,30.755641));
+	m6.content.title="ä¸‰å¯¸é‡‘è²å±•é¦†";
+	
+	var m7=addOneMark(map, new BMap.Point(120.49844,30.744391));
+	m7.content.title="ä¹Œæ¢…é’å·";
+	
+	var m8=addOneMark(map, new BMap.Point(120.492978,30.755502));
+	m8.content.title="é”¦å²¸ç§æˆ¿èœ";
+	
+	var m9=addOneMark(map, new BMap.Point(120.501764,30.747844));
+	m9.content.title="å®‹å®¶å®¢æ ˆ";
+	
+	m1.addNextMarker(m2);
+	m2.addNextMarker(m3);
+	m3.addNextMarker(m4);
+	m4.addNextMarker(m5);
+	m5.addNextMarker(m6);
+	m6.addNextMarker(m7);
+	m7.addNextMarker(m8);
+	m8.addNextMarker(m9);
+	
+}
+
+
 function addContextMenu(map){
 	var contextMenu = new BMap.ContextMenu();
 	var txtMenuItem = [ {
@@ -44,7 +86,7 @@ function addContextMenu(map){
 
 function addCurveLine(map,fromPoint,toPoint){
 	//var points = [fromPoint,toPoint];
-	//var curve = new BMapLib.CurveLine(points, {strokeColor:"blue", strokeWeight:7, strokeOpacity:0.5}); //´´½¨»¡Ïß¶ÔÏó
+	//var curve = new BMapLib.CurveLine(points, {strokeColor:"blue", strokeWeight:7, strokeOpacity:0.5}); //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß¶ï¿½ï¿½ï¿½
 	//map.addOverlay(curve);
 	//curve.disableEditing(); 
 	//return curve;
@@ -71,19 +113,19 @@ function createOneSearchMarker(p,index){
 	return marker;
 }
 
-//Ìí¼ÓĞÅÏ¢´°¿Ú
+//ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½ï¿½
 function addInfoWindow(marker,poi,index){
     var maxLen = 10;
     if(poi.type == BMAP_POI_TYPE_NORMAL){
-        name = "µØÖ·£º  ";
+        name = "ï¿½ï¿½Ö·ï¿½ï¿½  ";
     }else if(poi.type == BMAP_POI_TYPE_BUSSTOP){
-        name = "¹«½»£º  ";
+        name = "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  ";
     }else if(poi.type == BMAP_POI_TYPE_SUBSTOP){
-        name = "µØÌú£º  ";
+        name = "ï¿½ï¿½ï¿½ï¿½  ";
     }
-    // infowindowµÄ±êÌâ
+    // infowindowï¿½Ä±ï¿½ï¿½ï¿½
     var infoWindowTitle = '<div style="font-weight:bold;color:#CE5521;font-size:14px">'+poi.title+'</div>';
-    // infowindowµÄÏÔÊ¾ĞÅÏ¢
+    // infowindowï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½Ï¢
     var infoWindowHtml = [];
     infoWindowHtml.push('<table cellspacing="0" style="table-layout:fixed;width:100%;font:12px arial,simsun,sans-serif"><tbody>');
     infoWindowHtml.push('<tr>');
@@ -113,11 +155,10 @@ function addOneMark(map, p) {
 	marker.addEventListener("click", function() {
 		
 		
-		var sContent = '<img src="./resource/SampleInfo.jpg" />';
+		//var sContent = '<img src="./resource/SampleInfo.jpg" />';
 			
-			
-		sContent+="<br/>"+"lat:" + marker.getPosition().lat + " lng:"
-			+ marker.getPosition().lng;
+		var sContent=marker.content.title+"<br/>";
+		sContent+=" lng:"+ marker.getPosition().lng+" lat:" + marker.getPosition().lat;
 		var infoWindow = new BMap.InfoWindow(sContent);
 		marker.openInfoWindow(infoWindow);
 		
@@ -156,6 +197,7 @@ function addOneMark(map, p) {
 	
 	addContextMenu2Marker(map,marker);
 	map.addOverlay(marker);
+	return marker;
 }
 
 
@@ -221,7 +263,8 @@ function addContextMenu2SearchMarker(map,marker){
 }
 
 function changeSelectedSearchResult2MapMarker(map,bmarker){
-	addOneMark(map,bmarker.getPosition());
+	var marker=addOneMark(map,bmarker.getPosition());
+	marker.content.title=bmarker.getTitle();
 }
 
 function removeAllSearchResults(map){
@@ -380,7 +423,7 @@ function searchLocation(){
 	
 	var searchOptions={
 			onSearchComplete: function(results){
-			    // ÅĞ¶Ï×´Ì¬ÊÇ·ñÕıÈ·
+			    // ï¿½Ğ¶ï¿½×´Ì¬ï¿½Ç·ï¿½ï¿½ï¿½È·
 			    if (local.getStatus() == BMAP_STATUS_SUCCESS){
 			    	var s = [];
 			    	for (var i = 0; i < results.getCurrentNumPois(); i ++){
@@ -398,6 +441,6 @@ function searchLocation(){
 			}
 	};
 	
-	var local = new BMap.LocalSearch("È«¹ú", searchOptions);
+	var local = new BMap.LocalSearch("È«ï¿½ï¿½", searchOptions);
 	local.search(searchKey);
 }

@@ -14,38 +14,59 @@ map.addControl(new BMap.NavigationControl(
 function addSampleTrip(){
 	var m1=addOneMark(map, new BMap.Point(121.32698,31.201231));
 	m1.content.title="上海虹桥火车站";
+	m1.changeIcon("train");
+	
 	var m2=addOneMark(map, new BMap.Point(120.573931,30.543156));
 	m2.content.title="桐乡火车站";
+	m2.changeIcon("train");
 	
 	var m3=addOneMark(map, new BMap.Point(120.500623,30.737927));
 	m3.content.title="桐乡乌镇汽车站";
+	m3.changeIcon("bus");
+	
+	var mG1=addOneMark(map, new BMap.Point(120.496458,30.753967));
+	mG1.content.title="乌镇";
+	mG1.changeIcon("smallcity");
 	
 	var m4=addOneMark(map, new BMap.Point(120.498325,30.754291));
 	m4.content.title="西栅东大门";
+	m4.changeIcon("statue");
 	
 	var m5=addOneMark(map, new BMap.Point(120.493284,30.754858));
 	m5.content.title="裕生餐厅";
+	m5.changeIcon("restaurant");
 	
 	var m6=addOneMark(map, new BMap.Point(120.492619,30.755641));
 	m6.content.title="三寸金莲展馆";
+	m6.changeIcon("statue");
 	
 	var m7=addOneMark(map, new BMap.Point(120.49844,30.744391));
 	m7.content.title="乌梅青号";
-	
+	m7.changeIcon("restaurant");
 	var m8=addOneMark(map, new BMap.Point(120.492978,30.755502));
 	m8.content.title="锦岸私房菜";
-	
+	m8.changeIcon("restaurant");
 	var m9=addOneMark(map, new BMap.Point(120.501764,30.747844));
 	m9.content.title="宋家客栈";
+	m9.changeIcon("hotel");
 	
 	m1.addNextMarker(m2);
 	m2.addNextMarker(m3);
-	m3.addNextMarker(m4);
-	m4.addNextMarker(m5);
-	m5.addNextMarker(m6);
-	m6.addNextMarker(m7);
-	m7.addNextMarker(m8);
-	m8.addNextMarker(m9);
+	m3.addNextMarker(mG1);
+	
+	mG1.addTreeChildMarker(m4);
+	mG1.addTreeChildMarker(m5);
+	mG1.addTreeChildMarker(m6);
+	mG1.addTreeChildMarker(m7);
+	mG1.addTreeChildMarker(m8);
+	mG1.addTreeChildMarker(m9);
+	mG1.collapseSubMarkers();
+	m4.setIcon(createIndexIcon(0));
+	m5.setIcon(createIndexIcon(1));
+	m6.setIcon(createIndexIcon(2));
+	m7.setIcon(createIndexIcon(3));
+	m8.setIcon(createIndexIcon(4));
+	m9.setIcon(createIndexIcon(5));
 	
 }
 
@@ -98,7 +119,10 @@ function addCurveLine(map,fromPoint,toPoint){
 
 function drawLine(map,fromPoint,toPoint){
 	var points =[fromPoint,toPoint];
-	var polyline=new BMap.Polyline(points,{strokeColor:"green", strokeWeight:3, strokeOpacity:0.5});
+	var polyline=new BMap.Polyline(points,{strokeColor:"green", 
+				strokeStyle:"dashed",
+				strokeWeight:3, 
+				strokeOpacity:0.5});
 	map.addOverlay(polyline);
 	return polyline;
 }
@@ -111,6 +135,25 @@ function createOneSearchMarker(p,index){
 	var marker=new BMap.Marker(p,{icon: myIcon});
 	addContextMenu2SearchMarker(map,marker);
 	return marker;
+}
+
+function createIndexIcon(index){
+	var myIcon = new BMap.Icon("http://api.map.baidu.com/img/markers.png", new BMap.Size(23, 25), {
+		anchor: new BMap.Size(10, 25),
+	    imageOffset: new BMap.Size(0, 0 - index * 25),
+	    infoWindowAnchor:new BMap.Size(10,0)
+	  });
+	return myIcon;
+}
+
+function findIconByName(name){
+	var path="resource/markers/";
+	path=path+name+".png";
+	var myIcon = new BMap.Icon(path, new BMap.Size(32, 37), {
+		anchor: new BMap.Size(16, 37),
+		infoWindowAnchor:new BMap.Size(16,0),
+	  });
+	return myIcon;
 }
 
 //�����Ϣ����
@@ -153,16 +196,30 @@ function addOneMark(map, p) {
 	var marker = new MapMarker(p);
 	marker.enableDragging();
 	marker.addEventListener("click", function() {
-		
-		
-		//var sContent = '<img src="./resource/SampleInfo.jpg" />';
+		if(marker.hasTreeChildMarker()){
 			
-		var sContent=marker.content.title+"<br/>";
+			if(marker.areSubMarkersHide()){
+				//hide all ovellays on map
+				hideAllTrip(marker);
+				
+				//show this marker and its tree nodes
+				marker.showSubMarkers();
+			}else{
+				//show all ovellays on map
+				showAllTrip(marker);
+				//hide all tree nodes belong to this map
+				marker.collapseSubMarkers();
+			}
+		}
+		
+		//add info windows
+		//var sContent = '<img src="./resource/SampleInfo.jpg" />';	
+		var sContent=marker.content.getHtmlContent()+"<br/>";
 		sContent+=" lng:"+ marker.getPosition().lng+" lat:" + marker.getPosition().lat;
 		var infoWindow = new BMap.InfoWindow(sContent);
 		marker.openInfoWindow(infoWindow);
 		
-		//add curveline if clicked
+		//add MainLine if clicked
 		var clickedMarker=null;
 		for(var i in map.getOverlays()){
 			if(map.getOverlays()[i] instanceof MapMarker && map.getOverlays()[i].needMainLine==true){
@@ -177,7 +234,7 @@ function addOneMark(map, p) {
 			clickedMarker.needMainLine=false;
 		}
 		
-		//add line if clicked
+		//add sub line if clicked
 		var fromMarker=null;
 		for(var i in map.getOverlays()){
 			if(map.getOverlays()[i] instanceof MapMarker && map.getOverlays()[i].needSubLine==true){
@@ -287,10 +344,69 @@ function Node(){
 
 function MarkerContent(){
 	this.title="Default Title";
-	this.category="food";
+	this.category="default";
 	this.likeNum=236;
 	this.address="Default Address";
 	this.textContent="Default content";
+	this.getIconPath=function(){
+		if(this.category=="default"){
+			return null;
+		}else{
+			return "resource/markers/"+this.category+".png";
+		}
+	};
+	
+	this.getIcon=function(){
+		if(this.getIconPath()==null){
+			return null;
+		}
+		
+		var myIcon = new BMap.Icon(this.getIconPath(), new BMap.Size(32, 37), {
+		anchor: new BMap.Size(16, 37),
+		infoWindowAnchor:new BMap.Size(16,0),
+		});
+		return myIcon;
+	};
+	
+	this.getHtmlContent=function(){
+		var sContent=this.title+"<br/>";
+		if(this.getIconPath()!=null){
+			sContent += '<img src="'+ this.getIconPath()+'" />';
+		}
+		return sContent;
+	};
+}
+
+function hideAllTrip(oneMarker){
+	var marker=oneMarker;
+	while(marker.connectedMainMarker!=null){
+		marker.connectedMainLine.hide();
+		marker=marker.connectedMainMarker;
+		marker.hide();
+	}
+	
+	marker=oneMarker;
+	while(marker.prevMainMarker!=null){
+		marker=marker.prevMainMarker;
+		marker.hide();
+		marker.connectedMainLine.hide();
+	}
+}
+
+function showAllTrip(oneMarker){
+	var marker=oneMarker;
+	while(marker.connectedMainMarker!=null){
+		marker.connectedMainLine.show();
+		marker=marker.connectedMainMarker;
+		marker.show();	
+	}
+	
+	marker=oneMarker;
+	while(marker.prevMainMarker!=null){
+		marker=marker.prevMainMarker;
+		marker.show();
+		marker.connectedMainLine.show();
+	}
 }
 
 function MapMarker(point) {
@@ -316,6 +432,13 @@ MapMarker.prototype = new BMap.Marker();
 
 MapMarker.prototype.areSubMarkersHide=function(){
 	return this.isHideAllSubMarkers;
+};
+
+MapMarker.prototype.changeIcon=function(name){
+	this.content.category=name;
+	if(this.content.getIcon()!=null){
+		this.setIcon(this.content.getIcon());
+	}
 };
 
 MapMarker.prototype.collapseSubMarkers=function(){
@@ -381,6 +504,15 @@ MapMarker.prototype.addTreeChildMarker=function(marker){
 	this.subMarkersArray.push(node);
 	marker.parentSubMarker=this;
 };
+
+MapMarker.prototype.hasTreeChildMarker=function(){
+	if(this.subMarkersArray==null||this.subMarkersArray.length==0){
+		return false;
+	}else{
+		return true;
+	}
+};
+
 //logic add and redraw
 MapMarker.prototype.addNextMarker=function(marker){
 	if(this.connectedMainMarker!=null){

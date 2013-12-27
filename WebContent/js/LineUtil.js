@@ -17,9 +17,26 @@ function ArrowLine(startPoint,endPoint,length,angleValue){
 		strokeOpacity : 0.7
 	});
 	
+//	this.addContent=function(content){
+//		this.line.addEventListener("click",function(){
+//			
+//			
+//			
+//		});
+//	};
+	
 	this.remove=function(map){
 		map.removeOverlay(this.line);
 		map.removeOverlay(this.arrow);
+	};
+	
+	this.hide=function(map){
+		this.line.hide();
+		this.arrow.hide();
+	};
+	this.show=function(map){
+		this.line.show();
+		this.arrow.show();
 	};
 	
 	this.draw=function(map){

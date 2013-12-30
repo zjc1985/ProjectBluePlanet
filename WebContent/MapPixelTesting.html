@@ -1,17 +1,112 @@
 <!DOCTYPE html>  
 <html>  
 <head>  
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />  
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
 <style type="text/css">  
-body, html,#allmap {width: 100%;height: 100%;overflow: hidden;margin:0;}  
-#l-map{height:100%;width:78%;float:left;border-right:2px solid #bcbcbc;}  
-#r-result{height:100%;width:20%;float:left;}  
-</style>  
-<script type="text/javascript" src="http://api.map.baidu.com/api?v=1.4"></script>  
-<title>Arrow and Line Testing</title>  
+body, html,#allmap {width: 100%;height: 100%;}
+
+#searchDialog{
+	position: absolute;
+  	left: 30px;
+  	top: 20px;
+  	z-index:3;
+}
+
+.info{
+	position: absolute;
+  	z-index:2;
+  	background-color: white;
+  	border-style: groove;
+  	border-width: 1px;
+  	width:400px;
+  	padding: 10px;
+}
+
+</style>
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css">
+<link rel="stylesheet" href="js/lib/magnific-popup.css"> 
+<script type="text/javascript"
+	src="http://api.map.baidu.com/api?v=2.0&ak=DAfc49ea71a7aff2f10ac4847a9208d0"></script>
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+<script src="js/lib/jquery.magnific-popup.js"></script> 
+<title>Style Testing</title>  
 </head>  
-<body>  
+<body>
+
+<div id="searchDialog">
+		<input type="text" name="searchKey" id="searchKey" size="50" style="height:25px;"/>
+		<input type="button" value="search" onclick="searchLocation()" style="height:30px"/>
+		<input type="button" value="feature" onclick="feature()" style="height:30px"/>
+</div>
+
+
+<div class="info" id="titleInfo">
+	<h2>Title</h2>
+	<p>This is an animated dialog which is useful for displaying information. The dialog window can be moved, resized and closed with the 'x' icon.</p>
+	<button>Hide</button>
+</div>
+
+<div class="info" id="imgInfo" style="top:100px">
+	<h3>Img</h3>
+	<p>
+	<a class="image-popup-fit-width" href="http://farm9.staticflickr.com/8379/8588290361_ecf8c27021_b.jpg" title="This image fits only horizontally.">
+		<img src="http://farm9.staticflickr.com/8379/8588290361_ecf8c27021_s.jpg" width="75" height="75">
+	</a>
+	<a class="image-popup-no-margins" href="http://farm4.staticflickr.com/3721/9207329484_ba28755ec4_o.jpg">
+		<img src="http://farm4.staticflickr.com/3721/9207329484_ba28755ec4_o.jpg" width="107" height="75">
+	</a>
+	</p>
+	<button>Hide</button>
+</div>
+
 <div id="allmap"></div>  
+
+
+
+
+
 </body>  
 </html>  
-<script type="text/javascript" src="js/pixelArrowTesting.js"></script>  
+<script type="text/javascript">
+var map = new BMap.Map("allmap");
+var point = new BMap.Point(116.404, 39.915);
+map.centerAndZoom(point, 15);
+map.enableScrollWheelZoom();
+
+$( ".info" ).draggable();
+
+$( "button" ).click(function() {
+	$( ".info" ).hide("Clip",null,2000,null);
+});
+
+$('.image-popup-fit-width').magnificPopup({
+	type: 'image',
+	closeOnContentClick: true,
+	image: {
+		verticalFit: false
+	}
+});
+
+$('.image-popup-no-margins').magnificPopup({
+	type: 'image',
+	closeOnContentClick: true,
+	closeBtnInside: false,
+	fixedContentPos: true,
+	mainClass: 'mfp-no-margins mfp-with-zoom', // class to remove default margin from left and right side
+	image: {
+		verticalFit: true
+	},
+	zoom: {
+		enabled: true,
+		duration: 300 // don't foget to change the duration also in CSS
+	}
+});
+
+function feature(){
+	console.log("fearure function");
+	$( ".info" ).show("Clip",null,2000,null);
+}
+
+</script>  

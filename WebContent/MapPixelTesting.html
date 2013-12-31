@@ -19,8 +19,10 @@ body, html,#allmap {width: 100%;height: 100%;}
   	background-color: white;
   	border-style: groove;
   	border-width: 1px;
-  	width:400px;
+  	width:450px;
   	padding: 10px;
+  	top:70px;
+  	left:30px;
 }
 
 </style>
@@ -43,29 +45,51 @@ body, html,#allmap {width: 100%;height: 100%;}
 
 
 <div class="info" id="titleInfo">
-	<h2>Title</h2>
-	<p>This is an animated dialog which is useful for displaying information. The dialog window can be moved, resized and closed with the 'x' icon.</p>
-	<button>Hide</button>
+	<div id="titleContainer"></div>
 </div>
 
-<div class="info" id="imgInfo" style="top:100px">
-	<h3>Img</h3>
-	<p>
-	<a class="image-popup-fit-width" href="http://farm9.staticflickr.com/8379/8588290361_ecf8c27021_b.jpg" title="This image fits only horizontally.">
-		<img src="http://farm9.staticflickr.com/8379/8588290361_ecf8c27021_s.jpg" width="75" height="75">
-	</a>
-	<a class="image-popup-no-margins" href="http://farm4.staticflickr.com/3721/9207329484_ba28755ec4_o.jpg">
-		<img src="http://farm4.staticflickr.com/3721/9207329484_ba28755ec4_o.jpg" width="107" height="75">
-	</a>
-	</p>
-	<button>Hide</button>
+<div class="info" id="customInfo" style="top:200px">	
+	<div id="customContainer"></div>	
+</div>
+
+<div class="info" id="card">
 </div>
 
 <div id="allmap"></div>  
 
 
 
+<div id="customInfoA">
+	<p>
+	<a class="image-popup-fit-width" href="http://farm9.staticflickr.com/8379/8588290361_ecf8c27021_b.jpg" title="This image fits only horizontally.">
+		<img src="http://farm9.staticflickr.com/8379/8588290361_ecf8c27021_s.jpg" width="75" height="75">
+	</a>
+	<a class="image-popup-no-margins" href="http://farm4.staticflickr.com/3721/9207329484_ba28755ec4_o.jpg"
+		title="cow cow cow cow cow cow ">
+		<img src="http://farm4.staticflickr.com/3721/9207329484_ba28755ec4_o.jpg" width="107" height="75">
+	</a>
+	</p>
+	<button class="rotateButton">rotate</button><button class="hideButton">Hide</button>
+</div>
 
+<div id="customInfoB">
+	<p >This is Custom Basic Info. This is Custom Info</p>
+	<button class="rotateButton">rotate</button><button class="hideButton">Hide</button>
+</div>
+
+<div id="titleInfoA">	
+	<h2>Title</h2>
+	<p id="address">This is one address.</p>
+	
+	<div id="favorite">
+	</div>
+	<button class="rotateButton">rotate</button><button class="hideButton">Hide</button>
+</div>
+
+<div id="titleInfoB">	
+	<p id="address">This is Basic Info. This is Basic Info</p>
+	<button class="rotateButton">rotate</button><button class="hideButton">Hide</button>
+</div>
 
 </body>  
 </html>  
@@ -75,10 +99,40 @@ var point = new BMap.Point(116.404, 39.915);
 map.centerAndZoom(point, 15);
 map.enableScrollWheelZoom();
 
+$(".rotateButton").click(function(){
+	
+	var container=$(this).parent().parent().parent();
+	var idName=$(this).parent().attr("id");
+	container.hide("blind",{direction:"left"},600,function(){
+		console.log(idName);
+		
+		if(idName=="titleInfoA"){
+			$("#titleInfoA").hide();
+			$("#titleInfoB").show();
+		}
+		if(idName=="titleInfoB"){
+			$("#titleInfoB").hide();
+			$("#titleInfoA").show();
+		}	
+		if(idName=="customInfoA"){
+			$("#customInfoA").hide();
+			$("#customInfoB").show();
+		}
+		if(idName=="customInfoB"){
+			$("#customInfoB").hide();
+			$("#customInfoA").show();
+		}
+	});
+	
+	container.show("blind",{direction:"left"},600,null);
+	
+});
+
 $( ".info" ).draggable();
 
-$( "button" ).click(function() {
-	$( ".info" ).hide("Clip",null,2000,null);
+$( ".hideButton" ).click(function() {
+	console.log($(this).html());
+	$(this).parent().parent().parent().hide("blind",{direction:"left"},600,null);
 });
 
 $('.image-popup-fit-width').magnificPopup({
@@ -104,9 +158,50 @@ $('.image-popup-no-margins').magnificPopup({
 	}
 });
 
+
+
 function feature(){
 	console.log("fearure function");
+	/*
+	$("#customContainer").append($("#customInfoA"));
+	$("#customContainer").append($("#customInfoB"));
+	$("#customInfoB").hide();
+	$("#titleContainer").append($("#titleInfoA"));
+	$("#titleContainer").append($("#titleInfoB"));
+	$("#titleInfoB").hide();
+	console.log($("#titleInfoB").html());
 	$( ".info" ).show("Clip",null,2000,null);
+	*/
+	
+	var w=new infoCard("card","<p>Title</p>","<p>Back Title</p>");
+	w.init("20px","70px");
+}
+
+function infoCard(idName,htmlContentA,htmlContentB){
+	this.idName=idName;
+	this.jqueryId="#"+this.idName;
+	this.contentA=htmlContentA;
+	this.contentB=htmlContentB;
+	
+	this.init=function(top,left){
+		$(this.jqueryId).draggable();
+		$(this.jqueryId).append(this.contentA);
+		$(this.jqueryId).append(this.contentB);
+		var buttonHtml="<button class='rotateButton'>rotate</button><button class='hideButton'>Hide</button>";
+		$(this.jqueryId).append(buttonHtml);
+		$(this.jqueryId).addClass("info");
+		/*
+		$(this.jqueryId).css({position: "absolute",
+	  	z-index:"2",
+	  	background-color: "white",
+	  	border-style: "groove",
+	  	border-width: "1px",
+	  	width:"450px",
+	  	padding: "10px",
+	  	top:"70px",
+	  	left:"30px"});
+		*/
+	}
 }
 
 </script>  

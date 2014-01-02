@@ -5,9 +5,28 @@
 <style type="text/css">
 #l-map{height:100%;width:100%;float:left;border-right:2px solid #bcbcbc;position: absolute; z-index: 1}
 #r-result{height:100%;width:20%;float:left;}
+
+.info{
+	position: absolute;
+  	z-index:2;
+  	background-color: white;
+  	border-style: groove;
+  	border-width: 1px;
+  	width:450px;
+  	height:130px;
+  	padding: 5px;
+  	top:70px;
+  	left:30px;
+}
+
+
 </style>
-
-
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css">
+<link rel="stylesheet" href="js/lib/magnific-popup.css">
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+<script src="js/lib/jquery.magnific-popup.js"></script>
+<script src="js/InfoCard.js"></script> 
 <script type="text/javascript"
 	src="http://api.map.baidu.com/api?v=2.0&ak=DAfc49ea71a7aff2f10ac4847a9208d0"></script>
 <script type="text/javascript" src="http://api.map.baidu.com/library/CurveLine/1.5/src/CurveLine.min.js"></script>

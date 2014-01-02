@@ -21,7 +21,7 @@ body, html,#allmap {width: 100%;height: 100%;}
   	border-width: 1px;
   	width:450px;
   	height:130px;
-  	padding: 10px;
+  	padding: 5px;
   	top:70px;
   	left:30px;
 }
@@ -51,31 +51,37 @@ body, html,#allmap {width: 100%;height: 100%;}
 
 
 <div id="customInfoA">
-	<p>
-	<a class="image-popup-fit-width" href="http://farm9.staticflickr.com/8379/8588290361_ecf8c27021_b.jpg" title="This image fits only horizontally.">
-		<img src="http://farm9.staticflickr.com/8379/8588290361_ecf8c27021_s.jpg" width="75" height="75">
-	</a>
-	<a class="image-popup-no-margins" href="http://farm4.staticflickr.com/3721/9207329484_ba28755ec4_o.jpg"
-		title="cow cow cow cow cow cow ">
-		<img src="http://farm4.staticflickr.com/3721/9207329484_ba28755ec4_o.jpg" width="107" height="75">
-	</a>
-	</p>
+	<div class="popup-gallery" id="12">
+		<a href="resource/img/wuzheng/wu1.png" title="The Cleaner">
+			<div style='background-image: url(resource/img/wuzheng/wu1.png);height:80px;background-position: center;'>
+				<p style='color:white;opacity:0.55;background-color: black;'>乌镇</p>
+			</div>
+		</a>
+		<a style='display: none;' href="http://farm9.staticflickr.com/8382/8558295631_0f56c1284f_b.jpg" title="Winter Dance"></a>
+		<a style='display: none;' href="http://farm9.staticflickr.com/8225/8558295635_b1c5ce2794_b.jpg" title="The Uninvited Guest"></a>
+		<a style='display: none;' href="http://farm9.staticflickr.com/8383/8563475581_df05e9906d_b.jpg" title="Oh no, not again!"></a>
+	</div>
 </div>
 
 <div id="customInfoB">
-	<p >This is Custom Basic Info. This is Custom Info</p>
+	<p>This is Custom Basic Info. This is Custom Info</p>
 </div>
 
-<div id="titleInfoA">	
-	<h2>Title</h2>
-	<p id="address">This is one address.</p>
-	
-	<div id="favorite">
+<div id='titleInfoA'>	
+	<h2 id='title'>Title</h2>
+	<p id='address'>This is one address.</p>	
+	<div style='position:absolute;top:20px;left:300px' id='favorite'>
+		<img src='resource/favorite.png' height='120px'/>
 	</div>
 </div>
 
 <div id="titleInfoB">	
-	<p id="address">This is Basic Info. This is Basic Info</p>
+	<p id="titleIntro">This is Basic Info. This is Basic Info</p>
+</div>
+
+
+<div id='gallery' style='background-image: url(resource/img/wuzheng/wu1.png);height:80px;background-position: center;'>
+		<p style='color:white;opacity:0.55;background-color: black;'>乌镇</p>
 </div>
 
 </body>  
@@ -91,44 +97,82 @@ $("#titleInfoB").hide();
 $("#customInfoA").hide();
 $("#customInfoB").hide();
 
-var t=new infoCard("card",$("#titleInfoA").html(),$("#titleInfoB").html());
+var t=new infoCard("card",createTitleContentA("TrainStation","XianXia Road"),
+		createBasicInfo("基本描述这是基本描述这是基本描述这是基本描述这是基本描述这是基本描述这是基本描述这是基本描述这是基本描述这是基本描述这是基本描述这是基本描述这是基本描述这是基本描述这是基本描述这是基本描述"));
 t.init("70px","30px");
 
-var i=new infoCard("img",$("#customInfoA").html(),$("#customInfoB").html());
+
+var imgGalleryHtml=createImgGallery([
+        {url:'resource/img/wuzheng/wu1.png',title:'Wu Zheng'},
+        {url:'http://farm9.staticflickr.com/8382/8558295631_0f56c1284f_b.jpg',title:'P2'},
+        {url:'http://farm9.staticflickr.com/8383/8563475581_df05e9906d_b.jpg',title:'P3'}
+                                 ],"乌镇");
+
+
+var i=new infoCard("img",imgGalleryHtml,$("#customInfoB").html());
 i.init("200px","30px");
 
-
-
-$('.image-popup-fit-width').magnificPopup({
+$('.popup-gallery').magnificPopup({
+	delegate: 'a',
 	type: 'image',
-	closeOnContentClick: true,
-	image: {
-		verticalFit: false
-	}
-});
-
-$('.image-popup-no-margins').magnificPopup({
-	type: 'image',
-	closeOnContentClick: true,
-	closeBtnInside: false,
-	fixedContentPos: true,
-	mainClass: 'mfp-no-margins mfp-with-zoom', // class to remove default margin from left and right side
-	image: {
-		verticalFit: true
-	},
-	zoom: {
+	tLoading: 'Loading image #%curr%...',
+	//mainClass: 'mfp-img-mobile',
+	gallery: {
 		enabled: true,
-		duration: 300 // don't foget to change the duration also in CSS
+		navigateByImgClick: true,
+		preload: [0,1] // Will preload 0 - before current, and 1 after the current image
+	},
+	image: {
+		tError: '<a href="%url%">The image #%curr%</a> could not be loaded.',
+		titleSrc: function(item) {
+			return item.el.attr('title');
+		}
 	}
 });
 
 
+function createTitleContentA(title,address){
+	return "<div><h2>"+title+"</h2><p>"+address+"</p>	<div style='position:absolute;top:20px;left:300px' id='favorite'><img src='resource/favorite.png' height='120px'/></div></div>";
+}
+
+
+
+function createBasicInfo(content){
+	return "<p style='text-overflow:ellipsis;height:70px'>"+content+"</p>";
+}
+
+function createImgGallery(imgArray,mainTitle){
+	var ahrefs="";
+	
+	for(var index in imgArray){
+		if(index==0){
+			ahrefs=	"<a href='"+imgArray[0].url+"' title='"+imgArray[0].title+"'><div style='background-image: url("+imgArray[0].url+");height:80px;background-position: center;'><p style='color:white;opacity:0.55;background-color: black;'>"+mainTitle+"</p></div></a>";
+		}else{
+			ahrefs+="<a style='display: none;' href='"+imgArray[index].url+"' title='"+imgArray[index].title+"'></a>";
+		}
+	}
+	
+	
+	var html="<div><div class='popup-gallery'>"+ahrefs+"</div></div>";
+	return html;
+	
+}
 
 function feature(){
 	$(".info").show();
 	t.resetLocation("70px","30px");
-	t.setContentA("<p>change contentA</p>")
 	i.resetLocation("200px","30px");
-	i.setContentB($("#titleInfoA").html());
+	
+	createImgGallery([
+	    {
+		url:'url1',
+		title:'title1'
+		},
+		{
+		url:'url2',
+		title:'title2'
+		},
+	
+	]);
 }
 </script>  

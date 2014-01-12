@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>jQuery UI Dialog - Default functionality</title>
+  <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css">
+  <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+  <link rel="stylesheet" href="js/lib/magnific-popup.css">
+  <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+  <script src="js/lib/bjqs.js"></script>
+  <script src="js/lib/jquery.magnific-popup.js"></script>
+  <script src="js/InfoCard.js"></script>
+  <link type="text/css" rel="Stylesheet" href="js/lib/bjqs.css" />
+  <style>
+  	.info{
+	position: absolute;
+  	z-index:2;
+  	background-color: white;
+  	border-style: groove;
+  	border-width: 1px;
+  	width:450px;
+  	padding: 2px;
+  	top:70px;
+  	left:30px;
+  	
+}
+
+p.sansserif{font-family:Arial,Verdana,Sans-serif}
+p.serif{font-family:"Times New Roman",Microsoft YaHei,Georgia,Serif}
+
+.white-popup {
+  position: relative;
+  background: #FFF;
+  padding: 20px;
+  width: auto;
+  max-width: 600px;
+  margin: 20px auto;
+}
+  </style>
+</head>
+<body>
+
+
+
+
+
+</body>
+</html>
+
+<script type="text/javascript">
+var card=new infoCard('card');
+
+var imgArray=[
+              {url:'resource/img/img1.jpg',title:'Wu Zheng'},
+              {url:'resource/img/img2.jpg',title:'P2'},
+              {url:'resource/img/img3.jpg',title:'P3'}
+                                       ];
+
+card.initDefault('100px','100px',
+		 {title:'Shanghai Station|上海火车站',
+	      category:'Train Station',
+	      address:'No 333 Xian Xia Road',
+	      mycomment:'Nice Station',
+	      categoryIconUrl:'resource/markers/train.png'},imgArray);
+	      
+	      
+
+function editFormOK(){
+	card.editFormOK();
+	
+}
+
+</script>

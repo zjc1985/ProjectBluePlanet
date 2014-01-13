@@ -11,32 +11,6 @@
   <script src="js/lib/jquery.magnific-popup.js"></script>
   <script src="js/InfoCard.js"></script>
   <link type="text/css" rel="Stylesheet" href="js/lib/bjqs.css" />
-  <style>
-  	.info{
-	position: absolute;
-  	z-index:2;
-  	background-color: white;
-  	border-style: groove;
-  	border-width: 1px;
-  	width:450px;
-  	padding: 2px;
-  	top:70px;
-  	left:30px;
-  	
-}
-
-p.sansserif{font-family:Arial,Verdana,Sans-serif}
-p.serif{font-family:"Times New Roman",Microsoft YaHei,Georgia,Serif}
-
-.white-popup {
-  position: relative;
-  background: #FFF;
-  padding: 20px;
-  width: auto;
-  max-width: 600px;
-  margin: 20px auto;
-}
-  </style>
 </head>
 <body>
 
@@ -62,7 +36,11 @@ card.initDefault('100px','100px',
 	      address:'No 333 Xian Xia Road',
 	      mycomment:'Nice Station',
 	      categoryIconUrl:'resource/markers/train.png'},imgArray);
-	      
+
+card.setDefaultImgs([{url:'resource/img/img2.jpg',title:'P2'}]);
+card.setDefaultContent({
+	title:'Changed Title'
+});
 	      
 
 function editFormOK(){

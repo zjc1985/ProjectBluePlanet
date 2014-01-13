@@ -32,28 +32,32 @@ function infoCard(id){
 		});
 	};
 	
+	this.setDefaultImgs=function(imgArray){
+		this.setContentB(createDefaultGallery(imgArray), true);
+	};
+	
 	this.setDefaultContent=function(content){
-		if(content.title!=''){
+		if(content.title!=''&& content.title!=null){
 			$(titleId).empty();
 			$(titleId).html(content.title);
 		}
 		
-		if(content.category!=''){
+		if(content.category!=''&& content.category!=null){
 			$(categoryId).empty();
 			$(categoryId).html(content.category);
 		}
 		
-		if(content.address!=''){
+		if(content.address!=''&& content.address!=null){
 			$(addressId).empty();
 			$(addressId).html(content.address);
 		}
 		
-		if(content.mycomment!=''){
+		if(content.mycomment!=''&& content.mycomment!=null){
 			$(mycommentId).empty();
 			$(mycommentId).html(content.mycomment);
 		}
 		
-		if(content.categoryIconUrl!=''){
+		if(content.categoryIconUrl!=''&& content.categoryIconUrl!=null){
 			$(iconUrlId).empty();
 			$(iconUrlId).attr("src",content.categoryIconUrl);
 		}
@@ -122,6 +126,7 @@ function infoCard(id){
 		$(BSideId).append(createDefaultGallery(imgArray));
 		initAllGallery();
 		initPopupEditForm();
+		initCSS();
 	};
 	
 	this.initCustom=function(top,left,contentAHtml,contentBHtml){
@@ -129,11 +134,34 @@ function infoCard(id){
 		$(ASideId).append(contentAHtml);
 		$(BSideId).append(contentBHtml);
 		initAllGallery();
+		initCSS();
 	};
 	
 	
 	
 	//private method
+	function initCSS(){
+		$('.info').css({
+			'position': 'absolute',
+	  	'z-index':'2',
+	  	'background-color': 'white',
+	  	'border-style': 'groove',
+	  	'border-width': '1px',
+	  	'width':'450px',
+	  	'padding': '2px',
+	  	'top':'70px',
+	  	'left':'30px'
+		});
+		
+		$('p.sansserif').css({
+			'font-family':'Arial,Verdana,Sans-serif'
+		});
+		$('p.serif').css({
+			'font-family':'Times New Roman,Microsoft YaHei,Georgia,Serif'
+		});
+	}
+	
+	
 	function rotate(){
 		$(jqueryId).hide("blind",{direction:"left"},300,function(){
 			if(isASideShow){
@@ -193,6 +221,9 @@ function infoCard(id){
 	}
 	
 	function initPopupEditForm(){
+		
+		
+		
 		$('.popup-with-form').magnificPopup({
 			type: 'inline',
 			preloader: false,
@@ -210,6 +241,27 @@ function infoCard(id){
 				}
 			}
 		});
+		
+		/*
+		 * .white-popup {
+  position: relative;
+  background: #FFF;
+  padding: 20px;
+  width: auto;
+  max-width: 600px;
+  margin: 20px auto;
+}
+		 **/
+		
+		$('.white-popup').css({
+			'position': 'relative',
+		  'background': '#FFF',
+		  'padding': '20px',
+		  'width': 'auto',
+		  'max-width': '600px',
+		  'margin': '20px auto'
+		});
+		
 	}
 	
 	function initAllGallery(){

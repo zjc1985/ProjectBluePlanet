@@ -8,22 +8,26 @@ map.addControl(new BMap.NavigationControl(
 		{anchor: BMAP_ANCHOR_BOTTOM_RIGHT, 
 		 type: BMAP_NAVIGATION_CONTROL_ZOOM})); 
 
-var info1=new infoCard("card",createTitleContentA("TrainStation","XianXia Road"),
-		createBasicInfo("基本描述这是基本描述这是基本描述这是基本描述这是基本描述这是基本描述这是基本描述这是基本描述这是基本描述这是基本描述这是基本描述这是基本描述这是基本描述这是基本描述这是基本描述这是基本描述"));
-info1.init("70px","30px");
-info1.hide();
 
-var imgGalleryHtml=createImgGallery([
+
+var imgGalleryArray=[
         {url:'resource/img/wuzheng/wu1.png',title:'Wu Zheng'},
         {url:'http://farm9.staticflickr.com/8382/8558295631_0f56c1284f_b.jpg',title:'P2'},
         {url:'http://farm9.staticflickr.com/8383/8563475581_df05e9906d_b.jpg',title:'P3'}
-                                 ],"乌镇");
+                                 ];
+
+var info1=new infoCard('card');
+info1.initDefault('100px','100px',
+		 {title:'Shanghai Station|上海火车站',
+	      category:'Train Station',
+	      address:'No 333 Xian Xia Road',
+	      mycomment:'Nice Station',
+	      categoryIconUrl:'resource/markers/train.png'},imgGalleryArray);
 
 
-var info2=new infoCard("img",imgGalleryHtml,createBasicInfo("BasicInfo"));
-info2.init("200px","30px");
-info2.hide();
-initAllGallery();
+function editFormOK(){
+	info1.editFormOK();
+}
 
 
 function addSampleTrip(){
@@ -272,7 +276,7 @@ function addOneMark(map, p) {
 		sContent+=" lng:"+ marker.getPosition().lng+" lat:" + marker.getPosition().lat;
 		var infoWindow = new BMap.InfoWindow(sContent);
 		marker.openInfoWindow(infoWindow);
-		*/
+		
 		info1.setContentA(marker.content.getHtmlContent(),false);
 		info1.setContentB(createBasicInfo(marker.content.textContent),false);
 		info1.resetLocation("70px","30px");
@@ -289,9 +293,18 @@ function addOneMark(map, p) {
 			info2.showContentB();
 			info2.show();
 		}
+		*/
+		info1.setDefaultContent({
+			title:marker.content.title,
+			category:marker.content.category,
+			address:marker.content.address,
+			mycomment:marker.content.userContent,
+			categoryIconUrl:marker.content.getIconPath()
+		});
 		
-		
-		
+		if(marker.content.imgs!=null){
+			info1.setDefaultImgs(marker.content.imgs);
+		}		
 		//add MainLine if clicked
 		var clickedMarker=null;
 		for(var i in map.getOverlays()){

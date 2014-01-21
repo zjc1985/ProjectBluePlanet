@@ -22,14 +22,18 @@ function infoCard(id){
 	
 	var isASideShow=true;
 	
-	this.editFormOK=function(){
-		this.setDefaultContent({
-			title:$('#'+editFormTitleIdName).val(),
-			category:$('#'+editFormCategoryIdName).val(),
-			address:$('#'+editFormAddresIdName).val(),
-			mycomment:$('#'+editFormMycommentIdName).val(),
-			categoryIconUrl:$('#'+editFormIconUrlIdName).val()
-		});
+	this.editFormClickOK=function(){
+		var c=new MarkerContent();
+		c.title=$('#'+editFormTitleIdName).val();
+		c.category=$('#'+editFormCategoryIdName).val();
+		c.address=$('#'+editFormAddresIdName).val();
+		c.setMycomment($('#'+editFormMycommentIdName).val());
+		
+		this.setDefaultContent(c);
+		
+		$.magnificPopup.instance.close();
+		
+		return c;
 	};
 	
 	this.setDefaultImgs=function(imgArray){
@@ -40,27 +44,32 @@ function infoCard(id){
 		if(content.title!=''&& content.title!=null){
 			$(titleId).empty();
 			$(titleId).html(content.title);
+			$('#'+editFormTitleIdName).val(content.title);
 		}
 		
 		if(content.category!=''&& content.category!=null){
 			$(categoryId).empty();
 			$(categoryId).html(content.category);
+			$('#'+editFormCategoryIdName).val(content.category);
 		}
 		
 		if(content.address!=''&& content.address!=null){
 			$(addressId).empty();
 			$(addressId).html(content.address);
+			$('#'+editFormAddresIdName).val(content.address);
 		}
 		
-		if(content.mycomment!=''&& content.mycomment!=null){
+		if(content.getMycomment(false)!=''&& content.getMycomment(false)!=null){
 			$(mycommentId).empty();
-			$(mycommentId).html(content.mycomment);
+			$(mycommentId).html(content.getMycomment(true));
+			$('#'+editFormMycommentIdName).val(content.getMycomment(false));
 		}
 		
-		if(content.categoryIconUrl!=''&& content.categoryIconUrl!=null){
+		if(content.getIconPath()!=''&& content.getIconPath()!=null){
 			$(iconUrlId).empty();
-			$(iconUrlId).attr("src",content.categoryIconUrl);
+			$(iconUrlId).attr("src",content.getIconPath());
 		}
+		
 	};
 	
 	this.setContentA=function(html,isGallery){
@@ -304,11 +313,11 @@ function infoCard(id){
 		
 	}
 	
-	//title
-	//category
-	//address
-	//mycomment
-	//categoryIconUrl
+	/*
+	 * arg:
+	 * mapMarker.content
+	 * 
+	 * */
 	function createDefaultInfoHtml(content){
 		var titleIdName=idName+'Title';
 		titleId='#'+titleIdName;
@@ -325,34 +334,14 @@ function infoCard(id){
 		var categoryIconUrlIdName=idName+'CategoryIconUrl';
 		iconUrlId='#'+categoryIconUrlIdName;
 		
-		if(content.title==null){
-			content.title='Unknow Location';
-		}
-		
-		if(content.category==null){
-			content.category='Unknow Category';
-		}
-		
-		if(content.address==null){
-			content.address='Unknow Address';
-		}
-		
-		if(content.mycomment==null){
-			content.mycomment='No comment';
-		}
-		
-		if(content.categoryIconUrl==null){
-			content.categoryIconUrl='resource/markers/default.png';
-		}
-		
 		var html="<div style='background-color:rgb(245,245,245);border-bottom-style:solid;border-width:1px;border-color:rgb(230,230,230)'>"+
-			"<div style='float:left;width:50px;height:50px;'><img id='"+categoryIconUrlIdName+"'src='"+content.categoryIconUrl+"'></div>"+
+			"<div style='float:left;width:50px;height:50px;'><img id='"+categoryIconUrlIdName+"'src='"+content.getIconPath()+"'></div>"+
 			"<p id='"+titleIdName+"' class='serif' style='margin:0px;color:#4577D4;'>"+content.title+"</p>"+
 			"<p id='"+categoryIdName+"' class='serif' style='margin:0px;font-size:11px;'>"+content.category+"</p>"+
 			"<p id='"+addressIdName+"' class='serif' style='margin:0px;font-size:11px;'>"+content.address+"</p>"+
 		"</div>"+
 		"<div style='width:330px;height:130px;overflow: hidden;text-overflow: ellipsis;white-space: normal;'>"+
-			"<p id='"+mycommentIdName+"' class='serif' style='margin:5px;font-size:14px;'>"+content.mycomment+"</p>"+
+			"<p id='"+mycommentIdName+"' class='serif' style='margin:5px;font-size:14px;'>"+content.getMycomment(true)+"</p>"+
 			"<a href='#' class='serif' style='float:right;margin:0px;font-size:8px;color:#4577D4;'>show detail</a>"+
 		"</div>";
 		

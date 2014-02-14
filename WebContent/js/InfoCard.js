@@ -136,6 +136,7 @@ function infoCard(id){
 		initAllGallery();
 		initPopupEditForm();
 		initCSS();
+		console.log($(ASideId).get(0));
 	};
 	
 	this.initCustom=function(top,left,contentAHtml,contentBHtml){
@@ -230,9 +231,28 @@ function infoCard(id){
 	}
 	
 	function initPopupEditForm(){
-		
-		
-		
+		var iconSelect= new IconSelect(editFormIconUrlIdName);
+		var icons = [];
+        icons.push({'iconFilePath':'resource/markers/bus.png', 'iconValue':'bus'});
+        icons.push({'iconFilePath':'resource/markers/default.png', 'iconValue':'default'});
+        icons.push({'iconFilePath':'resource/markers/hotel.png', 'iconValue':'hotel'});
+        icons.push({'iconFilePath':'resource/markers/bus.png', 'iconValue':'bus'});
+        icons.push({'iconFilePath':'resource/markers/restaurant.png', 'iconValue':'restaurant'});
+        icons.push({'iconFilePath':'resource/markers/smallcity.png', 'iconValue':'smallcity'});
+        icons.push({'iconFilePath':'resource/markers/statue.png', 'iconValue':'statue'});
+        icons.push({'iconFilePath':'resource/markers/train.png', 'iconValue':'train'});
+        
+                
+        
+        
+        
+        
+        iconSelect.refresh(icons);
+        
+        $('#'+editFormIconUrlIdName).on('changed',function(){
+        	$('#'+editFormCategoryIdName).val(iconSelect.getSelectedValue());
+        });
+        
 		$('.popup-with-form').magnificPopup({
 			type: 'inline',
 			preloader: false,
@@ -369,7 +389,7 @@ function infoCard(id){
 			
 			"<li>"+
 				"<label for='iconUrl'>IconUrl:</label>"+
-				"<input id='"+editFormIconUrlIdName+"' type='text' placeholder='Name'>"+
+				"<div id='"+editFormIconUrlIdName+"'>"+
 			"</li>"+
 			
 			"<li>"+

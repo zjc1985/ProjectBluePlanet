@@ -1,21 +1,14 @@
-function ArrowLine(startPoint,endPoint,length,angleValue){
+function ArrowLine(startPoint,endPoint,length,angleValue,id){
+	this.id=id;
 	this.startPoint=startPoint;
 	this.endPoint=endPoint;
 	this.length=length;
 	this.angleValue=angleValue;
 	
-	this.line=new BMap.Polyline([ startPoint, endPoint ], {
-		strokeColor : "blue",
-		strokeWeight : 5,
-		strokeOpacity : 0.8
-	});
+	this.line=null;
 	
-	this.arrow=new BMap.Polyline(myDrawArrowFunction(startPoint,endPoint,length,angleValue),
-			{
-		strokeColor : "blue",
-		strokeWeight : 4,
-		strokeOpacity : 0.7
-	});
+	
+	this.arrow=null;
 	
 //	this.addContent=function(content){
 //		this.line.addEventListener("click",function(){
@@ -40,6 +33,19 @@ function ArrowLine(startPoint,endPoint,length,angleValue){
 	};
 	
 	this.draw=function(map){
+		this.line=new BMap.Polyline([ startPoint, endPoint ], {
+			strokeColor : "blue",
+			strokeWeight : 5,
+			strokeOpacity : 0.8
+		});
+		
+		
+		this.arrow=new BMap.Polyline(myDrawArrowFunction(startPoint,endPoint,length,angleValue,map),
+				{
+			strokeColor : "blue",
+			strokeWeight : 4,
+			strokeOpacity : 0.7
+		});
 		map.addOverlay(this.line);
 		map.addOverlay(this.arrow);
 	};
@@ -67,7 +73,7 @@ function ArrowLine(startPoint,endPoint,length,angleValue){
 	
 }
 
-function myDrawArrowFunction(startPoint, endPoint, length, angleValue) {
+function myDrawArrowFunction(startPoint, endPoint, length, angleValue,map) {
 	var d=1;
 	var pixelStart = map.pointToPixel(startPoint);
 	var pixelEnd = map.pointToPixel(endPoint);

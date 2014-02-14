@@ -402,7 +402,9 @@ function MarkerContent(){
 	this.category="default";
 	this.likeNum=236;
 	this.address="Unknown Address";
-	var mycomment="";
+
+	var mycomment="...";
+
 	this.imgs=null;
 	
 	this.update=function(uc){

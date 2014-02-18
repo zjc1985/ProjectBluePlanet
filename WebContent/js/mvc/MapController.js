@@ -13,6 +13,8 @@ function MapController(){
 		};
 	};
 	
+	
+	
 	this.markerClickEventHandler=function(marker){
 		
 		if(view.markerNeedMainLine!==null){
@@ -34,6 +36,10 @@ function MapController(){
 		var id=view.addOneMark(position).id;
 		model.createOneMarker(id);
 		
+	};
+	
+	this.addCustomClickEvent=function(position){
+		view.addCustomOverlay(position);
 	};
 	
 	this.addMainLineClickHandler=function(marker){

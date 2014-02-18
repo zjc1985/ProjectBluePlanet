@@ -6,6 +6,9 @@ function infoCard(id){
 	var BSideId='';
 	var hideButtonId='';
 	var rotateButtonId;
+	var editOKButtonId;
+	var unpinButtonId;
+	var pinButtonId;
 	
 	var titleId='';
 	var categoryId='';
@@ -22,25 +25,25 @@ function infoCard(id){
 	
 	var isASideShow=true;
 	
-	this.editFormClickOK=function(){
-		var c=new MarkerContent();
-		c.title=$('#'+editFormTitleIdName).val();
-		c.category=$('#'+editFormCategoryIdName).val();
-		c.address=$('#'+editFormAddresIdName).val();
-		c.setMycomment($('#'+editFormMycommentIdName).val());
-		
-		this.setDefaultContent(c);
-		
-		$.magnificPopup.instance.close();
-		
-		return c;
+	this.getTop=function(){
+		var s= $(jqueryId).css("top");
+		return parseInt(s);
+	};
+	
+	this.getLeft=function(){
+		var s= $(jqueryId).css("left");
+		return parseInt(s);
+	};
+	
+	this.setDefaultContent=function(content){
+		setDefaultContent();
 	};
 	
 	this.setDefaultImgs=function(imgArray){
 		this.setContentB(createDefaultGallery(imgArray), true);
 	};
 	
-	this.setDefaultContent=function(content){
+	function setDefaultContent(content){
 		if(content.title!=''&& content.title!=null){
 			$(titleId).empty();
 			$(titleId).html(content.title);
@@ -147,20 +150,56 @@ function infoCard(id){
 		initCSS();
 	};
 	
+	this.toJSObject=function(){
+		$(jqueryId).css("top",0);
+		$(jqueryId).css("left",0);
+		$(jqueryId).draggable( "destroy" );
+		return $(jqueryId).get(0);
+	};
 	
+	this.unpin=function(left,top){
+		console.log('----unpin---');
+		console.log('left:'+left);
+		console.log('top:'+top);
+		$('body').append( $(jqueryId));
+		$(jqueryId).css('left',left+'px');
+		$(jqueryId).css('top',top+'px');
+		$(jqueryId).draggable();
+	};
+	
+	this.addPinButtonEvent=function(handler){
+		$(pinButtonId).click(handler);
+	};
+	this.addUnpinButtonEvent=function(handler){
+		$(unpinButtonId).click(handler);
+	};
+	
+	function editFormClickOK(){
+		console.log("clickOK");
+		var c=new MarkerContent();
+		c.title=$('#'+editFormTitleIdName).val();
+		c.category=$('#'+editFormCategoryIdName).val();
+		c.address=$('#'+editFormAddresIdName).val();
+		c.setMycomment($('#'+editFormMycommentIdName).val());
+		
+		
+		setDefaultContent(c);
+		
+		$.magnificPopup.instance.close();
+		
+		return c;
+	};
 	
 	//private method
 	function initCSS(){
-		$('.info').css({
+		$(jqueryId).css({
 			'position': 'absolute',
 	  	'z-index':'2',
 	  	'background-color': 'white',
 	  	'border-style': 'groove',
 	  	'border-width': '1px',
 	  	'width':'450px',
-	  	'padding': '2px',
-	  	'top':'70px',
-	  	'left':'30px'
+	  	'padding': '2px'
 		});
 		
 		$('p.sansserif').css({
@@ -191,8 +230,7 @@ function infoCard(id){
 	
 	function init(top,left){
 		
-		$("body").append("<div class='info' id='"+idName+"'></div>");
-		$('body').append(createEditForm());
+		
 		var aSideIdName=idName+"A";
 		var bSideIdName=idName+"B";
 		ASideId="#"+aSideIdName;
@@ -200,8 +238,16 @@ function infoCard(id){
 		
 		var hideButtonIdName=idName+"HideButton";
 		var rotateButtonIdName=idName+"RotateButton";
+		var unpinButtonIdName=idName+"UnpinButton";
+		var pinButtonIdName=idName+"PinButton";
 		hideButtonId="#"+hideButtonIdName;
 		rotateButtonId="#"+rotateButtonIdName;
+		editOKButtonId="#"+idName+"EditOK";
+		unpinButtonId="#"+unpinButtonIdName;
+		pinButtonId="#"+pinButtonIdName;
+		
+		$("body").append("<div class='info' id='"+idName+"'></div>");
+		$('body').append(createEditForm());
 		
 		$(jqueryId).draggable();
 		
@@ -212,6 +258,8 @@ function infoCard(id){
 		$(BSideId).hide();
 		var buttonHtml="<div style='height:20px;background-color:rgb(245,245,245);border-top-style:solid;border-width:1px;border-color:rgb(230,230,230)'>" +
 				"<p class='serif' style='margin:3px 0px 0px 0px;font-size:12px;float:right'><a id='"+hideButtonIdName+"' href='#'>CLOSE X</a></p>" +
+				"<p class='serif' style='margin:3px 0px 0px 0px;font-size:12px;float:right'><a id='"+unpinButtonIdName+"' href='#'>UNPIN  ||</a></p>" +
+				"<p class='serif' style='margin:3px 0px 0px 0px;font-size:12px;float:right'><a id='"+pinButtonIdName+"' href='#'>PIN  ||</a></p>" +
 				"<p class='serif' style='margin:3px 5px 0px 0px;font-size:12px;float:left'><a id='"+rotateButtonIdName+"' href='#'>ROTATE</a></p>" +
 				"<p class='serif' style='margin:3px 0px 0px 0px;font-size:12px;'><a class='popup-with-form' href='#"+editFormIdName+"'>EDIT</a></p>" +
 				"</div>";
@@ -227,6 +275,15 @@ function infoCard(id){
 		
 		$(rotateButtonId).click(function(){
 			rotate();
+		});
+		
+		$(editOKButtonId).click(function(){
+			editFormClickOK();
+		});
+		
+		$(unpinButtonId).click(function(){
+			$('body').append( $(jqueryId));
+			$(jqueryId).draggable();
 		});
 	}
 	
@@ -397,7 +454,7 @@ function infoCard(id){
 				"<textarea id='"+editFormMycommentIdName+"' style='margin: 2px; width: 509px; height: 183px;'></textarea>"+
 			"</li>"+
 		"</ol>"+
-		"<input type='button' value='OK' onclick='editFormOK()' style='height:30px'/>"+
+		"<button id='"+idName+"EditOK"+"'>OK</button>"+
 "</fieldset></div>";
 		return html;
 	}

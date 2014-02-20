@@ -8,6 +8,112 @@ function BaiduMapView(oneController, oneModel) {
 	var overlays = new Array();
 	// this num is used to create id for BaiduMarker
 	var num = 0;
+	
+	function createOneSearchMarker(p,index){
+		 var myIcon = new BMap.Icon("http://api.map.baidu.com/img/markers.png", new BMap.Size(23, 25), {
+			    offset: new BMap.Size(10, 25),
+			    imageOffset: new BMap.Size(0, 0 - index * 25)
+			  });
+		var marker=new BMap.Marker(p,{icon: myIcon});
+		addContextMenu2SearchMarker(map,marker);
+		return marker;
+	}
+	
+	function addContextMenu2SearchMarker(map,marker){
+		var contextMenu = new BMap.ContextMenu();
+		var txtMenuItem = [ {
+			text : 'Yes, this is the place I want',
+			callback : function(target) {
+				removeAllSearchResults();
+				var content=new MarkerContent();
+				content.title=marker.title;
+				content.address=marker.address;
+				controller.addMarkerClickEvent(marker.getPosition(),content);
+			}
+		} ];
+		for ( var i = 0; i < txtMenuItem.length; i++) {
+			contextMenu.addItem(new BMap.MenuItem(txtMenuItem[i].text,
+					txtMenuItem[i].callback, 100));
+			
+		}
+		marker.addContextMenu(contextMenu);
+	}
+	
+	function removeAllSearchResults(){
+		var length=map.getOverlays().length;
+		var resultArray=map.getOverlays();
+		for(var i=0;i<length;i++){
+			var overlay=resultArray.pop();
+			if(overlay instanceof BMap.Marker && !(overlay instanceof BaiduMarker)){
+				map.removeOverlay(overlay);
+			}
+		}
+
+	}
+	
+	function addSearchInfoWindow(marker,poi,index){
+	    var maxLen = 10;
+	    if(poi.type == BMAP_POI_TYPE_NORMAL){
+	        name = "��ַ��  ";
+	    }else if(poi.type == BMAP_POI_TYPE_BUSSTOP){
+	        name = "������  ";
+	    }else if(poi.type == BMAP_POI_TYPE_SUBSTOP){
+	        name = "����  ";
+	    }
+	    // infowindow�ı���
+	    var infoWindowTitle = '<div style="font-weight:bold;color:#CE5521;font-size:14px">'+poi.title+'</div>';
+	    // infowindow����ʾ��Ϣ
+	    var infoWindowHtml = [];
+	    infoWindowHtml.push('<table cellspacing="0" style="table-layout:fixed;width:100%;font:12px arial,simsun,sans-serif"><tbody>');
+	    infoWindowHtml.push('<tr>');
+	    //infoWindowHtml.push('<td style="vertical-align:top;line-height:16px;width:38px;white-space:nowrap;word-break:keep-all">' + name + '</td>');
+	    infoWindowHtml.push('<td style="vertical-align:top;line-height:16px">' + poi.address + ' </td>');
+	    infoWindowHtml.push('</tr>');
+	    infoWindowHtml.push('</tbody></table>');
+	    var infoWindow = new BMap.InfoWindow(infoWindowHtml.join(""),{title:infoWindowTitle,width:200}); 
+	    var openInfoWinFun = function(){
+	        marker.openInfoWindow(infoWindow);
+	        for(var cnt = 0; cnt < maxLen; cnt++){
+	            if(!document.getElementById("list" + cnt)){continue;}
+	            if(cnt == index){
+	                document.getElementById("list" + cnt).style.backgroundColor = "#f0f0f0";
+	            }else{
+	                document.getElementById("list" + cnt).style.backgroundColor = "#fff";
+	            }
+	        }
+	    };
+	    marker.addEventListener("click", openInfoWinFun);
+	    return openInfoWinFun;
+	}
+	
+	this.searchLocation=function(key){
+		removeAllSearchResults(map);
+		
+		var searchKey=key;
+		
+		var searchOptions={
+				onSearchComplete: function(results){
+				    if (local.getStatus() == BMAP_STATUS_SUCCESS){
+				    	
+				    	for (var i = 0; i < results.getCurrentNumPois(); i ++){
+				    		var searchMarker=createOneSearchMarker(results.getPoi(i).point,i);
+				    		searchMarker.setTitle(results.getPoi(i).title);
+				    		searchMarker.title=results.getPoi(i).title;
+				    		searchMarker.setLabel(results.getPoi(i).address);
+				    		searchMarker.address=results.getPoi(i).address;
+				    		addSearchInfoWindow(searchMarker,results.getPoi(i),i);
+				    		map.addOverlay(searchMarker);
+				    	}
+				    	
+				    }
+				    
+				    map.centerAndZoom(results.getPoi(0).point,15);
+				}
+		};
+		
+		var local = new BMap.LocalSearch(map, searchOptions);
+		local.search(searchKey);
+	};
 
 	this.createView = function() {
 		map.enableScrollWheelZoom();
@@ -78,18 +184,13 @@ function BaiduMapView(oneController, oneModel) {
 		}
 	};
 
-	this.addCustomOverlay = function(p) {
+	this.addInfoWindow = function(point,content) {
 		num++;
-		var info1 = new infoCard('card' + num);
-		var contentBegin = new MarkerContent();
-		info1.initDefault('100px', '100px', contentBegin, null);
 
-		var mySquare = new SquareOverlay(p, info1, num);
+		var mySquare = new SquareOverlay(point, content, num);
 
-		// var mySquare=new ComplexCustomOverlay(p,'text','mouseOverText');
-		// mySquare.enableDragging();
 		map.addOverlay(mySquare);
-
+		return mySquare;
 	};
 
 	this.addOneMark = function(p) {
@@ -117,10 +218,9 @@ function BaiduMapView(oneController, oneModel) {
 	function addMarkerContextMenu(marker) {
 		var contextMenu = new BMap.ContextMenu();
 		var txtMenuItem = [ {
-			text : 'delete marker',
-			callback : function(target) {
-				// TODO
-				// map.removeOverlay(marker);
+			text : 'show info',
+			callback : function() {
+				controller.showInfoClickHandler(marker);
 			}
 		}, {
 			text : 'add main line',
@@ -158,27 +258,12 @@ function BaiduMapView(oneController, oneModel) {
 		var txtMenuItem = [ {
 			text : 'add marker',
 			callback : function(position) {
-				controller.addMarkerClickEvent(position);
+				controller.addMarkerClickEvent(position,null);
 			}
 		}, {
-			text : 'add custom overlay',
+			text : 'test function',
 			callback : function(position) {
-				controller.addCustomClickEvent(position);
-			}
-		}, {
-			text : 'drag',
-			callback : function(position) {
-				$("#searchDialog").draggable();
-			}
-		}, {
-			text : 'into Map',
-			callback : function(position) {
-				$("#customInfo").append("<p>add new</p>");
-			}
-		}, {
-			text : 'out Map',
-			callback : function(position) {
-				$("#searchDialog").draggable();
+				
 			}
 		}
 
@@ -190,6 +275,8 @@ function BaiduMapView(oneController, oneModel) {
 		}
 		map.addContextMenu(contextMenu);
 	}
+	
+
 
 }
 
@@ -197,13 +284,15 @@ function BaiduMarker(point, id) {
 	BMap.Marker.call(this, point);
 	this.id = id;
 }
+
 BaiduMarker.prototype = new BMap.Marker();
 
-function SquareOverlay(center, infoCard, id) {
+function SquareOverlay(center, content, id) {
 	BMap.Marker.call(this, center);
 	this._center = center;
-	this._infoCard = infoCard;
+	this._infoCard = new infoCard('card' + id);
 	this.id = id;
+	this.content=content;
 }
 
 SquareOverlay.prototype = new BMap.Overlay();
@@ -212,7 +301,7 @@ SquareOverlay.prototype.reInit = function() {
 	console.log('======Pin=====');
 	console.log('left:' + this._infoCard.getLeft());
 	console.log('top:' + this._infoCard.getTop());
-	var pixel = new BMap.Pixel(this._infoCard.getLeft() - 50, this._infoCard
+	var pixel = new BMap.Pixel(this._infoCard.getLeft(), this._infoCard
 			.getTop());
 	this._div.appendChild(this._infoCard.toJSObject());
 
@@ -221,6 +310,7 @@ SquareOverlay.prototype.reInit = function() {
 };
 
 SquareOverlay.prototype.initialize = function(mp) {
+	this._infoCard.initDefault('0px', '0px', this.content, null);
 	this._map = mp;
 
 	var thisObject = this;
@@ -238,10 +328,10 @@ SquareOverlay.prototype.initialize = function(mp) {
 	div.id = 'SquareOverlay' + this.id;
 	div.style.position = "absolute";
 	// div.style.backgroundColor = "#EE5D5B";
-	div.style.border = "1px solid #BC3B3A";
+	//div.style.border = "1px solid #BC3B3A";
 	// 可以根据参数设置元素外观
-	div.style.width = 500 + "px";
-	div.style.height = 300 + "px";
+	//div.style.width = 500 + "px";
+	//div.style.height = 300 + "px";
 	div.style.background = this._color;
 
 	div.appendChild(this._infoCard.toJSObject());
@@ -257,9 +347,17 @@ SquareOverlay.prototype.initialize = function(mp) {
 	return div;
 };
 
+SquareOverlay.prototype.show=function(){
+	this._infoCard.show();
+};
+
+SquareOverlay.prototype.hide=function(){
+	this._infoCard.hide();
+};
+
 SquareOverlay.prototype.draw = function() {
 	var position = this._map.pointToOverlayPixel(this._center);
-	this._div.style.left = (position.x + 50) + "px";
+	this._div.style.left = position.x + "px";
 	this._div.style.top = position.y + "px";
 
 };

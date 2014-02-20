@@ -4,6 +4,10 @@ function MapController(){
 	view.createView();
 	model.setView(view);
 	
+	this.searchLocation=function(key){
+		view.searchLocation(key);
+	};
+	
 	this.zoomEventHandler=function(){
 		var headIds=model.findHeadMarker();
 		if(headIds.length!=0){
@@ -13,7 +17,14 @@ function MapController(){
 		};
 	};
 	
-	
+	this.showInfoClickHandler=function(marker){
+		if(marker.infoWindow==null){
+			var content=model.getMarkerContentById(marker.id);
+			marker.infoWindow=view.addInfoWindow(marker.getPosition(), content);
+		}else{
+			marker.infoWindow.show();
+		};
+	};
 	
 	this.markerClickEventHandler=function(marker){
 		
@@ -32,9 +43,9 @@ function MapController(){
 		model.redrawConnectedLine(marker.id);
 	};
 	
-	this.addMarkerClickEvent=function(position){
+	this.addMarkerClickEvent=function(position,content){
 		var id=view.addOneMark(position).id;
-		model.createOneMarker(id);
+		model.createOneMarker(id,content);
 		
 	};
 	

@@ -198,7 +198,7 @@ function infoCard(id){
 	  	'background-color': 'white',
 	  	'border-style': 'groove',
 	  	'border-width': '1px',
-	  	'width':'450px',
+	  	'width':'380px',
 	  	'padding': '2px'
 		});
 		

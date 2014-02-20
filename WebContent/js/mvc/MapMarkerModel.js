@@ -6,11 +6,16 @@ function MapMarkerModel(){
 		view=argView;
 	};
 	
-	this.createOneMarker=function(id){
+	this.createOneMarker=function(id,content){
 		var marker=new MapMarker(id);
+		if(content!=null){
+			marker.content.update(content);
+		}
 		overlays.push(marker);
 		return marker;
 	};
+	
+	
 	
 	function getOverlayById(id){
 		var length=overlays.length;
@@ -21,6 +26,15 @@ function MapMarkerModel(){
 		}
 		return null;
 	}
+	
+	this.getMarkerContentById=function(id){
+		var marker=getOverlayById(id);
+		if(marker.content!=null){
+			return marker.content;
+		}else{
+			return null;
+		}		
+	};
 	
 	this.addMainLine=function(fromId,toId){
 		var fromMarker=getOverlayById(fromId);

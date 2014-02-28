@@ -25,6 +25,10 @@ function infoCard(id){
 	
 	var isASideShow=true;
 	
+
+	
+	
+	
 	this.getTop=function(){
 		var s= $(jqueryId).css("top");
 		return parseInt(s);
@@ -36,14 +40,6 @@ function infoCard(id){
 	};
 	
 	this.setDefaultContent=function(content){
-		setDefaultContent();
-	};
-	
-	this.setDefaultImgs=function(imgArray){
-		this.setContentB(createDefaultGallery(imgArray), true);
-	};
-	
-	function setDefaultContent(content){
 		if(content.title!=''&& content.title!=null){
 			$(titleId).empty();
 			$(titleId).html(content.title);
@@ -72,8 +68,13 @@ function infoCard(id){
 			$(iconUrlId).empty();
 			$(iconUrlId).attr("src",content.getIconPath());
 		}
-		
 	};
+	
+	this.setDefaultImgs=function(imgArray){
+		this.setContentB(createDefaultGallery(imgArray), true);
+	};
+	
+	
 	
 	this.setContentA=function(html,isGallery){
 		this.contentA=html;
@@ -174,16 +175,18 @@ function infoCard(id){
 		$(unpinButtonId).click(handler);
 	};
 	
-	function editFormClickOK(){
-		console.log("clickOK");
+	this.addEditFormOKButtonEvent=function(handler){
+		$(editOKButtonId).click(handler);
+	};
+	
+	this.editFormClickOK=function(){
 		var c=new MarkerContent();
 		c.title=$('#'+editFormTitleIdName).val();
 		c.category=$('#'+editFormCategoryIdName).val();
 		c.address=$('#'+editFormAddresIdName).val();
 		c.setMycomment($('#'+editFormMycommentIdName).val());
 		
-		
-		setDefaultContent(c);
+		this.setDefaultContent(c);
 		
 		$.magnificPopup.instance.close();
 		
@@ -271,14 +274,9 @@ function infoCard(id){
 		$(hideButtonId).click(function(){
 			$(jqueryId).hide();
 		});
-		
-		
+				
 		$(rotateButtonId).click(function(){
 			rotate();
-		});
-		
-		$(editOKButtonId).click(function(){
-			editFormClickOK();
 		});
 		
 		$(unpinButtonId).click(function(){

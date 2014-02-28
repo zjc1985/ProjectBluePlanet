@@ -29,6 +29,7 @@ function MapMarkerModel(){
 	
 	this.getMarkerContentById=function(id){
 		var marker=getOverlayById(id);
+		console.log(JSON.stringify(marker));
 		if(marker.content!=null){
 			return marker.content;
 		}else{

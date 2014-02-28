@@ -184,11 +184,17 @@ function BaiduMapView(oneController, oneModel) {
 		}
 	};
 
-	this.addInfoWindow = function(point,content) {
+	this.addInfoWindow = function(marker,content) {
 		num++;
 
-		var mySquare = new SquareOverlay(point, content, num);
-
+		var mySquare = new SquareOverlay(marker.getPosition(), content, num);
+		
+		mySquare._infoCard.addEditFormOKButtonEvent(function(){
+			console.log('edit ok click');
+			var content= mySquare._infoCard.editFormClickOK();
+			controller.updateMarkerContentById(marker.id,content);
+		});
+		
 		map.addOverlay(mySquare);
 		return mySquare;
 	};
@@ -287,12 +293,14 @@ function BaiduMarker(point, id) {
 
 BaiduMarker.prototype = new BMap.Marker();
 
+
+
 function SquareOverlay(center, content, id) {
 	BMap.Marker.call(this, center);
 	this._center = center;
 	this._infoCard = new infoCard('card' + id);
+	this._infoCard.initDefault('0px', '0px', content, null);
 	this.id = id;
-	this.content=content;
 }
 
 SquareOverlay.prototype = new BMap.Overlay();
@@ -310,7 +318,7 @@ SquareOverlay.prototype.reInit = function() {
 };
 
 SquareOverlay.prototype.initialize = function(mp) {
-	this._infoCard.initDefault('0px', '0px', this.content, null);
+	
 	this._map = mp;
 
 	var thisObject = this;

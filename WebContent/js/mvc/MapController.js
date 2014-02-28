@@ -17,10 +17,19 @@ function MapController(){
 		};
 	};
 	
+	this.updateMarkerContentById=function(id,content){
+		console.log("ready to update");
+		var modelContent=model.getMarkerContentById(id);
+		modelContent.update(content);
+		
+	};
+	
 	this.showInfoClickHandler=function(marker){
-		if(marker.infoWindow==null){
-			var content=model.getMarkerContentById(marker.id);
-			marker.infoWindow=view.addInfoWindow(marker.getPosition(), content);
+		var content=model.getMarkerContentById(marker.id);
+		console.log(content);
+		
+		if(marker.infoWindow==null){			
+			marker.infoWindow=view.addInfoWindow(marker, content);
 		}else{
 			marker.infoWindow.show();
 		};

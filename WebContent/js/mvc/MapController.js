@@ -5,21 +5,12 @@ function MapController(){
 	var view=new BaiduMapView(this);
 	view.createView();
 	
-	this.init=function(){
-		$.subscribe('updateUI',this.updateUI());
-	};
-	
 	this.searchLocation=function(key){
 		view.searchLocation(key);
 	};
 	
 	this.zoomEventHandler=function(){
-		var headIds=model.findHeadMarker();
-		if(headIds.length!=0){
-			for(var i=0;i<headIds.length;i++){
-				model.redrawConnectedLine(headIds[i]);
-			}
-		};
+		this.updateUI();
 	};
 	
 	this.updateMarkerContentById=function(id,content){
@@ -56,19 +47,36 @@ function MapController(){
 	this.updateUI=function(){
 		console.log('update UI trigger');
 		
+		//clean all lines
+		view.removeAllLines();
+		
 		var headMarkers=model.findHeadMarker();
 		
 		for(var i=0;i<headMarkers.length;i++){
-			var marker=headMarkers[i];
+			var marker=headMarkers[i];		
+			for(var j=0;j<marker.subMarkersArray.length;j++){
+				view.drawSubLine(marker.id,marker.subMarkersArray[j].id);
+			}
+			
 			while(marker.connectedMainMarker!=null){
+				//redraw main line
+				
 				view.drawMainLine(marker.id, marker.connectedMainMarker.id);
+				
+				for(var j=0;j<marker.connectedMainMarker.subMarkersArray.length;j++){
+					view.drawSubLine(marker.connectedMainMarker.id,marker.connectedMainMarker.subMarkersArray[j].id);
+				}
+				
 				marker=marker.connectedMainMarker;
 			}
+			
+			
 		}	
 	};
 	
 	this.markerDragendEventHandler=function(marker){
-		model.redrawConnectedLine(marker.id);
+		var modelMarker=model.getMapMarkerById(marker.id);
+		modelMarker.getContent().setlatlong(marker.getPosition().lat,marker.getPosition().lng);
 	};
 	
 	this.addMarkerClickEvent=function(position,content){
@@ -91,4 +99,5 @@ function MapController(){
 		alert("please click another marker to add sub line");
 	};
 	
+	$.subscribe('updateUI',this.updateUI);
 }

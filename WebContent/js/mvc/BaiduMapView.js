@@ -171,8 +171,7 @@ function BaiduMapView(oneController) {
 			}
 		}
 		return null;
-	}
-	;
+	};
 
 	this.removeById = function(id) {
 		var overlay = getOverlayById(id);
@@ -180,6 +179,16 @@ function BaiduMapView(oneController) {
 			overlay.remove(map);
 		} else {
 			map.removeOverlay(overlay);
+		}
+	};
+	
+	this.removeAllLines=function(){
+		for(var i=0;i<overlays.length;i++){
+			if(overlays[i] instanceof ArrowLine){
+				overlays[i].remove(map);
+			}else if(overlays[i] instanceof BMap.Polyline){
+				map.removeOverlay(overlays[i]);
+			}
 		}
 	};
 

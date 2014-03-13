@@ -21,6 +21,10 @@ function MapMarkerModel(){
 		return null;
 	}
 	
+	this.getMapMarkerById=function(id){
+		return getOverlayById(id);
+	};
+	
 	this.getMarkerContentById=function(id){
 		var marker=getOverlayById(id);
 		if(marker.content!=null){
@@ -34,6 +38,7 @@ function MapMarkerModel(){
 		var fromMarker=getOverlayById(fromId);
 		var toMarker=getOverlayById(toId);
 		fromMarker.addNextMarker(toMarker);
+		
 	};
 	
 	this.addSubLine=function(fromId,toId){
@@ -43,16 +48,16 @@ function MapMarkerModel(){
 	};
 	
 	this.findHeadMarker=function(){
-		var headIds=new Array();
+		var heads=new Array();
 		var length=overlays.length;
 		for(var i=0;i<length;i++){
 			if(overlays[i] instanceof MapMarker){
-				if(overlays[i].prevMainMarker==null&&overlays[i].connectedMainMarker!=null){
-					headIds.push(overlays[i].id);
+				if(overlays[i].prevMainMarker==null&&!overlays[i].isSubMarker()){
+					heads.push(overlays[i]);
 				}
 			}
 		}
-		return headIds;
+		return heads;
 	};
 	
 	this.redrawConnectedLine=function(id){
@@ -130,17 +135,17 @@ function MarkerContent(){
 		return lat;
 	};
 	
-	this.setLat=function(latFoo){
+	this.setlatlong=function(latFoo,longFoo){
 		lat=latFoo;
+		long=longFoo;
+		$.publish('updateUI');
 	};
 	
 	this.getLong=function(){
 		return long;
 	};
 	
-	this.setLong=function(longFoo){
-		long=longFoo;
-	};
+
 	
 	this.getAddress=function(){
 		return address;

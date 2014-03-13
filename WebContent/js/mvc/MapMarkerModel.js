@@ -1,20 +1,14 @@
-function MapMarkerModel(){
-	var view;
+function MapMarkerModel(){	
 	var overlays=new Array();
-	
-	this.setView=function(argView){
-		view=argView;
-	};
 	
 	this.createOneMarker=function(id,content){
 		var marker=new MapMarker(id);
 		if(content!=null){
-			marker.content.update(content);
+			marker.getContent.updateContent(content);
 		}
 		overlays.push(marker);
 		return marker;
 	};
-	
 	
 	
 	function getOverlayById(id){
@@ -29,7 +23,6 @@ function MapMarkerModel(){
 	
 	this.getMarkerContentById=function(id){
 		var marker=getOverlayById(id);
-		console.log(JSON.stringify(marker));
 		if(marker.content!=null){
 			return marker.content;
 		}else{
@@ -41,17 +34,12 @@ function MapMarkerModel(){
 		var fromMarker=getOverlayById(fromId);
 		var toMarker=getOverlayById(toId);
 		fromMarker.addNextMarker(toMarker);
-		redrawOneMarker(fromMarker);
 	};
 	
 	this.addSubLine=function(fromId,toId){
 		var fromMarker=getOverlayById(fromId);
 		var toMarker=getOverlayById(toId);
-		
-		var node=new Node();
-		node.entity=toMarker;
-		node.line=new SubLine(view.drawSubLine(fromId,toId));
-		fromMarker.addTreeChildMarker(node);
+		fromMarker.addTreeChildMarker(toMarker);
 	};
 	
 	this.findHeadMarker=function(){
@@ -112,18 +100,62 @@ function MapMarkerModel(){
 }
 
 function MarkerContent(){
-	this.title="Unknown Location";
-	this.category="default";
-	this.likeNum=236;
-	this.address="Unknown Address";
+	var title="Unknown Location";
+	var address="Unknown Address";
+	var lat=0;
+	var long=0;
 	var mycomment="...";
-	this.imgs=null;
 	
-	this.update=function(uc){
-		this.title=uc.title;
-		this.category=uc.category;
-		this.address=uc.address;
-		mycomment=uc.getMycomment(false);
+	this.updateContent=function(args){
+		if(args.title!=null){
+			this.setTitle(args.title);
+		}
+		
+		if(args.address!=null){
+			this.setAddress(args.address);
+		}
+		
+		if(args.mycomment!=null){
+			this.setMycomment(args.mycomment);
+		}
+		
+		if(args.lat!=null && args.long!=null){
+			this.setLat(args.lat);
+			this.setLong(args.long);
+		}
+		
+	};
+	
+	this.getLat=function(){
+		return lat;
+	};
+	
+	this.setLat=function(latFoo){
+		lat=latFoo;
+	};
+	
+	this.getLong=function(){
+		return long;
+	};
+	
+	this.setLong=function(longFoo){
+		long=longFoo;
+	};
+	
+	this.getAddress=function(){
+		return address;
+	};
+	
+	this.setAddress=function(addressFoo){
+		address=addressFoo;
+	};
+	
+	this.getTitle=function(){
+		return title;
+	};
+	
+	this.setTitle=function(titleFoo){
+		title=titleFoo;
 	};
 	
 	this.setMycomment=function(comment){
@@ -137,40 +169,10 @@ function MarkerContent(){
 			return mycomment;
 		}
 	};
-	
-	this.getIconPath=function(){
-		return "resource/markers/"+this.category+".png";
-	};
-	
-	this.getIcon=function(){
-		if(this.getIconPath()==null){
-			return null;
-		}
-		
-		var myIcon = new BMap.Icon(this.getIconPath(), new BMap.Size(32, 37), {
-		anchor: new BMap.Size(16, 37),
-		infoWindowAnchor:new BMap.Size(16,0),
-		});
-		return myIcon;
-	};
-}
-
-function MainLine(id){
-	this.id=id;
-}
-
-function SubLine(id){
-	this.id=id;
-}
-
-function Node(){
-	this.entity=null;
-	this.line=null;
 }
 
 function MapMarker(id) {
 	this.id=id;
-	
 	this.content=new MarkerContent();
 	
 	this.needMainLine = false;
@@ -181,109 +183,64 @@ function MapMarker(id) {
 	
 	//pre Marker and curveLine
 	this.prevMainMarker=null;
-	//node type array
+	//of MapMarker array
 	this.subMarkersArray=new Array();
 	this.parentSubMarker=null;
 	
 	this.isHideAllSubMarkers=false;
 	
+	this.isSubMarker=function(){
+		if(this.parentSubMarker!=null){
+			return true;
+		}else{
+			return false;
+		}
+	};
+	
+	this.canAddSubMarker=function(marker){
+		var result=true;
+		if(marker.parentSubMarker==null && marker.connectedMainMarker==null && marker.prevMainMarker==null){
+			result=true;
+		}else{
+			result=false;
+		}
+
+		return result;
+	};
+	
 	//logic add
 	this.addNextMarker=function(marker){
-		if(this.connectedMainMarker!=null){
-			this.connectedMainMarker.prevMainMarker=null;
+		if(!marker.isSubMarker()){
+			if(this.connectedMainMarker!=null){
+				this.connectedMainMarker.prevMainMarker=null;
+			}
+			
+			this.connectedMainMarker=marker;
+			marker.prevMainMarker=this;
 		}
-		
-		this.connectedMainMarker=marker;
-		marker.prevMainMarker=this;
+		$.publish('updateUI');
 	};
 	
 	//logic add tree node
 	this.addTreeChildMarker=function(treeNodeMarker){
-		this.subMarkersArray.push(treeNodeMarker);
-		treeNodeMarker.entity.parentSubMarker=this;
+		if(this.canAddSubMarker(treeNodeMarker)){
+			this.subMarkersArray.push(treeNodeMarker);
+			treeNodeMarker.parentSubMarker=this;
+		}		
+		$.publish('updateUI');
 	};
+	
+	//getters and setters
+	this.getContent=function(){
+		return this.content;
+	};
+	
 }
 
-this.areSubMarkersHide=function(){
-	return this.isHideAllSubMarkers;
-};
+function MainLine(id){
+	this.id=id;
+}
 
-this.changeIcon=function(name){
-	this.content.category=name;
-	if(this.content.getIcon()!=null){
-		this.setIcon(this.content.getIcon());
-	}
-};
-
-this.collapseSubMarkers=function(){
-	this.isHideAllSubMarkers=true;
-	for(var i in this.subMarkersArray){
-		if(this.subMarkersArray==null||this.subMarkersArray.length==0){
-			continue;
-		}
-		
-		//hide marker
-		if(this.subMarkersArray[i].entity!=null){
-			this.subMarkersArray[i].entity.hide();
-		}
-		//hide line
-		if(this.subMarkersArray[i].line!=null){
-			this.subMarkersArray[i].line.hide();
-		}
-		//hide sub sub markers if it sub marker has
-		this.subMarkersArray[i].entity.collapseSubMarkers();
-	}
-	
-};
-
-this.showSubMarkers=function(){
-	this.isHideAllSubMarkers=false;
-	for(var i in this.subMarkersArray){
-		if(this.subMarkersArray==null||this.subMarkersArray.length==0){
-			continue;
-		}
-		
-		//hide marker
-		if(this.subMarkersArray[i].entity!=null){
-			this.subMarkersArray[i].entity.show();
-		}
-		//hide line
-		if(this.subMarkersArray[i].line!=null){
-			this.subMarkersArray[i].line.show();
-		}
-		//hide sub sub markers if it sub marker has
-		this.subMarkersArray[i].entity.showSubMarkers();
-	}
-	
-};
-
-this.redrawConnectedLines=function(){
-	//redraw curveLine
-	if(this.prevMainMarker!=null){
-		redrawOneMarker(this.prevMainMarker,map);
-	}
-	redrawOneMarker(this,map);
-	
-	//redraw line
-	if(this.parentSubMarker!=null){	
-		redrawTreeNode(this.parentSubMarker,map);
-	}
-	redrawTreeNode(this,map);
-};
-
-this.addTreeChildMarker=function(marker){
-	var node=new Node();
-	node.entity=marker;
-	node.line=drawLine(map,this.getPosition(),marker.getPosition());
-	this.subMarkersArray.push(node);
-	marker.parentSubMarker=this;
-};
-
-this.hasTreeChildMarker=function(){
-	if(this.subMarkersArray==null||this.subMarkersArray.length==0){
-		return false;
-	}else{
-		return true;
-	}
-};
-
+function SubLine(id){
+	this.id=id;
+}

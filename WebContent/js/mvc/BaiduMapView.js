@@ -1,6 +1,5 @@
-function BaiduMapView(oneController, oneModel) {
+function BaiduMapView(oneController) {
 	var controller = oneController;
-	var model = oneModel;
 	var map = new BMap.Map("l-map");
 	this.markerNeedMainLine = null;
 	this.markerNeedSubLine = null;

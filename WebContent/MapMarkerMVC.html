@@ -26,8 +26,12 @@
 <link rel="stylesheet" type="text/css" href="js/lib/iconselect.css" >
 <script type="text/javascript" src="js/lib/iconselect.js"></script>
 <script type="text/javascript" src="js/lib/iscroll.js"></script>
+
+
 <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
 <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+
+
 
 <script src="js/lib/jquery.magnific-popup.js"></script>
 <script src="js/InfoCard.js"></script> 
@@ -38,6 +42,7 @@
 <script type="text/javascript" src="js/mvc/BaiduMapView.js"></script>
 <script type="text/javascript" src="js/mvc/MapController.js"></script>
 <script type="text/javascript" src="js/mvc/MapMarkerModel.js"></script>
+<script type="text/javascript" src="js/lib/ba-tiny-pubsub.min.js"></script>
 <title>Map Marker</title>
 </head>
 <body>
@@ -56,6 +61,7 @@
 </html>
 <script type="text/javascript">
 var controller=new MapController();
+controller.init();
 
 function searchLocation(){
 	controller.searchLocation(document.getElementById("searchKey").value);

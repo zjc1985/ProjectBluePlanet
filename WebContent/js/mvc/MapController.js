@@ -1,8 +1,13 @@
 function MapController(){
+	
+	
 	var model=new MapMarkerModel();
-	var view=new BaiduMapView(this,model);
+	var view=new BaiduMapView(this);
 	view.createView();
-	model.setView(view);
+	
+	this.init=function(){
+		$.subscribe('updateUI',this.updateUI());
+	};
 	
 	this.searchLocation=function(key){
 		view.searchLocation(key);
@@ -46,6 +51,20 @@ function MapController(){
 			model.addSubLine(view.markerNeedSubLine.id,marker.id);
 			view.markerNeedSubLine=null;
 		}
+	};
+	
+	this.updateUI=function(){
+		console.log('update UI trigger');
+		
+		var headMarkers=model.findHeadMarker();
+		
+		for(var i=0;i<headMarkers.length;i++){
+			var marker=headMarkers[i];
+			while(marker.connectedMainMarker!=null){
+				view.drawMainLine(marker.id, marker.connectedMainMarker.id);
+				marker=marker.connectedMainMarker;
+			}
+		}	
 	};
 	
 	this.markerDragendEventHandler=function(marker){

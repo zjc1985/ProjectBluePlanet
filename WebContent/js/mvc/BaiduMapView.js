@@ -24,7 +24,7 @@ function BaiduMapView(oneController) {
 			text : 'Yes, this is the place I want',
 			callback : function(target) {
 				removeAllSearchResults();
-				var content=new MarkerContent();
+				var content=new Object();
 				content.title=marker.title;
 				content.address=marker.address;
 				controller.addMarkerClickEvent(marker.getPosition(),content);
@@ -171,6 +171,10 @@ function BaiduMapView(oneController) {
 			}
 		}
 		return null;
+	};
+	
+	this.getViewOverlaysById=function(id){
+		return getOverlayById(id);
 	};
 
 	this.removeById = function(id) {
@@ -361,6 +365,10 @@ SquareOverlay.prototype.initialize = function(mp) {
 	// 需要将div元素作为方法的返回值，当调用该覆盖物的show、
 	// hide方法，或者对覆盖物进行移除时，API都将操作此元素。
 	return div;
+};
+
+SquareOverlay.prototype.setContent=function(content){
+	this._infoCard.setDefaultContent(content);
 };
 
 SquareOverlay.prototype.show=function(){

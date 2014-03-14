@@ -1,6 +1,4 @@
-function MapController(){
-	
-	
+function MapController(){	
 	var model=new MapMarkerModel();
 	var view=new BaiduMapView(this);
 	view.createView();
@@ -10,22 +8,22 @@ function MapController(){
 	};
 	
 	this.zoomEventHandler=function(){
-		this.updateUI();
+		this.updateUIRoute();
 	};
 	
 	this.updateMarkerContentById=function(id,content){
-		console.log("ready to update");
-		var modelContent=model.getMarkerContentById(id);
-		modelContent.update(content);
-		
+		var mapMarker=model.getMapMarkerById(id);
+		mapMarker.updateContent(content);
 	};
-	
+		
 	this.showInfoClickHandler=function(marker){
 		var content=model.getMarkerContentById(marker.id);
-		console.log(content);
+		console.log(content.getTitle());
 		
 		if(marker.infoWindow==null){			
-			marker.infoWindow=view.addInfoWindow(marker, content);
+			marker.infoWindow=view.addInfoWindow(marker, {title:content.getTitle(),
+														address:content.getAddress(),
+														comment:content.getMycomment(false)});
 		}else{
 			marker.infoWindow.show();
 		};
@@ -44,34 +42,56 @@ function MapController(){
 		}
 	};
 	
-	this.updateUI=function(){
-		console.log('update UI trigger');
-		
-		//clean all lines
-		view.removeAllLines();
-		
-		var headMarkers=model.findHeadMarker();
-		
-		for(var i=0;i<headMarkers.length;i++){
-			var marker=headMarkers[i];		
-			for(var j=0;j<marker.subMarkersArray.length;j++){
-				view.drawSubLine(marker.id,marker.subMarkersArray[j].id);
-			}
+	this.updateMarkerInfoWindow=function(){
+		return function(_,senderMarker){
 			
-			while(marker.connectedMainMarker!=null){
-				//redraw main line
-				
-				view.drawMainLine(marker.id, marker.connectedMainMarker.id);
-				
-				for(var j=0;j<marker.connectedMainMarker.subMarkersArray.length;j++){
-					view.drawSubLine(marker.connectedMainMarker.id,marker.connectedMainMarker.subMarkersArray[j].id);
+			
+			var viewMarker=view.getViewOverlaysById(senderMarker.id);
+			var contentModel=senderMarker.getContent();
+			console.log('update marker info window. markerId: '+senderMarker.id);
+			console.log('title: '+contentModel.getTitle());
+			
+			if(viewMarker!=null){				
+				if(viewMarker.infoWindow!=null){					
+					viewMarker.infoWindow.setContent({title:contentModel.getTitle(),
+													address:contentModel.getAddress(),
+												  mycomment:contentModel.getMycomment(true),
+												fullcomment:contentModel.getMycomment(false)});
+				}
+			}
+		};
+	};
+	
+	this.updateUIRoute=function(){
+		return function(_){
+			console.log('update UI trigger');
+			
+			//clean all lines
+			view.removeAllLines();
+			
+			var headMarkers=model.findHeadMarker();
+			
+			for(var i=0;i<headMarkers.length;i++){
+				var marker=headMarkers[i];		
+				for(var j=0;j<marker.subMarkersArray.length;j++){
+					view.drawSubLine(marker.id,marker.subMarkersArray[j].id);
 				}
 				
-				marker=marker.connectedMainMarker;
-			}
-			
-			
-		}	
+				while(marker.connectedMainMarker!=null){
+					//redraw main line
+					
+					view.drawMainLine(marker.id, marker.connectedMainMarker.id);
+					
+					for(var j=0;j<marker.connectedMainMarker.subMarkersArray.length;j++){
+						view.drawSubLine(marker.connectedMainMarker.id,marker.connectedMainMarker.subMarkersArray[j].id);
+					}
+					
+					marker=marker.connectedMainMarker;
+				}	
+			}	
+		};
+		
+		
 	};
 	
 	this.markerDragendEventHandler=function(marker){
@@ -99,5 +119,6 @@ function MapController(){
 		alert("please click another marker to add sub line");
 	};
 	
-	$.subscribe('updateUI',this.updateUI);
+	$.subscribe('updateUI',this.updateUIRoute());
+	$.subscribe('updateInfoWindow',this.updateMarkerInfoWindow());
 }

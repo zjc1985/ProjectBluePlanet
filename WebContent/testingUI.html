@@ -10,6 +10,7 @@
   <script src="js/lib/bjqs.js"></script>
   <script src="js/lib/jquery.magnific-popup.js"></script>
   <script src="js/InfoCard.js"></script>
+  <script type="text/javascript" src="js/lib/ba-tiny-pubsub.min.js"></script>
   <link type="text/css" rel="Stylesheet" href="js/lib/bjqs.css" />
 </head>
 <body>
@@ -22,30 +23,31 @@
 </html>
 
 <script type="text/javascript">
-var card=new infoCard('card');
 
-var imgArray=[
-              {url:'resource/img/img1.jpg',title:'Wu Zheng'},
-              {url:'resource/img/img2.jpg',title:'P2'},
-              {url:'resource/img/img3.jpg',title:'P3'}
-                                       ];
 
-card.initDefault('100px','100px',
-		 {title:'Shanghai Station|上海火车站',
-	      category:'Train Station',
-	      address:'No 333 Xian Xia Road',
-	      mycomment:'Nice Station',
-	      categoryIconUrl:'resource/markers/train.png'},imgArray);
-
-card.setDefaultImgs([{url:'resource/img/img2.jpg',title:'P2'}]);
-card.setDefaultContent({
-	title:'Changed Title'
-});
-	      
-
-function editFormOK(){
-	card.editFormOK();
+function Person(name){
+	this.name=name;
 	
+	this.setName=function(nameFoo){
+		this.name=nameFoo;
+		$.publish('updateName',[this]);
+	}
+	this.getName=function(){
+		return this.name;
+	}
 }
 
+function control(){	
+	this.someOneChangeName=function(){
+		return function(_,sender){
+			console.log('some one change his name to: '+sender.getName());	
+		}
+	};
+	$.subscribe('updateName', this.someOneChangeName());
+}
+
+var mike=new Person('mike');
+var controllor=new control();
+mike.setName('mike updated');
+mike.setName('mike updated2');
 </script>

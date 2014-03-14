@@ -4,7 +4,7 @@ function MapMarkerModel(){
 	this.createOneMarker=function(id,content){
 		var marker=new MapMarker(id);
 		if(content!=null){
-			marker.getContent.updateContent(content);
+			marker.updateContent(content);
 		}
 		overlays.push(marker);
 		return marker;
@@ -27,8 +27,8 @@ function MapMarkerModel(){
 	
 	this.getMarkerContentById=function(id){
 		var marker=getOverlayById(id);
-		if(marker.content!=null){
-			return marker.content;
+		if(marker.getContent()!=null){
+			return marker.getContent();
 		}else{
 			return null;
 		}		
@@ -111,25 +111,7 @@ function MarkerContent(){
 	var long=0;
 	var mycomment="...";
 	
-	this.updateContent=function(args){
-		if(args.title!=null){
-			this.setTitle(args.title);
-		}
-		
-		if(args.address!=null){
-			this.setAddress(args.address);
-		}
-		
-		if(args.mycomment!=null){
-			this.setMycomment(args.mycomment);
-		}
-		
-		if(args.lat!=null && args.long!=null){
-			this.setLat(args.lat);
-			this.setLong(args.long);
-		}
-		
-	};
+	
 	
 	this.getLat=function(){
 		return lat;
@@ -138,7 +120,7 @@ function MarkerContent(){
 	this.setlatlong=function(latFoo,longFoo){
 		lat=latFoo;
 		long=longFoo;
-		$.publish('updateUI');
+		$.publish('updateUI',[]);
 	};
 	
 	this.getLong=function(){
@@ -169,7 +151,7 @@ function MarkerContent(){
 	
 	this.getMycomment=function(needShort){
 		if(needShort){
-			return mycomment.substring(0,130)+'...';
+			return mycomment.substring(0,150)+'...';
 		}else{
 			return mycomment;
 		}
@@ -202,6 +184,28 @@ function MapMarker(id) {
 		}
 	};
 	
+	this.updateContent=function(args){
+		if(args.title!=null){
+			this.content.setTitle(args.title);
+		}
+		
+		if(args.address!=null){
+			this.content.setAddress(args.address);
+		}
+		
+		if(args.mycomment!=null){
+			this.content.setMycomment(args.mycomment);
+		}
+		
+		if(args.lat!=null && args.long!=null){
+			this.content.setLat(args.lat);
+			this.content.setLong(args.long);
+		}
+		
+		$.publish('updateInfoWindow',[this]);
+		
+	};
+	
 	this.canAddSubMarker=function(marker){
 		var result=true;
 		if(marker.parentSubMarker==null && marker.connectedMainMarker==null && marker.prevMainMarker==null){
@@ -223,7 +227,7 @@ function MapMarker(id) {
 			this.connectedMainMarker=marker;
 			marker.prevMainMarker=this;
 		}
-		$.publish('updateUI');
+		$.publish('updateUI',[]);
 	};
 	
 	//logic add tree node
@@ -232,7 +236,7 @@ function MapMarker(id) {
 			this.subMarkersArray.push(treeNodeMarker);
 			treeNodeMarker.parentSubMarker=this;
 		}		
-		$.publish('updateUI');
+		$.publish('updateUI',[]);
 	};
 	
 	//getters and setters

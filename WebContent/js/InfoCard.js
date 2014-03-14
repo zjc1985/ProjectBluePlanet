@@ -58,16 +58,18 @@ function infoCard(id){
 			$('#'+editFormAddresIdName).val(content.address);
 		}
 		
-		if(content.getMycomment(false)!=''&& content.getMycomment(false)!=null){
+		if(content.mycomment!=''&& content.mycomment!=null){
 			$(mycommentId).empty();
-			$(mycommentId).html(content.getMycomment(true));
-			$('#'+editFormMycommentIdName).val(content.getMycomment(false));
+			$(mycommentId).html(content.mycomment);
+			$('#'+editFormMycommentIdName).val(content.fullcomment);
 		}
 		
+		/*
 		if(content.getIconPath()!=''&& content.getIconPath()!=null){
 			$(iconUrlId).empty();
 			$(iconUrlId).attr("src",content.getIconPath());
 		}
+		*/
 	};
 	
 	this.setDefaultImgs=function(imgArray){
@@ -141,6 +143,7 @@ function infoCard(id){
 		initPopupEditForm();
 		initCSS();
 		console.log($(ASideId).get(0));
+		this.setDefaultContent(content);
 	};
 	
 	this.initCustom=function(top,left,contentAHtml,contentBHtml){
@@ -180,13 +183,13 @@ function infoCard(id){
 	};
 	
 	this.editFormClickOK=function(){
-		var c=new MarkerContent();
+		var c=new Object();
 		c.title=$('#'+editFormTitleIdName).val();
 		c.category=$('#'+editFormCategoryIdName).val();
 		c.address=$('#'+editFormAddresIdName).val();
-		c.setMycomment($('#'+editFormMycommentIdName).val());
+		c.mycomment=$('#'+editFormMycommentIdName).val();
 		
-		this.setDefaultContent(c);
+		//this.setDefaultContent(c);
 		
 		$.magnificPopup.instance.close();
 		
@@ -410,13 +413,13 @@ function infoCard(id){
 		iconUrlId='#'+categoryIconUrlIdName;
 		
 		var html="<div style='background-color:rgb(245,245,245);border-bottom-style:solid;border-width:1px;border-color:rgb(230,230,230)'>"+
-			"<div style='float:left;width:50px;height:50px;'><img id='"+categoryIconUrlIdName+"'src='"+content.getIconPath()+"'></div>"+
+			//"<div style='float:left;width:50px;height:50px;'><img id='"+categoryIconUrlIdName+"'src='"+content.getIconPath()+"'></div>"+
 			"<p id='"+titleIdName+"' class='serif' style='margin:0px;color:#4577D4;'>"+content.title+"</p>"+
 			"<p id='"+categoryIdName+"' class='serif' style='margin:0px;font-size:11px;'>"+content.category+"</p>"+
 			"<p id='"+addressIdName+"' class='serif' style='margin:0px;font-size:11px;'>"+content.address+"</p>"+
 		"</div>"+
 		"<div style='width:330px;height:130px;overflow: hidden;text-overflow: ellipsis;white-space: normal;'>"+
-			"<p id='"+mycommentIdName+"' class='serif' style='margin:5px;font-size:14px;'>"+content.getMycomment(true)+"</p>"+
+			"<p id='"+mycommentIdName+"' class='serif' style='margin:5px;font-size:14px;'>"+content.comment+"</p>"+
 			"<a href='#' class='serif' style='float:right;margin:0px;font-size:8px;color:#4577D4;'>show detail</a>"+
 		"</div>";
 		

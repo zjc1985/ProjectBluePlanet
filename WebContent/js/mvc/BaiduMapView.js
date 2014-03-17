@@ -258,9 +258,9 @@ function BaiduMapView(oneController) {
 				// marker.collapseSubMarkers();
 			}
 		}, {
-			text : "show sub Marker",
+			text : "testing Feature",
 			callback : function() {
-				// marker.showSubMarkers();
+				controller.testingFeature();
 			}
 		} ];
 		for ( var i = 0; i < txtMenuItem.length; i++) {
@@ -276,7 +276,8 @@ function BaiduMapView(oneController) {
 		var txtMenuItem = [ {
 			text : 'add marker',
 			callback : function(position) {
-				controller.addMarkerClickEvent(position,null);
+				controller.addMarkerClickEvent(position,{lat:position.lat,
+															lng:position.lng});
 			}
 		}, {
 			text : 'test function',

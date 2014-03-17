@@ -8,7 +8,7 @@ function MapController(){
 	};
 	
 	this.zoomEventHandler=function(){
-		this.updateUIRoute();
+		$.publish('updateUI',[]);
 	};
 	
 	this.updateMarkerContentById=function(id,content){
@@ -96,7 +96,7 @@ function MapController(){
 	
 	this.markerDragendEventHandler=function(marker){
 		var modelMarker=model.getMapMarkerById(marker.id);
-		modelMarker.getContent().setlatlong(marker.getPosition().lat,marker.getPosition().lng);
+		modelMarker.getContent().setlatlng(marker.getPosition().lat,marker.getPosition().lng);
 	};
 	
 	this.addMarkerClickEvent=function(position,content){
@@ -117,6 +117,10 @@ function MapController(){
 	this.addSubLineClickHandler=function(marker){
 		view.markerNeedSubLine=marker;
 		alert("please click another marker to add sub line");
+	};
+	
+	this.testingFeature=function(){
+		model.save2Backend();
 	};
 	
 	$.subscribe('updateUI',this.updateUIRoute());

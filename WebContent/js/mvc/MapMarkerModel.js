@@ -10,6 +10,11 @@ function MapMarkerModel(){
 		return marker;
 	};
 	
+	this.save2Backend=function(){
+		for(var i in overlays){
+			console.log(overlays[i].toJSONString());
+		};
+	};
 	
 	function getOverlayById(id){
 		var length=overlays.length;
@@ -108,7 +113,7 @@ function MarkerContent(){
 	var title="Unknown Location";
 	var address="Unknown Address";
 	var lat=0;
-	var long=0;
+	var lng=0;
 	var mycomment="...";
 	
 	
@@ -117,14 +122,14 @@ function MarkerContent(){
 		return lat;
 	};
 	
-	this.setlatlong=function(latFoo,longFoo){
+	this.setlatlng=function(latFoo,lngFoo){
 		lat=latFoo;
-		long=longFoo;
+		lng=lngFoo;
 		$.publish('updateUI',[]);
 	};
 	
-	this.getLong=function(){
-		return long;
+	this.getLng=function(){
+		return lng;
 	};
 	
 
@@ -197,9 +202,8 @@ function MapMarker(id) {
 			this.content.setMycomment(args.mycomment);
 		}
 		
-		if(args.lat!=null && args.long!=null){
-			this.content.setLat(args.lat);
-			this.content.setLong(args.long);
+		if(args.lat!=null && args.lng!=null){
+			this.content.setlatlng(args.lat,args.lng);
 		}
 		
 		$.publish('updateInfoWindow',[this]);
@@ -237,6 +241,24 @@ function MapMarker(id) {
 			treeNodeMarker.parentSubMarker=this;
 		}		
 		$.publish('updateUI',[]);
+	};
+	
+	this.toJSONString=function(){
+		var subMarkerIdsArray=new Array();
+		for(var i in this.subMarkersArray){
+			subMarkerIdsArray.push(this.subMarkersArray[i].id);
+		}
+		
+		var object= {id:this.id,
+				lat:this.getContent().getLat(),
+				lng:this.getContent().getLng(),
+				title:this.getContent().getTitle(),
+				address:this.getContent().getAddress(),
+				mycomment:this.getContent().getMycomment(false),
+				nextMainMarkerId:this.connectedMainMarker==null?null:this.connectedMainMarker.id,
+				subMarkerIds:subMarkerIdsArray};
+		
+		return JSON.stringify(object);				
 	};
 	
 	//getters and setters

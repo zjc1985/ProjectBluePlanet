@@ -1,26 +1,96 @@
+
 function MapMarkerModel(){	
-	var overlays=new Array();
+	var marks=new Array();
+	
+	var backendManager=new BackendManager();
+	
+	this.getModelMarkers=function(){
+		return marks;
+	};
+	
+	this.fetchMaxIdinMarks=function(){
+		marks.sort(function(mark1,mark2){
+			if(mark1.id>mark2.id){
+				return 1;
+			}else if(mark1.id==mark2.id){
+				return 0;
+			}else{
+				return -1;
+			}
+		});
+		
+		return marks[marks.length-1].id;
+	};
 	
 	this.createOneMarker=function(id,content){
 		var marker=new MapMarker(id);
 		if(content!=null){
 			marker.updateContent(content);
 		}
-		overlays.push(marker);
+		marks.push(marker);
+		$.publish('createOneMarker',[marker]);
 		return marker;
 	};
 	
-	this.save2Backend=function(){
-		for(var i in overlays){
-			console.log(overlays[i].toJSONString());
-		};
+	this.loadRoutine=function(routineId){
+		marks=new Array();
+		
+		var self=this;
+		
+		backendManager.fetchRoutineJSONStringById(routineId,function(marksJSONString){
+			if(marksJSONString!=null){
+				var marksJSONArray=JSON.parse(marksJSONString);
+				for(var i in marksJSONArray){
+					self.createOneMarker(marksJSONArray[i].id, marksJSONArray[i]);
+				}
+				
+				for(var i in marksJSONArray){
+					var eachJSONObject=marksJSONArray[i];
+					if(eachJSONObject.nextMainMarkerId!=null){
+						self.addMainLine(eachJSONObject.id, eachJSONObject.nextMainMarkerId);
+					}
+					
+					for(var j in eachJSONObject.subMarkerIds){
+						self.addSubLine(eachJSONObject.id, eachJSONObject.subMarkerIds[j]);
+					}
+				}
+			}
+			alert('fetch routine success');
+			console.log(marksJSONString);
+			
+			
+		});
+						
+	};
+	
+	this.save2Backend=function(routineName){
+		console.log('prepare to save routine '+routineName);
+		if(marks.length==0){
+			alert('no routine found. abort saving');
+			return;
+		}
+			
+		var currentUser = backendManager.getCurrentUser();
+		
+		if(currentUser!=null){
+			var marksJSONArray=new Array();
+			for(var i in marks){
+				marksJSONArray.push(marks[i].toJSONObject());
+			};
+			
+			backendManager.saveRoutine(routineName, JSON.stringify(marksJSONArray));
+		}else{
+			alert('no find user abort saving routine');
+			return;
+		}
+		
 	};
 	
 	function getOverlayById(id){
-		var length=overlays.length;
+		var length=marks.length;
 		for(var i=0;i<length;i++){
-			if(overlays[i].id==id){
-				return overlays[i];
+			if(marks[i].id==id){
+				return marks[i];
 			}
 		}
 		return null;
@@ -54,11 +124,11 @@ function MapMarkerModel(){
 	
 	this.findHeadMarker=function(){
 		var heads=new Array();
-		var length=overlays.length;
+		var length=marks.length;
 		for(var i=0;i<length;i++){
-			if(overlays[i] instanceof MapMarker){
-				if(overlays[i].prevMainMarker==null&&!overlays[i].isSubMarker()){
-					heads.push(overlays[i]);
+			if(marks[i] instanceof MapMarker){
+				if(marks[i].prevMainMarker==null&&!marks[i].isSubMarker()){
+					heads.push(marks[i]);
 				}
 			}
 		}
@@ -108,6 +178,83 @@ function MapMarkerModel(){
 	}
 	
 }
+
+
+
+function BackendManager(){
+	var Routine = AV.Object.extend("Routine");
+	
+	var routine = null;
+	var currentUser=null;
+	
+	
+	
+	AV.initialize("6pzfpf5wkg4m52owuwixt5vggrpjincr8xon3pd966fhgj3c", "4wrzupru1m4m7gpafo4llinv7iepyapnycvxygup7uiui77x");
+	
+	this.getCurrentUser=function(){
+		currentUser = AV.User.current();
+		if (currentUser) {
+			console.log("welcomse session user:"+ currentUser.get('username'));
+			
+			return currentUser;
+			
+		} else {
+			AV.User.logIn("yufu", "123456", {
+				  success: function(user) {
+					  console.log("login for user:"+ user.get('username'));
+					  currentUser=user;
+					  return currentUser;
+				  },
+				  error: function(user, error) {
+					  alert("Error: " + error.code + " " + error.message);
+					  alert("log failed. abort save routines");
+					  return null;
+				  }
+			});
+		}
+	};
+	
+	this.fetchRoutineJSONStringById=function(objectId,successCallback){
+		console.log('fetch routine id=:'+objectId);
+
+		var query = new AV.Query(Routine);
+		query.get(objectId, {
+		  success: function(fetchedRoutine) {
+			  routine=fetchedRoutine;
+			  successCallback(routine.get('RoutineJSONString'));
+		  },
+		  error: function(object, error) {
+		    alert("The object was not retrieved successfully.");
+		    console.log(error);
+		  }
+		});
+	};
+	
+	this.saveRoutine=function(routineName,routineJSONString){
+		if(routine==null){
+			routine=new Routine();
+		}
+		routine.set('title',routineName);
+		routine.set('RoutineJSONString',routineJSONString);
+		routine.set('user',this.getCurrentUser());
+		routine.save(null, {
+			  success: function(routineFoo) {
+				  routine=routineFoo;
+				  alert('save routine successful:' +routineName);
+			  },
+			  error:function(object,error){
+				  alert('save routine failed');
+				  routine=null;
+			  }
+			  
+			});
+	};
+	
+	//getters and setters
+	
+}
+
+
 
 function MarkerContent(){
 	var title="Unknown Location";
@@ -243,7 +390,7 @@ function MapMarker(id) {
 		$.publish('updateUI',[]);
 	};
 	
-	this.toJSONString=function(){
+	this.toJSONObject=function(){
 		var subMarkerIdsArray=new Array();
 		for(var i in this.subMarkersArray){
 			subMarkerIdsArray.push(this.subMarkersArray[i].id);
@@ -258,7 +405,7 @@ function MapMarker(id) {
 				nextMainMarkerId:this.connectedMainMarker==null?null:this.connectedMainMarker.id,
 				subMarkerIds:subMarkerIdsArray};
 		
-		return JSON.stringify(object);				
+		return object;			
 	};
 	
 	//getters and setters

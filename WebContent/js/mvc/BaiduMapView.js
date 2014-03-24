@@ -5,8 +5,6 @@ function BaiduMapView(oneController) {
 	this.markerNeedSubLine = null;
 
 	var overlays = new Array();
-	// this num is used to create id for BaiduMarker
-	var num = 0;
 	
 	function createOneSearchMarker(p,index){
 		 var myIcon = new BMap.Icon("http://api.map.baidu.com/img/markers.png", new BMap.Size(23, 25), {
@@ -131,8 +129,7 @@ function BaiduMapView(oneController) {
 		});
 	};
 
-	this.drawSubLine = function(idFrom, idTo) {
-		num++;
+	this.drawSubLine = function(idFrom, idTo,num) {
 		var points = [ getOverlayById(idFrom).getPosition(),
 				getOverlayById(idTo).getPosition() ];
 		var polyline = new BMap.Polyline(points, {
@@ -147,8 +144,7 @@ function BaiduMapView(oneController) {
 		return polyline.id;
 	};
 
-	this.drawMainLine = function(idFrom, idTo) {
-		num++;
+	this.drawMainLine = function(idFrom, idTo,num) {
 		var sideLength;
 		if (map.getZoom() < 15) {
 			sideLength = 15;
@@ -157,7 +153,7 @@ function BaiduMapView(oneController) {
 		}
 
 		var arrowline = new ArrowLine(getOverlayById(idFrom).getPosition(),
-				getOverlayById(idTo).getPosition(), sideLength, 30, num++);
+				getOverlayById(idTo).getPosition(), sideLength, 30, num);
 		arrowline.draw(map);
 		overlays.push(arrowline);
 		return arrowline.id;
@@ -196,8 +192,7 @@ function BaiduMapView(oneController) {
 		}
 	};
 
-	this.addInfoWindow = function(marker,content) {
-		num++;
+	this.addInfoWindow = function(marker,content,num) {
 
 		var mySquare = new SquareOverlay(marker.getPosition(), content, num);
 		
@@ -211,9 +206,9 @@ function BaiduMapView(oneController) {
 		return mySquare;
 	};
 
-	this.addOneMark = function(p) {
-		num++;
-		var marker = new BaiduMarker(p, num);
+	this.addOneMark = function(lat,lng,num) {
+		var point=new BMap.Point(lng,lat);
+		var marker = new BaiduMarker(point, num);
 		marker.enableDragging();
 
 		marker.addEventListener("click", function() {
@@ -280,9 +275,21 @@ function BaiduMapView(oneController) {
 															lng:position.lng});
 			}
 		}, {
-			text : 'test function',
+			text : 'save routine',
 			callback : function(position) {
-				
+				var name=prompt("routine name?","default routine"); 
+				if (name!=null && name!="") 
+				{ 
+					controller.saveRoutine(name);
+				} else{
+					alert('please input your routine name to save');
+				}
+								
+			}
+		},{
+			text : 'load routine',
+			callback : function(position) {
+				controller.testingFeature();
 			}
 		}
 

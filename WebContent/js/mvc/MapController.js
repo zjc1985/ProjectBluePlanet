@@ -1,7 +1,33 @@
+var QueryString = function () {
+	  // This function is anonymous, is executed immediately and 
+	  // the return value is assigned to QueryString!
+	  var query_string = {};
+	  var query = window.location.search.substring(1);
+	  var vars = query.split("&");
+	  for (var i=0;i<vars.length;i++) {
+	    var pair = vars[i].split("=");
+	    	// If first entry with this name
+	    if (typeof query_string[pair[0]] === "undefined") {
+	      query_string[pair[0]] = pair[1];
+	    	// If second entry with this name
+	    } else if (typeof query_string[pair[0]] === "string") {
+	      var arr = [ query_string[pair[0]], pair[1] ];
+	      query_string[pair[0]] = arr;
+	    	// If third or later entry with this name
+	    } else {
+	      query_string[pair[0]].push(pair[1]);
+	    }
+	  } 
+	    return query_string;
+	} ();
+
 function MapController(){	
 	var model=new MapMarkerModel();
 	var view=new BaiduMapView(this);
 	view.createView();
+	
+	// this num is used to create id for BaiduMarker
+	var num = 1;
 	
 	this.searchLocation=function(key){
 		view.searchLocation(key);
@@ -23,7 +49,8 @@ function MapController(){
 		if(marker.infoWindow==null){			
 			marker.infoWindow=view.addInfoWindow(marker, {title:content.getTitle(),
 														address:content.getAddress(),
-														comment:content.getMycomment(false)});
+														comment:content.getMycomment(false)}
+												,num++);
 		}else{
 			marker.infoWindow.show();
 		};
@@ -61,6 +88,8 @@ function MapController(){
 			}
 		};
 	};
+	
+
 	
 	this.updateUIRoute=function(){
 		return function(_){
@@ -100,9 +129,15 @@ function MapController(){
 	};
 	
 	this.addMarkerClickEvent=function(position,content){
-		var id=view.addOneMark(position).id;
-		model.createOneMarker(id,content);
-		
+		console.log('creating markder id:'+ model.createOneMarker(num,content).id);
+	};
+	
+	this.createViewMarker=function(){
+		return function(_,modelMarker){
+			view.addOneMark(modelMarker.content.getLat(),
+							modelMarker.content.getLng(), modelMarker.id);
+			num++;
+		};
 	};
 	
 	this.addCustomClickEvent=function(position){
@@ -120,9 +155,17 @@ function MapController(){
 	};
 	
 	this.testingFeature=function(){
-		model.save2Backend();
+		if(QueryString.routineId!=null){
+			model.loadRoutine(QueryString.routineId);
+			
+		}
 	};
 	
+	this.saveRoutine=function(routineName){
+		model.save2Backend(routineName);
+	};
+	
+	$.subscribe('createOneMarker',this.createViewMarker());
 	$.subscribe('updateUI',this.updateUIRoute());
 	$.subscribe('updateInfoWindow',this.updateMarkerInfoWindow());
 }

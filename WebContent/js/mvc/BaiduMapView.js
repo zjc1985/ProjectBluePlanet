@@ -6,6 +6,27 @@ function BaiduMapView(oneController) {
 
 	var overlays = new Array();
 	
+	function createMarkerIcon(){
+		var icon=new BMap.Icon("resource/icons/guide.png",new BMap.Size(70, 60));
+		icon.setImageSize(new BMap.Size(70,60));
+		icon.setAnchor(new BMap.Size(35,60));
+		return icon;
+	}
+	
+	function createEventIcon(){
+		var icon=new BMap.Icon("resource/icons/event.png",new BMap.Size(56, 48));
+		icon.setImageSize(new BMap.Size(56,48));
+		icon.setAnchor(new BMap.Size(28,48));
+		return icon;
+	}
+	
+	function createPicIcon(){
+		var icon=new BMap.Icon("resource/icons/pic.png",new BMap.Size(56, 48));
+		icon.setImageSize(new BMap.Size(56,48));
+		icon.setAnchor(new BMap.Size(28,48));
+		return icon;
+	}
+	
 	function createOneSearchMarker(p,index){
 		 var myIcon = new BMap.Icon("http://api.map.baidu.com/img/markers.png", new BMap.Size(23, 25), {
 			    offset: new BMap.Size(10, 25),
@@ -68,6 +89,7 @@ function BaiduMapView(oneController) {
 	    infoWindowHtml.push('</tr>');
 	    infoWindowHtml.push('</tbody></table>');
 	    var infoWindow = new BMap.InfoWindow(infoWindowHtml.join(""),{title:infoWindowTitle,width:200}); 
+	    infoWindow.disableCloseOnClick();
 	    var openInfoWinFun = function(){
 	        marker.openInfoWindow(infoWindow);
 	        for(var cnt = 0; cnt < maxLen; cnt++){
@@ -207,8 +229,12 @@ function BaiduMapView(oneController) {
 	};
 
 	this.addOneMark = function(lat,lng,num) {
+		
 		var point=new BMap.Point(lng,lat);
 		var marker = new BaiduMarker(point, num);
+		
+		marker.setIcon(createMarkerIcon());
+		
 		marker.enableDragging();
 
 		marker.addEventListener("click", function() {
@@ -226,6 +252,17 @@ function BaiduMapView(oneController) {
 		overlays.push(marker);
 
 		return marker;
+	};
+	
+	this.changeMarkerIcon=function(id,iconName){
+		var marker=this.getViewOverlaysById(id);
+		if(iconName=="event"){
+			marker.setIcon(createEventIcon());
+		}else if(iconName=="pic"){
+			marker.setIcon(createPicIcon());
+		}else{
+			marker.setIcon(createMarkerIcon());
+		}
 	};
 
 	function addMarkerContextMenu(marker) {

@@ -291,14 +291,9 @@ function infoCard(id){
 	function initPopupEditForm(){
 		var iconSelect= new IconSelect(editFormIconUrlIdName);
 		var icons = [];
-        icons.push({'iconFilePath':'resource/markers/bus.png', 'iconValue':'bus'});
-        icons.push({'iconFilePath':'resource/markers/default.png', 'iconValue':'default'});
-        icons.push({'iconFilePath':'resource/markers/hotel.png', 'iconValue':'hotel'});
-        icons.push({'iconFilePath':'resource/markers/bus.png', 'iconValue':'bus'});
-        icons.push({'iconFilePath':'resource/markers/restaurant.png', 'iconValue':'restaurant'});
-        icons.push({'iconFilePath':'resource/markers/smallcity.png', 'iconValue':'smallcity'});
-        icons.push({'iconFilePath':'resource/markers/statue.png', 'iconValue':'statue'});
-        icons.push({'iconFilePath':'resource/markers/train.png', 'iconValue':'train'});
+		icons.push({'iconFilePath':'resource/icons/guide.png', 'iconValue':'marker'});
+        icons.push({'iconFilePath':'resource/icons/pic.png', 'iconValue':'pic'});
+        icons.push({'iconFilePath':'resource/icons/event.png', 'iconValue':'event'});
         
                 
         

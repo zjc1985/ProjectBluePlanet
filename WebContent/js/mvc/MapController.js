@@ -85,6 +85,8 @@ function MapController(){
 												  mycomment:contentModel.getMycomment(true),
 												fullcomment:contentModel.getMycomment(false)});
 				}
+				
+				view.changeMarkerIcon(senderMarker.id, contentModel.getCategory());
 			}
 		};
 	};
@@ -136,6 +138,7 @@ function MapController(){
 		return function(_,modelMarker){
 			view.addOneMark(modelMarker.content.getLat(),
 							modelMarker.content.getLng(), modelMarker.id);
+			view.changeMarkerIcon(modelMarker.id, modelMarker.content.getCategory());
 			num++;
 		};
 	};

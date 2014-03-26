@@ -262,7 +262,15 @@ function MarkerContent(){
 	var lat=0;
 	var lng=0;
 	var mycomment="...";
+	var category="marker";
 	
+	this.getCategory=function(){
+		return category;
+	};
+	
+	this.setCategory=function(nameFoo){
+		category=nameFoo;
+	};
 	
 	
 	this.getLat=function(){
@@ -349,6 +357,10 @@ function MapMarker(id) {
 			this.content.setMycomment(args.mycomment);
 		}
 		
+		if(args.category!=null){
+			this.content.setCategory(args.category);
+		}
+		
 		if(args.lat!=null && args.lng!=null){
 			this.content.setlatlng(args.lat,args.lng);
 		}
@@ -402,6 +414,7 @@ function MapMarker(id) {
 				title:this.getContent().getTitle(),
 				address:this.getContent().getAddress(),
 				mycomment:this.getContent().getMycomment(false),
+				category:this.getContent().getCategory(),
 				nextMainMarkerId:this.connectedMainMarker==null?null:this.connectedMainMarker.id,
 				subMarkerIds:subMarkerIdsArray};
 		

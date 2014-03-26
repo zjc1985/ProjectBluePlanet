@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>jQuery UI Dialog - Default functionality</title>
+  <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css">
+  <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+  <link rel="stylesheet" href="js/lib/magnific-popup.css">
+  <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+  <script src="js/lib/bjqs.js"></script>
+  <script src="js/lib/jquery.magnific-popup.js"></script>
+  <script src="js/InfoCard.js"></script>
+  <script type="text/javascript" src="js/lib/ba-tiny-pubsub.min.js"></script>
+  <link type="text/css" rel="Stylesheet" href="js/lib/bjqs.css" />
+</head>
+<body>
+
+
+
+
+
+</body>
+</html>
+
+<script type="text/javascript">
+
+
+function Person(name){
+	this.name=name;
+	
+	this.setName=function(nameFoo){
+		this.name=nameFoo;
+		$.publish('updateName',[this]);
+	}
+	this.getName=function(){
+		return this.name;
+	}
+}
+
+function control(){	
+	this.someOneChangeName=function(){
+		return function(_,sender){
+			console.log('some one change his name to: '+sender.getName());	
+		}
+	};
+	$.subscribe('updateName', this.someOneChangeName());
+}
+
+var mike=new Person('mike');
+var controllor=new control();
+mike.setName('mike updated');
+mike.setName('mike updated2');
+</script>

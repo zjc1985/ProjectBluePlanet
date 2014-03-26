@@ -13,24 +13,37 @@
   	border-style: groove;
   	border-width: 1px;
   	width:450px;
-  	height:130px;
   	padding: 5px;
   	top:70px;
   	left:30px;
+  	
 }
 
 
 </style>
 <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css">
 <link rel="stylesheet" href="js/lib/magnific-popup.css">
+<link rel="stylesheet" type="text/css" href="js/lib/iconselect.css" >
+<script type="text/javascript" src="js/lib/iconselect.js"></script>
+<script type="text/javascript" src="js/lib/iscroll.js"></script>
+
+
 <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
 <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+
+
+
 <script src="js/lib/jquery.magnific-popup.js"></script>
 <script src="js/InfoCard.js"></script> 
 <script type="text/javascript"
 	src="http://api.map.baidu.com/api?v=2.0&ak=DAfc49ea71a7aff2f10ac4847a9208d0"></script>
 <script type="text/javascript" src="http://api.map.baidu.com/library/CurveLine/1.5/src/CurveLine.min.js"></script>
 <script type="text/javascript" src="js/LineUtil.js"></script>
+<script type="text/javascript" src="js/mvc/BaiduMapView.js"></script>
+<script type="text/javascript" src="js/mvc/MapController.js"></script>
+<script type="text/javascript" src="js/mvc/MapMarkerModel.js"></script>
+<script type="text/javascript" src="js/lib/ba-tiny-pubsub.min.js"></script>
+<script src="https://cn.avoscloud.com/scripts/lib/av-0.3.1.min.js"></script>
 <title>Map Marker</title>
 </head>
 <body>
@@ -47,7 +60,12 @@
 	<div id="r-result"></div>
 </body>
 </html>
-<script type="text/javascript"
-	src="js/mapMarker.js"></script>
+<script type="text/javascript">
+var controller=new MapController();
+
+function searchLocation(){
+	controller.searchLocation(document.getElementById("searchKey").value);
+}
+</script>
 	
 

@@ -137,6 +137,8 @@ function MapController(){
 	};
 	
 	this.addMarkerClickEvent=function(position,content){
+		content.lat=position.lat;
+		content.lng=position.lng;
 		console.log('creating markder id:'+ model.createOneMarker(num,content).id);
 	};
 	

@@ -24,11 +24,16 @@ function MapMarkerModel(){
 	
 	this.createOneMarker=function(id,content){
 		var marker=new MapMarker(id);
+		
 		if(content!=null){
 			marker.updateContent(content);
 		}
+		
 		marks.push(marker);
 		$.publish('createOneMarker',[marker]);
+		
+		
+		
 		return marker;
 	};
 	
@@ -263,6 +268,15 @@ function MarkerContent(){
 	var lng=0;
 	var mycomment="...";
 	var category="marker";
+	var imgUrls=new Array();
+	
+	this.getImgUrls=function(){
+		return imgUrls;
+	};
+	
+	this.setImgUrls=function(urlArray){
+		imgUrls=urlArray;
+	};
 	
 	this.getCategory=function(){
 		return category;
@@ -365,6 +379,10 @@ function MapMarker(id) {
 			this.content.setlatlng(args.lat,args.lng);
 		}
 		
+		if(args.imgUrls!=null && args.imgUrls.length!=0){
+			this.content.setImgUrls(args.imgUrls);
+		}
+		
 		$.publish('updateInfoWindow',[this]);
 		
 	};
@@ -415,6 +433,7 @@ function MapMarker(id) {
 				address:this.getContent().getAddress(),
 				mycomment:this.getContent().getMycomment(false),
 				category:this.getContent().getCategory(),
+				imgUrls:this.getContent().getImgUrls(),
 				nextMainMarkerId:this.connectedMainMarker==null?null:this.connectedMainMarker.id,
 				subMarkerIds:subMarkerIdsArray};
 		

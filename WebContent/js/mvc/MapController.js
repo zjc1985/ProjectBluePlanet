@@ -49,8 +49,11 @@ function MapController(){
 		if(marker.infoWindow==null){			
 			marker.infoWindow=view.addInfoWindow(marker, {title:content.getTitle(),
 														address:content.getAddress(),
+														category:content.getCategory(),
 														comment:content.getMycomment(false)}
 												,num++);
+			
+			marker.infoWindow.setDefaultImgs(content.getImgUrls());
 		}else{
 			marker.infoWindow.show();
 		};
@@ -83,7 +86,10 @@ function MapController(){
 					viewMarker.infoWindow.setContent({title:contentModel.getTitle(),
 													address:contentModel.getAddress(),
 												  mycomment:contentModel.getMycomment(true),
+												  category:contentModel.getCategory(),
 												fullcomment:contentModel.getMycomment(false)});
+					
+					viewMarker.infoWindow.setDefaultImgs(contentModel.getImgUrls());
 				}
 				
 				view.changeMarkerIcon(senderMarker.id, contentModel.getCategory());

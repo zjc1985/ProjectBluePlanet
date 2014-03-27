@@ -21,6 +21,7 @@ function infoCard(id){
 	var editFormCategoryIdName=editFormIdName+'Category';
 	var editFormAddresIdName=editFormIdName+'Address';
 	var editFormMycommentIdName=editFormIdName+'Mycomment';
+	var editFormImageUrlIdName=editFormIdName+'ImageUrl';
 	var editFormIconUrlIdName=editFormIdName+'IconUrl';
 	
 	var isASideShow=true;
@@ -64,15 +65,17 @@ function infoCard(id){
 			$('#'+editFormMycommentIdName).val(content.fullcomment);
 		}
 		
-		/*
-		if(content.getIconPath()!=''&& content.getIconPath()!=null){
-			$(iconUrlId).empty();
-			$(iconUrlId).attr("src",content.getIconPath());
-		}
-		*/
 	};
 	
 	this.setDefaultImgs=function(imgArray){
+		var imgString="";
+		
+		for(var i in imgArray){
+			imgString=imgString+imgArray[i]+";";
+		}
+		
+		$('#'+editFormImageUrlIdName).val(imgString);
+		
 		this.setContentB(createDefaultGallery(imgArray), true);
 	};
 	
@@ -188,7 +191,7 @@ function infoCard(id){
 		c.category=$('#'+editFormCategoryIdName).val();
 		c.address=$('#'+editFormAddresIdName).val();
 		c.mycomment=$('#'+editFormMycommentIdName).val();
-		
+		c.imgUrls=$('#'+editFormImageUrlIdName).val().split(";");
 		//this.setDefaultContent(c);
 		
 		$.magnificPopup.instance.close();
@@ -366,10 +369,13 @@ function infoCard(id){
 		});
 	}
 	
-	//args:
-	//imgArray[0].url
-	//imgArray[0].title
-	function createDefaultGallery(imgArray){
+	function createDefaultGallery(urlArray){
+		var imgArray=new Array();
+		for(var i in urlArray){
+			imgArray.push({url:urlArray[i],
+					   title:""});
+		}
+			
 		var ahrefs="";
 		
 		for(var index in imgArray){
@@ -448,6 +454,11 @@ function infoCard(id){
 			"<li>"+
 				"<label for='mycomment'>My Comment:</label><br>"+
 				"<textarea id='"+editFormMycommentIdName+"' style='margin: 2px; width: 509px; height: 183px;'></textarea>"+
+			"</li>"+
+			
+			"<li>"+
+			"<label for='imageUrls'>Urls:(use ; to separate):</label><br>"+
+			"<textarea id='"+editFormImageUrlIdName+"' style='margin: 2px; width: 509px; height: 183px;'></textarea>"+
 			"</li>"+
 		"</ol>"+
 		"<button id='"+idName+"EditOK"+"'>OK</button>"+

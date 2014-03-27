@@ -27,6 +27,7 @@ function BaiduMapView(oneController) {
 		icon.setImageSize(new BMap.Size(49,42));
 		icon.setAnchor(new BMap.Size(24,42));
 		return icon;
+		
 	}
 	
 	function createOneSearchMarker(p,index){
@@ -358,7 +359,7 @@ function SquareOverlay(center, content, id) {
 	BMap.Marker.call(this, center);
 	this._center = center;
 	this._infoCard = new infoCard('card' + id);
-	this._infoCard.initDefault('0px', '0px', content, null);
+	this._infoCard.initDefault('0px', '0px', content,null );
 	this.id = id;
 }
 
@@ -416,6 +417,11 @@ SquareOverlay.prototype.initialize = function(mp) {
 
 SquareOverlay.prototype.setContent=function(content){
 	this._infoCard.setDefaultContent(content);
+};
+
+SquareOverlay.prototype.setDefaultImgs=function(urlArray){
+	
+	this._infoCard.setDefaultImgs(urlArray);
 };
 
 SquareOverlay.prototype.show=function(){

@@ -159,6 +159,12 @@ function MapController(){
 	
 	this.testingFeature=function(){
 		if(QueryString.routineId!=null){
+			//todo: clean all existOverlay in view
+			
+			
+			//todo: resetId
+			
+						
 			model.loadRoutine(QueryString.routineId);
 			
 		}

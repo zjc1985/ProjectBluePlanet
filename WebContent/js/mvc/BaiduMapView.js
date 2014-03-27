@@ -7,23 +7,25 @@ function BaiduMapView(oneController) {
 	var overlays = new Array();
 	
 	function createMarkerIcon(){
-		var icon=new BMap.Icon("resource/icons/guide.png",new BMap.Size(70, 60));
-		icon.setImageSize(new BMap.Size(70,60));
-		icon.setAnchor(new BMap.Size(35,60));
-		return icon;
+		var myIcon = new BMap.Icon("http://api.map.baidu.com/img/markers.png", new BMap.Size(23, 25), {
+		    offset: new BMap.Size(10, 25),
+		    imageOffset: new BMap.Size(0, 0 - 11 * 25)
+		  });
+		myIcon.setAnchor(new BMap.Size(12, 25));
+		return myIcon;
 	}
 	
 	function createEventIcon(){
-		var icon=new BMap.Icon("resource/icons/event.png",new BMap.Size(56, 48));
-		icon.setImageSize(new BMap.Size(56,48));
-		icon.setAnchor(new BMap.Size(28,48));
+		var icon=new BMap.Icon("resource/icons/event.png",new BMap.Size(49, 42));
+		icon.setImageSize(new BMap.Size(49,42));
+		icon.setAnchor(new BMap.Size(24,42));
 		return icon;
 	}
 	
 	function createPicIcon(){
-		var icon=new BMap.Icon("resource/icons/pic.png",new BMap.Size(56, 48));
-		icon.setImageSize(new BMap.Size(56,48));
-		icon.setAnchor(new BMap.Size(28,48));
+		var icon=new BMap.Icon("resource/icons/pic.png",new BMap.Size(49, 42));
+		icon.setImageSize(new BMap.Size(49,42));
+		icon.setAnchor(new BMap.Size(24,42));
 		return icon;
 	}
 	

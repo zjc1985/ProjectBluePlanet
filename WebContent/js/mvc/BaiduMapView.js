@@ -148,25 +148,27 @@ function BaiduMapView(oneController) {
 		}));
 
 		addContextMenu();
-
+		map.disable3DBuilding();
 		map.addEventListener("zoomend", function() {
 			controller.zoomEventHandler();
 		});
 	};
 
 	this.drawSubLine = function(idFrom, idTo,num) {
-		var points = [ getOverlayById(idFrom).getPosition(),
-				getOverlayById(idTo).getPosition() ];
-		var polyline = new BMap.Polyline(points, {
-			strokeColor : "green",
-			strokeStyle : "dashed",
-			strokeWeight : 3,
-			strokeOpacity : 0.5
-		});
-		polyline.id = num;
-		map.addOverlay(polyline);
-		overlays.push(polyline);
-		return polyline.id;
+		if(this.getViewOverlaysById(idTo).isShow==true){
+			var points = [ getOverlayById(idFrom).getPosition(),
+			               getOverlayById(idTo).getPosition() ];
+			var polyline = new BMap.Polyline(points, {
+				strokeColor : "green",
+				strokeStyle : "dashed",
+				strokeWeight : 3,
+				strokeOpacity : 0.5
+			});
+			polyline.id = num;
+			map.addOverlay(polyline);
+			overlays.push(polyline);
+			return polyline.id;
+		}
 	};
 
 	this.drawMainLine = function(idFrom, idTo,num) {
@@ -295,6 +297,7 @@ function BaiduMapView(oneController) {
 		}, {
 			text : "testing Feature",
 			callback : function() {
+				
 				controller.testingFeature();
 			}
 		} ];
@@ -349,6 +352,7 @@ function BaiduMapView(oneController) {
 function BaiduMarker(point, id) {
 	BMap.Marker.call(this, point);
 	this.id = id;
+	this.isShow=true;
 }
 
 BaiduMarker.prototype = new BMap.Marker();

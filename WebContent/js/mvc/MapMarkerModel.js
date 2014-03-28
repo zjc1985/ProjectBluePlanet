@@ -219,6 +219,17 @@ function BackendManager(){
 		}
 	};
 	
+	this.fetchRoutinesByUser=function(user,successCallback){
+		var query=new AV.Query(Routine);
+		query.equalTo("user",user);
+		query.find({
+		      success: function(routines) {
+		    	alert("fetch routine success");
+		    	successCallback(routines);
+		      }
+		});
+	};
+	
 	this.fetchRoutineJSONStringById=function(objectId,successCallback){
 		console.log('fetch routine id=:'+objectId);
 

@@ -25,7 +25,7 @@ function MapController(){
 	var model=new MapMarkerModel();
 	var view=new BaiduMapView(this);
 	view.createView();
-	
+	var self=this;
 	// this num is used to create id for BaiduMarker
 	var num = 1;
 	
@@ -42,34 +42,68 @@ function MapController(){
 		mapMarker.updateContent(content);
 	};
 		
-	this.showInfoClickHandler=function(marker){
-		var content=model.getMarkerContentById(marker.id);
+	this.showInfoClickHandler=function(viewMarker){
+		var content=model.getMarkerContentById(viewMarker.id);
 		console.log(content.getTitle());
 		
-		if(marker.infoWindow==null){			
-			marker.infoWindow=view.addInfoWindow(marker, {title:content.getTitle(),
+		if(viewMarker.infoWindow==null){			
+			viewMarker.infoWindow=view.addInfoWindow(viewMarker, {title:content.getTitle(),
 														address:content.getAddress(),
 														category:content.getCategory(),
 														comment:content.getMycomment(false)}
 												,num++);
 			
-			marker.infoWindow.setDefaultImgs(content.getImgUrls());
+			viewMarker.infoWindow.setDefaultImgs(content.getImgUrls());
 		}else{
-			marker.infoWindow.show();
+			viewMarker.infoWindow.show();
 		};
 	};
 	
-	this.markerClickEventHandler=function(marker){
+	function changeSubMarkerShowStatusOrShowInfoWindow(parentMarkerId){
+		var modelMarker=model.getMapMarkerById(parentMarkerId);
 		
+		if(modelMarker.subMarkersArray.length!=0){
+			for(var i in modelMarker.subMarkersArray){
+				var subViewMarker=view.getViewOverlaysById(modelMarker.subMarkersArray[i].id);
+				if(subViewMarker.isShow==false){
+					subViewMarker.show();
+				}else{
+					subViewMarker.hide();
+				}
+				subViewMarker.isShow=!subViewMarker.isShow;	
+				changeSubMarkerShowStatusOrShowInfoWindow(modelMarker.subMarkersArray[i].id);
+			}
+		}else{
+			return;
+		}
+		
+		
+	}
+	
+	this.markerClickEventHandler=function(viewMarker){
 		if(view.markerNeedMainLine!==null){
-			model.addMainLine(view.markerNeedMainLine.id, marker.id);
+			model.addMainLine(view.markerNeedMainLine.id, viewMarker.id);
 			view.markerNeedMainLine=null;
+			return;
 		}
 		
 		if(view.markerNeedSubLine!=null){
-			model.addSubLine(view.markerNeedSubLine.id,marker.id);
+			model.addSubLine(view.markerNeedSubLine.id,viewMarker.id);
 			view.markerNeedSubLine=null;
+			return;
 		}
+		
+		//show or hide subMarkers if has
+		if(model.getMapMarkerById(viewMarker.id).subMarkersArray.length!=0){
+			changeSubMarkerShowStatusOrShowInfoWindow(viewMarker.id);
+		}else{
+			this.showInfoClickHandler(viewMarker);
+		}
+		
+		
+		$.publish('updateUI',[]);
+		
+		
 	};
 	
 	this.updateMarkerInfoWindow=function(){
@@ -97,7 +131,21 @@ function MapController(){
 		};
 	};
 	
-
+	
+	
+	
+	function drawSubLine(markerId){
+		var markerModel=model.getMapMarkerById(markerId);
+		if(markerModel.subMarkersArray.length!=0){
+			for(var i=0 in markerModel.subMarkersArray){
+				
+				view.drawSubLine(markerId, markerModel.subMarkersArray[i].id);
+				drawSubLine(markerModel.subMarkersArray[i].id);
+			}
+		}else{
+			return;
+		}
+	}
 	
 	this.updateUIRoute=function(){
 		return function(_){
@@ -110,9 +158,8 @@ function MapController(){
 			
 			for(var i=0;i<headMarkers.length;i++){
 				var marker=headMarkers[i];		
-				for(var j=0;j<marker.subMarkersArray.length;j++){
-					view.drawSubLine(marker.id,marker.subMarkersArray[j].id);
-				}
+				
+				drawSubLine(marker.id);
 				
 				while(marker.connectedMainMarker!=null){
 					//redraw main line

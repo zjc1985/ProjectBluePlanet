@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Login</title>
+
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script type="text/javascript" src="js/mvc/MapMarkerModel.js"></script>
+<script src="https://cn.avoscloud.com/scripts/lib/av-0.3.1.min.js"></script>
+
+</head>
+<body>
+
+
+<p>username: <input type="text" id="username" /></p>
+<p>password: <input type="password" id="password" /></p>
+<button id='login'>login</button>
+
+
+</body>
+</html>
+
+<script type="text/javascript">
+
+alert(Math.pow(9,2));
+
+var backendManager=new BackendManager();
+
+$('#login').click(function(){
+	console.log($('#username').val());
+	console.log($('#password').val());
+	backendManager.login($('#username').val(),$('#password').val(),function(user){
+		alert('login success,welcome:'+user.get('username'));
+		window.location.href = 'index.html';
+	})
+});
+
+
+</script>

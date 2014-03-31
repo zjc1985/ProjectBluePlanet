@@ -189,12 +189,23 @@ function MapController(){
 		console.log('creating markder id:'+ model.createOneMarker(num,content).id);
 	};
 	
+	this.markerDeleteClickHandler=function(viewMarker){
+		model.deleteOneMarker(viewMarker.id);
+	};
+	
 	this.createViewMarker=function(){
 		return function(_,modelMarker){
 			view.addOneMark(modelMarker.content.getLat(),
 							modelMarker.content.getLng(), modelMarker.id);
 			view.changeMarkerIcon(modelMarker.id, modelMarker.content.getCategory());
 			num++;
+		};
+	};
+	
+	this.deleteViewMarker=function(){
+		return function(_,modelMarker){
+			view.removeById(modelMarker.id);
+			$.publish('updateUI',[]);
 		};
 	};
 	
@@ -212,15 +223,19 @@ function MapController(){
 		alert("please click another marker to add sub line");
 	};
 	
-	this.testingFeature=function(){
+	this.loadRoutines=function(){
 		if(QueryString.routineId!=null){
 			//todo: clean all existOverlay in view
-			
+			model.resetModels();
+			view.resetView();
 			
 			//todo: resetId
-			
-						
-			model.loadRoutine(QueryString.routineId);
+									
+			model.loadRoutine(QueryString.routineId,function(){
+				var headModelMark=model.findHeadMarker()[0];
+				view.centerAndZoom(headModelMark.content.getLat(), 
+						(headModelMark.content.getLng()));
+			});
 			
 		}
 	};
@@ -229,6 +244,11 @@ function MapController(){
 		model.save2Backend(routineName);
 	};
 	
+	this.testFeature=function(){
+		view.getDistance(model.findHeadMarker()[0].id, model.findHeadMarker()[0].connectedMainMarker.id);
+	};
+	
+	$.subscribe('deleteOneMarker',this.deleteViewMarker());
 	$.subscribe('createOneMarker',this.createViewMarker());
 	$.subscribe('updateUI',this.updateUIRoute());
 	$.subscribe('updateInfoWindow',this.updateMarkerInfoWindow());

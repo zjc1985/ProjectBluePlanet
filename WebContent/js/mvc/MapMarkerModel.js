@@ -4,6 +4,10 @@ function MapMarkerModel(){
 	
 	var backendManager=new BackendManager();
 	
+	this.resetModels=function(){
+		marks=new Array();
+	};
+	
 	this.getModelMarkers=function(){
 		return marks;
 	};
@@ -30,14 +34,45 @@ function MapMarkerModel(){
 		}
 		
 		marks.push(marker);
+		
 		$.publish('createOneMarker',[marker]);
-		
-		
 		
 		return marker;
 	};
 	
-	this.loadRoutine=function(routineId){
+	this.deleteOneMarker=function(id){
+		var modelMarker=this.getMapMarkerById(id);
+		if(modelMarker!=null){
+			
+			//unconnect pre main model marker
+			if(modelMarker.prevMainMarker!=null){
+				modelMarker.prevMainMarker.disconnectNextMarker();
+			}
+			
+			//unconnect next main model marker
+			if(modelMarker.connectedMainMarker!=null){
+				modelMarker.disconnectNextMarker();
+			}
+			
+			//unconnect parentSubMarker
+			if(modelMarker.parentSubMarker!=null){
+				modelMarker.parentSubMarker.disconnectTreeChildMarker(modelMarker);
+			}
+			
+			//unconnect all sub marker
+			modelMarker.disconnectAllTreeChildMarker();
+			
+			for(var i in marks){
+				if(marks[i].id==id){
+					marks.splice(i, 1);
+				}
+			}		
+			
+			$.publish('deleteOneMarker',[modelMarker]);
+		}
+	};
+	
+	this.loadRoutine=function(routineId,successCallback){
 		marks=new Array();
 		
 		var self=this;
@@ -61,9 +96,7 @@ function MapMarkerModel(){
 				}
 			}
 			alert('fetch routine success');
-			console.log(marksJSONString);
-			
-			
+			successCallback();			
 		});
 						
 	};
@@ -98,6 +131,7 @@ function MapMarkerModel(){
 				return marks[i];
 			}
 		}
+		alert('can not find model marker :'+id);
 		return null;
 	}
 	
@@ -192,9 +226,18 @@ function BackendManager(){
 	var routine = null;
 	var currentUser=null;
 	
-	
-	
 	AV.initialize("6pzfpf5wkg4m52owuwixt5vggrpjincr8xon3pd966fhgj3c", "4wrzupru1m4m7gpafo4llinv7iepyapnycvxygup7uiui77x");
+	
+	this.login=function(userName,pwd,successCallback){
+		AV.User.logIn(userName, pwd, {
+			  success: function(user) {
+				  successCallback(user);
+			  },
+			  error: function(user, error) {
+				  alert('login failed');
+			  }
+		});
+	};
 	
 	this.getCurrentUser=function(){
 		currentUser = AV.User.current();
@@ -418,8 +461,17 @@ function MapMarker(id) {
 			
 			this.connectedMainMarker=marker;
 			marker.prevMainMarker=this;
+			$.publish('updateUI',[]);
 		}
-		$.publish('updateUI',[]);
+	};
+	
+	//logic delete
+	this.disconnectNextMarker=function(){
+		if(this.connectedMainMarker!=null){
+			this.connectedMainMarker.prevMainMarker=null;
+			this.connectedMainMarker=null;
+			//$.publish('updateUI',[]);
+		}
 	};
 	
 	//logic add tree node
@@ -427,8 +479,31 @@ function MapMarker(id) {
 		if(this.canAddSubMarker(treeNodeMarker)){
 			this.subMarkersArray.push(treeNodeMarker);
 			treeNodeMarker.parentSubMarker=this;
-		}		
-		$.publish('updateUI',[]);
+			$.publish('updateUI',[]);
+		}
+	};
+	
+	//logic delete tree node
+	this.disconnectTreeChildMarker=function(mark){
+		if(this.subMarkersArray.length!=0){
+			for(var i in this.subMarkersArray){
+				if(this.subMarkersArray[i].id==mark.id){
+					this.subMarkersArray[i].parentSubMarker=null;
+					this.subMarkersArray.splice(i, 1);
+				}
+			}
+			console.log(this.subMarkersArray);
+			//$.publish('updateUI',[]);
+		}
+	};
+	
+	this.disconnectAllTreeChildMarker=function(){
+		if(this.subMarkersArray.length!=0){
+			for(var i in this.subMarkersArray){
+				this.subMarkersArray[i].parentSubMarker=null;
+			}
+			this.subMarkersArray=new Array();
+		}
 	};
 	
 	this.toJSONObject=function(){

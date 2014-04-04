@@ -23,7 +23,7 @@ var QueryString = function () {
 
 function MapController(){	
 	var model=new MapMarkerModel();
-	var view=new BaiduMapView(this);
+	var view=new GoogleMapView(this);
 	view.createView();
 	var self=this;
 	// this num is used to create id for BaiduMarker

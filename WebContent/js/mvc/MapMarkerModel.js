@@ -77,7 +77,7 @@ function MapMarkerModel(){
 		
 		var self=this;
 		
-		backendManager.fetchRoutineJSONStringById(routineId,function(marksJSONString){
+		backendManager.fetchRoutineJSONStringById(routineId,function(marksJSONString,title){
 			if(marksJSONString!=null){
 				var marksJSONArray=JSON.parse(marksJSONString);
 				for(var i in marksJSONArray){
@@ -96,7 +96,7 @@ function MapMarkerModel(){
 				}
 			}
 			alert('fetch routine success');
-			successCallback();			
+			successCallback(title);			
 		});
 						
 	};
@@ -280,7 +280,7 @@ function BackendManager(){
 		query.get(objectId, {
 		  success: function(fetchedRoutine) {
 			  routine=fetchedRoutine;
-			  successCallback(routine.get('RoutineJSONString'));
+			  successCallback(routine.get('RoutineJSONString'),routine.get('title'));
 		  },
 		  error: function(object, error) {
 		    alert("The object was not retrieved successfully.");

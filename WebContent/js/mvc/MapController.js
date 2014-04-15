@@ -178,9 +178,9 @@ function MapController(){
 		
 	};
 	
-	this.markerDragendEventHandler=function(marker){
-		var modelMarker=model.getMapMarkerById(marker.id);
-		modelMarker.getContent().setlatlng(marker.getPosition().lat,marker.getPosition().lng);
+	this.markerDragendEventHandler=function(id,lat,lng){
+		var modelMarker=model.getMapMarkerById(id);
+		modelMarker.getContent().setlatlng(lat,lng);
 	};
 	
 	this.addMarkerClickEvent=function(position,content){
@@ -231,10 +231,14 @@ function MapController(){
 			
 			//todo: resetId
 									
-			model.loadRoutine(QueryString.routineId,function(){
+			model.loadRoutine(QueryString.routineId,function(routineName){
+				/*
 				var headModelMark=model.findHeadMarker()[0];
 				view.centerAndZoom(headModelMark.content.getLat(), 
 						(headModelMark.content.getLng()));
+				*/
+				view.routineName=routineName;
+				view.fitRoutineBounds();
 			});
 			
 		}

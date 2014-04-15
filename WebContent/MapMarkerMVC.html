@@ -19,6 +19,36 @@
   	
 }
 
+.controls {
+        margin-top: 36px;
+        border: 1px solid transparent;
+        border-radius: 2px 0 0 2px;
+        box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        height: 
+px;
+        outline: none;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+      }
+
+/*	start styles for the ContextMenu	*/
+.context_menu{
+	background-color:white;
+	border:1px solid gray;
+}
+.context_menu_item{
+	padding:3px 6px;
+}
+.context_menu_item:hover{
+	background-color:#CCCCCC;
+}
+.context_menu_separator{
+	background-color:gray;
+	height:1px;
+	margin:0;
+	padding:0;
+}
+/*	end styles for the ContextMenu	*/
 
 </style>
 <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css">
@@ -34,15 +64,21 @@
 
 
 <script src="js/lib/jquery.magnific-popup.js"></script>
+
+<script type="text/javascript"
+      src="http://maps.googleapis.com/maps/api/js?key=AIzaSyCHRDVOvVhCnFcyHSs2lmhV2HNjcQQzdX0&sensor=false&libraries=places"></script>
 <script src="js/InfoCard.js"></script> 
 <script type="text/javascript" src="js/LineUtil.js"></script>
 <script type="text/javascript" src="js/mvc/GoogleMapView.js"></script>
+
+
 <script type="text/javascript" src="js/mvc/MapController.js"></script>
 <script type="text/javascript" src="js/mvc/MapMarkerModel.js"></script>
 <script type="text/javascript" src="js/lib/ba-tiny-pubsub.min.js"></script>
 <script src="https://cn.avoscloud.com/scripts/lib/av-0.3.1.min.js"></script>
-<script type="text/javascript"
-      src="http://maps.googleapis.com/maps/api/js?key=AIzaSyCHRDVOvVhCnFcyHSs2lmhV2HNjcQQzdX0&sensor=false"></script>
+
+<!-- userd for google map for context menu -->
+<script type="text/javascript" src="js/lib/ContextMenu.js"></script>
 <title>Map Marker</title>
 </head>
 <body>
@@ -50,10 +86,12 @@
 	
 	<div id="l-map"></div>
 	
-	<div id="searchDialog"style="position: relative; top: 15px; width: 500px;margin-left:0.7cm; z-index: 2">
-		<input type="text" name="searchKey" id="searchKey" size="50" style="height:25px;"/>
+	<div id="searchDialog" style="position: relative; top: 100px; width: 500px;margin-left:0.7cm; z-index: 2">
+		<input type="text" class='controls' name="searchKey" id="searchKey" size="50" style="height:25px;"/>
+		<!-- 	
 		<input type="button" value="search" onclick="searchLocation()" style="height:30px"/>
 		<input type="button" value="SampleTrip" onclick="addSampleTrip()" style="height:30px"/>
+		 -->
 	</div>
 	
 	<div id="r-result"></div>
@@ -62,9 +100,11 @@
 <script type="text/javascript">
 var controller=new MapController();
 
+
 function searchLocation(){
 	controller.searchLocation(document.getElementById("searchKey").value);
 }
+
 </script>
 	
 

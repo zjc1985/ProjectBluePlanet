@@ -231,14 +231,16 @@ function MapController(){
 			
 			//todo: resetId
 									
-			model.loadRoutine(QueryString.routineId,function(routineName){
+			model.loadRoutine(QueryString.routineId,function(arg){
 				/*
 				var headModelMark=model.findHeadMarker()[0];
 				view.centerAndZoom(headModelMark.content.getLat(), 
 						(headModelMark.content.getLng()));
 				*/
-				view.routineName=routineName;
+				view.routineName=arg.routineName;
+				num=arg.maxId+1;
 				view.fitRoutineBounds();
+				console.log('current num in controller:'+num);
 			});
 			
 		}

@@ -429,13 +429,17 @@ function GoogleMapView(oneController) {
 			strokeOpacity:0.5,
 			geodesic : true
 		});
+		
+		//line.setEditable(true);
 
 		line.id = num;
 
 		line.isShowRoute = false;
 
 		google.maps.event.addListener(line, 'click', function(mouseEvent) {
-
+			console.log(line.getPath().getLength());
+			line.setEditable(!line.getEditable());
+			/*
 			if (line.isShowRoute == false) {
 				var o = line.getPath().getArray();
 				var latlngFrom = o[0];
@@ -444,11 +448,23 @@ function GoogleMapView(oneController) {
 			} else {
 				directionsDisplay.setMap(null);
 			}
+			*/
 			line.isShowRoute = !line.isShowRoute;
 		});
+		
+		line.getMainLinePath=function(){
+			var pathArray=line.getPath();
+			var returnArray=new Array();
+			
+			for(var i=0;i<pathArray.length;i++){
+				returnArray.push({lat:pathArray[i].lat(),lng:pathArray[i].lng()});
+			}
+			return returnArray();
+		};
 
 		overlays.push(line);
-
+		
+		return line;
 	};
 
 	this.drawSubLine = function(idfrom, idto, num) {

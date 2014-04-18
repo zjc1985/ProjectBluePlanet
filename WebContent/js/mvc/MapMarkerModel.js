@@ -78,9 +78,13 @@ function MapMarkerModel(){
 		var self=this;
 		
 		backendManager.fetchRoutineJSONStringById(routineId,function(marksJSONString,title){
+			var maxId=0;
 			if(marksJSONString!=null){
 				var marksJSONArray=JSON.parse(marksJSONString);
 				for(var i in marksJSONArray){
+					if(marksJSONArray[i].id>maxId){
+						maxId=marksJSONArray[i].id;
+					}
 					self.createOneMarker(marksJSONArray[i].id, marksJSONArray[i]);
 				}
 				
@@ -96,7 +100,7 @@ function MapMarkerModel(){
 				}
 			}
 			alert('fetch routine success');
-			successCallback(title);			
+			successCallback({routineName:title,maxId:maxId});			
 		});
 						
 	};
@@ -396,8 +400,14 @@ function MapMarker(id) {
 	this.connectedMainMarker=null;
 	this.connectedMainLine=null;
 	
+	//main path
+	this.mainPaths=new Array();
+	
 	//pre Marker and curveLine
 	this.prevMainMarker=null;
+	
+	
+	
 	//of MapMarker array
 	this.subMarkersArray=new Array();
 	this.parentSubMarker=null;

@@ -178,6 +178,25 @@ function MapMarkerModel(){
 		return heads;
 	};
 	
+	
+	
+	this.belongWhichHeadIds=function(markerId){
+		var modelMarker=this.getMapMarkerById(markerId);
+		
+		if(modelMarker.prevMainMarker==null){
+			var routineIds=[];
+			var headMarker=modelMarker;
+			do{
+				routineIds.push(headMarker.id);
+				headMarker=headMarker.connectedMainMarker;
+			}while(headMarker!=null);
+			console.log("model.belongwhichHeadIds: return "+routineIds);
+			return routineIds;
+		}else{
+			return this.belongWhichHeadIds(modelMarker.prevMainMarker.id);
+		}
+	};
+	
 	this.redrawConnectedLine=function(id){
 		var marker=getOverlayById(id);
 		//redraw curveLine
@@ -447,6 +466,10 @@ function MapMarker(id) {
 			this.content.setImgUrls(args.imgUrls);
 		}
 		
+		if(args.mainPaths!=null){
+			this.mainPaths=args.mainPaths;
+		}
+		
 		$.publish('updateInfoWindow',[this]);
 		
 	};
@@ -531,7 +554,8 @@ function MapMarker(id) {
 				category:this.getContent().getCategory(),
 				imgUrls:this.getContent().getImgUrls(),
 				nextMainMarkerId:this.connectedMainMarker==null?null:this.connectedMainMarker.id,
-				subMarkerIds:subMarkerIdsArray};
+				subMarkerIds:subMarkerIdsArray,
+				mainPaths:this.mainPaths};
 		
 		return object;			
 	};

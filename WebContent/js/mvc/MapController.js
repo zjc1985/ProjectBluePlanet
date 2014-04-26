@@ -41,6 +41,11 @@ function MapController(){
 		var mapMarker=model.getMapMarkerById(id);
 		mapMarker.updateContent(content);
 	};
+	
+	this.showAllRoutineClickHandler=function(){
+		view.showAllMarkers();
+		$.publish('updateUI',[]);
+	};
 		
 	this.showInfoClickHandler=function(viewMarker){
 		var content=model.getMarkerContentById(viewMarker.id);
@@ -73,12 +78,31 @@ function MapController(){
 				subViewMarker.isShow=!subViewMarker.isShow;	
 				changeSubMarkerShowStatusOrShowInfoWindow(modelMarker.subMarkersArray[i].id);
 			}
+			
+
+			
 		}else{
 			return;
-		}
-		
-		
+		}	
 	}
+	
+	this.lineEditEnd=function(pathArray,fromMarkerId){
+		console.log('line editend, line node num: '+ pathArray.length);
+		console.log('from marker id:'+fromMarkerId);
+		var modelMarker=model.getMapMarkerById(fromMarkerId);
+		modelMarker.mainPaths=pathArray;
+	};
+	
+	function changeMainMarkerShowStatus(idsNeed2ShowArray){
+		console.log("controller.changeMainMarkerShowStatus");
+		for(var i=0;i<idsNeed2ShowArray.length;i++){
+			if(idsNeed2ShowArray[i]!=0){
+				view.getViewOverlaysById(idsNeed2ShowArray[i]).isShow=true;
+				view.getViewOverlaysById(idsNeed2ShowArray[i]).show();
+				console.log("controller.changeMainMarkerShowStatus: set"+idsNeed2ShowArray[i]+" show status to true");
+			}
+		}
+	};
 	
 	this.markerClickEventHandler=function(viewMarker){
 		if(view.markerNeedMainLine!==null){
@@ -93,6 +117,32 @@ function MapController(){
 			return;
 		}
 		
+		//center click marker	
+		var modelMarker=model.getMapMarkerById(viewMarker.id);
+		view.centerAndZoom(modelMarker.content.getLat(), modelMarker.content.getLng());
+		if(modelMarker.connectedMainMarker!=null){
+			view.fitTwoPositionBounds({lat:modelMarker.content.getLat(),lng:modelMarker.content.getLng()}, 
+					{lat:modelMarker.connectedMainMarker.content.getLat(),lng:modelMarker.connectedMainMarker.content.getLng()});
+		}
+		view.centerAndZoom(modelMarker.content.getLat(), modelMarker.content.getLng());
+		
+		if(!modelMarker.isSubMarker()){
+		//show current marker, next marker, preMarker and its mainline, others are hide
+			var nextMarkerId=modelMarker.connectedMainMarker==null?0:modelMarker.connectedMainMarker.id;
+			var preMarkerId=modelMarker.prevMainMarker==null?0:modelMarker.prevMainMarker.id;
+			
+			view.showAllMarkers();
+			
+			var belongRoutineMarkerIds=model.belongWhichHeadIds(modelMarker.id);
+			
+			for(var i=0;i<belongRoutineMarkerIds.length;i++){
+				view.getViewOverlaysById(belongRoutineMarkerIds[i]).isShow=false;
+				view.getViewOverlaysById(belongRoutineMarkerIds[i]).hide();
+			}
+			
+			changeMainMarkerShowStatus([viewMarker.id,nextMarkerId,preMarkerId]);
+		}
+		
 		//show or hide subMarkers if has
 		if(model.getMapMarkerById(viewMarker.id).subMarkersArray.length!=0){
 			changeSubMarkerShowStatusOrShowInfoWindow(viewMarker.id);
@@ -100,10 +150,7 @@ function MapController(){
 			this.showInfoClickHandler(viewMarker);
 		}
 		
-		
 		$.publish('updateUI',[]);
-		
-		
 	};
 	
 	this.updateMarkerInfoWindow=function(){
@@ -163,8 +210,9 @@ function MapController(){
 				
 				while(marker.connectedMainMarker!=null){
 					//redraw main line
-					
-					view.drawMainLine(marker.id, marker.connectedMainMarker.id);
+					if(view.getViewOverlaysById(marker.connectedMainMarker.id).isShow==true){
+						view.drawMainLine(marker.id, marker.connectedMainMarker.id,0,marker.mainPaths.length==0?null:marker.mainPaths);
+					}
 					
 					for(var j=0;j<marker.connectedMainMarker.subMarkersArray.length;j++){
 						view.drawSubLine(marker.connectedMainMarker.id,marker.connectedMainMarker.subMarkersArray[j].id);
@@ -250,8 +298,12 @@ function MapController(){
 		model.save2Backend(routineName);
 	};
 	
-	this.testFeature=function(){
-		view.getDistance(model.findHeadMarker()[0].id, model.findHeadMarker()[0].connectedMainMarker.id);
+	this.testFeature=function(viewMarker){
+		var modelMarker1=model.getMapMarkerById(viewMarker.id);
+		var modelMarker2=modelMarker1.connectedMainMarker;
+		
+		console.log('distance: '+view.pixelDistance({lat:modelMarker1.content.getLat(),lng:modelMarker1.content.getLng()}, 
+				{lat:modelMarker2.content.getLat(),lng:modelMarker2.content.getLng()}));
 	};
 	
 	$.subscribe('deleteOneMarker',this.deleteViewMarker());

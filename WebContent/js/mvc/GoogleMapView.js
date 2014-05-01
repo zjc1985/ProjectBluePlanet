@@ -4,6 +4,9 @@ function GoogleMapView(oneController) {
 	this.markerNeedSubLine = null;
 	this.routineName='default routine';
 	
+	this.infocard=null;
+	this.currentMarkerId=-1;
+	
 	var self=this;
 	
 	var directionsDisplay;
@@ -13,6 +16,7 @@ function GoogleMapView(oneController) {
 
 	var overlays = new Array();
 	var searchMarkers=[];
+	
 
 	function getOverlayById(id) {
 		var length = overlays.length;
@@ -382,6 +386,17 @@ function GoogleMapView(oneController) {
 	};
 	
 	this.createView = function() {
+		this.infocard=new infoCard("infoCard");
+		
+		this.infocard.initDefault('80px', '100px', {title:"unknownTitle"}, null);
+		
+		this.infocard.addEditFormOKButtonEvent(function() {
+			var uContent = self.infocard.editFormClickOK();
+			controller.updateMarkerContentById(self.currentMarkerId, uContent);
+		});
+		
+		this.infocard.hide();
+		
 		directionsDisplay = new google.maps.DirectionsRenderer();
 
 		var mapOptions = {
@@ -653,7 +668,7 @@ function GoogleMapView(oneController) {
 	};
 
 	this.addInfoWindow = function(marker, content, num) {
-
+		/*
 		var infocard = new infoCard('card' + num);
 		infocard.initDefault('0px', '0px', content, null);
 
@@ -661,25 +676,32 @@ function GoogleMapView(oneController) {
 			var uContent = infocard.editFormClickOK();
 			controller.updateMarkerContentById(marker.id, uContent);
 		});
-
+		*/
 		var infowindow = new google.maps.InfoWindow({
-			content : infocard.toJSObject()
+			content : content.title
 		});
-
+		
+		infowindow.show = function() {
+			console.log('infowwindow show');
+			infowindow.open(map, marker);
+		};
+		
+		infowindow.hide=function(){
+			infowindow.close();
+		};
+		
+		/*
 		infowindow.setDefaultImgs = function(imgArray) {
 			console.log('setdefaultImgs');
 			infocard.setDefaultImgs(imgArray);
 		};
 
-		infowindow.show = function() {
-			console.log('infowwindow show');
-			infowindow.open(map, marker);
-		};
+		
 
 		infowindow.setContent = function(changeContent) {
 			infocard.setDefaultContent(changeContent);
 		};
-
+		*/
 		infowindow.show();
 		return infowindow;
 	};

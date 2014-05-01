@@ -464,6 +464,8 @@ function MapMarker(id) {
 		
 		if(args.imgUrls!=null && args.imgUrls.length!=0){
 			this.content.setImgUrls(args.imgUrls);
+		}else{
+			this.content.setImgUrls([]);
 		}
 		
 		if(args.mainPaths!=null){

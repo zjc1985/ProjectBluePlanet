@@ -49,38 +49,49 @@ function MapController(){
 		
 	this.showInfoClickHandler=function(viewMarker){
 		var content=model.getMarkerContentById(viewMarker.id);
-		console.log(content.getTitle());
+		console.log("controller.showInfoClickHandler: "+content.getTitle()+
+				content.getAddress()+
+				content.getCategory()+
+				content.getMycomment(false));
 		
-		if(viewMarker.infoWindow==null){			
-			viewMarker.infoWindow=view.addInfoWindow(viewMarker, {title:content.getTitle(),
+		view.infocard.setDefaultContent({title:content.getTitle(),
 														address:content.getAddress(),
 														category:content.getCategory(),
-														comment:content.getMycomment(false)}
-												,num++);
+														mycomment:content.getMycomment(true),
+														fullcomment:content.getMycomment(false)});
+		if(content.getImgUrls().length!=0){
+			view.infocard.setDefaultImgs(content.getImgUrls());
+			view.infocard.showContentB();
+		}else{
+			view.infocard.showContentA();
+		}
+		
+		
+		
+		if(viewMarker.infoWindow==null){			
+			viewMarker.infoWindow=view.addInfoWindow(viewMarker, {title:content.getTitle(),},num++);
 			
-			viewMarker.infoWindow.setDefaultImgs(content.getImgUrls());
 		}else{
 			viewMarker.infoWindow.show();
 		};
+		
 	};
 	
-	function changeSubMarkerShowStatusOrShowInfoWindow(parentMarkerId){
+	function changeSubMarkerShowStatus(parentMarkerId,needShow){
 		var modelMarker=model.getMapMarkerById(parentMarkerId);
 		
 		if(modelMarker.subMarkersArray.length!=0){
 			for(var i in modelMarker.subMarkersArray){
 				var subViewMarker=view.getViewOverlaysById(modelMarker.subMarkersArray[i].id);
-				if(subViewMarker.isShow==false){
+				if(needShow){
+					subViewMarker.isShow=true;
 					subViewMarker.show();
 				}else{
+					subViewMarker.isShow=false;
 					subViewMarker.hide();
-				}
-				subViewMarker.isShow=!subViewMarker.isShow;	
-				changeSubMarkerShowStatusOrShowInfoWindow(modelMarker.subMarkersArray[i].id);
-			}
-			
-
-			
+				}	
+				changeSubMarkerShowStatus(modelMarker.subMarkersArray[i].id,needShow);
+			}	
 		}else{
 			return;
 		}	
@@ -99,12 +110,20 @@ function MapController(){
 			if(idsNeed2ShowArray[i]!=0){
 				view.getViewOverlaysById(idsNeed2ShowArray[i]).isShow=true;
 				view.getViewOverlaysById(idsNeed2ShowArray[i]).show();
+				if(view.getViewOverlaysById(idsNeed2ShowArray[i]).infoWindow!=null){
+					view.getViewOverlaysById(idsNeed2ShowArray[i]).infoWindow.show();
+				}
+				
 				console.log("controller.changeMainMarkerShowStatus: set"+idsNeed2ShowArray[i]+" show status to true");
 			}
 		}
 	};
 	
 	this.markerClickEventHandler=function(viewMarker){
+		view.infocard.show();
+		
+		view.currentMarkerId=viewMarker.id;
+		
 		if(view.markerNeedMainLine!==null){
 			model.addMainLine(view.markerNeedMainLine.id, viewMarker.id);
 			view.markerNeedMainLine=null;
@@ -119,12 +138,13 @@ function MapController(){
 		
 		//center click marker	
 		var modelMarker=model.getMapMarkerById(viewMarker.id);
-		view.centerAndZoom(modelMarker.content.getLat(), modelMarker.content.getLng());
+		/*
 		if(modelMarker.connectedMainMarker!=null){
 			view.fitTwoPositionBounds({lat:modelMarker.content.getLat(),lng:modelMarker.content.getLng()}, 
 					{lat:modelMarker.connectedMainMarker.content.getLat(),lng:modelMarker.connectedMainMarker.content.getLng()});
 		}
-		view.centerAndZoom(modelMarker.content.getLat(), modelMarker.content.getLng());
+		*/
+		
 		
 		if(!modelMarker.isSubMarker()){
 		//show current marker, next marker, preMarker and its mainline, others are hide
@@ -136,8 +156,12 @@ function MapController(){
 			var belongRoutineMarkerIds=model.belongWhichHeadIds(modelMarker.id);
 			
 			for(var i=0;i<belongRoutineMarkerIds.length;i++){
+				changeSubMarkerShowStatus(belongRoutineMarkerIds[i],false);
 				view.getViewOverlaysById(belongRoutineMarkerIds[i]).isShow=false;
 				view.getViewOverlaysById(belongRoutineMarkerIds[i]).hide();
+				if(view.getViewOverlaysById(belongRoutineMarkerIds[i]).infoWindow!=null){
+					view.getViewOverlaysById(belongRoutineMarkerIds[i]).infoWindow.hide();
+				}
 			}
 			
 			changeMainMarkerShowStatus([viewMarker.id,nextMarkerId,preMarkerId]);
@@ -145,10 +169,12 @@ function MapController(){
 		
 		//show or hide subMarkers if has
 		if(model.getMapMarkerById(viewMarker.id).subMarkersArray.length!=0){
-			changeSubMarkerShowStatusOrShowInfoWindow(viewMarker.id);
+			changeSubMarkerShowStatus(viewMarker.id,true);
 		}else{
 			this.showInfoClickHandler(viewMarker);
 		}
+		
+		view.centerAndZoom(modelMarker.content.getLat(), modelMarker.content.getLng());
 		
 		$.publish('updateUI',[]);
 	};
@@ -162,19 +188,22 @@ function MapController(){
 			console.log('update marker info window. markerId: '+senderMarker.id);
 			console.log('title: '+contentModel.getTitle());
 			
-			if(viewMarker!=null){				
-				if(viewMarker.infoWindow!=null){					
-					viewMarker.infoWindow.setContent({title:contentModel.getTitle(),
+			if(viewMarker!=null){								
+				view.infocard.setDefaultContent({title:contentModel.getTitle(),
 													address:contentModel.getAddress(),
 												  mycomment:contentModel.getMycomment(true),
 												  category:contentModel.getCategory(),
 												fullcomment:contentModel.getMycomment(false)});
 					
-					viewMarker.infoWindow.setDefaultImgs(contentModel.getImgUrls());
-				}
+				view.infocard.setDefaultImgs(contentModel.getImgUrls());
 				
-				view.changeMarkerIcon(senderMarker.id, contentModel.getCategory());
+				if(viewMarker.infoWindow!=null){
+					viewMarker.infoWindow.setContent(contentModel.getTitle());
+				}
 			}
+			
+			view.changeMarkerIcon(senderMarker.id, contentModel.getCategory());
+			
 		};
 	};
 	

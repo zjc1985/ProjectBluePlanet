@@ -192,7 +192,13 @@ function infoCard(id){
 		c.address=$('#'+editFormAddresIdName).val();
 		c.mycomment=$('#'+editFormMycommentIdName).val();
 		c.imgUrls=$('#'+editFormImageUrlIdName).val().split(";");
-		//this.setDefaultContent(c);
+		
+		for (var i = 0; i < c.imgUrls.length; i++) {
+			if ($.trim(c.imgUrls[i])=="") {
+				c.imgUrls.splice(i, 1);
+				i--;
+			}
+		}
 		
 		$.magnificPopup.instance.close();
 		

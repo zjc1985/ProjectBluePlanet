@@ -39,6 +39,7 @@ function MapController(){
 	
 	this.updateMarkerContentById=function(id,content){
 		var mapMarker=model.getMapMarkerById(id);
+		view.changeMarkerIcon(id, content.iconUrl);
 		mapMarker.updateContent(content);
 	};
 	
@@ -138,12 +139,12 @@ function MapController(){
 		
 		//center click marker	
 		var modelMarker=model.getMapMarkerById(viewMarker.id);
-		/*
+		
 		if(modelMarker.connectedMainMarker!=null){
 			view.fitTwoPositionBounds({lat:modelMarker.content.getLat(),lng:modelMarker.content.getLng()}, 
 					{lat:modelMarker.connectedMainMarker.content.getLat(),lng:modelMarker.connectedMainMarker.content.getLng()});
 		}
-		*/
+		
 		
 		
 		if(!modelMarker.isSubMarker()){
@@ -174,7 +175,7 @@ function MapController(){
 			this.showInfoClickHandler(viewMarker);
 		}
 		
-		view.centerAndZoom(modelMarker.content.getLat(), modelMarker.content.getLng());
+		//view.centerAndZoom(modelMarker.content.getLat(), modelMarker.content.getLng());
 		
 		$.publish('updateUI',[]);
 	};
@@ -201,9 +202,6 @@ function MapController(){
 					viewMarker.infoWindow.setContent(contentModel.getTitle());
 				}
 			}
-			
-			view.changeMarkerIcon(senderMarker.id, contentModel.getCategory());
-			
 		};
 	};
 	
@@ -274,7 +272,7 @@ function MapController(){
 		return function(_,modelMarker){
 			view.addOneMark(modelMarker.content.getLat(),
 							modelMarker.content.getLng(), modelMarker.id);
-			view.changeMarkerIcon(modelMarker.id, modelMarker.content.getCategory());
+			view.changeMarkerIcon(modelMarker.id, modelMarker.content.getIconUrl());
 			num++;
 		};
 	};

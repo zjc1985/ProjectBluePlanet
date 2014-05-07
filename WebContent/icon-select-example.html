@@ -1,0 +1,59 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Icon/Image Select: Basic Example (Javascript)</title>
+
+        <link rel="stylesheet" type="text/css" href="js/lib/iconselect.css" >
+        <script type="text/javascript" src="js/lib/iconselect.js"></script>  
+        <script type="text/javascript" src="js/lib/iscroll.js"></script>
+        
+        <script>
+            
+        var iconSelect;
+        var selectedText;
+
+        window.onload = function(){
+            
+            selectedText = document.getElementById('selected-text');
+            
+            document.getElementById('my-icon-select').addEventListener('changed', function(e){
+               selectedText.value = iconSelect.getSelectedValue();
+            });
+            
+            iconSelect = new IconSelect("my-icon-select",{
+                'vectoralIconNumber':4,
+                'horizontalIconNumber':4});
+
+            var icons = [];
+            icons.push({'iconFilePath':'resource/icons/default/default_default.png', 'iconValue':'default_default'});
+    		icons.push({'iconFilePath':'resource/icons/food/food_default.png', 'iconValue':'food_default'});	        
+    		icons.push({'iconFilePath':'resource/icons/pic/pic_default.png', 'iconValue':'pic_default'});		
+    		icons.push({'iconFilePath':'resource/icons/event/event_default.png', 'iconValue':'event_default'});
+            icons.push({'iconFilePath':'resource/icons/sight/sight_default.png', 'iconValue':'sight_default'});
+            icons.push({'iconFilePath':'resource/icons/hotel/hotel_default.png', 'iconValue':'hotel_default'});
+            icons.push({'iconFilePath':'resource/icons/bike/bike_default.png', 'iconValue':'bike_default'});
+            icons.push({'iconFilePath':'resource/icons/bus/bus_default.png', 'iconValue':'bus_default'});
+            icons.push({'iconFilePath':'resource/icons/car/car_default.png', 'iconValue':'car_default'});
+            icons.push({'iconFilePath':'resource/icons/plane/plane_default.png', 'iconValue':'plane_default'});
+            icons.push({'iconFilePath':'resource/icons/ship/ship_default.png', 'iconValue':'ship_default'});
+            icons.push({'iconFilePath':'resource/icons/train/train_default.png', 'iconValue':'train_default'});
+            
+            iconSelect.refresh(icons);
+            
+
+
+        };
+            
+        </script>
+        
+    </head>
+    <body>
+        
+        <h2>Icon/Image Select: Basic Example (Javascript)</h2>
+        
+        <div id="my-icon-select"></div>
+        
+        <input type="text" id="selected-text" name="selected-text" style="width:65px;">
+        
+    </body>
+</html>

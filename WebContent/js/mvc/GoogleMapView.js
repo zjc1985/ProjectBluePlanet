@@ -392,6 +392,7 @@ function GoogleMapView(oneController) {
 		
 		this.infocard.addEditFormOKButtonEvent(function() {
 			var uContent = self.infocard.editFormClickOK();
+			console.log('infocard edit form ok, content:'+ uContent.iconUrl);
 			controller.updateMarkerContentById(self.currentMarkerId, uContent);
 		});
 		
@@ -577,8 +578,7 @@ function GoogleMapView(oneController) {
 			
 			self.fitTwoPositionBounds(p1, p2);
 			
-			line.setEditable(false);
-			
+		
 			if(line.getEditable()==true){
 				line.setEditable(false);
 				controller.lineEditEnd(line.getMainLinePath(),idfrom);
@@ -663,8 +663,9 @@ function GoogleMapView(oneController) {
 		}
 	};
 
-	this.changeMarkerIcon = function() {
-
+	this.changeMarkerIcon = function(markerId,iconUrl) {
+		var viewMarker=this.getViewOverlaysById(markerId);
+		viewMarker.setIcon(iconUrl);
 	};
 
 	this.addInfoWindow = function(marker, content, num) {

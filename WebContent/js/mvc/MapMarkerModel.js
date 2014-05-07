@@ -346,6 +346,15 @@ function MarkerContent(){
 	var mycomment="...";
 	var category="marker";
 	var imgUrls=new Array();
+	var iconUrl="resource/icons/default/default_default.png";
+	
+	this.getIconUrl=function(){
+		return iconUrl;
+	};
+	
+	this.setIconUrl=function(arg){
+		iconUrl=arg;
+	};
 	
 	this.getImgUrls=function(){
 		return imgUrls;
@@ -468,9 +477,16 @@ function MapMarker(id) {
 			this.content.setImgUrls([]);
 		}
 		
+		if(args.iconUrl!=null){
+			this.content.setIconUrl(args.iconUrl);
+		}
+		
+		
 		if(args.mainPaths!=null){
 			this.mainPaths=args.mainPaths;
 		}
+		
+		
 		
 		$.publish('updateInfoWindow',[this]);
 		
@@ -555,6 +571,7 @@ function MapMarker(id) {
 				mycomment:this.getContent().getMycomment(false),
 				category:this.getContent().getCategory(),
 				imgUrls:this.getContent().getImgUrls(),
+				iconUrl:this.getContent().getIconUrl(),
 				nextMainMarkerId:this.connectedMainMarker==null?null:this.connectedMainMarker.id,
 				subMarkerIds:subMarkerIdsArray,
 				mainPaths:this.mainPaths};

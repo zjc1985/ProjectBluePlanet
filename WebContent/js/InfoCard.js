@@ -21,11 +21,12 @@ function infoCard(id){
 	var editFormCategoryIdName=editFormIdName+'Category';
 	var editFormAddresIdName=editFormIdName+'Address';
 	var editFormMycommentIdName=editFormIdName+'Mycomment';
+	var editFormImageUrlIdName=editFormIdName+'ImageUrl';
 	var editFormIconUrlIdName=editFormIdName+'IconUrl';
+	var editFormCombobox;
 	
 	var isASideShow=true;
 	
-
 	
 	
 	
@@ -64,15 +65,17 @@ function infoCard(id){
 			$('#'+editFormMycommentIdName).val(content.fullcomment);
 		}
 		
-		/*
-		if(content.getIconPath()!=''&& content.getIconPath()!=null){
-			$(iconUrlId).empty();
-			$(iconUrlId).attr("src",content.getIconPath());
-		}
-		*/
 	};
 	
 	this.setDefaultImgs=function(imgArray){
+		var imgString="";
+		
+		for(var i in imgArray){
+			imgString=imgString+imgArray[i]+";";
+		}
+		
+		$('#'+editFormImageUrlIdName).val(imgString);
+		
 		this.setContentB(createDefaultGallery(imgArray), true);
 	};
 	
@@ -188,8 +191,14 @@ function infoCard(id){
 		c.category=$('#'+editFormCategoryIdName).val();
 		c.address=$('#'+editFormAddresIdName).val();
 		c.mycomment=$('#'+editFormMycommentIdName).val();
-		
-		//this.setDefaultContent(c);
+		c.imgUrls=$('#'+editFormImageUrlIdName).val().split(";");
+		c.iconUrl=editFormCombobox.value;
+		for (var i = 0; i < c.imgUrls.length; i++) {
+			if ($.trim(c.imgUrls[i])=="") {
+				c.imgUrls.splice(i, 1);
+				i--;
+			}
+		}
 		
 		$.magnificPopup.instance.close();
 		
@@ -289,23 +298,55 @@ function infoCard(id){
 	}
 	
 	function initPopupEditForm(){
-		var iconSelect= new IconSelect(editFormIconUrlIdName);
+		var jsonData = [                                  
+		                {image:'resource/icons/default/default_default.png', description:'', value:'resource/icons/default/default_default.png', text:'default'},
+		                {image:'resource/icons/food/food_default.png', description:'', value:'resource/icons/food/food_default.png', text:'food'},
+		                {image:'resource/icons/pic/pic_default.png', description:'', value:'resource/icons/pic/pic_default.png', text:'pic'},
+		                {image:'resource/icons/event/event_default.png', description:'', value:'resource/icons/event/event_default.png', text:'event'},
+		                {image:'resource/icons/sight/sight_default.png', description:'', value:'resource/icons/sight/sight_default.png', text:'sight'},
+		                {image:'resource/icons/hotel/hotel_default.png', description:'', value:'resource/icons/hotel/hotel_default.png', text:'hotel'},
+		                {image:'resource/icons/bike/bike_default.png', description:'', value:'resource/icons/bike/bike_default.png', text:'bike'},
+		                {image:'resource/icons/bus/bus_default.png', description:'', value:'resource/icons/bus/bus_default.png', text:'bus'},
+		                {image:'resource/icons/car/car_default.png', description:'', value:'resource/icons/car/car_default.png', text:'car'},
+		                {image:'resource/icons/plane/plane_default.png', description:'', value:'resource/icons/plane/plane_default.png', text:'plane'},
+		                {image:'resource/icons/ship/ship_default.png', description:'', value:'resource/icons/ship/ship_default.png', text:'ship'},
+		                {image:'resource/icons/train/train_default.png', description:'', value:'resource/icons/train/train_default.png', text:'train'},
+		                {image:'resource/icons/parking/parking_default.png', description:'', value:'resource/icons/parking/parking_default.png', text:'parking'}];
+		             
+		editFormCombobox = $("#"+editFormIconUrlIdName).msDropdown({byJson:{data:jsonData, name:'icon'}}).data("dd");
+		
+		editFormCombobox.on("change", function(res) {
+			//console.log( oDropdown.value);
+			//console.log(oDropdown.selectedText);
+			$('#'+editFormCategoryIdName).val(editFormCombobox.selectedText);
+		});
+		
+		/*
+		var iconSelect= new IconSelect(editFormIconUrlIdName,{
+            'vectoralIconNumber':10,
+            'horizontalIconNumber':10});
 		var icons = [];
-		icons.push({'iconFilePath':'resource/icons/guide.png', 'iconValue':'marker'});
-        icons.push({'iconFilePath':'resource/icons/pic.png', 'iconValue':'pic'});
-        icons.push({'iconFilePath':'resource/icons/event.png', 'iconValue':'event'});
-        
-                
-        
-        
-        
+		  
+		icons.push({'iconFilePath':'resource/icons/default/default_default.png', 'iconValue':'default_default'});
+		icons.push({'iconFilePath':'resource/icons/food/food_default.png', 'iconValue':'food_default'});	        
+		icons.push({'iconFilePath':'resource/icons/pic/pic_default.png', 'iconValue':'pic_default'});		
+		icons.push({'iconFilePath':'resource/icons/event/event_default.png', 'iconValue':'event_default'});
+        icons.push({'iconFilePath':'resource/icons/sight/sight_default.png', 'iconValue':'sight_default'});
+        icons.push({'iconFilePath':'resource/icons/hotel/hotel_default.png', 'iconValue':'hotel_default'});
+        icons.push({'iconFilePath':'resource/icons/bike/bike_default.png', 'iconValue':'bike_default'});
+        icons.push({'iconFilePath':'resource/icons/bus/bus_default.png', 'iconValue':'bus_default'});
+        icons.push({'iconFilePath':'resource/icons/car/car_default.png', 'iconValue':'car_default'});
+        icons.push({'iconFilePath':'resource/icons/plane/plane_default.png', 'iconValue':'plane_default'});
+        icons.push({'iconFilePath':'resource/icons/ship/ship_default.png', 'iconValue':'ship_default'});
+        icons.push({'iconFilePath':'resource/icons/train/train_default.png', 'iconValue':'train_default'});
+       
         
         iconSelect.refresh(icons);
         
         $('#'+editFormIconUrlIdName).on('changed',function(){
         	$('#'+editFormCategoryIdName).val(iconSelect.getSelectedValue());
         });
-        
+        */
 		$('.popup-with-form').magnificPopup({
 			type: 'inline',
 			preloader: false,
@@ -323,17 +364,6 @@ function infoCard(id){
 				}
 			}
 		});
-		
-		/*
-		 * .white-popup {
-  position: relative;
-  background: #FFF;
-  padding: 20px;
-  width: auto;
-  max-width: 600px;
-  margin: 20px auto;
-}
-		 **/
 		
 		$('.white-popup').css({
 			'position': 'relative',
@@ -366,10 +396,13 @@ function infoCard(id){
 		});
 	}
 	
-	//args:
-	//imgArray[0].url
-	//imgArray[0].title
-	function createDefaultGallery(imgArray){
+	function createDefaultGallery(urlArray){
+		var imgArray=new Array();
+		for(var i in urlArray){
+			imgArray.push({url:urlArray[i],
+					   title:""});
+		}
+			
 		var ahrefs="";
 		
 		for(var index in imgArray){
@@ -448,6 +481,11 @@ function infoCard(id){
 			"<li>"+
 				"<label for='mycomment'>My Comment:</label><br>"+
 				"<textarea id='"+editFormMycommentIdName+"' style='margin: 2px; width: 509px; height: 183px;'></textarea>"+
+			"</li>"+
+			
+			"<li>"+
+			"<label for='imageUrls'>Urls:(use ; to separate):</label><br>"+
+			"<textarea id='"+editFormImageUrlIdName+"' style='margin: 2px; width: 509px; height: 183px;'></textarea>"+
 			"</li>"+
 		"</ol>"+
 		"<button id='"+idName+"EditOK"+"'>OK</button>"+

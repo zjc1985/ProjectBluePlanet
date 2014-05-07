@@ -11,12 +11,13 @@
   <script src="js/lib/jquery.magnific-popup.js"></script>
   <script src="js/InfoCard.js"></script>
   <script type="text/javascript" src="js/lib/ba-tiny-pubsub.min.js"></script>
+  <script src="https://cn.avoscloud.com/scripts/lib/av-0.3.1.min.js"></script>
   <link type="text/css" rel="Stylesheet" href="js/lib/bjqs.css" />
 </head>
 <body>
 
-
-
+<input type="file" id="profilePhotoFileUpload">
+<button id='upload'>ok</button>
 
 
 </body>
@@ -24,30 +25,53 @@
 
 <script type="text/javascript">
 
+AV.initialize("6pzfpf5wkg4m52owuwixt5vggrpjincr8xon3pd966fhgj3c", "4wrzupru1m4m7gpafo4llinv7iepyapnycvxygup7uiui77x");
 
-function Person(name){
-	this.name=name;
+var TestObject = AV.Object.extend("TestObject");
+
+var testObject;
+
+var query=new AV.Query(TestObject);
+query.get("532a866ee4b0f0c857fe8910", {
+	  success: function(result) {
+		  alert('fetch success:'+result.get('foo'));
+	    testObject=result;
+	  },
+	  error: function(object, error) {
+	    // The object was not retrieved successfully.
+	    // error is a AV.Error with an error code and description.
+	  }
+});
+
+$("#upload").click(function(){
 	
-	this.setName=function(nameFoo){
-		this.name=nameFoo;
-		$.publish('updateName',[this]);
-	}
-	this.getName=function(){
-		return this.name;
-	}
-}
+	
+	
+	var fileUploadControl = $("#profilePhotoFileUpload")[0];
+	if (fileUploadControl.files.length > 0) {
+	  var file = fileUploadControl.files[0];
+	 
+	  
+	  var name = "photo.jpg";
 
-function control(){	
-	this.someOneChangeName=function(){
-		return function(_,sender){
-			console.log('some one change his name to: '+sender.getName());	
-		}
-	};
-	$.subscribe('updateName', this.someOneChangeName());
-}
+	  var avFile = new AV.File(name, file);
+	  avFile.metaData('customValue','customValue');
+	  console.log("file size:" +avFile.size());
+	  console.log('file owner id'+avFile.ownerId());
+	  
+	  avFile.save().then(function() {
+		  // The file has been saved to AV.
+		  alert('The file has been saved to AV.');
+		  testObject.set('img',avFile);
+		  testObject.save();
+		  
+		}, function(error) {
+		  // The file either could not be read, or could not be saved to AV.
+		  alert('The file either could not be read, or could not be saved to AV.');
+		});
+	}
+});
 
-var mike=new Person('mike');
-var controllor=new control();
-mike.setName('mike updated');
-mike.setName('mike updated2');
+
+
 </script>

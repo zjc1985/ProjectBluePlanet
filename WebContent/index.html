@@ -3,10 +3,37 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script type="text/javascript" src="js/mvc/MapMarkerModel.js"></script>
+<script src="https://cn.avoscloud.com/scripts/lib/av-0.3.1.min.js"></script>
+
 </head>
 <body>
 
-<a href="MapMarkerMVC.html?routineId=532ed04de4b0729e44c4842d">MapMarker</a>
+<a href="MapMarkerMVC.html?routineId=532ed04de4b0729e44c4842d">MapMarker</a></br></br>
 
 </body>
 </html>
+
+<script type="text/javascript">
+var backendManager=new BackendManager();
+
+var currentUser=backendManager.getCurrentUser();
+
+
+var routines=backendManager.fetchRoutinesByUser(currentUser,function(results){
+	for(var i in results){
+		
+		console.log(results[i].get('title'));
+		console.log(results[i].id);
+		
+		var html="<a href='MapMarkerMVC.html?routineId="+results[i].id+"'>"+results[i].get('title')+"</a>"+"</br>"
+		$("body").append(html);
+	}
+});
+
+
+
+</script>
+

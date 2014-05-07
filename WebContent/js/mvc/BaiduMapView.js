@@ -27,6 +27,7 @@ function BaiduMapView(oneController) {
 		icon.setImageSize(new BMap.Size(49,42));
 		icon.setAnchor(new BMap.Size(24,42));
 		return icon;
+		
 	}
 	
 	function createOneSearchMarker(p,index){
@@ -107,6 +108,39 @@ function BaiduMapView(oneController) {
 	    return openInfoWinFun;
 	}
 	
+	this.resetView=function(){
+		for(var i=0;i<overlays.length;i++){
+			if(overlays[i] instanceof ArrowLine){
+				overlays[i].remove(map);
+			}else if(overlays[i] instanceof BMap.Polyline){
+				map.removeOverlay(overlays[i]);
+			}else{
+				map.removeOverlay(overlays[i]);
+			}
+		}
+		overlays=new Array();
+	};
+	
+	function getPixelDistence(x1,y1,x2,y2){
+		return Math.sqrt(Math.pow(x1-x2,2)+Math.pow(y1-y2,2));
+	}
+	
+	this.getDistance=function(id1,id2){
+		var m1=this.getViewOverlaysById(id1);
+		var m2=this.getViewOverlaysById(id2);
+		
+		
+		
+		alert("距离："+map.getDistance(m1.getPosition(),m2.getPosition())+"米");
+		console.log("zoom level:"+map.getZoom());
+		console.log("距离："+map.getDistance(m1.getPosition(),m2.getPosition())+"米");
+		
+		var p1=map.pointToPixel(m1.getPosition());
+		var p2=map.pointToPixel(m2.getPosition());
+		
+		console.log("屏幕距离： "+getPixelDistence(p1.x,p1.y,p2.x,p2.y));
+	};
+	
 	this.searchLocation=function(key){
 		removeAllSearchResults(map);
 		
@@ -147,25 +181,31 @@ function BaiduMapView(oneController) {
 		}));
 
 		addContextMenu();
-
+		map.disable3DBuilding();
 		map.addEventListener("zoomend", function() {
 			controller.zoomEventHandler();
 		});
 	};
+	
+	this.centerAndZoom=function(lat,lng){
+		map.centerAndZoom(new BMap.Point(lng,lat),15);
+	};
 
 	this.drawSubLine = function(idFrom, idTo,num) {
-		var points = [ getOverlayById(idFrom).getPosition(),
-				getOverlayById(idTo).getPosition() ];
-		var polyline = new BMap.Polyline(points, {
-			strokeColor : "green",
-			strokeStyle : "dashed",
-			strokeWeight : 3,
-			strokeOpacity : 0.5
-		});
-		polyline.id = num;
-		map.addOverlay(polyline);
-		overlays.push(polyline);
-		return polyline.id;
+		if(this.getViewOverlaysById(idTo).isShow==true){
+			var points = [ getOverlayById(idFrom).getPosition(),
+			               getOverlayById(idTo).getPosition() ];
+			var polyline = new BMap.Polyline(points, {
+				strokeColor : "green",
+				strokeStyle : "dashed",
+				strokeWeight : 3,
+				strokeOpacity : 0.5
+			});
+			polyline.id = num;
+			map.addOverlay(polyline);
+			overlays.push(polyline);
+			return polyline.id;
+		}
 	};
 
 	this.drawMainLine = function(idFrom, idTo,num) {
@@ -199,10 +239,17 @@ function BaiduMapView(oneController) {
 
 	this.removeById = function(id) {
 		var overlay = getOverlayById(id);
+		
 		if (overlay instanceof ArrowLine) {
 			overlay.remove(map);
 		} else {
 			map.removeOverlay(overlay);
+		}
+		
+		for(var i in overlays){
+			if(overlays[i].id==id){
+				overlays.splice(i, 1);
+			}
 		}
 	};
 	
@@ -292,9 +339,9 @@ function BaiduMapView(oneController) {
 				// marker.collapseSubMarkers();
 			}
 		}, {
-			text : "testing Feature",
-			callback : function() {
-				controller.testingFeature();
+			text : "delete self",
+			callback : function() {				
+				controller.markerDeleteClickHandler(marker);
 			}
 		} ];
 		for ( var i = 0; i < txtMenuItem.length; i++) {
@@ -328,7 +375,12 @@ function BaiduMapView(oneController) {
 		},{
 			text : 'load routine',
 			callback : function(position) {
-				controller.testingFeature();
+				controller.loadRoutines();
+			}
+		},{
+			text : 'test feature',
+			callback : function(position) {
+				controller.testFeature();
 			}
 		}
 
@@ -348,6 +400,7 @@ function BaiduMapView(oneController) {
 function BaiduMarker(point, id) {
 	BMap.Marker.call(this, point);
 	this.id = id;
+	this.isShow=true;
 }
 
 BaiduMarker.prototype = new BMap.Marker();
@@ -358,7 +411,7 @@ function SquareOverlay(center, content, id) {
 	BMap.Marker.call(this, center);
 	this._center = center;
 	this._infoCard = new infoCard('card' + id);
-	this._infoCard.initDefault('0px', '0px', content, null);
+	this._infoCard.initDefault('0px', '0px', content,null );
 	this.id = id;
 }
 
@@ -416,6 +469,11 @@ SquareOverlay.prototype.initialize = function(mp) {
 
 SquareOverlay.prototype.setContent=function(content){
 	this._infoCard.setDefaultContent(content);
+};
+
+SquareOverlay.prototype.setDefaultImgs=function(urlArray){
+	
+	this._infoCard.setDefaultImgs(urlArray);
 };
 
 SquareOverlay.prototype.show=function(){

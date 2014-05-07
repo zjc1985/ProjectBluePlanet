@@ -4,6 +4,10 @@ function MapMarkerModel(){
 	
 	var backendManager=new BackendManager();
 	
+	this.resetModels=function(){
+		marks=new Array();
+	};
+	
 	this.getModelMarkers=function(){
 		return marks;
 	};
@@ -24,23 +28,63 @@ function MapMarkerModel(){
 	
 	this.createOneMarker=function(id,content){
 		var marker=new MapMarker(id);
+		
 		if(content!=null){
 			marker.updateContent(content);
 		}
+		
 		marks.push(marker);
+		
 		$.publish('createOneMarker',[marker]);
+		
 		return marker;
 	};
 	
-	this.loadRoutine=function(routineId){
+	this.deleteOneMarker=function(id){
+		var modelMarker=this.getMapMarkerById(id);
+		if(modelMarker!=null){
+			
+			//unconnect pre main model marker
+			if(modelMarker.prevMainMarker!=null){
+				modelMarker.prevMainMarker.disconnectNextMarker();
+			}
+			
+			//unconnect next main model marker
+			if(modelMarker.connectedMainMarker!=null){
+				modelMarker.disconnectNextMarker();
+			}
+			
+			//unconnect parentSubMarker
+			if(modelMarker.parentSubMarker!=null){
+				modelMarker.parentSubMarker.disconnectTreeChildMarker(modelMarker);
+			}
+			
+			//unconnect all sub marker
+			modelMarker.disconnectAllTreeChildMarker();
+			
+			for(var i in marks){
+				if(marks[i].id==id){
+					marks.splice(i, 1);
+				}
+			}		
+			
+			$.publish('deleteOneMarker',[modelMarker]);
+		}
+	};
+	
+	this.loadRoutine=function(routineId,successCallback){
 		marks=new Array();
 		
 		var self=this;
 		
-		backendManager.fetchRoutineJSONStringById(routineId,function(marksJSONString){
+		backendManager.fetchRoutineJSONStringById(routineId,function(marksJSONString,title){
+			var maxId=0;
 			if(marksJSONString!=null){
 				var marksJSONArray=JSON.parse(marksJSONString);
 				for(var i in marksJSONArray){
+					if(marksJSONArray[i].id>maxId){
+						maxId=marksJSONArray[i].id;
+					}
 					self.createOneMarker(marksJSONArray[i].id, marksJSONArray[i]);
 				}
 				
@@ -56,9 +100,7 @@ function MapMarkerModel(){
 				}
 			}
 			alert('fetch routine success');
-			console.log(marksJSONString);
-			
-			
+			successCallback({routineName:title,maxId:maxId});			
 		});
 						
 	};
@@ -93,6 +135,7 @@ function MapMarkerModel(){
 				return marks[i];
 			}
 		}
+		alert('can not find model marker :'+id);
 		return null;
 	}
 	
@@ -133,6 +176,25 @@ function MapMarkerModel(){
 			}
 		}
 		return heads;
+	};
+	
+	
+	
+	this.belongWhichHeadIds=function(markerId){
+		var modelMarker=this.getMapMarkerById(markerId);
+		
+		if(modelMarker.prevMainMarker==null){
+			var routineIds=[];
+			var headMarker=modelMarker;
+			do{
+				routineIds.push(headMarker.id);
+				headMarker=headMarker.connectedMainMarker;
+			}while(headMarker!=null);
+			console.log("model.belongwhichHeadIds: return "+routineIds);
+			return routineIds;
+		}else{
+			return this.belongWhichHeadIds(modelMarker.prevMainMarker.id);
+		}
 	};
 	
 	this.redrawConnectedLine=function(id){
@@ -187,9 +249,18 @@ function BackendManager(){
 	var routine = null;
 	var currentUser=null;
 	
-	
-	
 	AV.initialize("6pzfpf5wkg4m52owuwixt5vggrpjincr8xon3pd966fhgj3c", "4wrzupru1m4m7gpafo4llinv7iepyapnycvxygup7uiui77x");
+	
+	this.login=function(userName,pwd,successCallback){
+		AV.User.logIn(userName, pwd, {
+			  success: function(user) {
+				  successCallback(user);
+			  },
+			  error: function(user, error) {
+				  alert('login failed');
+			  }
+		});
+	};
 	
 	this.getCurrentUser=function(){
 		currentUser = AV.User.current();
@@ -214,6 +285,17 @@ function BackendManager(){
 		}
 	};
 	
+	this.fetchRoutinesByUser=function(user,successCallback){
+		var query=new AV.Query(Routine);
+		query.equalTo("user",user);
+		query.find({
+		      success: function(routines) {
+		    	alert("fetch routine success");
+		    	successCallback(routines);
+		      }
+		});
+	};
+	
 	this.fetchRoutineJSONStringById=function(objectId,successCallback){
 		console.log('fetch routine id=:'+objectId);
 
@@ -221,7 +303,7 @@ function BackendManager(){
 		query.get(objectId, {
 		  success: function(fetchedRoutine) {
 			  routine=fetchedRoutine;
-			  successCallback(routine.get('RoutineJSONString'));
+			  successCallback(routine.get('RoutineJSONString'),routine.get('title'));
 		  },
 		  error: function(object, error) {
 		    alert("The object was not retrieved successfully.");
@@ -263,6 +345,24 @@ function MarkerContent(){
 	var lng=0;
 	var mycomment="...";
 	var category="marker";
+	var imgUrls=new Array();
+	var iconUrl="resource/icons/default/default_default.png";
+	
+	this.getIconUrl=function(){
+		return iconUrl;
+	};
+	
+	this.setIconUrl=function(arg){
+		iconUrl=arg;
+	};
+	
+	this.getImgUrls=function(){
+		return imgUrls;
+	};
+	
+	this.setImgUrls=function(urlArray){
+		imgUrls=urlArray;
+	};
 	
 	this.getCategory=function(){
 		return category;
@@ -328,8 +428,14 @@ function MapMarker(id) {
 	this.connectedMainMarker=null;
 	this.connectedMainLine=null;
 	
+	//main path
+	this.mainPaths=new Array();
+	
 	//pre Marker and curveLine
 	this.prevMainMarker=null;
+	
+	
+	
 	//of MapMarker array
 	this.subMarkersArray=new Array();
 	this.parentSubMarker=null;
@@ -365,6 +471,23 @@ function MapMarker(id) {
 			this.content.setlatlng(args.lat,args.lng);
 		}
 		
+		if(args.imgUrls!=null && args.imgUrls.length!=0){
+			this.content.setImgUrls(args.imgUrls);
+		}else{
+			this.content.setImgUrls([]);
+		}
+		
+		if(args.iconUrl!=null){
+			this.content.setIconUrl(args.iconUrl);
+		}
+		
+		
+		if(args.mainPaths!=null){
+			this.mainPaths=args.mainPaths;
+		}
+		
+		
+		
 		$.publish('updateInfoWindow',[this]);
 		
 	};
@@ -389,8 +512,17 @@ function MapMarker(id) {
 			
 			this.connectedMainMarker=marker;
 			marker.prevMainMarker=this;
+			$.publish('updateUI',[]);
 		}
-		$.publish('updateUI',[]);
+	};
+	
+	//logic delete
+	this.disconnectNextMarker=function(){
+		if(this.connectedMainMarker!=null){
+			this.connectedMainMarker.prevMainMarker=null;
+			this.connectedMainMarker=null;
+			//$.publish('updateUI',[]);
+		}
 	};
 	
 	//logic add tree node
@@ -398,8 +530,31 @@ function MapMarker(id) {
 		if(this.canAddSubMarker(treeNodeMarker)){
 			this.subMarkersArray.push(treeNodeMarker);
 			treeNodeMarker.parentSubMarker=this;
-		}		
-		$.publish('updateUI',[]);
+			$.publish('updateUI',[]);
+		}
+	};
+	
+	//logic delete tree node
+	this.disconnectTreeChildMarker=function(mark){
+		if(this.subMarkersArray.length!=0){
+			for(var i in this.subMarkersArray){
+				if(this.subMarkersArray[i].id==mark.id){
+					this.subMarkersArray[i].parentSubMarker=null;
+					this.subMarkersArray.splice(i, 1);
+				}
+			}
+			console.log(this.subMarkersArray);
+			//$.publish('updateUI',[]);
+		}
+	};
+	
+	this.disconnectAllTreeChildMarker=function(){
+		if(this.subMarkersArray.length!=0){
+			for(var i in this.subMarkersArray){
+				this.subMarkersArray[i].parentSubMarker=null;
+			}
+			this.subMarkersArray=new Array();
+		}
 	};
 	
 	this.toJSONObject=function(){
@@ -415,8 +570,11 @@ function MapMarker(id) {
 				address:this.getContent().getAddress(),
 				mycomment:this.getContent().getMycomment(false),
 				category:this.getContent().getCategory(),
+				imgUrls:this.getContent().getImgUrls(),
+				iconUrl:this.getContent().getIconUrl(),
 				nextMainMarkerId:this.connectedMainMarker==null?null:this.connectedMainMarker.id,
-				subMarkerIds:subMarkerIdsArray};
+				subMarkerIds:subMarkerIdsArray,
+				mainPaths:this.mainPaths};
 		
 		return object;			
 	};

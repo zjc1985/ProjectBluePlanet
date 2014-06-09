@@ -24,8 +24,8 @@ var QueryString = function () {
 function MapController(){	
 	var model=new MapMarkerModel();
 	var view=new GoogleMapView(this);
-	view.createView();
 	var self=this;
+	view.createView();
 	// this num is used to create id for BaiduMarker
 	var num = 1;
 	

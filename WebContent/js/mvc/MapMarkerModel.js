@@ -296,13 +296,26 @@ function BackendManager(){
 		});
 	};
 	
+	this.isUserOwnRoutines=function(user,routineId,successCallback){
+		var query=new AV.Query(Routine);
+		query.equalTo("user",user);
+		query.get(routineId,{
+			success:function(fetchedRoutined){
+				successCallback(true);
+			},
+			error:function(object,error){
+				successCallback(false);
+			}
+		});
+	};
+	
 	this.fetchRoutineJSONStringById=function(objectId,successCallback){
-		console.log('fetch routine id=:'+objectId);
+		console.log('BackendManager.FetchRoutineJSONStringById-fetch routine id=:'+objectId);
 
 		var query = new AV.Query(Routine);
 		query.get(objectId, {
 		  success: function(fetchedRoutine) {
-			  routine=fetchedRoutine;
+			  routine=fetchedRoutine;	  
 			  successCallback(routine.get('RoutineJSONString'),routine.get('title'));
 		  },
 		  error: function(object, error) {

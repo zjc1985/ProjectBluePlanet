@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script type="text/javascript" src="js/lib/jquery.exif.js"></script>
+<script type="text/javascript" src="js/lib/binaryajax.js"></script>
+
+</head>
+<body>
+
+
+<img src="http://www.nihilogic.dk/labs/exif/Bush-dog.jpg" exif="true" id="image1" />
+
+</body>
+</html>
+
+<script type="text/javascript">
+
+$("#image1").click(function() {  
+    alert($(this).exifPretty());  
+    // exifPretty() returns a string with all tags and values, one tag per line  
+});  
+
+
+
+
+
+</script>
+

@@ -415,7 +415,7 @@ function GoogleMapView(oneController) {
 		directionsDisplay.setMap(map);
 
 		linkSearchBox();
-
+		
 	};
 	
 	this.fromLatLngToPixel= function (position) {

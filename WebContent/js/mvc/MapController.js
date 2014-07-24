@@ -315,9 +315,16 @@ function MapController(){
 				view.routineName=arg.routineName;
 				num=arg.maxId+1;
 				view.fitRoutineBounds();
+				
 				console.log('current num in controller:'+num);
+				
+				model.isUserOwnRoutine(QueryString.routineId, function(isUserOwn){
+					if(!isUserOwn){
+						console.log('try to hide contextMenu');
+						view.hideEditMenuInContextMenu();
+					}
+				});
 			});
-			
 		}
 	};
 	
@@ -326,11 +333,7 @@ function MapController(){
 	};
 	
 	this.testFeature=function(viewMarker){
-		var modelMarker1=model.getMapMarkerById(viewMarker.id);
-		var modelMarker2=modelMarker1.connectedMainMarker;
 		
-		console.log('distance: '+view.pixelDistance({lat:modelMarker1.content.getLat(),lng:modelMarker1.content.getLng()}, 
-				{lat:modelMarker2.content.getLat(),lng:modelMarker2.content.getLng()}));
 	};
 	
 	$.subscribe('deleteOneMarker',this.deleteViewMarker());

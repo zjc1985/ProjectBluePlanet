@@ -9,7 +9,7 @@ function GoogleMapView(oneController) {
 	
 	var self=this;
 	
-	var directionsDisplay;
+	var directionsDisplay= new google.maps.DirectionsRenderer();
 	var directionsService = new google.maps.DirectionsService();
 	var map;
 	var canvasProjectionOverlay = new CanvasProjectionOverlay();
@@ -27,12 +27,17 @@ function GoogleMapView(oneController) {
 		}
 		return null;
 	}
+	
+	this.hideEditMenuInContextMenu=function(){
+		document.getElementById('addMarkerItem').style.display='none';
+		document.getElementById('saveRoutineItem').style.display='none';
+	};
 
 	this.getViewOverlaysById = function(id) {
 		return getOverlayById(id);
 	};
 	
-	function addMainLineContextMenu(line){
+	function addMainLineContextMenu(line,idfrom){
 		// create the ContextMenuOptions object
 		var contextMenuOptions = {};
 		contextMenuOptions.classNames = {
@@ -45,8 +50,35 @@ function GoogleMapView(oneController) {
 		menuItems.push({
 			className : 'context_menu_item',
 			eventName : 'edit',
+			id: 'lineEdieItem',
 			label : 'edit line'
-		});
+		},{},
+		{
+			className : 'context_menu_item',
+			eventName : 'car',
+			label : 'go with car'
+		}
+		,
+		{
+			className : 'context_menu_item',
+			eventName : 'bike',
+			label : 'go with bike'
+		}
+		,
+		{
+			className : 'context_menu_item',
+			eventName : 'walk',
+			label : 'go with walk'
+		}
+		,
+		{
+			className : 'context_menu_item',
+			eventName : 'line',
+			label : 'direct line'
+		}
+		
+		
+		);
 		
 		contextMenuOptions.menuItems = menuItems;
 
@@ -65,12 +97,37 @@ function GoogleMapView(oneController) {
 					// latLng is the position of the ContextMenu
 					// eventName is the eventName defined for the clicked
 					// ContextMenuItem in the ContextMenuOptions
+					var googlePathArray=line.getPath().getArray();
+					var googleFrom=googlePathArray[0];
+					var googleTo=googlePathArray[googlePathArray.length-1];
+					
 					switch (eventName) {
 					case 'edit':
-						line.setEditable(true);
-						
+						line.setEditable(true);						
 						break;
-					}
+					case 'line':
+						line.setPath([googleFrom,googleTo]);
+						controller.lineEditEnd(line.getMainLinePath(),idfrom);
+						break;
+					case 'car' :	
+						calcRoute(googleFrom,googleTo,google.maps.TravelMode.DRIVING,function(latlngArray,durationtext){
+							line.setPath(latlngArray);
+							controller.lineEditEnd(line.getMainLinePath(),idfrom);
+						});		
+						break;
+					case 'bike' :
+						calcRoute(googleFrom,googleTo,google.maps.TravelMode.BICYCLING,function(latlngArray,durationtext){
+							line.setPath(latlngArray);
+							controller.lineEditEnd(line.getMainLinePath(),idfrom);
+						});		
+						break;
+					case 'walk' :
+						calcRoute(googleFrom,googleTo,google.maps.TravelMode.WALKING,function(latlngArray,durationtext){
+							line.setPath(latlngArray);
+							controller.lineEditEnd(line.getMainLinePath(),idfrom);
+						});		
+						break;	
+					};
 					
 				});
 	}
@@ -152,17 +209,20 @@ function GoogleMapView(oneController) {
 		menuItems.push({
 			className : 'context_menu_item',
 			eventName : 'addMainline',
+			id: 'addMainlineItem',
 			label : 'addMainline'
 		});
 		menuItems.push({
 			className : 'context_menu_item',
 			eventName : 'addSubline',
+			id: 'addSublineItem',
 			label : 'addSubline'
 		});
 
 		menuItems.push({
 			className : 'context_menu_item',
 			eventName : 'deleteself',
+			id: 'deleteselfItem',
 			label : 'delete this marker'
 		});
 
@@ -224,22 +284,20 @@ function GoogleMapView(oneController) {
 		menuItems.push({
 			className : 'context_menu_item',
 			eventName : 'addMarker',
+			id: 'addMarkerItem',
 			label : 'add Mark'
 		});
 		menuItems.push({
 			className : 'context_menu_item',
 			eventName : 'saveRoutine',
+			id:'saveRoutineItem',
 			label : 'save Routine'
 		});
 		menuItems.push({
 			className : 'context_menu_item',
 			eventName : 'loadRoutine',
+			id: 'loadRoutineItem',
 			label : 'load Routine'
-		});
-		menuItems.push({
-			className : 'context_menu_item',
-			eventName : 'zoom_out_click',
-			label : 'Zoom out'
 		});
 		// a menuItem with no properties will be rendered as a separator
 		menuItems.push({});
@@ -292,19 +350,15 @@ function GoogleMapView(oneController) {
 					case 'loadRoutine':
 						controller.loadRoutines();
 						break;
-					case 'zoom_out_click':
-						map.setZoom(map.getZoom() - 1);
-						break;
 					case 'showAll':
 						controller.showAllRoutineClickHandler();
 						break;
 					case 'testing':
-						directionsDisplay.setMap(null);
+						controller.testFeature();
 						break;
 					}
 				});
-	}
-	;
+	};
 
 	function cleanSearchMarkers(){
 		for (var i = 0, marker; marker = searchMarkers[i]; i++) {
@@ -382,7 +436,7 @@ function GoogleMapView(oneController) {
 		bounds.extend(new google.maps.LatLng(p1.lat,p1.lng));
 		bounds.extend(new google.maps.LatLng(p2.lat,p2.lng));
 		map.fitBounds(bounds);
-		map.setZoom(map.getZoom() - 1);
+		//map.setZoom(map.getZoom() - 1);
 	};
 	
 	this.createView = function() {
@@ -398,24 +452,18 @@ function GoogleMapView(oneController) {
 		
 		this.infocard.hide();
 		
-		directionsDisplay = new google.maps.DirectionsRenderer();
-
 		var mapOptions = {
 			center : new google.maps.LatLng(37.3841308, -121.9801145),
 			zoom : 15,
 			mapTypeId : google.maps.MapTypeId.ROADMAP
 		};
-
+		
 		map = new google.maps.Map(document.getElementById("l-map"), mapOptions);
 		
-		canvasProjectionOverlay.setMap(map);
-		
+		//canvasProjectionOverlay.setMap(map);
 		addContextMenu();
-
-		directionsDisplay.setMap(map);
-
-		linkSearchBox();
 		
+		linkSearchBox();
 	};
 	
 	this.fromLatLngToPixel= function (position) {
@@ -452,16 +500,22 @@ function GoogleMapView(oneController) {
 		map.panTo(new google.maps.LatLng(lat,lng));
 	};
 
-	function calcRoute(latlngsFrom, latlngsTo) {
+	function calcRoute(latlngsFrom, latlngsTo,googleTravelMode,successCallback) {
 		var request = {
 			origin : latlngsFrom,
 			destination : latlngsTo,
-			travelMode : google.maps.TravelMode.DRIVING
+			travelMode : googleTravelMode
 		};
 		directionsService.route(request, function(response, status) {
 			if (status == google.maps.DirectionsStatus.OK) {
-				directionsDisplay.setMap(map);
-				directionsDisplay.setDirections(response);
+				//directionsDisplay.setMap(map);
+				//directionsDisplay.setDirections(response);
+				
+				var dRoute=response.routes[0];
+				
+				var leg=dRoute.legs[0];
+				
+				successCallback(dRoute.overview_path,leg.duration.text);				
 			}
 		});
 	}
@@ -553,7 +607,7 @@ function GoogleMapView(oneController) {
 		//line.setEditable(true);
 
 		line.id = num;
-
+		
 		line.isShowRoute = false;
 		
 		line.getMainLinePath=function(){
@@ -566,11 +620,9 @@ function GoogleMapView(oneController) {
 			return returnArray;
 		};
 		
-		addMainLineContextMenu(line);
+		addMainLineContextMenu(line,idfrom);
 		
 		google.maps.event.addListener(line, 'click', function(mouseEvent) {
-			
-			
 			console.log(line.getPath().getLength());
 			
 			var p1=line.getMainLinePath()[0];
@@ -589,11 +641,22 @@ function GoogleMapView(oneController) {
 				var o = line.getPath().getArray();
 				var latlngFrom = o[0];
 				var latlngTo = o[1];
-				calcRoute(latlngFrom, latlngTo);
+				calcRoute(latlngFrom, latlngTo,function(latlngArray,durationText){
+					new google.maps.Polyline({
+						path : latlngArray,
+						map : map,
+						strokeColor : 'black',
+						strokeWeight : 6,
+						strokeOpacity:0.5,
+						geodesic : true
+					});
+					alert(durationText);
+				});
 			} else {
 				directionsDisplay.setMap(null);
 			}
 			*/
+			
 			line.isShowRoute = !line.isShowRoute;
 		});
 		
@@ -635,7 +698,7 @@ function GoogleMapView(oneController) {
 				} ],
 				map : map,
 				strokeColor : 'Green',
-				strokeWeight : 5
+				strokeWeight : 1
 			});
 
 			line.id = num;

@@ -72,6 +72,12 @@ function MapMarkerModel(){
 		}
 	};
 	
+	this.isUserOwnRoutine=function(routineId,successCallback){
+		var currentUser=backendManager.getCurrentUser();
+
+		backendManager.isUserOwnRoutines(currentUser, routineId,successCallback);
+	};
+	
 	this.loadRoutine=function(routineId,successCallback){
 		marks=new Array();
 		
@@ -99,7 +105,7 @@ function MapMarkerModel(){
 					}
 				}
 			}
-			alert('fetch routine success');
+			console.log('model.loadRoutine:fetch routine success');
 			successCallback({routineName:title,maxId:maxId});			
 		});
 						
@@ -290,7 +296,7 @@ function BackendManager(){
 		query.equalTo("user",user);
 		query.find({
 		      success: function(routines) {
-		    	alert("fetch routine success");
+		    	console.log("backendManager:fetch routine success");
 		    	successCallback(routines);
 		      }
 		});
@@ -300,10 +306,12 @@ function BackendManager(){
 		var query=new AV.Query(Routine);
 		query.equalTo("user",user);
 		query.get(routineId,{
-			success:function(fetchedRoutined){
+			success:function(){
+				console.log('BackManager.isUserOwnRoutines: user own this routine');
 				successCallback(true);
 			},
 			error:function(object,error){
+				console.log('BackManager.isUserOwnRoutines: user not own this routine');
 				successCallback(false);
 			}
 		});

@@ -40,17 +40,7 @@
 <script type="text/javascript">
 var backendManager=new BackendManager();
 
-
-
 var currentUser=backendManager.getCurrentUser();
-
-backendManager.isUserOwnRoutines(currentUser, "537cdb76e4b0d8c271ff971c",function(isUserOwn){
-	if(isUserOwn){
-		alert('I own this routine');
-	}else{
-		alert("I don't own this routine");
-	}
-});
 
 backendManager.fetchRoutinesByUser(currentUser,function(results){
 	for(var i in results){

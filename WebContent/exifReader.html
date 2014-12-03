@@ -6,27 +6,66 @@
 
 <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
 <script type="text/javascript" src="js/lib/jquery.exif.js"></script>
-<script type="text/javascript" src="js/lib/binaryajax.js"></script>
 
 </head>
 <body>
 
 
-<img src="http://www.nihilogic.dk/labs/exif/Bush-dog.jpg" exif="true" id="image1" />
+	<form id="myform">
+		<input type="file" id="file" multiple /> </br>
+	</form>
 
 </body>
 </html>
 
 <script type="text/javascript">
+	if (window.File && window.FileReader && window.FileList && window.Blob) {
+		// Great success! All the File APIs are supported.
+	} else {
+		alert('The File APIs are not fully supported in this browser.');
+	}
 
-$("#image1").click(function() {  
-    alert($(this).exifPretty());  
-    // exifPretty() returns a string with all tags and values, one tag per line  
-});  
+	var someCallback = function(exifObject) {
 
+		var lat = exifObject.GPSLatitude;
+		var lon = exifObject.GPSLongitude;
 
+		//Convert coordinates to WGS84 decimal
+		var latRef = exifObject.GPSLatitudeRef || "N";
+		var lonRef = exifObject.GPSLongitudeRef || "W";
+		lat = (lat[0] + lat[1] / 60 + lat[2] / 3600) * (latRef == "N" ? 1 : -1);
+		lon = (lon[0] + lon[1] / 60 + lon[2] / 3600) * (lonRef == "W" ? -1 : 1);
 
+		alert("lat:" + lat + " lon:" + lon);
+	}
 
+	try {
+		$('#file').change(function() {
+			var files=this.files;
+			
+			for(var i=0;i<files.length;i++){
+				var file=files[i];
+				$.fileExifLoadEnd(file,function(exifObject,content) {
 
+					var lat = exifObject.GPSLatitude;
+					var lon = exifObject.GPSLongitude;
+					
+					if(lat!=null && lon!=null){
+					//Convert coordinates to WGS84 decimal
+						var latRef = exifObject.GPSLatitudeRef || "N";
+						var lonRef = exifObject.GPSLongitudeRef || "W";
+						lat = (lat[0] + lat[1] / 60 + lat[2] / 3600) * (latRef == "N" ? 1 : -1);
+						lon = (lon[0] + lon[1] / 60 + lon[2] / 3600) * (lonRef == "W" ? -1 : 1);
+						alert(lat+" "+lon);
+					}
+					
+				});
+				
+				
+			}
+		});
+	} catch (e) {
+		alert(e);
+	}
 </script>
 

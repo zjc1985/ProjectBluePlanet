@@ -938,7 +938,7 @@ $.fileExifLoadEnd = function(file, callback) {
 
         var binaryResponse = new BinaryFile(content);
 
-        callback(EXIF.readFromBinaryFile(binaryResponse),content);
+        callback(EXIF.readFromBinaryFile(binaryResponse),file);
     };
 
     reader.readAsBinaryString(getFilePart(file));

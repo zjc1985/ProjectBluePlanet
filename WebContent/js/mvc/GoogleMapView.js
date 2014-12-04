@@ -5,6 +5,7 @@ function GoogleMapView(oneController) {
 	this.routineName='default routine';
 	
 	this.infocard=null;
+	this.uploadImgForm=null;
 	this.currentMarkerId=-1;
 	
 	var self=this;
@@ -299,6 +300,12 @@ function GoogleMapView(oneController) {
 			id: 'loadRoutineItem',
 			label : 'load Routine'
 		});
+		menuItems.push({
+			className : 'context_menu_item',
+			eventName : 'uploadImg',
+			id: 'uploadItem',
+			label : 'upload image'
+		});
 		// a menuItem with no properties will be rendered as a separator
 		menuItems.push({});
 		menuItems.push({
@@ -338,17 +345,15 @@ function GoogleMapView(oneController) {
 							lng : latLng.lng()
 						});
 						break;
-					case 'saveRoutine':
-						var name=prompt("routine name?",self.routineName); 
-						if (name!=null && name!="") 
-						{ 
-							controller.saveRoutine(name);
-						} else{
-							alert('please input your routine name to save');
-						}
+					case 'saveRoutine':						
+						controller.saveRoutine();						
 						break;
 					case 'loadRoutine':
 						controller.loadRoutines();
+						break;
+					case 'uploadImg':
+						// do somthing upload image
+						self.uploadImgForm.show();
 						break;
 					case 'showAll':
 						controller.showAllRoutineClickHandler();
@@ -464,6 +469,12 @@ function GoogleMapView(oneController) {
 		addContextMenu();
 		
 		linkSearchBox();
+		
+		//init image uploader
+		this.uploadImgForm=new UploadFormView("uploadImageForm","file");
+		this.uploadImgForm.addChangeCallBack(function(files){
+			controller.uploadImgs(files);
+		});
 	};
 	
 	this.fromLatLngToPixel= function (position) {
@@ -730,6 +741,8 @@ function GoogleMapView(oneController) {
 		var viewMarker=this.getViewOverlaysById(markerId);
 		viewMarker.setIcon(iconUrl);
 	};
+	
+
 
 	this.addInfoWindow = function(marker, content, num) {
 		/*

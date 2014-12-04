@@ -70,6 +70,7 @@ px;
 <script type="text/javascript"
       src="http://maps.googleapis.com/maps/api/js?key=AIzaSyCHRDVOvVhCnFcyHSs2lmhV2HNjcQQzdX0&sensor=false&libraries=places"></script>
 <script src="js/InfoCard.js"></script> 
+<script src="js/UploadFormView.js"></script> 
 <script type="text/javascript" src="js/LineUtil.js"></script>
 <script type="text/javascript" src="js/mvc/GoogleMapView.js"></script>
 
@@ -97,6 +98,11 @@ px;
 	</div>
 	
 	<div id="r-result"></div>
+	
+	<div id="uploadImageForm" class="white-popup mfp-hide">
+  		<input type="file" id="file" multiple /></br>
+		<div id="progress">0%</div>
+	</div>
 </body>
 </html>
 <script type="text/javascript">

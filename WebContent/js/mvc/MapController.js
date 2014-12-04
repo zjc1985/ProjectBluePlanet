@@ -29,6 +29,11 @@ function MapController(){
 	// this num is used to create id for BaiduMarker
 	var num = 1;
 	
+	this.uploadImgs=function(files){
+		alert(files.length);
+		view.uploadImgForm.close();
+	};
+	
 	this.searchLocation=function(key){
 		view.searchLocation(key);
 	};
@@ -328,8 +333,14 @@ function MapController(){
 		}
 	};
 	
-	this.saveRoutine=function(routineName){
-		model.save2Backend(routineName);
+	this.saveRoutine=function(){
+		var name=prompt("routine name?",self.routineName); 
+		if (name!=null && name!="") 
+		{
+			model.save2Backend(name);
+		}else{
+			alert('please input your routine name to save');
+		}
 	};
 	
 	this.testFeature=function(viewMarker){

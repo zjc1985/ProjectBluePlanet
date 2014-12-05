@@ -2,6 +2,14 @@ function MapMarkerModel() {
 	var marks = new Array();
 
 	var backendManager = new BackendManager();
+	
+	this.saveImage=function(imageFile,successCallback,failCallback){
+		backendManager.saveFile(imageFile, function(url){
+			successCallback(url);
+		}, function(error){
+			failCallback(error);
+		});
+	};
 
 	this.resetModels = function() {
 		marks = new Array();
@@ -374,8 +382,7 @@ function BackendManager() {
 		var name = file.name;
 		var avFile = new AV.File(name, file);
 		avFile.save().then(function() {
-			alert(avFile.url());
-			successCallBack();
+			successCallBack(avFile.url());
 		}, function(error) {
 			failCallback(error);
 		});

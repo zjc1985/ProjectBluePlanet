@@ -471,9 +471,9 @@ function GoogleMapView(oneController) {
 		linkSearchBox();
 		
 		//init image uploader
-		this.uploadImgForm=new UploadFormView("uploadImageForm","file");
-		this.uploadImgForm.addChangeCallBack(function(files){
-			controller.uploadImgs(files);
+		this.uploadImgForm=new UploadFormView("uploadImageForm","file","progress","loading");
+		this.uploadImgForm.addChangeCallBack(function(file,lat,lon){
+			controller.uploadImgs(file,lat,lon);
 		});
 	};
 	

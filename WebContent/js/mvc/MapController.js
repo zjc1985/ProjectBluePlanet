@@ -29,9 +29,22 @@ function MapController(){
 	// this num is used to create id for BaiduMarker
 	var num = 1;
 	
-	this.uploadImgs=function(files){
-		alert(files.length);
-		view.uploadImgForm.close();
+	this.uploadImgs=function(file,lat,lon){
+		model.saveImage(file, function(url){
+			view.uploadImgForm.completeFileNum++;
+			view.uploadImgForm.updateProgress();
+			self.addMarkerClickEvent({lat:lat,lng:lon}, {imgUrls:[url],title:file.name});
+			if(view.uploadImgForm.completeFileNum==view.uploadImgForm.fileNum){
+				alert("all save complete");
+				view.uploadImgForm.UIFinishUpload();
+				view.uploadImgForm.close();
+				view.fitRoutineBounds();			
+			}
+		},function(error){
+			view.uploadImgForm.completeFileNum++;
+			view.uploadImgForm.updateProgress();
+			alert("one save failed"+error);
+		});
 	};
 	
 	this.searchLocation=function(key){

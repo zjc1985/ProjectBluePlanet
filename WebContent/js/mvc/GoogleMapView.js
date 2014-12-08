@@ -13,7 +13,8 @@ function GoogleMapView(oneController) {
 	var directionsDisplay= new google.maps.DirectionsRenderer();
 	var directionsService = new google.maps.DirectionsService();
 	var map;
-	var canvasProjectionOverlay = new CanvasProjectionOverlay();
+	var googleOverlay;
+	//var canvasProjectionOverlay = new CanvasProjectionOverlay();
 
 	var overlays = new Array();
 	var searchMarkers=[];
@@ -253,8 +254,11 @@ function GoogleMapView(oneController) {
 					// ContextMenuItem in the ContextMenuOptions
 					switch (eventName) {
 					case 'showInfo':
-						//alert('show Info');
-						console.log(self.fromLatLngToPixel(googleMarker.getPosition()));
+						console.log('=========show Info========');
+						var point=self.fromLatLngToPixel(googleMarker.getPosition());
+						console.log(point);
+						console.log(googleMarker.getPosition());
+						console.log(self.fromPixelToLatLng(point));
 						break;
 					case 'addMainline':
 						controller.addMainLineClickHandler(googleMarker);
@@ -266,7 +270,7 @@ function GoogleMapView(oneController) {
 						controller.markerDeleteClickHandler(googleMarker);
 						break;
 					case 'test':
-						controller.testFeature(googleMarker);
+						//controller.testFeature(googleMarker);
 						break;
 					}
 				});
@@ -327,6 +331,11 @@ function GoogleMapView(oneController) {
 		// display the ContextMenu on a Map right click
 		google.maps.event.addListener(map, 'rightclick', function(mouseEvent) {
 			contextMenu.show(mouseEvent.latLng);
+		});
+		
+		//zoom_changed
+		google.maps.event.addListener(map, 'zoom_changed', function() {
+			controller.zoomEventHandler();
 		});
 
 		// listen for the ContextMenu 'menu_item_selected' event
@@ -464,6 +473,9 @@ function GoogleMapView(oneController) {
 		};
 		
 		map = new google.maps.Map(document.getElementById("l-map"), mapOptions);
+		googleOverlay = new google.maps.OverlayView();
+		googleOverlay.draw = function() {};
+		googleOverlay.setMap(map);
 		
 		//canvasProjectionOverlay.setMap(map);
 		addContextMenu();
@@ -477,21 +489,12 @@ function GoogleMapView(oneController) {
 		});
 	};
 	
+	this.fromPixelToLatLng=function(point){
+		return googleOverlay.getProjection().fromContainerPixelToLatLng(point);
+	}
+	
 	this.fromLatLngToPixel= function (position) {
-		  var scale = Math.pow(2, map.getZoom());
-		  var proj = map.getProjection();
-		  var bounds = map.getBounds();
-
-		  var nw = proj.fromLatLngToPoint(
-		    new google.maps.LatLng(
-		      bounds.getNorthEast().lat(),
-		      bounds.getSouthWest().lng()
-		    ));
-		  var point = proj.fromLatLngToPoint(position);
-
-		  return new google.maps.Point(
-		    Math.floor((point.x - nw.x) * scale),
-		    Math.floor((point.y - nw.y) * scale));
+		return googleOverlay.getProjection().fromLatLngToContainerPixel(position);
 	};
 	
 	this.pixelDistance=function(position1,position2){

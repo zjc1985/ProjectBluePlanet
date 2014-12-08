@@ -183,10 +183,11 @@ function MapMarkerModel() {
 
 	};
 
-	this.addSubLine = function(fromId, toId) {
+	this.addSubLine = function(fromId, toId,offsetX,offsetY) {
+		console.log("model.addSubLine: fromId: "+fromId+" toId "+toId+" offsetX "+offsetX+" offsetY "+offsetY);
 		var fromMarker = getOverlayById(fromId);
 		var toMarker = getOverlayById(toId);
-		fromMarker.addTreeChildMarker(toMarker);
+		fromMarker.addTreeChildMarker(toMarker,offsetX,offsetY);
 	};
 
 	this.findHeadMarker = function() {
@@ -433,7 +434,6 @@ function MarkerContent() {
 	this.setlatlng = function(latFoo, lngFoo) {
 		lat = latFoo;
 		lng = lngFoo;
-		$.publish('updateUI', []);
 	};
 
 	this.getLng = function() {
@@ -490,6 +490,11 @@ function MapMarker(id) {
 	this.parentSubMarker = null;
 
 	this.isHideAllSubMarkers = false;
+	
+	//if this marker is a submarker, 
+	//then it has a relative value of pixel x and y cordinates compared to its parent marker
+	this.offsetX=0;
+	this.offsetY=0;
 
 	this.isSubMarker = function() {
 		if (this.parentSubMarker != null) {
@@ -497,6 +502,12 @@ function MapMarker(id) {
 		} else {
 			return false;
 		}
+	};
+	
+	this.updateOffset=function(x,y){
+		console.log("id "+this.id+ " modelMarker.updateOffset: "+x+" "+y);
+		this.offsetX=x;
+		this.offsetY=y;
 	};
 
 	this.updateContent = function(args) {
@@ -518,6 +529,8 @@ function MapMarker(id) {
 
 		if (args.lat != null && args.lng != null) {
 			this.content.setlatlng(args.lat, args.lng);
+			$.publish('updateUIMarker',[this]);
+			$.publish('updateUI',[]);
 		}
 
 		if (args.imgUrls != null && args.imgUrls.length != 0) {
@@ -574,10 +587,11 @@ function MapMarker(id) {
 	};
 
 	// logic add tree node
-	this.addTreeChildMarker = function(treeNodeMarker) {
+	this.addTreeChildMarker = function(treeNodeMarker,offsetX,offsetY) {
 		if (this.canAddSubMarker(treeNodeMarker)) {
 			this.subMarkersArray.push(treeNodeMarker);
 			treeNodeMarker.parentSubMarker = this;
+			treeNodeMarker.updateOffset(offsetX,offsetY);
 			$.publish('updateUI', []);
 		}
 	};

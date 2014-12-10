@@ -38,6 +38,7 @@ function MapMarkerModel() {
 
 		if (content != null) {
 			marker.updateContent(content);
+			marker.updateOffset(content.offsetX, content.offsetY);
 		}
 
 		marks.push(marker);
@@ -104,19 +105,24 @@ function MapMarkerModel() {
 					self.createOneMarker(marksJSONArray[i].id,
 							marksJSONArray[i]);
 				}
-
+				
 				for ( var i in marksJSONArray) {
 					var eachJSONObject = marksJSONArray[i];
+					/*
 					if (eachJSONObject.nextMainMarkerId != null) {
 						self.addMainLine(eachJSONObject.id,
 								eachJSONObject.nextMainMarkerId);
 					}
+					*/
 
 					for ( var j in eachJSONObject.subMarkerIds) {
 						self.addSubLine(eachJSONObject.id,
-								eachJSONObject.subMarkerIds[j]);
+								eachJSONObject.subMarkerIds[j],
+								0,
+								0);
 					}
 				}
+				
 			}
 			console.log('model.loadRoutine:fetch routine success');
 			successCallback({
@@ -183,11 +189,11 @@ function MapMarkerModel() {
 
 	};
 
-	this.addSubLine = function(fromId, toId,offsetX,offsetY) {
-		console.log("model.addSubLine: fromId: "+fromId+" toId "+toId+" offsetX "+offsetX+" offsetY "+offsetY);
+	this.addSubLine = function(fromId, toId) {
+		console.log("model.addSubLine: fromId: "+fromId+" toId "+toId);
 		var fromMarker = getOverlayById(fromId);
 		var toMarker = getOverlayById(toId);
-		fromMarker.addTreeChildMarker(toMarker,offsetX,offsetY);
+		fromMarker.addTreeChildMarker(toMarker);
 	};
 
 	this.findHeadMarker = function() {
@@ -555,7 +561,8 @@ function MapMarker(id) {
 		var result = true;
 		if (marker.parentSubMarker == null
 				&& marker.connectedMainMarker == null
-				&& marker.prevMainMarker == null) {
+				&& marker.prevMainMarker == null
+				&& !this.isSubMarker()) {
 			result = true;
 		} else {
 			result = false;
@@ -587,11 +594,10 @@ function MapMarker(id) {
 	};
 
 	// logic add tree node
-	this.addTreeChildMarker = function(treeNodeMarker,offsetX,offsetY) {
+	this.addTreeChildMarker = function(treeNodeMarker) {
 		if (this.canAddSubMarker(treeNodeMarker)) {
 			this.subMarkersArray.push(treeNodeMarker);
 			treeNodeMarker.parentSubMarker = this;
-			treeNodeMarker.updateOffset(offsetX,offsetY);
 			$.publish('updateUI', []);
 		}
 	};
@@ -638,7 +644,9 @@ function MapMarker(id) {
 			nextMainMarkerId : this.connectedMainMarker == null ? null
 					: this.connectedMainMarker.id,
 			subMarkerIds : subMarkerIdsArray,
-			mainPaths : this.mainPaths
+			mainPaths : this.mainPaths,
+			offsetX : this.offsetX,
+			offsetY : this.offsetY
 		};
 
 		return object;

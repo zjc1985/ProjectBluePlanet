@@ -68,6 +68,7 @@ function infoCard(id){
 	};
 	
 	this.setDefaultImgs=function(imgArray){
+		
 		var imgString="";
 		
 		for(var i in imgArray){
@@ -76,7 +77,11 @@ function infoCard(id){
 		
 		$('#'+editFormImageUrlIdName).val(imgString);
 		
-		this.setContentB(createDefaultGallery(imgArray), true);
+		if(imgArray==null||imgArray.length==0){
+			this.setContentB("", false);
+		}else{
+			this.setContentB(createDefaultGallery(imgArray), true);
+		}	
 	};
 	
 	
@@ -321,32 +326,7 @@ function infoCard(id){
 			$('#'+editFormCategoryIdName).val(editFormCombobox.selectedText);
 		});
 		
-		/*
-		var iconSelect= new IconSelect(editFormIconUrlIdName,{
-            'vectoralIconNumber':10,
-            'horizontalIconNumber':10});
-		var icons = [];
-		  
-		icons.push({'iconFilePath':'resource/icons/default/default_default.png', 'iconValue':'default_default'});
-		icons.push({'iconFilePath':'resource/icons/food/food_default.png', 'iconValue':'food_default'});	        
-		icons.push({'iconFilePath':'resource/icons/pic/pic_default.png', 'iconValue':'pic_default'});		
-		icons.push({'iconFilePath':'resource/icons/event/event_default.png', 'iconValue':'event_default'});
-        icons.push({'iconFilePath':'resource/icons/sight/sight_default.png', 'iconValue':'sight_default'});
-        icons.push({'iconFilePath':'resource/icons/hotel/hotel_default.png', 'iconValue':'hotel_default'});
-        icons.push({'iconFilePath':'resource/icons/bike/bike_default.png', 'iconValue':'bike_default'});
-        icons.push({'iconFilePath':'resource/icons/bus/bus_default.png', 'iconValue':'bus_default'});
-        icons.push({'iconFilePath':'resource/icons/car/car_default.png', 'iconValue':'car_default'});
-        icons.push({'iconFilePath':'resource/icons/plane/plane_default.png', 'iconValue':'plane_default'});
-        icons.push({'iconFilePath':'resource/icons/ship/ship_default.png', 'iconValue':'ship_default'});
-        icons.push({'iconFilePath':'resource/icons/train/train_default.png', 'iconValue':'train_default'});
-       
-        
-        iconSelect.refresh(icons);
-        
-        $('#'+editFormIconUrlIdName).on('changed',function(){
-        	$('#'+editFormCategoryIdName).val(iconSelect.getSelectedValue());
-        });
-        */
+		
 		$('.popup-with-form').magnificPopup({
 			type: 'inline',
 			preloader: false,
@@ -406,11 +386,15 @@ function infoCard(id){
 		var ahrefs="";
 		
 		for(var index in imgArray){
+			/*
 			if(index==0){
-				ahrefs=	"<a href='"+imgArray[0].url+"' title='"+imgArray[0].title+"'><div style='margin:10px;background-image: url("+imgArray[0].url+");height:300px;background-position: center;'></div></a>";
+				//ahrefs=	"<a href='"+imgArray[0].url+"' title='"+imgArray[0].title+"'><div style='margin:10px;background-image: url("+getThumbNailUrl(imgArray[0].url)+");height:300px;background-position: center;'></div></a>";
+				ahrefs=	"<a href='"+imgArray[0].url+"' title='"+imgArray[0].title+"'><img src='"+getThumbNailUrl(imgArray[0].url)+"'></a>";
 			}else{
 				ahrefs+="<a style='display: none;' href='"+imgArray[index].url+"' title='"+imgArray[index].title+"'></a>";
 			}
+			*/
+			ahrefs+="<a style='padding:2px 2px;' href='"+getGoodQualityUrl(imgArray[index].url)+"' title='"+imgArray[index].title+"'><img src='"+getThumbNailUrl(imgArray[index].url)+"'></a>";
 		}
 		
 		
@@ -509,7 +493,7 @@ function createImgGallery(imgArray){
 	
 	for(var index in imgArray){
 		if(index==0){
-			ahrefs=	"<a href='"+imgArray[0].url+"' title='"+imgArray[0].title+"'><div style='margin:10px;background-image: url("+imgArray[0].url+");height:300px;background-position: center;'></div></a>";
+			ahrefs=	"<a href='"+imgArray[0].url+"' title='"+imgArray[0].title+"'><div style='margin:10px;background-image: url("+getThumbNailUrl(imgArray[0].url)+");height:300px;background-position: center;'></div></a>";
 		}else{
 			ahrefs+="<a style='display: none;' href='"+imgArray[index].url+"' title='"+imgArray[index].title+"'></a>";
 		}
@@ -519,6 +503,14 @@ function createImgGallery(imgArray){
 	var html="<div><div class='popup-gallery'>"+ahrefs+"</div></div>";
 	return html;
 	
+}
+
+function getThumbNailUrl(url){
+	return url+'?imageView2/2/h/150/q/50';
+}
+
+function getGoodQualityUrl(url){
+	return url+'?imageView2/2/h/800';
 }
 
 function createPOICardHtml(title,category,address,mycomment,categoryIconUrl){

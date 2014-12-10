@@ -688,7 +688,7 @@ function GoogleMapView(oneController) {
 
 			var lineSymbol = {
 				path : 'M 0,-1 0,1',
-				strokeOpacity : 0.5,
+				strokeOpacity : 0.8,
 				scale : 4
 			};
 
@@ -770,18 +770,6 @@ function GoogleMapView(oneController) {
 			infowindow.close();
 		};
 		
-		/*
-		infowindow.setDefaultImgs = function(imgArray) {
-			console.log('setdefaultImgs');
-			infocard.setDefaultImgs(imgArray);
-		};
-
-		
-
-		infowindow.setContent = function(changeContent) {
-			infocard.setDefaultContent(changeContent);
-		};
-		*/
 		infowindow.show();
 		return infowindow;
 	};

@@ -94,8 +94,9 @@ function MapController(){
 														category:content.getCategory(),
 														mycomment:content.getMycomment(true),
 														fullcomment:content.getMycomment(false)});
-		if(content.getImgUrls().length!=0){
-			view.infocard.setDefaultImgs(content.getImgUrls());
+		
+		view.infocard.setDefaultImgs(content.getImgUrls());
+		if(content.getImgUrls().length!=0){			
 			view.infocard.showContentB();
 		}else{
 			view.infocard.showContentA();
@@ -184,7 +185,9 @@ function MapController(){
 			var offsetX=toPoint.x-fromPoint.x;
 			var offsetY=toPoint.y-fromPoint.y;
 			
-			model.addSubLine(view.markerNeedSubLine.id,viewMarker.id,offsetX,offsetY);
+			model.getMapMarkerById(viewMarker.id).updateOffset(offsetX,offsetY);
+			
+			model.addSubLine(view.markerNeedSubLine.id,viewMarker.id);
 			view.markerNeedSubLine=null;
 			return;
 		}
@@ -224,9 +227,9 @@ function MapController(){
 		//show or hide subMarkers if has
 		if(model.getMapMarkerById(viewMarker.id).subMarkersArray.length!=0){
 			changeSubMarkerShowStatus(viewMarker.id);
-		}else{
-			this.showInfoClickHandler(viewMarker);
 		}
+		this.showInfoClickHandler(viewMarker);
+		
 		
 		//view.centerAndZoom(modelMarker.content.getLat(), modelMarker.content.getLng());
 		
@@ -408,9 +411,16 @@ function MapController(){
 				view.centerAndZoom(headModelMark.content.getLat(), 
 						(headModelMark.content.getLng()));
 				*/
+				//hide all subMarkers
+				for(var i in model.getModelMarkers()){
+					changeSubMarkerShowStatus(model.getModelMarkers()[i].id);
+				}
+				
 				view.routineName=arg.routineName;
 				num=arg.maxId+1;
 				view.fitRoutineBounds();
+				
+				
 				
 				console.log('current num in controller:'+num);
 				

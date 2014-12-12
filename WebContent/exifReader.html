@@ -37,6 +37,11 @@
 	}
 
 	var backendManager = new BackendManager();
+	backendManager.deleteFileByUrl("http://ac-6pzfpf5w.qiniudn.com/MFJSYvmakN0Myh1HE4z8ggoRsadHPz9P1z6asWGT.JPG",function(){
+		console.log('deleted');
+	},function(){
+		console.log('fetch failed');
+	})
 
 	try {
 		$('#file').change(

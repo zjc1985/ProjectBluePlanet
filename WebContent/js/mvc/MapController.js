@@ -29,11 +29,17 @@ function MapController(){
 	// this num is used to create id for BaiduMarker
 	var num = 1;
 	
-	this.uploadImgs=function(file,lat,lon){
+	this.uploadImgs=function(file,lat,lng){
 		model.saveImage(file, function(url){
 			view.uploadImgForm.completeFileNum++;
 			view.uploadImgForm.updateProgress();
-			self.addMarkerClickEvent({lat:lat,lng:lon}, {imgUrls:[url],title:file.name});
+			
+			if(lat==null||lng==null){
+				lat=view.getCenter().lat;
+				lng=view.getCenter().lng;
+			}
+			
+			self.addMarkerClickEvent({lat:lat,lng:lng}, {imgUrls:[url],title:file.name});
 			if(view.uploadImgForm.completeFileNum==view.uploadImgForm.fileNum){
 				alert("all save complete");
 				view.uploadImgForm.UIFinishUpload();
@@ -57,18 +63,18 @@ function MapController(){
 			var modelMarker=model.getModelMarkers()[i];
 			if(modelMarker.isSubMarker()){
 				var parentViewMarker=view.getViewOverlaysById(modelMarker.parentSubMarker.id);
-				var parentPoint=view.fromLatLngToPixel(parentViewMarker.getPosition());
+				var parentPoint=view.fromLatLngToPixel(parentViewMarker.getLatLng());
 				var newPoint=parentPoint;
 				newPoint.x=newPoint.x+modelMarker.offsetX;
 				newPoint.y=newPoint.y+modelMarker.offsetY;
 				var newlatlng=view.fromPixelToLatLng(newPoint);
 				console.log("calculate newlatlng "+newlatlng);
-				modelMarker.updateContent({
-					lat:newlatlng.lat(),
-					lng:newlatlng.lng()
-				});
+				modelMarker.updateContent(newlatlng);
 			}
 		}
+		
+		//hide all subMarkers
+		//...
 	};
 	
 	this.updateMarkerContentById=function(id,content){
@@ -125,7 +131,6 @@ function MapController(){
 					subViewMarker.show();
 					subViewMarker.setAnimation(google.maps.Animation.BOUNCE);
 					isShow=true;
-					//setTimeout(function(){ subViewMarker.setAnimation(null); }, 750);
 				}else{				
 					subViewMarker.isShow=false;
 					subViewMarker.hide();
@@ -138,8 +143,6 @@ function MapController(){
 						}
 					}, 750);
 				}
-				
-				//changeSubMarkerShowStatus(modelMarker.subMarkersArray[i].id);
 			}	
 		}else{
 			return;
@@ -180,8 +183,8 @@ function MapController(){
 		}
 		
 		if(view.markerNeedSubLine!=null){
-			var fromPoint=view.fromLatLngToPixel(view.markerNeedSubLine.getPosition());
-			var toPoint=view.fromLatLngToPixel(viewMarker.getPosition());
+			var fromPoint=view.fromLatLngToPixel(view.markerNeedSubLine.getLatLng());
+			var toPoint=view.fromLatLngToPixel(viewMarker.getLatLng());
 			var offsetX=toPoint.x-fromPoint.x;
 			var offsetY=toPoint.y-fromPoint.y;
 			
@@ -322,14 +325,13 @@ function MapController(){
 						
 		}else if(modelMarker.subMarkersArray.length>0){
 			// if it is a parent marker,move its subMarker to the new position
-			var point=view.fromLatLngToPixel(new google.maps.LatLng(lat,lng));
+			var point=view.fromLatLngToPixel({lat:lat,lng:lng});
 			for ( var i in modelMarker.subMarkersArray) {
 				var newPoint=new google.maps.Point(point.x,point.y);
 				newPoint.x=newPoint.x+modelMarker.subMarkersArray[i].offsetX;
 				newPoint.y=newPoint.y+modelMarker.subMarkersArray[i].offsetY;
 				var newPosition=view.fromPixelToLatLng(newPoint);
-				modelMarker.subMarkersArray[i].updateContent({lat:newPosition.lat(),
-					lng:newPosition.lng()});
+				modelMarker.subMarkersArray[i].updateContent(newPosition);
 			}
 		}
 	};
@@ -338,8 +340,8 @@ function MapController(){
 		var result=new Object();
 		var parent=view.getViewOverlaysById(fromMarkerId);
 		var sub=view.getViewOverlaysById(toMarkerId);
-		var parentPoint=view.fromLatLngToPixel(parent.getPosition());
-		var subPoint=view.fromLatLngToPixel(sub.getPosition());
+		var parentPoint=view.fromLatLngToPixel(parent.getLatLng());
+		var subPoint=view.fromLatLngToPixel(sub.getLatLng());
 		result.offsetX=subPoint.x-parentPoint.x;
 		result.offsetY=subPoint.y-parentPoint.y;
 		return result;
@@ -379,6 +381,7 @@ function MapController(){
 	this.deleteViewMarker=function(){
 		return function(_,modelMarker){
 			view.removeById(modelMarker.id);
+			view.infocard.hide();
 			$.publish('updateUI',[]);
 		};
 	};

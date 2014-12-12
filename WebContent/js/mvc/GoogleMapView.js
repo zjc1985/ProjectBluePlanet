@@ -255,7 +255,7 @@ function GoogleMapView(oneController) {
 					switch (eventName) {
 					case 'showInfo':
 						console.log('=========show Info========');
-						var point=self.fromLatLngToPixel(googleMarker.getPosition());
+						var point=self.fromLatLngToPixel(googleMarker.getLatLng());
 						console.log(point);
 						console.log(googleMarker.getPosition());
 						console.log(self.fromPixelToLatLng(point));
@@ -368,7 +368,7 @@ function GoogleMapView(oneController) {
 						controller.showAllRoutineClickHandler();
 						break;
 					case 'testing':
-						controller.testFeature();
+						console.log(self.getCenter());
 						break;
 					}
 				});
@@ -435,6 +435,10 @@ function GoogleMapView(oneController) {
 		});
 	};
 	
+	this.getCenter=function(){
+		return {lat:map.getCenter().lat(),lng:map.getCenter().lng()};
+	};
+	
 	this.fitRoutineBounds=function(){
 		var bounds = new google.maps.LatLngBounds();
 		for(var i=0;i<overlays.length;i++){
@@ -490,11 +494,15 @@ function GoogleMapView(oneController) {
 	};
 	
 	this.fromPixelToLatLng=function(point){
-		return googleOverlay.getProjection().fromContainerPixelToLatLng(point);
+		var googlePoint=new google.maps.Point(point.x,point.y);
+		var googleLatLng= googleOverlay.getProjection().fromContainerPixelToLatLng(googlePoint);
+		return {lat:googleLatLng.lat(),lng:googleLatLng.lng()};
 	}
 	
 	this.fromLatLngToPixel= function (position) {
-		return googleOverlay.getProjection().fromLatLngToContainerPixel(position);
+		var googlePosition=new google.maps.LatLng(position.lat,position.lng);
+		var googlePoint= googleOverlay.getProjection().fromLatLngToContainerPixel(googlePosition);
+		return {x:googlePoint.x,y:googlePoint.y};
 	};
 	
 	this.pixelDistance=function(position1,position2){
@@ -567,6 +575,11 @@ function GoogleMapView(oneController) {
 
 		viewMarker.show = function() {
 			viewMarker.setVisible(true);
+		};
+		
+		viewMarker.getLatLng=function(){
+			return {lat:viewMarker.getPosition().lat(),
+				lng:viewMarker.getPosition().lng()};
 		};
 
 		overlays.push(viewMarker);

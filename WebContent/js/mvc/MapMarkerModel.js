@@ -76,6 +76,18 @@ function MapMarkerModel() {
 					marks.splice(i, 1);
 				}
 			}
+			
+			var imgUrls= modelMarker.content.getImgUrls();
+			if(imgUrls!=null && imgUrls.length>0){
+				for(var i in imgUrls){
+					var url=imgUrls[i];
+					backendManager.deleteFileByUrl(url, function(){
+						console.log('success deleted img ');
+					}, function(){
+						console.log('fail delete img');
+					});
+				};
+			}
 
 			$.publish('deleteOneMarker', [ modelMarker ]);
 		}
@@ -239,6 +251,18 @@ function MapMarkerModel() {
 		}
 		redrawTreeNode(marker);
 	};
+	
+	//event listeners
+	this.deleteImg=function(){
+		return function(_,url){			
+			backendManager.deleteFileByUrl(url, function(){
+				console.log('success deleted');
+			}, function(){
+				console.log('fail deleted');
+			});
+			
+		};
+	};
 
 	function redrawOneMarker(marker) {
 		if (marker.connectedMainMarker == null) {
@@ -268,7 +292,8 @@ function MapMarkerModel() {
 			 */
 		}
 	}
-
+	
+	$.subscribe('deleteImg',this.deleteImg());
 }
 
 function BackendManager() {
@@ -394,7 +419,35 @@ function BackendManager() {
 			failCallback(error);
 		});
 	};
-
+	
+	this.deleteFileByUrl=function(url,successCallBack,failCallback){
+		console.log('BManager.deleteFileByUrl:'+url);
+		var query = new AV.Query(AV.Object.extend("_File"));
+		query.equalTo("url", url);
+		query.find({
+			  success: function(results) {
+				  if(results.length>0){
+					  console.log('find url:'+url);
+					 
+					  var file=results[0];
+					  file.destroy({success:function(file){
+						  successCallBack();
+					  },error:function(error){
+						  console.log("Error: " + error.code + " " + error.message);
+						  failCallback();
+					  }});
+					 
+				  }else{
+					  console.log('url '+url+' not found');
+				  }
+			  },
+			  error: function(error) {
+			    console.log("Error: " + error.code + " " + error.message);
+			    failCallback();
+			  }
+			});
+	};
+	
 	// getters and setters
 
 }
@@ -656,7 +709,7 @@ function MapMarker(id) {
 	this.getContent = function() {
 		return this.content;
 	};
-
+	
 }
 
 function MainLine(id) {

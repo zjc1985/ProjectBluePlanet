@@ -35,16 +35,13 @@ function MapMarkerModel() {
 
 	this.createOneMarker = function(id, content) {
 		var marker = new MapMarker(id);
-
-		if (content != null) {
-			marker.updateContent(content);
-			marker.updateOffset(content.offsetX, content.offsetY);
-		}
-
-		marks.push(marker);
-
 		$.publish('createOneMarker', [ marker ]);
 
+		if (content != null) {
+			marker.content.updateContent(content);
+			marker.updateOffset(content.offsetX, content.offsetY);
+		}
+		marks.push(marker);
 		return marker;
 	};
 
@@ -251,18 +248,6 @@ function MapMarkerModel() {
 		redrawTreeNode(marker);
 	};
 
-	// event listeners
-	this.deleteImg = function() {
-		return function(_, url) {
-			backendManager.deleteFileByUrl(url, function() {
-				console.log('success deleted');
-			}, function() {
-				console.log('fail deleted');
-			});
-
-		};
-	};
-
 	function redrawOneMarker(marker) {
 		if (marker.connectedMainMarker == null) {
 			return;
@@ -291,8 +276,6 @@ function MapMarkerModel() {
 			 */
 		}
 	}
-
-	$.subscribe('deleteImg', this.deleteImg());
 }
 
 function BackendManager() {
@@ -465,6 +448,46 @@ function MarkerContent(id) {
 	var category = "marker";
 	var imgUrls = new Array();
 	var iconUrl = "resource/icons/default/default_default.png";
+	
+	this.updateContent = function(args) {
+		if (args.title != null) {
+			this.setTitle(args.title);
+		}
+
+		if (args.address != null) {
+			this.setAddress(args.address);
+		}
+
+		if (args.mycomment != null) {
+			this.setMycomment(args.mycomment);
+		}
+
+		if (args.category != null) {
+			this.setCategory(args.category);
+		}
+
+		if (args.lat != null && args.lng != null) {
+			this.setlatlng(args.lat, args.lng);
+			
+		}
+
+		if (args.imgUrls != null && args.imgUrls.length != 0) {
+			this.setImgUrls(args.imgUrls);
+		} 
+
+		if (args.iconUrl != null) {
+			this.setIconUrl(args.iconUrl);
+		}
+
+		/*
+		if (args.mainPaths != null) {
+			this.mainPaths = args.mainPaths;
+		}
+		*/
+
+		$.publish('updateInfoWindow', [ this ]);
+
+	};
 
 	this.getIconUrl = function() {
 		return iconUrl;
@@ -472,6 +495,7 @@ function MarkerContent(id) {
 
 	this.setIconUrl = function(arg) {
 		iconUrl = arg;
+		$.publish("iconUrlUpdated",[this]);
 	};
 
 	this.getImgUrls = function() {
@@ -497,6 +521,8 @@ function MarkerContent(id) {
 	this.setlatlng = function(latFoo, lngFoo) {
 		lat = latFoo;
 		lng = lngFoo;
+		$.publish('latlngChanged', [ this ]);
+		$.publish('updateUI', []);
 	};
 
 	this.getLng = function() {
@@ -534,7 +560,7 @@ function MarkerContent(id) {
 
 function MapMarker(id) {
 	this.id = id;
-	this.content = new MarkerContent();
+	this.content = new MarkerContent(id);
 
 	this.needMainLine = false;
 	this.needSubLine = false;
@@ -573,45 +599,6 @@ function MapMarker(id) {
 				+ y);
 		this.offsetX = x;
 		this.offsetY = y;
-	};
-
-	this.updateContent = function(args) {
-		if (args.title != null) {
-			this.content.setTitle(args.title);
-		}
-
-		if (args.address != null) {
-			this.content.setAddress(args.address);
-		}
-
-		if (args.mycomment != null) {
-			this.content.setMycomment(args.mycomment);
-		}
-
-		if (args.category != null) {
-			this.content.setCategory(args.category);
-		}
-
-		if (args.lat != null && args.lng != null) {
-			this.content.setlatlng(args.lat, args.lng);
-			$.publish('updateUIMarker', [ this ]);
-			$.publish('updateUI', []);
-		}
-
-		if (args.imgUrls != null && args.imgUrls.length != 0) {
-			this.content.setImgUrls(args.imgUrls);
-		} 
-
-		if (args.iconUrl != null) {
-			this.content.setIconUrl(args.iconUrl);
-		}
-
-		if (args.mainPaths != null) {
-			this.mainPaths = args.mainPaths;
-		}
-
-		$.publish('updateInfoWindow', [ this ]);
-
 	};
 
 	this.canAddSubMarker = function(marker) {

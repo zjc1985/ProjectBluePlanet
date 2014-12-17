@@ -316,6 +316,7 @@ function infoCard(id){
 		                {image:'resource/icons/plane/plane_default.png', description:'', value:'resource/icons/plane/plane_default.png', text:'plane'},
 		                {image:'resource/icons/ship/ship_default.png', description:'', value:'resource/icons/ship/ship_default.png', text:'ship'},
 		                {image:'resource/icons/train/train_default.png', description:'', value:'resource/icons/train/train_default.png', text:'train'},
+		                {image:'resource/icons/pic/pic_point.png', description:'', value:'resource/icons/pic/pic_point.png', text:'pic_point'},
 		                {image:'resource/icons/parking/parking_default.png', description:'', value:'resource/icons/parking/parking_default.png', text:'parking'}];
 		             
 		editFormCombobox = $("#"+editFormIconUrlIdName).msDropdown({byJson:{data:jsonData, name:'icon'}}).data("dd");

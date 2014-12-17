@@ -2,11 +2,11 @@ function MapMarkerModel() {
 	var marks = new Array();
 
 	var backendManager = new BackendManager();
-	
-	this.saveImage=function(imageFile,successCallback,failCallback){
-		backendManager.saveFile(imageFile, function(url){
+
+	this.saveImage = function(imageFile, successCallback, failCallback) {
+		backendManager.saveFile(imageFile, function(url) {
 			successCallback(url);
-		}, function(error){
+		}, function(error) {
 			failCallback(error);
 		});
 	};
@@ -48,7 +48,7 @@ function MapMarkerModel() {
 		return marker;
 	};
 
-	this.deleteOneMarker = function(id) {
+	this.deleteOneMarker = function(id, needDeleteAttackedImg) {
 		var modelMarker = this.getMapMarkerById(id);
 		if (modelMarker != null) {
 
@@ -76,19 +76,21 @@ function MapMarkerModel() {
 					marks.splice(i, 1);
 				}
 			}
-			
-			var imgUrls= modelMarker.content.getImgUrls();
-			if(imgUrls!=null && imgUrls.length>0){
-				for(var i in imgUrls){
-					var url=imgUrls[i];
-					backendManager.deleteFileByUrl(url, function(){
-						console.log('success deleted img ');
-					}, function(){
-						console.log('fail delete img');
-					});
-				};
-			}
 
+			if (needDeleteAttackedImg) {
+				var imgUrls = modelMarker.content.getImgUrls();
+				if (imgUrls != null && imgUrls.length > 0) {
+					for ( var i in imgUrls) {
+						var url = imgUrls[i];
+						backendManager.deleteFileByUrl(url, function() {
+							console.log('success deleted img ');
+						}, function() {
+							console.log('fail delete img');
+						});
+					}
+					;
+				}
+			}
 			$.publish('deleteOneMarker', [ modelMarker ]);
 		}
 	};
@@ -117,24 +119,21 @@ function MapMarkerModel() {
 					self.createOneMarker(marksJSONArray[i].id,
 							marksJSONArray[i]);
 				}
-				
+
 				for ( var i in marksJSONArray) {
 					var eachJSONObject = marksJSONArray[i];
 					/*
-					if (eachJSONObject.nextMainMarkerId != null) {
-						self.addMainLine(eachJSONObject.id,
-								eachJSONObject.nextMainMarkerId);
-					}
-					*/
+					 * if (eachJSONObject.nextMainMarkerId != null) {
+					 * self.addMainLine(eachJSONObject.id,
+					 * eachJSONObject.nextMainMarkerId); }
+					 */
 
 					for ( var j in eachJSONObject.subMarkerIds) {
 						self.addSubLine(eachJSONObject.id,
-								eachJSONObject.subMarkerIds[j],
-								0,
-								0);
+								eachJSONObject.subMarkerIds[j], 0, 0);
 					}
 				}
-				
+
 			}
 			console.log('model.loadRoutine:fetch routine success');
 			successCallback({
@@ -202,7 +201,7 @@ function MapMarkerModel() {
 	};
 
 	this.addSubLine = function(fromId, toId) {
-		console.log("model.addSubLine: fromId: "+fromId+" toId "+toId);
+		console.log("model.addSubLine: fromId: " + fromId + " toId " + toId);
 		var fromMarker = getOverlayById(fromId);
 		var toMarker = getOverlayById(toId);
 		fromMarker.addTreeChildMarker(toMarker);
@@ -251,16 +250,16 @@ function MapMarkerModel() {
 		}
 		redrawTreeNode(marker);
 	};
-	
-	//event listeners
-	this.deleteImg=function(){
-		return function(_,url){			
-			backendManager.deleteFileByUrl(url, function(){
+
+	// event listeners
+	this.deleteImg = function() {
+		return function(_, url) {
+			backendManager.deleteFileByUrl(url, function() {
 				console.log('success deleted');
-			}, function(){
+			}, function() {
 				console.log('fail deleted');
 			});
-			
+
 		};
 	};
 
@@ -292,8 +291,8 @@ function MapMarkerModel() {
 			 */
 		}
 	}
-	
-	$.subscribe('deleteImg',this.deleteImg());
+
+	$.subscribe('deleteImg', this.deleteImg());
 }
 
 function BackendManager() {
@@ -419,40 +418,45 @@ function BackendManager() {
 			failCallback(error);
 		});
 	};
-	
-	this.deleteFileByUrl=function(url,successCallBack,failCallback){
-		console.log('BManager.deleteFileByUrl:'+url);
+
+	this.deleteFileByUrl = function(url, successCallBack, failCallback) {
+		console.log('BManager.deleteFileByUrl:' + url);
 		var query = new AV.Query(AV.Object.extend("_File"));
 		query.equalTo("url", url);
 		query.find({
-			  success: function(results) {
-				  if(results.length>0){
-					  console.log('find url:'+url);
-					 
-					  var file=results[0];
-					  file.destroy({success:function(file){
-						  successCallBack();
-					  },error:function(error){
-						  console.log("Error: " + error.code + " " + error.message);
-						  failCallback();
-					  }});
-					 
-				  }else{
-					  console.log('url '+url+' not found');
-				  }
-			  },
-			  error: function(error) {
-			    console.log("Error: " + error.code + " " + error.message);
-			    failCallback();
-			  }
-			});
+			success : function(results) {
+				if (results.length > 0) {
+					console.log('find url:' + url);
+
+					var file = results[0];
+					file.destroy({
+						success : function(file) {
+							successCallBack();
+						},
+						error : function(error) {
+							console.log("Error: " + error.code + " "
+									+ error.message);
+							failCallback();
+						}
+					});
+
+				} else {
+					console.log('url ' + url + ' not found');
+				}
+			},
+			error : function(error) {
+				console.log("Error: " + error.code + " " + error.message);
+				failCallback();
+			}
+		});
 	};
-	
+
 	// getters and setters
 
 }
 
-function MarkerContent() {
+function MarkerContent(id) {
+	this.id=id;
 	var title = "Unknown Location";
 	var address = "Unknown Address";
 	var lat = 0;
@@ -549,11 +553,12 @@ function MapMarker(id) {
 	this.parentSubMarker = null;
 
 	this.isHideAllSubMarkers = false;
-	
-	//if this marker is a submarker, 
-	//then it has a relative value of pixel x and y cordinates compared to its parent marker
-	this.offsetX=0;
-	this.offsetY=0;
+
+	// if this marker is a submarker,
+	// then it has a relative value of pixel x and y cordinates compared to its
+	// parent marker
+	this.offsetX = 0;
+	this.offsetY = 0;
 
 	this.isSubMarker = function() {
 		if (this.parentSubMarker != null) {
@@ -562,11 +567,12 @@ function MapMarker(id) {
 			return false;
 		}
 	};
-	
-	this.updateOffset=function(x,y){
-		console.log("id "+this.id+ " modelMarker.updateOffset: "+x+" "+y);
-		this.offsetX=x;
-		this.offsetY=y;
+
+	this.updateOffset = function(x, y) {
+		console.log("id " + this.id + " modelMarker.updateOffset: " + x + " "
+				+ y);
+		this.offsetX = x;
+		this.offsetY = y;
 	};
 
 	this.updateContent = function(args) {
@@ -588,15 +594,13 @@ function MapMarker(id) {
 
 		if (args.lat != null && args.lng != null) {
 			this.content.setlatlng(args.lat, args.lng);
-			$.publish('updateUIMarker',[this]);
-			$.publish('updateUI',[]);
+			$.publish('updateUIMarker', [ this ]);
+			$.publish('updateUI', []);
 		}
 
 		if (args.imgUrls != null && args.imgUrls.length != 0) {
 			this.content.setImgUrls(args.imgUrls);
-		} else {
-			this.content.setImgUrls([]);
-		}
+		} 
 
 		if (args.iconUrl != null) {
 			this.content.setIconUrl(args.iconUrl);
@@ -614,8 +618,7 @@ function MapMarker(id) {
 		var result = true;
 		if (marker.parentSubMarker == null
 				&& marker.connectedMainMarker == null
-				&& marker.prevMainMarker == null
-				&& !this.isSubMarker()) {
+				&& marker.prevMainMarker == null && !this.isSubMarker()) {
 			result = true;
 		} else {
 			result = false;
@@ -709,7 +712,7 @@ function MapMarker(id) {
 	this.getContent = function() {
 		return this.content;
 	};
-	
+
 }
 
 function MainLine(id) {

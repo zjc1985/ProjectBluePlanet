@@ -91,6 +91,11 @@ function MapController(){
 	this.updateMarkerContentById=function(id,content){
 		var mapMarker=model.getMapMarkerById(id);
 		mapMarker.content.updateContent(content);
+		if(content.slideNum!=null && mapMarker.subMarkersArray.length>0){
+			for(var i in mapMarker.subMarkersArray){
+				mapMarker.subMarkersArray[i].content.updateContent({slideNum:content.slideNum});
+			}
+		}
 	};
 	
 	this.showAllRoutineClickHandler=function(){
@@ -104,14 +109,20 @@ function MapController(){
 				content.getAddress()+
 				content.getCategory()+
 				content.getMycomment(false));
+		view.infocard.setMaxSlideNum(model.getModelMarkers().length);
 		
 		view.infocard.setDefaultContent({title:content.getTitle(),
-														address:content.getAddress(),
-														category:content.getCategory(),
-														mycomment:content.getMycomment(true),
-														fullcomment:content.getMycomment(false)});
+											iconUrl:content.getIconUrl(),
+											address:content.getAddress(),
+											category:content.getCategory(),
+											mycomment:content.getMycomment(true),
+											slideNum:content.getSlideNum(),
+											fullcomment:content.getMycomment(false)});
 		
 		view.infocard.setDefaultImgs(content.getImgUrls());
+		
+		
+		
 		if(content.getImgUrls().length!=0){			
 			view.infocard.showContentB();
 		}else{
@@ -478,6 +489,7 @@ function MapController(){
 			if(viewMarker!=null){								
 				view.infocard.setDefaultContent({title:contentModel.getTitle(),
 													address:contentModel.getAddress(),
+													slideNum:contentModel.getSlideNum(),
 												  mycomment:contentModel.getMycomment(true),
 												  category:contentModel.getCategory(),
 												fullcomment:contentModel.getMycomment(false)});

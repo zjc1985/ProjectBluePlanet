@@ -23,6 +23,8 @@ function infoCard(id){
 	var editFormMycommentIdName=editFormIdName+'Mycomment';
 	var editFormImageUrlIdName=editFormIdName+'ImageUrl';
 	var editFormIconUrlIdName=editFormIdName+'IconUrl';
+	var editFormSlideNumIdName=editFormIdName+'SlideNum';
+	
 	var editFormCombobox;
 	
 	var isASideShow=true;
@@ -41,16 +43,25 @@ function infoCard(id){
 	};
 	
 	this.setDefaultContent=function(content){
-		if(content.title!=''&& content.title!=null){
-			$(titleId).empty();
-			$(titleId).html(content.title);
-			$('#'+editFormTitleIdName).val(content.title);
+		if(content.iconUrl!=null && content.iconUrl!=''){
+			editFormCombobox.set("value",content.iconUrl);
 		}
 		
 		if(content.category!=''&& content.category!=null){
 			$(categoryId).empty();
 			$(categoryId).html(content.category);
 			$('#'+editFormCategoryIdName).val(content.category);
+		}
+		
+		if(content.slideNum!=null && content.slideNum!=''){
+			$(categoryId).append("&nbsp;"+content.slideNum);
+			$('#'+editFormSlideNumIdName).val(content.slideNum);
+		}
+		
+		if(content.title!=''&& content.title!=null){
+			$(titleId).empty();
+			$(titleId).html(content.title);
+			$('#'+editFormTitleIdName).val(content.title);
 		}
 		
 		if(content.address!=''&& content.address!=null){
@@ -84,7 +95,12 @@ function infoCard(id){
 		}	
 	};
 	
-	
+	this.setMaxSlideNum=function(maxNum){
+		$('#'+editFormSlideNumIdName).empty();
+		for(var i=1;i<maxNum+1;i++){
+			$('#'+editFormSlideNumIdName).append("<option value='"+i+"'>"+i+"</option>");
+		}	
+	};
 	
 	this.setContentA=function(html,isGallery){
 		this.contentA=html;
@@ -197,6 +213,7 @@ function infoCard(id){
 		c.address=$('#'+editFormAddresIdName).val();
 		c.mycomment=$('#'+editFormMycommentIdName).val();
 		c.imgUrls=$('#'+editFormImageUrlIdName).val().split(";");
+		c.slideNum=$('#'+editFormSlideNumIdName).val();
 		c.iconUrl=editFormCombobox.value;
 		for (var i = 0; i < c.imgUrls.length; i++) {
 			if ($.trim(c.imgUrls[i])=="") {
@@ -422,14 +439,18 @@ function infoCard(id){
 		var mycommentIdName=idName+'Mycomment';
 		mycommentId='#'+mycommentIdName;
 		
+		var slideNumIdName=idName+'SlideNum';
+		slideNumId='#'+slideNumIdName;
+		
 		var categoryIconUrlIdName=idName+'CategoryIconUrl';
 		iconUrlId='#'+categoryIconUrlIdName;
 		
 		var html="<div style='background-color:rgb(245,245,245);border-bottom-style:solid;border-width:1px;border-color:rgb(230,230,230)'>"+
 			//"<div style='float:left;width:50px;height:50px;'><img id='"+categoryIconUrlIdName+"'src='"+content.getIconPath()+"'></div>"+
 			"<p id='"+titleIdName+"' class='serif' style='margin:0px;color:#4577D4;'>"+content.title+"</p>"+
-			"<p id='"+categoryIdName+"' class='serif' style='margin:0px;font-size:11px;'>"+content.category+"</p>"+
+			"<p id='"+categoryIdName+"' class='serif' style='margin:0px;font-size:11px;'>"+content.category+ "</p>"+
 			"<p id='"+addressIdName+"' class='serif' style='margin:0px;font-size:11px;'>"+content.address+"</p>"+
+			
 		"</div>"+
 		"<div style='width:330px;height:130px;overflow: hidden;text-overflow: ellipsis;white-space: normal;'>"+
 			"<p id='"+mycommentIdName+"' class='serif' style='margin:5px;font-size:14px;'>"+content.comment+"</p>"+
@@ -453,6 +474,8 @@ function infoCard(id){
 			"<li><label for='category'>Category:</label>"+
 				"<input id='"+editFormCategoryIdName+"' type='text' placeholder='Name'></li>"+
 			
+			"<li><label for='slideNum'>SlideNum:</label>"+
+				"<select id='"+editFormSlideNumIdName+"'></select></li>"+
 			"<li>"+
 				"<label for='address'>Address:</label>"+
 				"<input id='"+editFormAddresIdName+"' type='text' placeholder='Name'>"+

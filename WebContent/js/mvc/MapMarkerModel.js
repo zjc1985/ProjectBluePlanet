@@ -449,11 +449,18 @@ function MarkerContent(id) {
 	var category = "marker";
 	var imgUrls = new Array();
 	var isImgPositionDecided=true;
+	var slideNum=1;
 	
 	var defaultImgIcon="resource/icons/pic/pic_default.png";
 	var picNoPositionIconUrl="resource/icons/pic/pic_no_position.png";
 	var iconUrl = "resource/icons/default/default_default.png";
 
+	this.getSlideNum=function(){
+		return slideNum;
+	};
+	this.setSlideNum=function(num){
+		slideNum=num;
+	};
 	
 	this.setImgPositionDecided=function(arg){
 		isImgPositionDecided=arg;
@@ -466,10 +473,14 @@ function MarkerContent(id) {
 	
 	this.isImgPositionDecided=function(){
 		return isImgPositionDecided;
-	}
+	};
 	
 	
 	this.updateContent = function(args) {
+		if(args.slideNum!=null){
+			this.setSlideNum(args.slideNum);
+		}
+		
 		if (args.title != null) {
 			this.setTitle(args.title);
 		}
@@ -707,6 +718,7 @@ function MapMarker(id) {
 			category : this.getContent().getCategory(),
 			imgUrls : this.getContent().getImgUrls(),
 			iconUrl : this.getContent().getIconUrl(),
+			slideNum: this.getContent().getSlideNum(),
 			nextMainMarkerId : this.connectedMainMarker == null ? null
 					: this.connectedMainMarker.id,
 			subMarkerIds : subMarkerIdsArray,

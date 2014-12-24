@@ -28,18 +28,25 @@ function MapController(){
 	view.createView();
 	// this num is used to create id for BaiduMarker
 	var num = 1;
+	var isSlideMode=false;
 	
 	this.uploadImgs=function(file,lat,lng){
 		model.saveImage(file, function(url){
 			view.uploadImgForm.completeFileNum++;
 			view.uploadImgForm.updateProgress();
 			
+			var hasPositionInImg=true;
+			
 			if(lat==null||lng==null){
+				hasPositionInImg=false;
 				lat=view.getCenter().lat;
 				lng=view.getCenter().lng;
 			}
 			
-			self.addMarkerClickEvent({lat:lat,lng:lng}, {imgUrls:[url],title:file.name});
+			var id=self.addMarkerClickEvent({lat:lat,lng:lng}, {imgUrls:[url],title:file.name});
+			var content=model.getMarkerContentById(id);
+			content.setImgPositionDecided(hasPositionInImg);
+			
 			if(view.uploadImgForm.completeFileNum==view.uploadImgForm.fileNum){
 				alert("all save complete");
 				view.uploadImgForm.UIFinishUpload();
@@ -55,6 +62,10 @@ function MapController(){
 	
 	this.searchLocation=function(key){
 		view.searchLocation(key);
+	};
+	
+	this.startSlideMode=function(){
+		isSlideMode=true;
 	};
 	
 	this.zoomEventHandler=function(){
@@ -107,14 +118,15 @@ function MapController(){
 			view.infocard.showContentA();
 		}
 		
-		
-		
+		//Don't need show infoWindow right now
+		/*
 		if(viewMarker.infoWindow==null){			
 			viewMarker.infoWindow=view.addInfoWindow(viewMarker, {title:content.getTitle(),},num++);
 			
 		}else{
 			viewMarker.infoWindow.show();
 		};
+		*/
 		
 	};
 	
@@ -175,7 +187,21 @@ function MapController(){
 		
 		view.currentMarkerId=viewMarker.id;
 		
-		if(view.markerNeedMainLine!==null){
+		if(view.markerNeedMergeImgUrl!=null){
+			if(view.markerNeedMergeImgUrl.id!=viewMarker.id){
+				var fromContent=model.getMarkerContentById(view.markerNeedMergeImgUrl.id);
+				var urls=fromContent.getImgUrls();
+				var toContent=model.getMarkerContentById(viewMarker.id);				
+				for(var i in urls){
+					toContent.addImgUrl(urls[i]);
+				}
+			}
+			
+			view.markerNeedMergeImgUrl=null;
+			return;
+		}
+		
+		if(view.markerNeedMainLine!=null){
 			model.addMainLine(view.markerNeedMainLine.id, viewMarker.id);
 			view.markerNeedMainLine=null;
 			return;
@@ -256,6 +282,9 @@ function MapController(){
 		//update lat lng
 		modelMarker.content.updateContent({lat:lat,lng:lng});
 		
+		if(!modelMarker.content.isImgPositionDecided()){
+			modelMarker.content.setImgPositionDecided(true);
+		}
 		
 		if(modelMarker.isSubMarker()){
 			//update offset if it is a submarker
@@ -288,8 +317,10 @@ function MapController(){
 	
 	this.addMarkerClickEvent=function(position,content){
 		content.lat=position.lat;
-		content.lng=position.lng;
-		console.log('creating markder id:'+ model.createOneMarker(num,content).id);
+		content.lng=position.lng;	
+		var id=model.createOneMarker(num,content).id;
+		console.log('creating markder id:'+ id);
+		return id;
 	};
 	
 	this.markerDeleteClickHandler=function(viewMarker){
@@ -309,6 +340,11 @@ function MapController(){
 	this.addSubLineClickHandler=function(marker){
 		view.markerNeedSubLine=marker;
 		alert("please click another marker to add sub line");
+	};
+	
+	this.mergeImgUrlClickHandler=function(marker){
+		view.markerNeedMergeImgUrl=marker;
+		alert("please click another marker which you want to merge to");
 	};
 	
 	this.loadRoutines=function(){

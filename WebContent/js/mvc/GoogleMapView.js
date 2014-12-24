@@ -2,6 +2,8 @@ function GoogleMapView(oneController) {
 	var controller = oneController;
 	this.markerNeedMainLine = null;
 	this.markerNeedSubLine = null;
+	this.markerNeedMergeImgUrl=null;
+	
 	this.routineName='default routine';
 	
 	this.infocard=null;
@@ -227,6 +229,13 @@ function GoogleMapView(oneController) {
 			id: 'deleteselfItem',
 			label : 'delete this marker'
 		});
+		
+		menuItems.push({
+			className : 'context_menu_item',
+			eventName : 'mergeImgUrl',
+			id: 'mergeImgUrl',
+			label : 'Merge ImgUrl To...'
+		});
 
 		menuItems.push({});
 		menuItems.push({
@@ -268,6 +277,9 @@ function GoogleMapView(oneController) {
 						break;
 					case 'deleteself':
 						controller.markerDeleteClickHandler(googleMarker);
+						break;
+					case 'mergeImgUrl':
+						controller.mergeImgUrlClickHandler(googleMarker);
 						break;
 					case 'test':
 						//controller.testFeature(googleMarker);
@@ -312,6 +324,11 @@ function GoogleMapView(oneController) {
 		});
 		// a menuItem with no properties will be rendered as a separator
 		menuItems.push({});
+		menuItems.push({
+			className : 'context_menu_item',
+			eventName : 'startSlide',
+			label : 'Start slide mode'
+		});
 		menuItems.push({
 			className : 'context_menu_item',
 			eventName : 'showAll',
@@ -369,6 +386,9 @@ function GoogleMapView(oneController) {
 						break;
 					case 'testing':
 						console.log(self.getCenter());
+						break;
+					case 'startSlide':
+						controller.startSlideMode();
 						break;
 					}
 				});
@@ -783,7 +803,7 @@ function GoogleMapView(oneController) {
 			infowindow.close();
 		};
 		
-		infowindow.show();
+		//infowindow.show();
 		return infowindow;
 	};
 

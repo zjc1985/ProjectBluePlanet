@@ -440,6 +440,7 @@ function BackendManager() {
 
 function MarkerContent(id) {
 	this.id=id;
+	
 	var title = "Unknown Location";
 	var address = "Unknown Address";
 	var lat = 0;
@@ -447,7 +448,26 @@ function MarkerContent(id) {
 	var mycomment = "...";
 	var category = "marker";
 	var imgUrls = new Array();
+	var isImgPositionDecided=true;
+	
+	var defaultImgIcon="resource/icons/pic/pic_default.png";
+	var picNoPositionIconUrl="resource/icons/pic/pic_no_position.png";
 	var iconUrl = "resource/icons/default/default_default.png";
+
+	
+	this.setImgPositionDecided=function(arg){
+		isImgPositionDecided=arg;
+		if(isImgPositionDecided){
+			this.setIconUrl(defaultImgIcon);
+		}else{
+			this.setIconUrl(picNoPositionIconUrl);
+		}
+	};
+	
+	this.isImgPositionDecided=function(){
+		return isImgPositionDecided;
+	}
+	
 	
 	this.updateContent = function(args) {
 		if (args.title != null) {
@@ -487,6 +507,11 @@ function MarkerContent(id) {
 
 		$.publish('updateInfoWindow', [ this ]);
 
+	};
+	
+	this.addImgUrl=function(url){
+		imgUrls.push(url);
+		$.publish('updateInfoWindow', [ this ]);
 	};
 
 	this.getIconUrl = function() {
@@ -632,7 +657,6 @@ function MapMarker(id) {
 		if (this.connectedMainMarker != null) {
 			this.connectedMainMarker.prevMainMarker = null;
 			this.connectedMainMarker = null;
-			// $.publish('updateUI',[]);
 		}
 	};
 
@@ -655,7 +679,6 @@ function MapMarker(id) {
 				}
 			}
 			console.log(this.subMarkersArray);
-			// $.publish('updateUI',[]);
 		}
 	};
 

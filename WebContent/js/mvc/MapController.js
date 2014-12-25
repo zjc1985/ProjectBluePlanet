@@ -28,7 +28,9 @@ function MapController(){
 	view.createView();
 	// this num is used to create id for BaiduMarker
 	var num = 1;
+	
 	var isSlideMode=false;
+	var currentSlideNum=1;
 	
 	this.uploadImgs=function(file,lat,lng){
 		model.saveImage(file, function(url){
@@ -66,6 +68,41 @@ function MapController(){
 	
 	this.startSlideMode=function(){
 		isSlideMode=true;
+		currentSlideNum=1;
+		
+		view.initSlideMode();
+		
+		for(var i in model.getModelMarkers()){
+			var viewMarker=view.getViewOverlaysById(model.getModelMarkers()[i].id);
+			viewMarker.hide();
+		}
+	};
+	
+	this.mapClickEventHandler=function(){
+		if(isSlideMode){
+			if(currentSlideNum>model.getModelMarkers().length){
+				return;
+			}
+			
+			var markerIdsNeed2Show=[];
+			
+			for(var i in model.getModelMarkers()){
+				var modelMarker=model.getModelMarkers()[i];
+				if(modelMarker.content.getSlideNum()==currentSlideNum){
+					markerIdsNeed2Show.push(modelMarker.id);
+				}
+			}
+			
+			currentSlideNum++;
+			
+			if(markerIdsNeed2Show.length>0){
+				for(var i in markerIdsNeed2Show){
+					view.getViewOverlaysById(markerIdsNeed2Show[i]).show();
+				}
+			}else{
+				this.mapClickEventHandler();
+			}
+		}
 	};
 	
 	this.zoomEventHandler=function(){
@@ -149,12 +186,10 @@ function MapController(){
 			for(var i in modelMarker.subMarkersArray){
 				var subViewMarker=view.getViewOverlaysById(modelMarker.subMarkersArray[i].id);
 				if(subViewMarker.isShow==null || subViewMarker.isShow==false){
-					subViewMarker.isShow=true;
 					subViewMarker.show();
 					subViewMarker.setAnimation(google.maps.Animation.BOUNCE);
 					isShow=true;
 				}else{				
-					subViewMarker.isShow=false;
 					subViewMarker.hide();
 				}
 				
@@ -182,7 +217,6 @@ function MapController(){
 		console.log("controller.changeMainMarkerShowStatus");
 		for(var i=0;i<idsNeed2ShowArray.length;i++){
 			if(idsNeed2ShowArray[i]!=0){
-				view.getViewOverlaysById(idsNeed2ShowArray[i]).isShow=true;
 				view.getViewOverlaysById(idsNeed2ShowArray[i]).show();
 				if(view.getViewOverlaysById(idsNeed2ShowArray[i]).infoWindow!=null){
 					view.getViewOverlaysById(idsNeed2ShowArray[i]).infoWindow.show();
@@ -252,7 +286,6 @@ function MapController(){
 			
 			for(var i=0;i<belongRoutineMarkerIds.length;i++){
 				changeSubMarkerShowStatus(belongRoutineMarkerIds[i],false);
-				view.getViewOverlaysById(belongRoutineMarkerIds[i]).isShow=false;
 				view.getViewOverlaysById(belongRoutineMarkerIds[i]).hide();
 				if(view.getViewOverlaysById(belongRoutineMarkerIds[i]).infoWindow!=null){
 					view.getViewOverlaysById(belongRoutineMarkerIds[i]).infoWindow.hide();

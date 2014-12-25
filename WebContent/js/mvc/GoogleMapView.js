@@ -21,6 +21,8 @@ function GoogleMapView(oneController) {
 	var overlays = new Array();
 	var searchMarkers=[];
 	
+	var mapEditModeRightClickListener;
+	
 
 	function getOverlayById(id) {
 		var length = overlays.length;
@@ -287,6 +289,56 @@ function GoogleMapView(oneController) {
 					}
 				});
 	};
+	
+	this.initSlideMode=function(){
+		
+		//google.maps.event.clearListeners(map,"rightclick");
+		document.getElementById('addMarkerItem').style.display='none';
+		
+		
+		//addSlideModeContextMenu();
+	};
+	
+	function addSlideModeContextMenu(){
+		// create the ContextMenuOptions object
+		var contextMenuOptions = {};
+		contextMenuOptions.classNames = {
+			menu : 'context_menu',
+			menuSeparator : 'context_menu_separator'
+		};
+
+		// create an array of ContextMenuItem objects
+		var menuItems = [];
+		menuItems.push({
+			className : 'context_menu_item',
+			eventName : 'closeSlideMode',
+			id: 'closeSlideMode',
+			label : 'Close Slide Mode'
+		});
+		
+		contextMenuOptions.menuItems = menuItems;
+
+		// create the ContextMenu object
+		var contextMenu = new ContextMenu(map, contextMenuOptions);
+
+		// display the ContextMenu on a Map right click
+		mapEditModeRightClickListener= google.maps.event.addListener(map, 'rightclick', function(mouseEvent) {
+			contextMenu.show(mouseEvent.latLng);
+		});
+		
+		// listen for the ContextMenu 'menu_item_selected' event
+		google.maps.event.addListener(contextMenu, 'menu_item_selected',
+				function(latLng, eventName) {
+					// latLng is the position of the ContextMenu
+					// eventName is the eventName defined for the clicked
+					// ContextMenuItem in the ContextMenuOptions
+					switch (eventName) {
+					case 'closeSlideMode':
+						break;
+					}
+				});
+		
+	}
 
 	function addContextMenu() {
 		// create the ContextMenuOptions object
@@ -348,6 +400,10 @@ function GoogleMapView(oneController) {
 		// display the ContextMenu on a Map right click
 		google.maps.event.addListener(map, 'rightclick', function(mouseEvent) {
 			contextMenu.show(mouseEvent.latLng);
+		});
+		
+		google.maps.event.addListener(map, 'click', function(mouseEvent) {
+			controller.mapClickEventHandler();
 		});
 		
 		//zoom_changed
@@ -591,10 +647,12 @@ function GoogleMapView(oneController) {
 
 		viewMarker.hide = function() {
 			viewMarker.setVisible(false);
+			viewMarker.isShow=false;
 		};
 
 		viewMarker.show = function() {
 			viewMarker.setVisible(true);
+			viewMarker.isShow=true;
 		};
 		
 		viewMarker.getLatLng=function(){

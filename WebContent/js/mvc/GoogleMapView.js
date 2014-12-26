@@ -21,8 +21,6 @@ function GoogleMapView(oneController) {
 	var overlays = new Array();
 	var searchMarkers=[];
 	
-	var mapEditModeRightClickListener;
-	
 
 	function getOverlayById(id) {
 		var length = overlays.length;
@@ -38,10 +36,28 @@ function GoogleMapView(oneController) {
 		document.getElementById('addMarkerItem').style.display='none';
 		document.getElementById('saveRoutineItem').style.display='none';
 	};
+	
+	this.setMarkerAnimation=function(id,animationType){
+		googleMarker=self.getViewOverlaysById(id);
+		if(googleMarker instanceof google.maps.Marker){
+			if(animationType=="BOUNCE"){
+				googleMarker.setAnimation(google.maps.Animation.BOUNCE);
+			}else if(animationType=="DROP"){
+				googleMarker.setAnimation(google.maps.Animation.DROP);
+			}else{
+				googleMarker.setAnimation(null);
+			}
+		}
+	};
 
 	this.getViewOverlaysById = function(id) {
 		return getOverlayById(id);
 	};
+	
+	this.setMarkerZIndex=function(id,znumber){
+		var viewMarker=self.getViewOverlaysById(id);
+		viewMarker.setZIndex(znumber);
+	}
 	
 	function addMainLineContextMenu(line,idfrom){
 		// create the ContextMenuOptions object
@@ -199,6 +215,7 @@ function GoogleMapView(oneController) {
 
 	function addMarkerContextMenu(googleMarker) {
 		// create the ContextMenuOptions object
+		var id=googleMarker.id;
 		var contextMenuOptions = {};
 		contextMenuOptions.classNames = {
 			menu : 'context_menu',
@@ -210,42 +227,36 @@ function GoogleMapView(oneController) {
 		menuItems.push({
 			className : 'context_menu_item',
 			eventName : 'showInfo',
+			id: 'showInfoItem'+id,
 			label : 'showInfo'
 		});
 		menuItems.push({
 			className : 'context_menu_item',
 			eventName : 'addMainline',
-			id: 'addMainlineItem',
+			id: 'addMainlineItem'+id,
 			label : 'addMainline'
 		});
 		menuItems.push({
 			className : 'context_menu_item',
 			eventName : 'addSubline',
-			id: 'addSublineItem',
+			id: 'addSublineItem'+id,
 			label : 'addSubline'
 		});
 
 		menuItems.push({
 			className : 'context_menu_item',
 			eventName : 'deleteself',
-			id: 'deleteselfItem',
+			id: 'deleteselfItem'+id,
 			label : 'delete this marker'
 		});
 		
 		menuItems.push({
 			className : 'context_menu_item',
 			eventName : 'mergeImgUrl',
-			id: 'mergeImgUrl',
+			id: 'mergeImgUrlItem'+id,
 			label : 'Merge ImgUrl To...'
 		});
 
-		menuItems.push({});
-		menuItems.push({
-			className : 'context_menu_item',
-			eventName : 'test',
-			label : 'test'
-		});
-		
 		contextMenuOptions.menuItems = menuItems;
 
 		// create the ContextMenu object
@@ -283,62 +294,63 @@ function GoogleMapView(oneController) {
 					case 'mergeImgUrl':
 						controller.mergeImgUrlClickHandler(googleMarker);
 						break;
-					case 'test':
-						//controller.testFeature(googleMarker);
-						break;
 					}
 				});
 	};
 	
 	this.initSlideMode=function(){
-		
-		//google.maps.event.clearListeners(map,"rightclick");
+		// map context menu
 		document.getElementById('addMarkerItem').style.display='none';
+		document.getElementById('saveRoutineItem').style.display='none';
+		document.getElementById('loadRoutineItem').style.display='none';
+		document.getElementById('uploadItem').style.display='none';
+		document.getElementById('showAllItem').style.display='none';
 		
+		//marker context menu
+		for(var i in overlays){
+			if(overlays[i] instanceof google.maps.Marker){
+				var id=overlays[i].id;
+				overlays[i].setDraggable(false);
+				if(id!=null){
+					document.getElementById('showInfoItem'+id).style.display='none';
+					document.getElementById('addMainlineItem'+id).style.display='none';
+					document.getElementById('addSublineItem'+id).style.display='none';
+					document.getElementById('deleteselfItem'+id).style.display='none';
+					document.getElementById('mergeImgUrlItem'+id).style.display='none';
+				}
+			}
+		}
 		
-		//addSlideModeContextMenu();
 	};
 	
-	function addSlideModeContextMenu(){
-		// create the ContextMenuOptions object
-		var contextMenuOptions = {};
-		contextMenuOptions.classNames = {
-			menu : 'context_menu',
-			menuSeparator : 'context_menu_separator'
-		};
-
-		// create an array of ContextMenuItem objects
-		var menuItems = [];
-		menuItems.push({
-			className : 'context_menu_item',
-			eventName : 'closeSlideMode',
-			id: 'closeSlideMode',
-			label : 'Close Slide Mode'
-		});
+	this.exitSlideMode=function(){
+		// map context menu
+		document.getElementById('addMarkerItem').style.display='';
+		document.getElementById('saveRoutineItem').style.display='';
+		document.getElementById('loadRoutineItem').style.display='';
+		document.getElementById('uploadItem').style.display='';
+		document.getElementById('showAllItem').style.display='';
 		
-		contextMenuOptions.menuItems = menuItems;
-
-		// create the ContextMenu object
-		var contextMenu = new ContextMenu(map, contextMenuOptions);
-
-		// display the ContextMenu on a Map right click
-		mapEditModeRightClickListener= google.maps.event.addListener(map, 'rightclick', function(mouseEvent) {
-			contextMenu.show(mouseEvent.latLng);
-		});
-		
-		// listen for the ContextMenu 'menu_item_selected' event
-		google.maps.event.addListener(contextMenu, 'menu_item_selected',
-				function(latLng, eventName) {
-					// latLng is the position of the ContextMenu
-					// eventName is the eventName defined for the clicked
-					// ContextMenuItem in the ContextMenuOptions
-					switch (eventName) {
-					case 'closeSlideMode':
-						break;
-					}
-				});
-		
-	}
+		//marker context menu
+		for(var i in overlays){
+			if(overlays[i] instanceof google.maps.Marker){
+				overlays[i].setDraggable(true);
+				
+				var id=overlays[i].id;
+				
+				if(id!=null){
+					document.getElementById('showInfoItem'+id).style.display='';
+					document.getElementById('addMainlineItem'+id).style.display='';
+					document.getElementById('addSublineItem'+id).style.display='';
+					document.getElementById('deleteselfItem'+id).style.display='';
+					document.getElementById('mergeImgUrlItem'+id).style.display='';
+				}
+				
+			}
+			
+		}
+	};
+	
 
 	function addContextMenu() {
 		// create the ContextMenuOptions object
@@ -378,18 +390,28 @@ function GoogleMapView(oneController) {
 		menuItems.push({});
 		menuItems.push({
 			className : 'context_menu_item',
+			eventName : 'showAll',
+			id: 'showAllItem',
+			label : 'show all routines'
+		});
+		menuItems.push({});
+		menuItems.push({
+			className : 'context_menu_item',
 			eventName : 'startSlide',
+			id: 'startSlideItem',
 			label : 'Start slide mode'
 		});
 		menuItems.push({
 			className : 'context_menu_item',
-			eventName : 'showAll',
-			label : 'show all routines'
+			eventName : 'prevSlide',
+			id: 'prevSlideItem',
+			label : 'Prev slide'
 		});
 		menuItems.push({
 			className : 'context_menu_item',
-			eventName : 'testing',
-			label : 'testing feature'
+			eventName : 'exitSlide',
+			id: 'exitSlideItem',
+			label : 'End slide mode'
 		});
 		
 		contextMenuOptions.menuItems = menuItems;
@@ -440,11 +462,14 @@ function GoogleMapView(oneController) {
 					case 'showAll':
 						controller.showAllRoutineClickHandler();
 						break;
-					case 'testing':
-						console.log(self.getCenter());
-						break;
 					case 'startSlide':
 						controller.startSlideMode();
+						break;
+					case 'exitSlide':
+						controller.exitSlideMode();
+						break;
+					case 'prevSlide':
+						controller.prevSlide();
 						break;
 					}
 				});
@@ -523,6 +548,17 @@ function GoogleMapView(oneController) {
 			}
 		}
 		map.fitBounds(bounds);
+	};
+	
+	this.panByIds=function(ids){
+		var bounds = new google.maps.LatLngBounds();
+		for(var i in ids){
+			var viewMarker=self.getViewOverlaysById(ids[i]);
+			if(viewMarker instanceof google.maps.Marker){
+				bounds.extend(viewMarker.getPosition());
+			}
+		}
+		map.panTo(bounds.getCenter());
 	};
 	
 	this.fitTwoPositionBounds=function(p1,p2){
@@ -836,8 +872,11 @@ function GoogleMapView(oneController) {
 		viewMarker.setIcon(iconUrl);
 	};
 	
-
-
+	this.setMarkerDragable=function(markerId,needDragable){
+		var viewMarker=this.getViewOverlaysById(markerId);
+		viewMarker.setDraggable(needDragable);
+	};
+	
 	this.addInfoWindow = function(marker, content, num) {
 		/*
 		var infocard = new infoCard('card' + num);

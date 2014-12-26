@@ -4,11 +4,13 @@ function infoCard(id){
 	var jqueryId="#"+idName;
 	var ASideId='';
 	var BSideId='';
+	
 	var hideButtonId='';
 	var rotateButtonId;
 	var editOKButtonId;
 	var unpinButtonId;
 	var pinButtonId;
+	var editButtonId;
 	
 	var titleId='';
 	var categoryId='';
@@ -30,7 +32,13 @@ function infoCard(id){
 	var isASideShow=true;
 	
 	
+	this.hideEditButton=function(){
+		$(editButtonId).hide();
+	};
 	
+	this.showEditButton=function(){
+		$(editButtonId).show();
+	};
 	
 	this.getTop=function(){
 		var s= $(jqueryId).css("top");
@@ -277,11 +285,14 @@ function infoCard(id){
 		var rotateButtonIdName=idName+"RotateButton";
 		var unpinButtonIdName=idName+"UnpinButton";
 		var pinButtonIdName=idName+"PinButton";
+		var editButtonIdName=idName+"EditButton";
+		
 		hideButtonId="#"+hideButtonIdName;
 		rotateButtonId="#"+rotateButtonIdName;
 		editOKButtonId="#"+idName+"EditOK";
 		unpinButtonId="#"+unpinButtonIdName;
 		pinButtonId="#"+pinButtonIdName;
+		editButtonId='#'+editButtonIdName;
 		
 		$("body").append("<div class='info' id='"+idName+"'></div>");
 		$('body').append(createEditForm());
@@ -298,7 +309,7 @@ function infoCard(id){
 				"<p class='serif' style='margin:3px 0px 0px 0px;font-size:12px;float:right'><a id='"+unpinButtonIdName+"' href='#'>UNPIN  ||</a></p>" +
 				"<p class='serif' style='margin:3px 0px 0px 0px;font-size:12px;float:right'><a id='"+pinButtonIdName+"' href='#'>PIN  ||</a></p>" +
 				"<p class='serif' style='margin:3px 5px 0px 0px;font-size:12px;float:left'><a id='"+rotateButtonIdName+"' href='#'>ROTATE</a></p>" +
-				"<p class='serif' style='margin:3px 0px 0px 0px;font-size:12px;'><a class='popup-with-form' href='#"+editFormIdName+"'>EDIT</a></p>" +
+				"<p class='serif' style='margin:3px 0px 0px 0px;font-size:12px;'><a id='"+editButtonIdName+"' class='popup-with-form' href='#"+editFormIdName+"'>EDIT</a></p>" +
 				"</div>";
 		$(jqueryId).append(buttonHtml);
 		$(jqueryId).addClass("info");

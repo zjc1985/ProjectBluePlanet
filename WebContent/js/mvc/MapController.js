@@ -32,6 +32,10 @@ function MapController(){
 	var isSlideMode=false;
 	var currentSlideNum=1;
 	
+	var isUserOwnThisRoutine=false;
+	
+	var MAX_ZINDEX=200;
+	
 	this.uploadImgs=function(file,lat,lng){
 		model.saveImage(file, function(url){
 			view.uploadImgForm.completeFileNum++;
@@ -70,12 +74,48 @@ function MapController(){
 		isSlideMode=true;
 		currentSlideNum=1;
 		
+		view.infocard.hideEditButton();
+		
+		view.removeAllLines();
+		
 		view.initSlideMode();
 		
 		for(var i in model.getModelMarkers()){
 			var viewMarker=view.getViewOverlaysById(model.getModelMarkers()[i].id);
 			viewMarker.hide();
 		}
+	};
+	
+	this.exitSlideMode=function(){	
+		if(isUserOwnThisRoutine){
+			isSlideMode=false;
+			view.infocard.showEditButton();
+			view.removeAllLines();
+			view.exitSlideMode();
+			for(var i in model.getModelMarkers()){
+				var viewMarker=view.getViewOverlaysById(model.getModelMarkers()[i].id);
+				if(model.getModelMarkers()[i].isSubMarker()){
+					viewMarker.hide();
+				}else{
+					viewMarker.show();
+				}
+			}
+		}	
+	};
+	
+	this.prevSlide=function(){
+		if(isSlideMode){
+			//hide current slide num and prev slide num
+			for(var i in model.getModelMarkers()){
+				var modelMarker=model.getModelMarkers()[i];
+				if(modelMarker.content.getSlideNum()==currentSlideNum-1 || modelMarker.content.getSlideNum()==currentSlideNum-2){
+					var viewMarker=view.getViewOverlaysById(modelMarker.id);
+					viewMarker.hide();
+				}
+			}
+		}
+		currentSlideNum--;
+		currentSlideNum--;
 	};
 	
 	this.mapClickEventHandler=function(){
@@ -88,7 +128,7 @@ function MapController(){
 			
 			for(var i in model.getModelMarkers()){
 				var modelMarker=model.getModelMarkers()[i];
-				if(modelMarker.content.getSlideNum()==currentSlideNum){
+				if(modelMarker.content.getSlideNum()==currentSlideNum && (!modelMarker.isSubMarker())){
 					markerIdsNeed2Show.push(modelMarker.id);
 				}
 			}
@@ -96,9 +136,35 @@ function MapController(){
 			currentSlideNum++;
 			
 			if(markerIdsNeed2Show.length>0){
-				for(var i in markerIdsNeed2Show){
-					view.getViewOverlaysById(markerIdsNeed2Show[i]).show();
-				}
+				view.panByIds(markerIdsNeed2Show);
+				
+				var startMillionSeconds=700;
+				
+				setTimeout(function(){ 
+					for(var i in markerIdsNeed2Show){
+						var id=markerIdsNeed2Show[i];
+						view.setMarkerZIndex(id, currentSlideNum);
+						view.getViewOverlaysById(id).show();
+						view.setMarkerAnimation(id, "DROP");
+					}
+				}, startMillionSeconds);	
+				
+				
+				setTimeout(function(){ 
+					for(var i in markerIdsNeed2Show){
+						var id=markerIdsNeed2Show[i];
+						view.setMarkerAnimation(id, "BOUNCE");
+					}
+				}, startMillionSeconds+650);
+				
+				setTimeout(function(){ 
+					for(var i in markerIdsNeed2Show){
+						var id=markerIdsNeed2Show[i];
+						view.setMarkerAnimation(id, null);
+					}
+				}, startMillionSeconds+2900);
+				
+				
 			}else{
 				this.mapClickEventHandler();
 			}
@@ -186,8 +252,9 @@ function MapController(){
 			for(var i in modelMarker.subMarkersArray){
 				var subViewMarker=view.getViewOverlaysById(modelMarker.subMarkersArray[i].id);
 				if(subViewMarker.isShow==null || subViewMarker.isShow==false){
+					view.setMarkerZIndex(subViewMarker.id, MAX_ZINDEX);
 					subViewMarker.show();
-					subViewMarker.setAnimation(google.maps.Animation.BOUNCE);
+					view.setMarkerAnimation(modelMarker.subMarkersArray[i].id, "BOUNCE");
 					isShow=true;
 				}else{				
 					subViewMarker.hide();
@@ -196,7 +263,7 @@ function MapController(){
 				if(isShow){
 					setTimeout(function(){ 
 						for(var i in modelMarker.subMarkersArray){
-							view.getViewOverlaysById(modelMarker.subMarkersArray[i].id).setAnimation(null);
+							view.setMarkerAnimation(modelMarker.subMarkersArray[i].id, null);
 						}
 					}, 750);
 				}
@@ -302,6 +369,8 @@ function MapController(){
 		}
 		this.showInfoClickHandler(viewMarker);
 		
+		//set max zindex
+		view.setMarkerZIndex(viewMarker.id, MAX_ZINDEX);
 		
 		//view.centerAndZoom(modelMarker.content.getLat(), modelMarker.content.getLng());
 		
@@ -414,14 +483,15 @@ function MapController(){
 				num=arg.maxId+1;
 				view.fitRoutineBounds();
 				
-				
-				
 				console.log('current num in controller:'+num);
 				
+				self.zoomEventHandler();
+				
 				model.isUserOwnRoutine(QueryString.routineId, function(isUserOwn){
+					isUserOwnThisRoutine=isUserOwn;
 					if(!isUserOwn){
+						
 						console.log('try to hide contextMenu');
-						view.hideEditMenuInContextMenu();
 					}
 				});
 			});

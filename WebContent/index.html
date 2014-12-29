@@ -2,24 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Your Routine List</title>
-
-<style type="text/css">
-
-.baseBorder{
-	margin-top: 10px;
-	border-width: 1px;
-	border-style: groove;
-	padding: 10px;
-}
-
-.ResultBorder{
-	margin-top: 10px;
-	border-width: 0px 0px 1px 0px;
-	border-style: groove;
-	padding: 10px;
-}
-</style>
+<title>Login</title>
 
 <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
 <script type="text/javascript" src="js/mvc/MapMarkerModel.js"></script>
@@ -28,32 +11,26 @@
 </head>
 <body>
 
-<a href="MapMarkerMVC.html">create new</a></br></br>
 
-<div id="routineList" class="baseBorder">
+<p>username: <input type="text" id="username" /></p>
+<p>password: <input type="password" id="password" /></p>
+<button id='login'>login</button>
 
-</div>
 
 </body>
 </html>
 
 <script type="text/javascript">
+
 var backendManager=new BackendManager();
 
-var currentUser=backendManager.getCurrentUser();
-
-backendManager.fetchRoutinesByUser(currentUser,function(results){
-	for(var i in results){
-		
-		console.log(results[i].get('title'));
-		console.log(results[i].id);
-		
-		var html="<div class='ResultBorder'><a href='MapMarkerMVC.html?routineId="+results[i].id+"'>"+results[i].get('title')+"</a>"+"</div>"
-		$("#routineList").append(html);
-	}
+$('#login').click(function(){
+	console.log($('#username').val());
+	console.log($('#password').val());
+	backendManager.login($('#username').val(),$('#password').val(),function(user){
+		alert('login success,welcome:'+user.get('username'));
+		window.location.href = 'routines.html';
+	})
 });
 
-
-
 </script>
-

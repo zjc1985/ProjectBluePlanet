@@ -490,8 +490,8 @@ function MapController(){
 				model.isUserOwnRoutine(QueryString.routineId, function(isUserOwn){
 					isUserOwnThisRoutine=isUserOwn;
 					if(!isUserOwn){
-						
-						console.log('try to hide contextMenu');
+						console.log('start slide mode');
+						self.startSlideMode();
 					}
 				});
 			});

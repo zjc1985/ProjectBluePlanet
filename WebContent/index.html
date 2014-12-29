@@ -2,7 +2,24 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>Your Routine List</title>
+
+<style type="text/css">
+
+.baseBorder{
+	margin-top: 10px;
+	border-width: 1px;
+	border-style: groove;
+	padding: 10px;
+}
+
+.ResultBorder{
+	margin-top: 10px;
+	border-width: 0px 0px 1px 0px;
+	border-style: groove;
+	padding: 10px;
+}
+</style>
 
 <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
 <script type="text/javascript" src="js/mvc/MapMarkerModel.js"></script>
@@ -11,7 +28,11 @@
 </head>
 <body>
 
-<a href="MapMarkerMVC.html?routineId=532ed04de4b0729e44c4842d">MapMarker</a></br></br>
+<a href="MapMarkerMVC.html">create new</a></br></br>
+
+<div id="routineList" class="baseBorder">
+
+</div>
 
 </body>
 </html>
@@ -21,15 +42,14 @@ var backendManager=new BackendManager();
 
 var currentUser=backendManager.getCurrentUser();
 
-
-var routines=backendManager.fetchRoutinesByUser(currentUser,function(results){
+backendManager.fetchRoutinesByUser(currentUser,function(results){
 	for(var i in results){
 		
 		console.log(results[i].get('title'));
 		console.log(results[i].id);
 		
-		var html="<a href='MapMarkerMVC.html?routineId="+results[i].id+"'>"+results[i].get('title')+"</a>"+"</br>"
-		$("body").append(html);
+		var html="<div class='ResultBorder'><a href='MapMarkerMVC.html?routineId="+results[i].id+"'>"+results[i].get('title')+"</a>"+"</div>"
+		$("#routineList").append(html);
 	}
 });
 

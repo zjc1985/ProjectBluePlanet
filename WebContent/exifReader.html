@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+
+
+
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+
+<script type="text/javascript" src="js/lib/jquery.exif.js"></script>
+<script type="text/javascript" src="js/mvc/MapMarkerModel.js"></script>
+<script src="https://cn.avoscloud.com/scripts/lib/av-0.3.1.min.js"></script>
+
+</head>
+<body>
+
+
+	<form id="myform">
+		<input type="file" id="file" multiple /> </br>
+		<button type="button" id="upload">Upload</button>
+		<div id="progress">0%</div>
+	</form>
+
+</body>
+</html>
+
+<script type="text/javascript">
+	function updateProgress(progress) {
+		$('#progress').text(progress + '%');
+	};
+
+	if (window.File && window.FileReader && window.FileList && window.Blob) {
+		// Great success! All the File APIs are supported.
+	} else {
+		alert('The File APIs are not fully supported in this browser.');
+	}
+
+	var backendManager = new BackendManager();
+	backendManager.deleteFileByUrl("http://ac-6pzfpf5w.qiniudn.com/MFJSYvmakN0Myh1HE4z8ggoRsadHPz9P1z6asWGT.JPG",function(){
+		console.log('deleted');
+	},function(){
+		console.log('fetch failed');
+	})
+
+	try {
+		$('#file').change(
+				function() {
+					var files = this.files;
+
+					var currentProgress = 0;
+					updateProgress(currentProgress);
+					var progressSlice = 100 / files.length / 2;
+
+					for ( var i = 0; i < files.length; i++) {
+						var file = files[i];
+						$.fileExifLoadEnd(file, function(exifObject, content) {
+							currentProgress = currentProgress + progressSlice;
+							updateProgress(currentProgress);
+
+							var lat = exifObject.GPSLatitude;
+							var lon = exifObject.GPSLongitude;
+
+							if (lat != null && lon != null) {
+								//Convert coordinates to WGS84 decimal
+								var latRef = exifObject.GPSLatitudeRef || "N";
+								var lonRef = exifObject.GPSLongitudeRef || "W";
+								lat = (lat[0] + lat[1] / 60 + lat[2] / 3600)
+										* (latRef == "N" ? 1 : -1);
+								lon = (lon[0] + lon[1] / 60 + lon[2] / 3600)
+										* (lonRef == "W" ? -1 : 1);
+								//alert(lat + " " + lon);
+							}
+							backendManager.saveFile(content, function() {
+								currentProgress = currentProgress
+										+ progressSlice;
+								updateProgress(currentProgress);
+								alert('one file save to cloud');
+							}, function() {
+								currentProgress = currentProgress
+										+ progressSlice;
+								updateProgress(currentProgress);
+								alert('one file save ');
+							});
+						});
+					}
+				});
+	} catch (e) {
+		alert(e);
+	}
+</script>
+

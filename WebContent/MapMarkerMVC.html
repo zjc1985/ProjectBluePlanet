@@ -66,10 +66,12 @@ px;
 <script type="text/javascript" src="js/lib/jquery.dd.min.js"></script>
 
 <script src="js/lib/jquery.magnific-popup.js"></script>
+<script src="js/lib/jquery.exif.js"></script>
 
 <script type="text/javascript"
       src="http://maps.googleapis.com/maps/api/js?key=AIzaSyCHRDVOvVhCnFcyHSs2lmhV2HNjcQQzdX0&sensor=false&libraries=places"></script>
 <script src="js/InfoCard.js"></script> 
+<script src="js/UploadFormView.js"></script> 
 <script type="text/javascript" src="js/LineUtil.js"></script>
 <script type="text/javascript" src="js/mvc/GoogleMapView.js"></script>
 
@@ -90,18 +92,21 @@ px;
 	
 	<div id="searchDialog" style="position: relative; top: 100px; width: 500px;margin-left:0.7cm; z-index: 2">
 		<input type="text" class='controls' name="searchKey" id="searchKey" size="50" style="height:25px;"/>
-		<!-- 	
-		<input type="button" value="search" onclick="searchLocation()" style="height:30px"/>
-		<input type="button" value="SampleTrip" onclick="addSampleTrip()" style="height:30px"/>
-		 -->
 	</div>
 	
 	<div id="r-result"></div>
+	
+	<div id="uploadImageForm" class="white-popup mfp-hide">
+  		<input type="file" id="file" multiple /></br>
+		<div id="progress">0%</div>
+		<img id="loading" src="resource/loading.gif"/>
+	</div>
 </body>
 </html>
 <script type="text/javascript">
 var controller=new MapController();
 
+controller.loadRoutines();
 
 function searchLocation(){
 	controller.searchLocation(document.getElementById("searchKey").value);

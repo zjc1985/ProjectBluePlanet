@@ -4,11 +4,13 @@ function infoCard(id){
 	var jqueryId="#"+idName;
 	var ASideId='';
 	var BSideId='';
+	
 	var hideButtonId='';
 	var rotateButtonId;
 	var editOKButtonId;
 	var unpinButtonId;
 	var pinButtonId;
+	var editButtonId;
 	
 	var titleId='';
 	var categoryId='';
@@ -23,12 +25,20 @@ function infoCard(id){
 	var editFormMycommentIdName=editFormIdName+'Mycomment';
 	var editFormImageUrlIdName=editFormIdName+'ImageUrl';
 	var editFormIconUrlIdName=editFormIdName+'IconUrl';
+	var editFormSlideNumIdName=editFormIdName+'SlideNum';
+	
 	var editFormCombobox;
 	
 	var isASideShow=true;
 	
 	
+	this.hideEditButton=function(){
+		$(editButtonId).hide();
+	};
 	
+	this.showEditButton=function(){
+		$(editButtonId).show();
+	};
 	
 	this.getTop=function(){
 		var s= $(jqueryId).css("top");
@@ -41,16 +51,25 @@ function infoCard(id){
 	};
 	
 	this.setDefaultContent=function(content){
-		if(content.title!=''&& content.title!=null){
-			$(titleId).empty();
-			$(titleId).html(content.title);
-			$('#'+editFormTitleIdName).val(content.title);
+		if(content.iconUrl!=null && content.iconUrl!=''){
+			editFormCombobox.set("value",content.iconUrl);
 		}
 		
 		if(content.category!=''&& content.category!=null){
 			$(categoryId).empty();
 			$(categoryId).html(content.category);
 			$('#'+editFormCategoryIdName).val(content.category);
+		}
+		
+		if(content.slideNum!=null && content.slideNum!=''){
+			$(categoryId).append("&nbsp;"+content.slideNum);
+			$('#'+editFormSlideNumIdName).val(content.slideNum);
+		}
+		
+		if(content.title!=''&& content.title!=null){
+			$(titleId).empty();
+			$(titleId).html(content.title);
+			$('#'+editFormTitleIdName).val(content.title);
 		}
 		
 		if(content.address!=''&& content.address!=null){
@@ -68,6 +87,7 @@ function infoCard(id){
 	};
 	
 	this.setDefaultImgs=function(imgArray){
+		
 		var imgString="";
 		
 		for(var i in imgArray){
@@ -76,10 +96,19 @@ function infoCard(id){
 		
 		$('#'+editFormImageUrlIdName).val(imgString);
 		
-		this.setContentB(createDefaultGallery(imgArray), true);
+		if(imgArray==null||imgArray.length==0){
+			this.setContentB("", false);
+		}else{
+			this.setContentB(createDefaultGallery(imgArray), true);
+		}	
 	};
 	
-	
+	this.setMaxSlideNum=function(maxNum){
+		$('#'+editFormSlideNumIdName).empty();
+		for(var i=1;i<maxNum+1;i++){
+			$('#'+editFormSlideNumIdName).append("<option value='"+i+"'>"+i+"</option>");
+		}	
+	};
 	
 	this.setContentA=function(html,isGallery){
 		this.contentA=html;
@@ -192,6 +221,7 @@ function infoCard(id){
 		c.address=$('#'+editFormAddresIdName).val();
 		c.mycomment=$('#'+editFormMycommentIdName).val();
 		c.imgUrls=$('#'+editFormImageUrlIdName).val().split(";");
+		c.slideNum=$('#'+editFormSlideNumIdName).val();
 		c.iconUrl=editFormCombobox.value;
 		for (var i = 0; i < c.imgUrls.length; i++) {
 			if ($.trim(c.imgUrls[i])=="") {
@@ -255,11 +285,14 @@ function infoCard(id){
 		var rotateButtonIdName=idName+"RotateButton";
 		var unpinButtonIdName=idName+"UnpinButton";
 		var pinButtonIdName=idName+"PinButton";
+		var editButtonIdName=idName+"EditButton";
+		
 		hideButtonId="#"+hideButtonIdName;
 		rotateButtonId="#"+rotateButtonIdName;
 		editOKButtonId="#"+idName+"EditOK";
 		unpinButtonId="#"+unpinButtonIdName;
 		pinButtonId="#"+pinButtonIdName;
+		editButtonId='#'+editButtonIdName;
 		
 		$("body").append("<div class='info' id='"+idName+"'></div>");
 		$('body').append(createEditForm());
@@ -276,7 +309,7 @@ function infoCard(id){
 				"<p class='serif' style='margin:3px 0px 0px 0px;font-size:12px;float:right'><a id='"+unpinButtonIdName+"' href='#'>UNPIN  ||</a></p>" +
 				"<p class='serif' style='margin:3px 0px 0px 0px;font-size:12px;float:right'><a id='"+pinButtonIdName+"' href='#'>PIN  ||</a></p>" +
 				"<p class='serif' style='margin:3px 5px 0px 0px;font-size:12px;float:left'><a id='"+rotateButtonIdName+"' href='#'>ROTATE</a></p>" +
-				"<p class='serif' style='margin:3px 0px 0px 0px;font-size:12px;'><a class='popup-with-form' href='#"+editFormIdName+"'>EDIT</a></p>" +
+				"<p class='serif' style='margin:3px 0px 0px 0px;font-size:12px;'><a id='"+editButtonIdName+"' class='popup-with-form' href='#"+editFormIdName+"'>EDIT</a></p>" +
 				"</div>";
 		$(jqueryId).append(buttonHtml);
 		$(jqueryId).addClass("info");
@@ -311,6 +344,7 @@ function infoCard(id){
 		                {image:'resource/icons/plane/plane_default.png', description:'', value:'resource/icons/plane/plane_default.png', text:'plane'},
 		                {image:'resource/icons/ship/ship_default.png', description:'', value:'resource/icons/ship/ship_default.png', text:'ship'},
 		                {image:'resource/icons/train/train_default.png', description:'', value:'resource/icons/train/train_default.png', text:'train'},
+		                {image:'resource/icons/pic/pic_point.png', description:'', value:'resource/icons/pic/pic_point.png', text:'pic_point'},
 		                {image:'resource/icons/parking/parking_default.png', description:'', value:'resource/icons/parking/parking_default.png', text:'parking'}];
 		             
 		editFormCombobox = $("#"+editFormIconUrlIdName).msDropdown({byJson:{data:jsonData, name:'icon'}}).data("dd");
@@ -321,32 +355,7 @@ function infoCard(id){
 			$('#'+editFormCategoryIdName).val(editFormCombobox.selectedText);
 		});
 		
-		/*
-		var iconSelect= new IconSelect(editFormIconUrlIdName,{
-            'vectoralIconNumber':10,
-            'horizontalIconNumber':10});
-		var icons = [];
-		  
-		icons.push({'iconFilePath':'resource/icons/default/default_default.png', 'iconValue':'default_default'});
-		icons.push({'iconFilePath':'resource/icons/food/food_default.png', 'iconValue':'food_default'});	        
-		icons.push({'iconFilePath':'resource/icons/pic/pic_default.png', 'iconValue':'pic_default'});		
-		icons.push({'iconFilePath':'resource/icons/event/event_default.png', 'iconValue':'event_default'});
-        icons.push({'iconFilePath':'resource/icons/sight/sight_default.png', 'iconValue':'sight_default'});
-        icons.push({'iconFilePath':'resource/icons/hotel/hotel_default.png', 'iconValue':'hotel_default'});
-        icons.push({'iconFilePath':'resource/icons/bike/bike_default.png', 'iconValue':'bike_default'});
-        icons.push({'iconFilePath':'resource/icons/bus/bus_default.png', 'iconValue':'bus_default'});
-        icons.push({'iconFilePath':'resource/icons/car/car_default.png', 'iconValue':'car_default'});
-        icons.push({'iconFilePath':'resource/icons/plane/plane_default.png', 'iconValue':'plane_default'});
-        icons.push({'iconFilePath':'resource/icons/ship/ship_default.png', 'iconValue':'ship_default'});
-        icons.push({'iconFilePath':'resource/icons/train/train_default.png', 'iconValue':'train_default'});
-       
-        
-        iconSelect.refresh(icons);
-        
-        $('#'+editFormIconUrlIdName).on('changed',function(){
-        	$('#'+editFormCategoryIdName).val(iconSelect.getSelectedValue());
-        });
-        */
+		
 		$('.popup-with-form').magnificPopup({
 			type: 'inline',
 			preloader: false,
@@ -406,11 +415,15 @@ function infoCard(id){
 		var ahrefs="";
 		
 		for(var index in imgArray){
+			/*
 			if(index==0){
-				ahrefs=	"<a href='"+imgArray[0].url+"' title='"+imgArray[0].title+"'><div style='margin:10px;background-image: url("+imgArray[0].url+");height:300px;background-position: center;'></div></a>";
+				//ahrefs=	"<a href='"+imgArray[0].url+"' title='"+imgArray[0].title+"'><div style='margin:10px;background-image: url("+getThumbNailUrl(imgArray[0].url)+");height:300px;background-position: center;'></div></a>";
+				ahrefs=	"<a href='"+imgArray[0].url+"' title='"+imgArray[0].title+"'><img src='"+getThumbNailUrl(imgArray[0].url)+"'></a>";
 			}else{
 				ahrefs+="<a style='display: none;' href='"+imgArray[index].url+"' title='"+imgArray[index].title+"'></a>";
 			}
+			*/
+			ahrefs+="<a style='padding:2px 2px;' href='"+getGoodQualityUrl(imgArray[index].url)+"' title='"+imgArray[index].title+"'><img src='"+getThumbNailUrl(imgArray[index].url)+"'></a>";
 		}
 		
 		
@@ -437,14 +450,18 @@ function infoCard(id){
 		var mycommentIdName=idName+'Mycomment';
 		mycommentId='#'+mycommentIdName;
 		
+		var slideNumIdName=idName+'SlideNum';
+		slideNumId='#'+slideNumIdName;
+		
 		var categoryIconUrlIdName=idName+'CategoryIconUrl';
 		iconUrlId='#'+categoryIconUrlIdName;
 		
 		var html="<div style='background-color:rgb(245,245,245);border-bottom-style:solid;border-width:1px;border-color:rgb(230,230,230)'>"+
 			//"<div style='float:left;width:50px;height:50px;'><img id='"+categoryIconUrlIdName+"'src='"+content.getIconPath()+"'></div>"+
 			"<p id='"+titleIdName+"' class='serif' style='margin:0px;color:#4577D4;'>"+content.title+"</p>"+
-			"<p id='"+categoryIdName+"' class='serif' style='margin:0px;font-size:11px;'>"+content.category+"</p>"+
+			"<p id='"+categoryIdName+"' class='serif' style='margin:0px;font-size:11px;'>"+content.category+ "</p>"+
 			"<p id='"+addressIdName+"' class='serif' style='margin:0px;font-size:11px;'>"+content.address+"</p>"+
+			
 		"</div>"+
 		"<div style='width:330px;height:130px;overflow: hidden;text-overflow: ellipsis;white-space: normal;'>"+
 			"<p id='"+mycommentIdName+"' class='serif' style='margin:5px;font-size:14px;'>"+content.comment+"</p>"+
@@ -468,6 +485,8 @@ function infoCard(id){
 			"<li><label for='category'>Category:</label>"+
 				"<input id='"+editFormCategoryIdName+"' type='text' placeholder='Name'></li>"+
 			
+			"<li><label for='slideNum'>SlideNum:</label>"+
+				"<select id='"+editFormSlideNumIdName+"'></select></li>"+
 			"<li>"+
 				"<label for='address'>Address:</label>"+
 				"<input id='"+editFormAddresIdName+"' type='text' placeholder='Name'>"+
@@ -509,7 +528,7 @@ function createImgGallery(imgArray){
 	
 	for(var index in imgArray){
 		if(index==0){
-			ahrefs=	"<a href='"+imgArray[0].url+"' title='"+imgArray[0].title+"'><div style='margin:10px;background-image: url("+imgArray[0].url+");height:300px;background-position: center;'></div></a>";
+			ahrefs=	"<a href='"+imgArray[0].url+"' title='"+imgArray[0].title+"'><div style='margin:10px;background-image: url("+getThumbNailUrl(imgArray[0].url)+");height:300px;background-position: center;'></div></a>";
 		}else{
 			ahrefs+="<a style='display: none;' href='"+imgArray[index].url+"' title='"+imgArray[index].title+"'></a>";
 		}
@@ -519,6 +538,14 @@ function createImgGallery(imgArray){
 	var html="<div><div class='popup-gallery'>"+ahrefs+"</div></div>";
 	return html;
 	
+}
+
+function getThumbNailUrl(url){
+	return url+'?imageView2/2/h/150/q/50';
+}
+
+function getGoodQualityUrl(url){
+	return url+'?imageView2/2/h/800';
 }
 
 function createPOICardHtml(title,category,address,mycomment,categoryIconUrl){

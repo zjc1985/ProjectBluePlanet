@@ -4,8 +4,6 @@ function GoogleMapView(oneController) {
 	this.markerNeedSubLine = null;
 	this.markerNeedMergeImgUrl=null;
 	
-	this.routineName='default routine';
-	
 	this.infocard=null;
 	this.uploadImgForm=null;
 	this.currentMarkerId=-1;

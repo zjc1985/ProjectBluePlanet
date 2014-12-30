@@ -51,38 +51,51 @@ px;
 /*	end styles for the ContextMenu	*/
 
 </style>
-<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css">
-<link rel="stylesheet" href="js/lib/magnific-popup.css">
 
+<!-- jquery -->
+<script src="http://lib.sinaapp.com/js/jquery/1.9.1/jquery-1.9.1.min.js"></script>
 
+<!-- jquery ui -->
+<link rel="stylesheet" href="http://lib.sinaapp.com/js/jquery-ui/1.10.2/themes/smoothness/jquery-ui.min.css">
+<script src="http://lib.sinaapp.com/js/jquery-ui/1.10.2/jquery-ui.min.js"></script>
 
+<!-- jquery magnific-popup -->
+<link rel="stylesheet" href="http://cdnjscn.b0.upaiyun.com/libs/magnific-popup.js/0.9.9/magnific-popup.css">
+<script src="http://cdnjscn.b0.upaiyun.com/libs/magnific-popup.js/0.9.9/jquery.magnific-popup.min.js"></script>
 
-<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
-<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
-
+<!-- drop down menu -->
 <link rel="stylesheet" type="text/css" href="js/lib/dd.css" >
 <link rel="stylesheet" type="text/css" href="js/lib/skin2.css" >
 <link rel="stylesheet" type="text/css" href="js/lib/flags.css" >
 <script type="text/javascript" src="js/lib/jquery.dd.min.js"></script>
 
-<script src="js/lib/jquery.magnific-popup.js"></script>
-<script src="js/lib/jquery.exif.js"></script>
+<!-- mvc frame -->
+<script type="text/javascript" src="js/lib/ba-tiny-pubsub.min.js"></script>
 
+<!-- avos cloud -->
+<script src="https://cn.avoscloud.com/scripts/lib/av-0.3.1.min.js"></script>
+
+<!-- google map -->
 <script type="text/javascript"
       src="http://maps.googleapis.com/maps/api/js?key=AIzaSyCHRDVOvVhCnFcyHSs2lmhV2HNjcQQzdX0&sensor=false&libraries=places"></script>
-<script src="js/InfoCard.js"></script> 
-<script src="js/UploadFormView.js"></script> 
-<script type="text/javascript" src="js/LineUtil.js"></script>
-<script type="text/javascript" src="js/mvc/GoogleMapView.js"></script>
 
-
-<script type="text/javascript" src="js/mvc/MapController.js"></script>
-<script type="text/javascript" src="js/mvc/MapMarkerModel.js"></script>
-<script type="text/javascript" src="js/lib/ba-tiny-pubsub.min.js"></script>
-<script src="https://cn.avoscloud.com/scripts/lib/av-0.3.1.min.js"></script>
 
 <!-- userd for google map for context menu -->
 <script type="text/javascript" src="js/lib/ContextMenu.js"></script>
+
+<!-- exif extractor -->
+<script src="js/lib/jquery.exif.js"></script>
+
+<!-- self dependency -->
+<script src="js/InfoCard.js"></script> 
+<script src="js/UploadFormView.js"></script>
+<script src="js/PopupForm.js"></script> 
+<script type="text/javascript" src="js/LineUtil.js"></script>
+<script type="text/javascript" src="js/mvc/GoogleMapView.js"></script>
+<script type="text/javascript" src="js/mvc/MapController.js"></script>
+<script type="text/javascript" src="js/mvc/MapMarkerModel.js"></script>
+
+
 <title>Map Marker</title>
 </head>
 <body>
@@ -100,6 +113,9 @@ px;
   		<input type="file" id="file" multiple /></br>
 		<div id="progress">0%</div>
 		<img id="loading" src="resource/loading.gif"/>
+	</div>
+	
+	<div id="CommentPopupForm" class="white-popup mfp-hide">
 	</div>
 </body>
 </html>

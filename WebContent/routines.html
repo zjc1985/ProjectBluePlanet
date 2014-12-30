@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Your Routine List</title>
+
+<style type="text/css">
+
+.baseBorder{
+	margin-top: 10px;
+	border-width: 1px;
+	border-style: groove;
+	padding: 10px;
+}
+
+.ResultBorder{
+	margin-top: 10px;
+	border-width: 0px 0px 1px 0px;
+	border-style: groove;
+	padding: 10px;
+}
+</style>
+
+<!-- jquery -->
+<script src="http://lib.sinaapp.com/js/jquery/1.9.1/jquery-1.9.1.min.js"></script>
+
+<script type="text/javascript" src="js/mvc/MapMarkerModel.js"></script>
+<script src="https://cn.avoscloud.com/scripts/lib/av-0.3.1.min.js"></script>
+
+</head>
+<body>
+
+<a href="MapMarkerMVC.html">create new</a></br></br>
+
+<div id="routineList" class="baseBorder">
+
+</div>
+
+</body>
+</html>
+
+<script type="text/javascript">
+var backendManager=new BackendManager();
+
+var currentUser=backendManager.getCurrentUser();
+
+if(currentUser.get('username')=="guest"){
+	window.location.href = 'index.html';
+}else{
+	backendManager.fetchRoutinesByUser(currentUser,function(results){
+		for(var i in results){
+			
+			console.log(results[i].get('title'));
+			console.log(results[i].id);
+			
+			var html="<div class='ResultBorder'><a href='MapMarkerMVC.html?routineId="+results[i].id+"'>"+results[i].get('title')+"</a>"+"</div>"
+			$("#routineList").append(html);
+		}
+	});
+}
+</script>
+

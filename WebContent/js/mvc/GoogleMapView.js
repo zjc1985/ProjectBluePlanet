@@ -4,10 +4,9 @@ function GoogleMapView(oneController) {
 	this.markerNeedSubLine = null;
 	this.markerNeedMergeImgUrl=null;
 	
-	this.routineName='default routine';
-	
 	this.infocard=null;
 	this.uploadImgForm=null;
+	this.popupForm=null;
 	this.currentMarkerId=-1;
 	
 	var self=this;
@@ -230,12 +229,14 @@ function GoogleMapView(oneController) {
 			id: 'showInfoItem'+id,
 			label : 'showInfo'
 		});
+		/* don't need mainline in current version
 		menuItems.push({
 			className : 'context_menu_item',
 			eventName : 'addMainline',
 			id: 'addMainlineItem'+id,
 			label : 'addMainline'
 		});
+		*/
 		menuItems.push({
 			className : 'context_menu_item',
 			eventName : 'addSubline',
@@ -313,7 +314,7 @@ function GoogleMapView(oneController) {
 				overlays[i].setDraggable(false);
 				if(id!=null){
 					document.getElementById('showInfoItem'+id).style.display='none';
-					document.getElementById('addMainlineItem'+id).style.display='none';
+					//document.getElementById('addMainlineItem'+id).style.display='none';
 					document.getElementById('addSublineItem'+id).style.display='none';
 					document.getElementById('deleteselfItem'+id).style.display='none';
 					document.getElementById('mergeImgUrlItem'+id).style.display='none';
@@ -340,7 +341,7 @@ function GoogleMapView(oneController) {
 				
 				if(id!=null){
 					document.getElementById('showInfoItem'+id).style.display='';
-					document.getElementById('addMainlineItem'+id).style.display='';
+					//document.getElementById('addMainlineItem'+id).style.display='';
 					document.getElementById('addSublineItem'+id).style.display='';
 					document.getElementById('deleteselfItem'+id).style.display='';
 					document.getElementById('mergeImgUrlItem'+id).style.display='';
@@ -603,6 +604,9 @@ function GoogleMapView(oneController) {
 		this.uploadImgForm.addChangeCallBack(function(file,lat,lon){
 			controller.uploadImgs(file,lat,lon);
 		});
+		
+		this.popupForm=new PopupForm("CommentPopupForm");
+		this.infocard.setPopupCommentForm(this.popupForm);
 	};
 	
 	this.fromPixelToLatLng=function(point){

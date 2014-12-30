@@ -306,7 +306,7 @@ function BackendManager() {
 			return currentUser;
 
 		} else {
-			AV.User.logIn("yufu", "123456", {
+			AV.User.logIn("guest", "guest", {
 				success : function(user) {
 					console.log("login for user:" + user.get('username'));
 					currentUser = user;

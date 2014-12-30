@@ -36,6 +36,8 @@ function MapController(){
 	
 	var MAX_ZINDEX=200;
 	
+	var routineName="Default Routine";
+	
 	this.uploadImgs=function(file,lat,lng){
 		model.saveImage(file, function(url){
 			view.uploadImgForm.completeFileNum++;
@@ -469,17 +471,12 @@ function MapController(){
 			//todo: resetId
 									
 			model.loadRoutine(QueryString.routineId,function(arg){
-				/*
-				var headModelMark=model.findHeadMarker()[0];
-				view.centerAndZoom(headModelMark.content.getLat(), 
-						(headModelMark.content.getLng()));
-				*/
 				//hide all subMarkers
 				for(var i in model.getModelMarkers()){
 					changeSubMarkerShowStatus(model.getModelMarkers()[i].id);
 				}
 				
-				view.routineName=arg.routineName;
+				routineName=arg.routineName;
 				num=arg.maxId+1;
 				view.fitRoutineBounds();
 				
@@ -490,8 +487,8 @@ function MapController(){
 				model.isUserOwnRoutine(QueryString.routineId, function(isUserOwn){
 					isUserOwnThisRoutine=isUserOwn;
 					if(!isUserOwn){
-						
-						console.log('try to hide contextMenu');
+						console.log('start slide mode');
+						self.startSlideMode();
 					}
 				});
 			});
@@ -499,13 +496,17 @@ function MapController(){
 	};
 	
 	this.saveRoutine=function(){
-		var name=prompt("routine name?",self.routineName); 
-		if (name!=null && name!="") 
-		{
-			model.save2Backend(name);
+		if(routineName!="Default Routine"){
+			model.save2Backend(routineName);
 		}else{
-			alert('please input your routine name to save');
-		}
+			var name=prompt("routine name?",routineName); 
+			if (name!=null && name!="") 
+			{
+				model.save2Backend(name);
+			}else{
+				alert('please input your routine name to save');
+			}
+		}	
 	};
 	
 	this.testFeature=function(viewMarker){

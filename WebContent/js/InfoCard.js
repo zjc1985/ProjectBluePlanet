@@ -12,6 +12,8 @@ function infoCard(id){
 	var pinButtonId;
 	var editButtonId;
 	
+	var showDetailLinkIdName;
+	
 	var titleId='';
 	var categoryId='';
 	var addressId='';
@@ -30,6 +32,12 @@ function infoCard(id){
 	var editFormCombobox;
 	
 	var isASideShow=true;
+	
+	var popupCommentForm=null;
+	
+	this.setPopupCommentForm=function(popupForm){
+		popupCommentForm=popupForm;
+	}
 	
 	
 	this.hideEditButton=function(){
@@ -82,8 +90,10 @@ function infoCard(id){
 			$(mycommentId).empty();
 			$(mycommentId).html(content.mycomment);
 			$('#'+editFormMycommentIdName).val(content.fullcomment);
+			if(popupCommentForm!=null && popupCommentForm instanceof PopupForm){
+				popupCommentForm.setContent(content.fullcomment);
+			}
 		}
-		
 	};
 	
 	this.setDefaultImgs=function(imgArray){
@@ -170,6 +180,13 @@ function infoCard(id){
 	this.initDefault=function(top,left,content,imgArray){
 		init(top,left);
 		$(ASideId).append(createDefaultInfoHtml(content));
+		
+		$('#'+showDetailLinkIdName).click(function(){
+			if(popupCommentForm!=null && popupCommentForm instanceof PopupForm){
+				popupCommentForm.show();
+			}
+		});
+		
 		$(BSideId).append(createDefaultGallery(imgArray));
 		initAllGallery();
 		initPopupEditForm();
@@ -287,6 +304,8 @@ function infoCard(id){
 		var pinButtonIdName=idName+"PinButton";
 		var editButtonIdName=idName+"EditButton";
 		
+		
+		
 		hideButtonId="#"+hideButtonIdName;
 		rotateButtonId="#"+rotateButtonIdName;
 		editOKButtonId="#"+idName+"EditOK";
@@ -328,6 +347,9 @@ function infoCard(id){
 			$('body').append( $(jqueryId));
 			$(jqueryId).draggable();
 		});
+		
+		$(unpinButtonId).hide();
+		$(pinButtonId).hide();
 	}
 	
 	function initPopupEditForm(){
@@ -456,6 +478,8 @@ function infoCard(id){
 		var categoryIconUrlIdName=idName+'CategoryIconUrl';
 		iconUrlId='#'+categoryIconUrlIdName;
 		
+		showDetailLinkIdName=idName+'DetailLink';
+		
 		var html="<div style='background-color:rgb(245,245,245);border-bottom-style:solid;border-width:1px;border-color:rgb(230,230,230)'>"+
 			//"<div style='float:left;width:50px;height:50px;'><img id='"+categoryIconUrlIdName+"'src='"+content.getIconPath()+"'></div>"+
 			"<p id='"+titleIdName+"' class='serif' style='margin:0px;color:#4577D4;'>"+content.title+"</p>"+
@@ -465,7 +489,7 @@ function infoCard(id){
 		"</div>"+
 		"<div style='width:330px;height:130px;overflow: hidden;text-overflow: ellipsis;white-space: normal;'>"+
 			"<p id='"+mycommentIdName+"' class='serif' style='margin:5px;font-size:14px;'>"+content.comment+"</p>"+
-			"<a href='#' class='serif' style='float:right;margin:0px;font-size:8px;color:#4577D4;'>show detail</a>"+
+			"<a id='"+showDetailLinkIdName+"' href='#' style='float:right;margin:0px;font-size:8px;color:#4577D4;'>show detail</a>"+
 		"</div>";
 		
 		return html;
@@ -546,21 +570,6 @@ function getThumbNailUrl(url){
 
 function getGoodQualityUrl(url){
 	return url+'?imageView2/2/h/800';
-}
-
-function createPOICardHtml(title,category,address,mycomment,categoryIconUrl){
-	var html="<div style='background-color:rgb(245,245,245);border-bottom-style:solid;border-width:1px;border-color:rgb(230,230,230)'>"+
-		"<div id='icon' style='float:left;width:50px;height:50px;'><img class='iconUrl' src='"+categoryIconUrl+"'></div>"+
-		"<p class='serif cardTitle' style='margin:0px;color:#4577D4;'>"+title+"</p>"+
-		"<p class='serif cardCategory' style='margin:0px;font-size:11px;'>"+category+"</p>"+
-		"<p class='serif cardAddress' style='margin:0px;font-size:11px;'>"+address+"</p>"+
-	"</div>"+
-	"<div style='width:330px;height:130px;overflow: hidden;text-overflow: ellipsis;white-space: normal;'>"+
-		"<p class='serif cardComment' style='margin:5px;font-size:14px;'>"+mycomment+"</p>"+
-		"<a href='#' class='serif' style='float:right;margin:0px;font-size:8px;color:#4577D4;'>show detail</a>"+
-	"</div>";
-	
-	return html;
 }
 
 

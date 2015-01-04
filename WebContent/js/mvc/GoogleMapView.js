@@ -919,7 +919,7 @@ function GoogleMapView(oneController) {
 		var MSearch;
 	    AMap.service(["AMap.PlaceSearch"], function() {       
 	        MSearch = new AMap.PlaceSearch({
-	            pageSize:10,
+	            pageSize:5,
 	            pageIndex:1,
 	        });
 	        
@@ -939,7 +939,7 @@ function GoogleMapView(oneController) {
 	    					map : map,
 	    					title : place.name,
 	    					position : location,
-	    					icon: 'http://www.google.com/intl/en_us/mapfiles/ms/micons/blue-dot.png'
+	    					icon: 'resource/icons/default/search_default.png'
 	    				});
 
 	    				searchMarkers.push(marker);

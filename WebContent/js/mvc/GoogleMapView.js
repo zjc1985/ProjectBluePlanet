@@ -490,6 +490,9 @@ function GoogleMapView(oneController) {
 		var input = /** @type {HTMLInputElement} */
 		(document.getElementById('searchKey'));
 		map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+		
+		var searchButton=document.getElementById('searchButton');
+		map.controls[google.maps.ControlPosition.TOP_LEFT].push(searchButton);
 
 		var searchBox = new google.maps.places.SearchBox(
 		/** @type {HTMLInputElement} */
@@ -909,9 +912,48 @@ function GoogleMapView(oneController) {
 	};
 
 	this.searchLocation = function(key) {
-
+		gaodeSearch(key);
 	};
+	
+	function gaodeSearch(key){
+		var MSearch;
+	    AMap.service(["AMap.PlaceSearch"], function() {       
+	        MSearch = new AMap.PlaceSearch({
+	            pageSize:10,
+	            pageIndex:1,
+	        });
+	        
+	        MSearch.search(key, function(status, result){
+	        	if(status === 'complete' && result.info === 'OK'){
+	        		console.log('search key is '+key);
+	        	    var poiArr = result.poiList.pois;
+	        	    
+	        	    cleanSearchMarkers();
+	    			
+	    			var bounds = new google.maps.LatLngBounds();
+	    			for (var i = 0, place; place = poiArr[i]; i++) {
+	    				// Create a marker for each place.
+	    				var location=new google.maps.LatLng( place.location.getLat(),place.location.getLng());
+	    				
+	    				var marker = new google.maps.Marker({
+	    					map : map,
+	    					title : place.name,
+	    					position : location,
+	    					icon: 'http://www.google.com/intl/en_us/mapfiles/ms/micons/blue-dot.png'
+	    				});
 
+	    				searchMarkers.push(marker);
+	    				
+	    				addSearchMarkerContextMenu(marker);
+	    				
+	    				bounds.extend(location);
+	    			}
+
+	    			map.fitBounds(bounds);
+	        	}
+	        }); 
+	    });
+	};
 };
 
 function CanvasProjectionOverlay() {}

@@ -82,6 +82,8 @@ function MapController(){
 		
 		view.initSlideMode();
 		
+		view.clearMarkerCluster();
+		
 		for(var i in model.getModelMarkers()){
 			var viewMarker=view.getViewOverlaysById(model.getModelMarkers()[i].id);
 			viewMarker.hide();
@@ -102,6 +104,8 @@ function MapController(){
 					viewMarker.show();
 				}
 			}
+			
+			refreshCluster();
 		}	
 	};
 	
@@ -115,10 +119,33 @@ function MapController(){
 					viewMarker.hide();
 				}
 			}
+			
+			if(currentSlideNum<=model.getModelMarkers().length){
+				currentSlideNum--;
+				currentSlideNum--;
+				
+				refreshClusterAccording2SlideNum(currentSlideNum);
+			}
+			
 		}
-		currentSlideNum--;
-		currentSlideNum--;
+		
 	};
+	
+	function refreshClusterAccording2SlideNum(slideNum){
+		var markerIdsNeed2Cluster=[];
+		
+		for(var i in model.getModelMarkers()){
+			var modelMarker=model.getModelMarkers()[i];
+			if(modelMarker.content.getSlideNum()<currentSlideNum-1 && (!modelMarker.isSubMarker())){
+				markerIdsNeed2Cluster.push(modelMarker.id);
+			}
+		}
+		
+		if(markerIdsNeed2Cluster.length>0){
+			view.clearMarkerCluster();
+			view.AddMarkers2Cluster(markerIdsNeed2Cluster);
+		}
+	}
 	
 	this.mapClickEventHandler=function(){
 		if(isSlideMode){
@@ -139,6 +166,8 @@ function MapController(){
 			
 			if(markerIdsNeed2Show.length>0){
 				view.panByIds(markerIdsNeed2Show);
+				
+				refreshClusterAccording2SlideNum(currentSlideNum-1);
 				
 				var startMillionSeconds=700;
 				
@@ -170,6 +199,8 @@ function MapController(){
 			}else{
 				this.mapClickEventHandler();
 			}
+			
+			
 		}
 	};
 	
@@ -439,8 +470,7 @@ function MapController(){
 	};
 	
 	this.markerDeleteClickHandler=function(viewMarker){
-		var needDeleteAttackedImg=confirm("Do you want to delete attached Img?");
-		model.deleteOneMarker(viewMarker.id,needDeleteAttackedImg);
+		model.deleteOneMarker(viewMarker.id,true);
 	};
 		
 	this.addCustomClickEvent=function(position){
@@ -461,6 +491,22 @@ function MapController(){
 		view.markerNeedMergeImgUrl=marker;
 		alert("please click another marker which you want to merge to");
 	};
+	
+	function refreshCluster(){
+		//add cluster logic
+		
+		var ids=new Array();
+		for(var i in model.getModelMarkers()){
+			var modelMarker=model.getModelMarkers()[i];
+			if(!modelMarker.isSubMarker()){
+				ids.push(modelMarker.id);
+			}
+		}
+		
+		view.clearMarkerCluster();
+		view.AddMarkers2Cluster(ids);
+		
+	}
 	
 	this.loadRoutines=function(){
 		if(QueryString.routineId!=null){
@@ -484,11 +530,15 @@ function MapController(){
 				
 				self.zoomEventHandler();
 				
+				refreshCluster();
+				
 				model.isUserOwnRoutine(QueryString.routineId, function(isUserOwn){
 					isUserOwnThisRoutine=isUserOwn;
 					if(!isUserOwn){
 						console.log('start slide mode');
 						self.startSlideMode();
+					}else{
+
 					}
 				});
 			});
@@ -577,7 +627,7 @@ function MapController(){
 					
 					marker=marker.connectedMainMarker;
 				}	
-			}	
+			}
 		};
 	};
 	

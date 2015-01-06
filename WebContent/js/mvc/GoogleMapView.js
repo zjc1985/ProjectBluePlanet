@@ -622,8 +622,8 @@ function GoogleMapView(oneController) {
 		// init image uploader
 		this.uploadImgForm = new UploadFormView("uploadImageForm", "file",
 				"progress", "loading");
-		this.uploadImgForm.addChangeCallBack(function(file, lat, lon) {
-			controller.uploadImgs(file, lat, lon);
+		this.uploadImgForm.addChangeCallBack(function(imageBase64String, lat, lon,fileName) {
+			controller.uploadImgs(imageBase64String, lat, lon,fileName);
 		});
 
 		this.popupForm = new PopupForm("CommentPopupForm");

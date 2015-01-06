@@ -38,8 +38,8 @@ function MapController(){
 	
 	var routineName="Default Routine";
 	
-	this.uploadImgs=function(file,lat,lng){
-		model.saveImage(file, function(url){
+	this.uploadImgs=function(imageBase64String,lat,lng,fileName){
+		model.saveImageByBase64(imageBase64String,fileName,function(url){
 			view.uploadImgForm.completeFileNum++;
 			view.uploadImgForm.updateProgress();
 			

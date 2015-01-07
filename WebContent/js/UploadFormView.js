@@ -66,7 +66,30 @@ function UploadFormView(popupId, inputId,progressId,loadingId) {
 						lon = (lon[0] + lon[1] / 60 + lon[2] / 3600)
 								* (lonRef == "W" ? -1 : 1);
 					}
-					callBack(imgFile,lat,lon);
+					
+					//compress and change image file to base64 string
+					var outputFormat="jpg";
+					if(imgFile.type=="image/png"){
+						outputFormat="png";
+					}
+					
+					var reader=new FileReader();
+					
+					reader.addEventListener("load",function(event){
+						var picDataUrl=event.target;
+						
+						var sourceImageObject=new Image();
+						sourceImageObject.src=picDataUrl.result;
+						
+						var compressedPicDataUrl=jic.compress(sourceImageObject,30,outputFormat).src;
+		                
+						var base64PicString=compressedPicDataUrl.split(',')[1];
+						
+						callBack(base64PicString,lat,lon,imgFile.name);
+					});
+					
+					reader.readAsDataURL(imgFile);
+					
 				});
 				
 			}	

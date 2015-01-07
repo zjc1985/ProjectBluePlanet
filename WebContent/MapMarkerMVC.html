@@ -76,19 +76,22 @@ px;
 <script src="https://cn.avoscloud.com/scripts/lib/av-0.3.1.min.js"></script>
 
 <!-- google map -->
-<!-- 
 <script type="text/javascript"
-      src="http://maps.googleapis.com/maps/api/js?key=AIzaSyCHRDVOvVhCnFcyHSs2lmhV2HNjcQQzdX0&sensor=false&libraries=places"></script>
- -->
-<script type="text/javascript"
-      src="http://ditu.google.cn/maps/api/js?key=AIzaSyCHRDVOvVhCnFcyHSs2lmhV2HNjcQQzdX0&sensor=false&libraries=places"></script>
- 
+      src="http://ditu.google.cn/maps/api/js?v=3&key=AIzaSyCHRDVOvVhCnFcyHSs2lmhV2HNjcQQzdX0&sensor=false&libraries=places"></script>
+<!-- GaoDe map for china search -->
+<script src="http://webapi.amap.com/maps?v=1.3&key=33ab32ae29c81b098603c17ae539777a"></script>
+
+<!-- google map cluster -->
+<script type="text/javascript" src="js/lib/markerclusterer_compiled.js"></script>
 
 <!-- userd for google map for context menu -->
 <script type="text/javascript" src="js/lib/ContextMenu.js"></script>
 
 <!-- exif extractor -->
 <script src="js/lib/jquery.exif.js"></script>
+
+<!-- image compress -->
+<script type="text/javascript" src="js/lib/JIC.js"></script>
 
 <!-- self dependency -->
 <script src="js/InfoCard.js"></script> 
@@ -109,6 +112,7 @@ px;
 	
 	<div id="searchDialog" style="position: relative; top: 100px; width: 500px;margin-left:0.7cm; z-index: 2">
 		<input type="text" class='controls' name="searchKey" id="searchKey" size="50" style="height:25px;"/>
+		<input type="button" style="margin-top: 36px;height:25px" id="searchButton" value="search" onclick="searchLocation()"/>
 	</div>
 	
 	<div id="r-result"></div>

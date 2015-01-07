@@ -10,6 +10,14 @@ function MapMarkerModel() {
 			failCallback(error);
 		});
 	};
+	
+	this.saveImageByBase64=function(base64String,fileName,successCallback,failCallback){
+		backendManager.saveBase64File(base64String, fileName, function(url){
+			successCallback(url);
+		}, function(error){
+			failCallback(error);
+		});
+	};
 
 	this.resetModels = function() {
 		marks = new Array();
@@ -395,6 +403,15 @@ function BackendManager() {
 
 		var name = file.name;
 		var avFile = new AV.File(name, file);
+		avFile.save().then(function() {
+			successCallBack(avFile.url());
+		}, function(error) {
+			failCallback(error);
+		});
+	};
+	
+	this.saveBase64File=function(base64String,fileName,successCallBack,failCallback){
+		var avFile=new AV.File(fileName,{base64:base64String});
 		avFile.save().then(function() {
 			successCallBack(avFile.url());
 		}, function(error) {

@@ -600,7 +600,9 @@ function GoogleMapView(oneController) {
 
 		var mapOptions = {
 			center : new google.maps.LatLng(37.3841308, -121.9801145),
+			disableDoubleClickZoom : true,
 			zoom : 15,
+			minZoom : 5,
 			mapTypeId : google.maps.MapTypeId.ROADMAP
 		};
 
@@ -614,8 +616,25 @@ function GoogleMapView(oneController) {
 		addContextMenu();
 
 		// init marker cluster
-		markerCluster = new MarkerClusterer(map, null);
+		var mcOption=mcOptions = {styles: [{
+			height: 53,
+			url: "resource/icons/cluster/m1.png",
+			width: 53
+			},
+			{
+			height: 56,
+			url: "resource/icons/cluster/m2.png",
+			width: 56
+			},
+			{
+			height: 66,
+			url: "resource/icons/cluster/m3.png",
+			width: 66}
+		]};
+		
+		markerCluster = new MarkerClusterer(map,null,mcOption);
 		markerCluster.setGridSize(30);
+		
 
 		linkSearchBox();
 
@@ -953,6 +972,10 @@ function GoogleMapView(oneController) {
 			markersNeedToCluster.push(viewMarker);
 		}
 		markerCluster.addMarkers(markersNeedToCluster);
+	};
+	
+	this.getZoom=function(){
+		return map.getZoom();
 	};
 
 	function gaodeSearch(key) {

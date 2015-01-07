@@ -220,8 +220,7 @@ function MapController(){
 			}
 		}
 		
-		//hide all subMarkers
-		//...
+		console.log('current zoom level '+view.getZoom());
 	};
 	
 	this.updateMarkerContentById=function(id,content){

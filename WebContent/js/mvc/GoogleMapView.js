@@ -977,6 +977,56 @@ function GoogleMapView(oneController) {
 	this.getZoom=function(){
 		return map.getZoom();
 	};
+	
+	this.setMapStyle2Default=function(){
+		console.log('view.setMapStyle2Default');
+		var defaultStyle=[];
+		map.setOptions({styles: defaultStyle});
+	}
+	
+	this.setMapStyle2Custom=function(){
+		console.log('view.setMapStyle2Custom');
+		var customStyle=[
+		           {
+		        	    "featureType": "road",
+		        	    "stylers": [
+		        	      { "visibility": "off" }
+		        	    ]
+		        	  },{
+		        	    "featureType": "water",
+		        	    "stylers": [
+		        	      { "color": "#73ABAD" }
+		        	    ]
+		        	  },{
+		        	    "featureType": "administrative.locality",
+		        	    "stylers": [
+		        	      { "visibility": "simplified" }
+		        	    ]
+		        	  },{
+		        	    "featureType": "landscape.natural",
+		        	    "elementType": "geometry.fill",
+		        	    "stylers": [
+		        	      { "color": "#F0EDDF" }
+		        	    ]
+		        	  },{
+		        	    "featureType": "administrative",
+		        	    "elementType": "labels.text.fill",
+		        	    "stylers": [
+		        	      { "color": "#698DB7" }
+		        	    ]
+		        	  }
+		        	];
+		map.setOptions({styles: customStyle});
+	};
+	
+	this.isInCustomZoom=function(){
+		var zoomlevel=self.getZoom();
+		if(zoomlevel==5 || zoomlevel==6 || zoomlevel==7){
+			return true;
+		}else{
+			return false;
+		}
+	};
 
 	function gaodeSearch(key) {
 		var MSearch;

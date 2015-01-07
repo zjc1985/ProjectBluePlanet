@@ -26,11 +26,16 @@ function MapController(){
 	var view=new GoogleMapView(this);
 	var self=this;
 	view.createView();
-	// this num is used to create id for BaiduMarker
+	// this num is used to create id for Marker
 	var num = 1;
 	
+	//used for slide
 	var isSlideMode=false;
+	
+	//slide sequence
 	var currentSlideNum=1;
+	
+	var isInCustomZoom=false;
 	
 	var isUserOwnThisRoutine=false;
 	
@@ -220,7 +225,17 @@ function MapController(){
 			}
 		}
 		
-		console.log('current zoom level '+view.getZoom());
+		if(view.isInCustomZoom()){
+			if(!isInCustomZoom){
+				view.setMapStyle2Custom();
+			}
+			isInCustomZoom=true;
+		}else{
+			if(isInCustomZoom){
+				view.setMapStyle2Default();
+			}
+			isInCustomZoom=false;
+		}
 	};
 	
 	this.updateMarkerContentById=function(id,content){

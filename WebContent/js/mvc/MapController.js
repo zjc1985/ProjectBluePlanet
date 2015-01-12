@@ -26,8 +26,6 @@ function MapController(){
 	var view=new GoogleMapView(this);
 	var self=this;
 	view.createView();
-	// this num is used to create id for Marker
-	var num = 1;
 	
 	//used for slide
 	var isSlideMode=false;
@@ -227,12 +225,42 @@ function MapController(){
 		
 		if(view.isInCustomZoom()){
 			if(!isInCustomZoom){
+				view.clearMarkerCluster();
+				
 				view.setMapStyle2Custom();
+				
+				var overviewModelMarkers=model.getCurrentOverviewMarkers();
+				for(var i in overviewModelMarkers){
+					var viewMarker=view.getViewOverlaysById(overviewModelMarkers[i].id);
+					viewMarker.show();
+				}
+				
+				var modelMarkers=model.getModelMarkers();
+				for(var i in modelMarkers){
+					var viewMarker=view.getViewOverlaysById(modelMarkers[i].id);
+					viewMarker.hide();
+				}
 			}
 			isInCustomZoom=true;
 		}else{
 			if(isInCustomZoom){
+				refreshCluster();
+				
 				view.setMapStyle2Default();
+				
+				var overviewModelMarkers=model.getCurrentOverviewMarkers();
+				for(var i in overviewModelMarkers){
+					var viewMarker=view.getViewOverlaysById(overviewModelMarkers[i].id);
+					viewMarker.hide();
+				}
+				
+				var modelMarkers=model.getModelMarkers();
+				for(var i in modelMarkers){
+					if(!modelMarkers[i].isSubMarker()){
+						var viewMarker=view.getViewOverlaysById(modelMarkers[i].id);
+						viewMarker.show();
+					}
+				}
 			}
 			isInCustomZoom=false;
 		}
@@ -477,8 +505,9 @@ function MapController(){
 	
 	this.addMarkerClickEvent=function(position,content){
 		content.lat=position.lat;
-		content.lng=position.lng;	
-		var id=model.createOneMarker(num,content).id;
+		content.lng=position.lng;
+		var uuid=model.genUUID();
+		var id=model.createOneMarker(uuid,content).id;
 		console.log('creating markder id:'+ id);
 		return id;
 	};
@@ -529,7 +558,16 @@ function MapController(){
 			view.resetView();
 			
 			//todo: resetId
-									
+			model.loadAllOverviewRoutine(function(){
+				view.fitRoutineBounds();
+				
+				view.setMapZoom(5);
+				
+				self.zoomEventHandler();
+			});
+			
+			
+			/*
 			model.loadRoutine(QueryString.routineId,function(arg){
 				//hide all subMarkers
 				for(var i in model.getModelMarkers()){
@@ -537,14 +575,12 @@ function MapController(){
 				}
 				
 				routineName=arg.routineName;
-				num=arg.maxId+1;
+				
 				view.fitRoutineBounds();
 				
-				console.log('current num in controller:'+num);
+				view.setMapZoom(5);
 				
 				self.zoomEventHandler();
-				
-				refreshCluster();
 				
 				model.isUserOwnRoutine(QueryString.routineId, function(isUserOwn){
 					isUserOwnThisRoutine=isUserOwn;
@@ -554,8 +590,11 @@ function MapController(){
 					}else{
 
 					}
+					
+					
 				});
 			});
+			*/
 		}
 	};
 	
@@ -611,7 +650,14 @@ function MapController(){
 			view.addOneMark(modelMarker.content.getLat(),
 							modelMarker.content.getLng(), modelMarker.id);
 			view.changeMarkerIcon(modelMarker.id, modelMarker.content.getIconUrl());
-			num++;
+		};
+	};
+	
+	this.createOverviewMarker=function(){
+		return function(_,modelMarker){
+			view.addOverviewMarker(modelMarker.content.getLat(),
+							modelMarker.content.getLng(), modelMarker.id);
+			view.changeMarkerIcon(modelMarker.id, modelMarker.content.getIconUrl());
 		};
 	};
 	
@@ -673,6 +719,7 @@ function MapController(){
 	
 	$.subscribe('deleteOneMarker',this.deleteViewMarker());
 	$.subscribe('createOneMarker',this.createViewMarker());
+	$.subscribe('createOverViewMarker',this.createOverviewMarker());
 	$.subscribe('updateUI',this.updateUIRoute());
 	$.subscribe('updateInfoWindow',this.updateMarkerInfoWindow());
 	$.subscribe('latlngChanged',this.latlngChangedHandler());

@@ -756,7 +756,12 @@ function GoogleMapView(oneController) {
 		};
 
 		overlays.push(viewMarker);
-		
+	};
+	
+	this.addOverviewMarker=function(lat, lng, num){
+		this.addOneMark(lat, lng, num);
+		var viewMarker=self.getViewOverlaysById(num);
+		viewMarker.setDraggable(false);
 	};
 
 	this.showAllMarkers = function() {
@@ -1026,6 +1031,10 @@ function GoogleMapView(oneController) {
 		}else{
 			return false;
 		}
+	};
+	
+	this.setMapZoom=function(zoomLevel){
+		map.setZoom(zoomLevel);
 	};
 
 	function gaodeSearch(key) {

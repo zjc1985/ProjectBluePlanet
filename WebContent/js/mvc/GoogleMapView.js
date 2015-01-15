@@ -212,6 +212,78 @@ function GoogleMapView(oneController) {
 
 				});
 	}
+	
+	function addOverviewMarkerContextMenu(googleMarker){
+		// create the ContextMenuOptions object
+		var id = googleMarker.id;
+		var contextMenuOptions = {};
+		contextMenuOptions.classNames = {
+			menu : 'context_menu',
+			menuSeparator : 'context_menu_separator'
+		};
+
+		// create an array of ContextMenuItem objects
+		var menuItems = [];
+		menuItems.push({
+			className : 'context_menu_item',
+			eventName : 'showRoutineDetail',
+			id : 'showRoutineDetail' + id,
+			label : 'show routine Detail'
+		});
+		
+		menuItems.push({
+			className : 'context_menu_item',
+			eventName : 'deleteRoutine',
+			id : 'deleteRoutine' + id,
+			label : 'delete this routine'
+		});
+
+		menuItems.push({
+			className : 'context_menu_item',
+			eventName : 'addIcon',
+			id : 'addIcon' + id,
+			label : 'add icon to routine'
+		});
+
+		menuItems.push({
+			className : 'context_menu_item',
+			eventName : 'deleteIcon',
+			id : 'deleteIcon' + id,
+			label : 'deleteIcon'
+		});
+
+		contextMenuOptions.menuItems = menuItems;
+
+		// create the ContextMenu object
+		var contextMenu = new ContextMenu(map, contextMenuOptions);
+
+		// display the ContextMenu on a Map right click
+		google.maps.event.addListener(googleMarker, 'rightclick', function(
+				mouseEvent) {
+			contextMenu.show(mouseEvent.latLng);
+		});
+
+		// listen for the ContextMenu 'menu_item_selected' event
+		google.maps.event.addListener(contextMenu, 'menu_item_selected',
+				function(latLng, eventName) {
+					// latLng is the position of the ContextMenu
+					// eventName is the eventName defined for the clicked
+					// ContextMenuItem in the ContextMenuOptions
+					switch (eventName) {
+					case 'showRoutineDetail':
+						break;
+					case 'deleteRoutine':
+						controller.deleteRoutine(id);
+						break;
+					case 'addIcon':
+						
+						break;
+					case 'deleteIcon':
+						
+						break;
+					}
+				});
+	}
 
 	function addMarkerContextMenu(googleMarker) {
 		// create the ContextMenuOptions object
@@ -758,10 +830,56 @@ function GoogleMapView(oneController) {
 		overlays.push(viewMarker);
 	};
 	
-	this.addOverviewMarker=function(lat, lng, num){
-		this.addOneMark(lat, lng, num);
-		var viewMarker=self.getViewOverlaysById(num);
-		viewMarker.setDraggable(false);
+	
+	this.addOverviewMarker=function(lat, lng, num,options){
+		var myLatlng = new google.maps.LatLng(lat, lng);
+
+		var viewMarker = new google.maps.Marker({
+			position : myLatlng,
+			map : map
+		});
+
+		// create one custom id in google mark
+		viewMarker.id = num;
+
+		viewMarker.isShow = true;
+		if(options==null||options.needDrag==null||options.needDrag==false){
+			viewMarker.setDraggable(false);
+		}else{
+			viewMarker.setDraggable(true);
+		}
+		
+		addOverviewMarkerContextMenu(viewMarker);
+
+		google.maps.event.addListener(viewMarker, 'click',
+				function(mouseEvent) {
+					controller.overviewMarkerClickEventHandler(viewMarker);
+				});
+
+		google.maps.event.addListener(viewMarker, 'dragend', function(
+				mouseEvent) {
+			controller.viewMarkerDragendEventHandler(viewMarker.id, viewMarker
+					.getPosition().lat(), viewMarker.getPosition().lng());
+		});
+
+		viewMarker.hide = function() {
+			viewMarker.setVisible(false);
+			viewMarker.isShow = false;
+		};
+
+		viewMarker.show = function() {
+			viewMarker.setVisible(true);
+			viewMarker.isShow = true;
+		};
+
+		viewMarker.getLatLng = function() {
+			return {
+				lat : viewMarker.getPosition().lat(),
+				lng : viewMarker.getPosition().lng()
+			};
+		};
+
+		overlays.push(viewMarker);
 	};
 
 	this.showAllMarkers = function() {

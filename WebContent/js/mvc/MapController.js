@@ -41,6 +41,13 @@ function MapController(){
 	
 	var routineName="Default Routine";
 	
+	this.deleteRoutine=function(overviewMarkerId){
+		model.deleteRoutineByOverviewId(overviewMarkerId, function(){
+			alert("delete routine success");
+			self.loadRoutines();
+		});
+	};
+	
 	this.uploadImgs=function(imageBase64String,lat,lng,fileName){
 		model.saveImageByBase64(imageBase64String,fileName,function(url){
 			view.uploadImgForm.completeFileNum++;
@@ -229,7 +236,7 @@ function MapController(){
 				
 				view.setMapStyle2Custom();
 				
-				var overviewModelMarkers=model.getCurrentOverviewMarkers();
+				var overviewModelMarkers=model.getAllOverviewMarkers();
 				for(var i in overviewModelMarkers){
 					var viewMarker=view.getViewOverlaysById(overviewModelMarkers[i].id);
 					viewMarker.show();
@@ -248,7 +255,7 @@ function MapController(){
 				
 				view.setMapStyle2Default();
 				
-				var overviewModelMarkers=model.getCurrentOverviewMarkers();
+				var overviewModelMarkers=model.getAllOverviewMarkers();
 				for(var i in overviewModelMarkers){
 					var viewMarker=view.getViewOverlaysById(overviewModelMarkers[i].id);
 					viewMarker.hide();
@@ -552,22 +559,22 @@ function MapController(){
 	}
 	
 	this.loadRoutines=function(){
+		//todo: clean all existOverlay in view
+		model.resetModels();
+		view.resetView();
+		
+		//todo: resetId
+		model.loadAllOverviewRoutine(function(){
+			view.fitRoutineBounds();
+			
+			view.setMapZoom(5);
+			
+			self.zoomEventHandler();
+		});
+		
+		/*
 		if(QueryString.routineId!=null){
-			//todo: clean all existOverlay in view
-			model.resetModels();
-			view.resetView();
-			
-			//todo: resetId
-			model.loadAllOverviewRoutine(function(){
-				view.fitRoutineBounds();
-				
-				view.setMapZoom(5);
-				
-				self.zoomEventHandler();
-			});
-			
-			
-			/*
+						
 			model.loadRoutine(QueryString.routineId,function(arg){
 				//hide all subMarkers
 				for(var i in model.getModelMarkers()){
@@ -594,18 +601,22 @@ function MapController(){
 					
 				});
 			});
-			*/
 		}
+		*/
 	};
 	
 	this.saveRoutine=function(){
 		if(routineName!="Default Routine"){
-			model.save2Backend(routineName);
+			model.save2Backend(routineName,function(){
+				self.loadRoutines();
+			});
 		}else{
 			var name=prompt("routine name?",routineName); 
 			if (name!=null && name!="") 
 			{
-				model.save2Backend(name);
+				model.save2Backend(name,function(){
+					self.loadRoutines();
+				});
 			}else{
 				alert('please input your routine name to save');
 			}

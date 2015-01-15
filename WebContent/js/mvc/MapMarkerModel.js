@@ -9,8 +9,18 @@ function MapMarkerModel() {
 		return currentOverviewMarkers;
 	};
 	
+	this.getAllOverviewMarkers=function(){
+		return allOverviewMarkers;
+	}
+	
 	this.genUUID=function(){
 		return uuid.v4();
+	};
+	
+	this.deleteRoutineByOverviewId=function(overviewMarkerId,successCallback){
+		backendManager.deleteRoutineByOverviewMarkerId(overviewMarkerId, function(){
+			successCallback();
+		});
 	};
 
 	this.saveImage = function(imageFile, successCallback, failCallback) {
@@ -31,6 +41,8 @@ function MapMarkerModel() {
 
 	this.resetModels = function() {
 		marks = new Array();
+		currentOverviewMarkers= new Array();
+		allOverviewMarkers=new Array();
 	};
 
 	this.getModelMarkers = function() {
@@ -198,7 +210,7 @@ function MapMarkerModel() {
 
 	};
 
-	this.save2Backend = function(routineName) {
+	this.save2Backend = function(routineName,callback) {
 		console.log('prepare to save routine ' + routineName);
 		if (marks.length == 0) {
 			alert('no routine found. abort saving');
@@ -236,7 +248,9 @@ function MapMarkerModel() {
 			
 
 			backendManager.saveRoutine(routineName, JSON
-					.stringify(marksJSONArray),JSON.stringify(overviewMarkersJSONArray));
+					.stringify(marksJSONArray),JSON.stringify(overviewMarkersJSONArray),function(){
+				callback();
+			});
 		} else {
 			alert('no find user abort saving routine');
 			return;
@@ -456,6 +470,19 @@ function BackendManager() {
 		});
 	};
 	
+	this.deleteRoutineByOverviewMarkerId=function(overviewMarkerId,successCallback){
+		for(var i in userRoutines){
+			var overviewJSONString=userRoutines[i].get('overViewJSONString');
+			if(overviewJSONString.indexOf(overviewMarkerId) !=-1){
+				userRoutines[i].destroy({
+					success: function(){
+						successCallback();
+					}
+				});
+			}
+		}
+	};
+	
 	this.fetchRoutineJSONStringByOverviewMarkerId=function(overviewMarkerId,successCallback){	
 		if(userRoutines==null){
 			return successCallback(null);
@@ -518,7 +545,7 @@ function BackendManager() {
 		});
 	};
 
-	this.saveRoutine = function(routineName, routineJSONString,overViewJSONString) {
+	this.saveRoutine = function(routineName, routineJSONString,overViewJSONString,callback) {
 		if (routine == null) {
 			routine = new Routine();
 		}
@@ -530,6 +557,7 @@ function BackendManager() {
 			success : function(routineFoo) {
 				routine = routineFoo;
 				alert('save routine successful:' + routineName);
+				callback();
 			},
 			error : function(object, error) {
 				alert('save routine failed');

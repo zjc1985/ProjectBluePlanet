@@ -1,26 +1,37 @@
 function MapMarkerModel() {
 	var marks = new Array();
-	var currentOverviewMarkers= new Array();
-	var allOverviewMarkers=new Array();
+	var currentOverviewMarkers = new Array();
+	var allOverviewMarkers = new Array();
 
 	var backendManager = new BackendManager();
-	
-	this.getCurrentOverviewMarkers=function(){
+
+	this.getCurrentOverviewMarkers = function() {
 		return currentOverviewMarkers;
 	};
 	
-	this.getAllOverviewMarkers=function(){
+	this.setCurrenOverviewMarkersByOverviewId=function(id){
+		currentOverviewMarkers=new Array();
+		var routineId=this.getMapMarkerById(id).routineId;
+		for(var i in allOverviewMarkers){
+			if(allOverviewMarkers[i].routineId==routineId){
+				currentOverviewMarkers.push(allOverviewMarkers[i]);
+			}
+		}
+	};
+
+	this.getAllOverviewMarkers = function() {
 		return allOverviewMarkers;
 	}
-	
-	this.genUUID=function(){
+
+	this.genUUID = function() {
 		return uuid.v4();
 	};
-	
-	this.deleteRoutineByOverviewId=function(overviewMarkerId,successCallback){
-		backendManager.deleteRoutineByOverviewMarkerId(overviewMarkerId, function(){
-			successCallback();
-		});
+
+	this.deleteRoutineByOverviewId = function(overviewMarkerId, successCallback) {
+		backendManager.deleteRoutineByOverviewMarkerId(overviewMarkerId,
+				function() {
+					successCallback();
+				});
 	};
 
 	this.saveImage = function(imageFile, successCallback, failCallback) {
@@ -30,19 +41,20 @@ function MapMarkerModel() {
 			failCallback(error);
 		});
 	};
-	
-	this.saveImageByBase64=function(base64String,fileName,successCallback,failCallback){
-		backendManager.saveBase64File(base64String, fileName, function(url){
+
+	this.saveImageByBase64 = function(base64String, fileName, successCallback,
+			failCallback) {
+		backendManager.saveBase64File(base64String, fileName, function(url) {
 			successCallback(url);
-		}, function(error){
+		}, function(error) {
 			failCallback(error);
 		});
 	};
 
 	this.resetModels = function() {
 		marks = new Array();
-		currentOverviewMarkers= new Array();
-		allOverviewMarkers=new Array();
+		currentOverviewMarkers = new Array();
+		allOverviewMarkers = new Array();
 	};
 
 	this.getModelMarkers = function() {
@@ -74,9 +86,10 @@ function MapMarkerModel() {
 		marks.push(marker);
 		return marker;
 	};
-	
-	this.createOverviewMarker=function(id,content){
+
+	this.createOverviewMarker = function(id, content,routineId) {
 		var marker = new MapMarker(id);
+		marker.routineId=routineId;
 		$.publish('createOverViewMarker', [ marker ]);
 
 		if (content != null) {
@@ -140,25 +153,60 @@ function MapMarkerModel() {
 		backendManager.isUserOwnRoutines(currentUser, routineId,
 				successCallback);
 	};
-	
-	this.loadAllOverviewRoutine=function(successCallback){
-		allOverviewMarkers=new Array();
-		
-		var self=this;
-		
-		var currentUser=backendManager.getCurrentUser();
-		
-		backendManager.fetchOverviewRoutinesByUser(currentUser, function(overviewJSONStringArray){
-			for(var i in overviewJSONStringArray){
-				var overviewJSONString = overviewJSONStringArray[i];
-				var overviewMarkerArray=JSON.parse(overviewJSONString);
-				for ( var i in overviewMarkerArray){
+
+	this.loadAllOverviewRoutine = function(successCallback) {
+		allOverviewMarkers = new Array();
+
+		var self = this;
+
+		var currentUser = backendManager.getCurrentUser();
+
+		backendManager.fetchOverviewRoutinesByUser(currentUser, function(
+				overviewJSONStringArray) {
+			for ( var i in overviewJSONStringArray) {
+				var overviewJSONString = overviewJSONStringArray[i].overviewJSONString;
+				var routineId=overviewJSONStringArray[i].routineId;
+				var overviewMarkerArray = JSON.parse(overviewJSONString);
+				for ( var i in overviewMarkerArray) {
 					self.createOverviewMarker(overviewMarkerArray[i].id,
-							overviewMarkerArray[i]);
+							overviewMarkerArray[i],routineId);
 				}
 			}
 			successCallback();
 		});
+	};
+
+	this.loadRoutineByOverviewMarkerId = function(overviewId, successCallback) {
+		marks = new Array();
+
+		var self = this;
+
+		backendManager.fetchRoutineJSONStringByOverviewMarkerId(overviewId,
+				function(marksJSONString, routineName) {
+					if (marksJSONString != null) {
+						// parse markers
+						var marksJSONArray = JSON.parse(marksJSONString);
+						for ( var i in marksJSONArray) {
+
+							self.createOneMarker(marksJSONArray[i].id,
+									marksJSONArray[i]);
+
+						}
+
+						for ( var i in marksJSONArray) {
+							var eachJSONObject = marksJSONArray[i];
+
+							for ( var j in eachJSONObject.subMarkerIds) {
+								self.addSubLine(eachJSONObject.id,
+										eachJSONObject.subMarkerIds[j], 0, 0);
+							}
+						}
+
+					}
+
+					successCallback(routineName);
+				});
+
 	};
 
 	this.loadRoutine = function(routineId, successCallback) {
@@ -168,23 +216,23 @@ function MapMarkerModel() {
 
 		backendManager.fetchRoutineJSONStringById(routineId, function(
 				marksJSONString, title, overViewJSONString) {
-			if(overViewJSONString!=null){
-				//parse overview markers
-				var overviewJSONArray=JSON.parse(overViewJSONString);
-				for ( var i in overviewJSONArray){
+			if (overViewJSONString != null) {
+				// parse overview markers
+				var overviewJSONArray = JSON.parse(overViewJSONString);
+				for ( var i in overviewJSONArray) {
 					self.createOverviewMarker(overviewJSONArray[i].id,
 							overviewJSONArray[i]);
 				}
 			}
-			
+
 			if (marksJSONString != null) {
-				//parse markers
+				// parse markers
 				var marksJSONArray = JSON.parse(marksJSONString);
 				for ( var i in marksJSONArray) {
-					
+
 					self.createOneMarker(marksJSONArray[i].id,
 							marksJSONArray[i]);
-							
+
 				}
 
 				for ( var i in marksJSONArray) {
@@ -210,68 +258,75 @@ function MapMarkerModel() {
 
 	};
 
-	this.save2Backend = function(routineName,callback) {
+	this.save2Backend = function(routineName, callback) {
 		console.log('prepare to save routine ' + routineName);
-		if (marks.length == 0) {
-			alert('no routine found. abort saving');
+		var currentUser = backendManager.getCurrentUser();
+		
+		if (currentUser == null) {
+			alert('no find user abort saving routine');
 			return;
 		}
 
-		var currentUser = backendManager.getCurrentUser();
-
-		if (currentUser != null) {
-			// gen marksJSONArray
-			var marksJSONArray = new Array();
+		//save all overview markers
+		//to do...
+		
+		
+		//save Routine Markers
+		// gen marksJSONArray
+		var marksJSONArray = new Array();
+		if(marks.length!=0){
 			for ( var i in marks) {
 				marksJSONArray.push(marks[i].toJSONObject());
 			}
-			
+
 			// gen overViewMarksJSONArray
-			var overviewMarkersJSONArray=new Array();
-			if(currentOverviewMarkers.length==0){
-				var uuid=this.genUUID();
-				var centreOverViewMarker=new MapMarker(uuid);
+			var overviewMarkersJSONArray = new Array();
+			if (currentOverviewMarkers.length == 0) {
+				var uuid = this.genUUID();
+				var centreOverViewMarker = new MapMarker(uuid);
 				centreOverViewMarker.content.setIsAvergeOverViewMarker(true);
-				var location=genCentreLocation();
+				var location = genCentreLocation();
 				centreOverViewMarker.content.updateContent(location);
 				overviewMarkersJSONArray.push(centreOverViewMarker.toJSONObject());
-			}else{
+			} else {
 				// find average Marker and update its lat lng
-				for(var i in currentOverviewMarkers){
-					var overviewMarker=currentOverviewMarkers[i];
-					if(overviewMarker.content.isAvergeOverViewMarker()){
+				for ( var i in currentOverviewMarkers) {
+					var overviewMarker = currentOverviewMarkers[i];
+					if (overviewMarker.content.isAvergeOverViewMarker()) {
 						overviewMarker.content.updateContent(genCentreLocation());
 					}
 					overviewMarkersJSONArray.push(overviewMarker.toJSONObject());
 				}
 			}
 			
-
-			backendManager.saveRoutine(routineName, JSON
-					.stringify(marksJSONArray),JSON.stringify(overviewMarkersJSONArray),function(){
-				callback();
-			});
-		} else {
-			alert('no find user abort saving routine');
-			return;
+			backendManager.saveRoutine(routineName, JSON.stringify(marksJSONArray),
+					JSON.stringify(overviewMarkersJSONArray), function() {
+						callback();
+					});
 		}
+		
+
+		
 
 	};
-	
-	function genCentreLocation(){
-		var numWithNoSubMarkers=0;
-		var allLat=0.000000;
-		var allLng=0.000000;
+
+	function genCentreLocation() {
+		var numWithNoSubMarkers = 0;
+		var allLat = 0.000000;
+		var allLng = 0.000000;
 		for ( var i = 0; i < marks.length; i++) {
-			if(!marks[i].isSubMarker()){
-				allLat=allLat+marks[i].getContent().getLat();
-				allLng=allLng+marks[i].getContent().getLng();
+			if (!marks[i].isSubMarker()) {
+				allLat = allLat + marks[i].getContent().getLat();
+				allLng = allLng + marks[i].getContent().getLng();
 				numWithNoSubMarkers++;
 			}
 		}
-		var averageLat=allLat/numWithNoSubMarkers;
-		var averageLng=allLng/numWithNoSubMarkers;
-		return {lat:averageLat,lng:averageLng};
+		var averageLat = allLat / numWithNoSubMarkers;
+		var averageLng = allLng / numWithNoSubMarkers;
+		return {
+			lat : averageLat,
+			lng : averageLng
+		};
 	}
 
 	function getOverlayById(id) {
@@ -285,8 +340,8 @@ function MapMarkerModel() {
 	}
 
 	this.getMapMarkerById = function(id) {
-		var marker=getOverlayById(id);
-		if(marker==null){
+		var marker = getOverlayById(id);
+		if (marker == null) {
 			var length = allOverviewMarkers.length;
 			for ( var i = 0; i < length; i++) {
 				if (allOverviewMarkers[i].id == id) {
@@ -295,10 +350,10 @@ function MapMarkerModel() {
 			}
 			alert('can not find model marker :' + id);
 			return null;
-		}else{
+		} else {
 			return marker;
 		}
-		
+
 	};
 
 	this.getMarkerContentById = function(id) {
@@ -403,7 +458,7 @@ function BackendManager() {
 
 	var routine = null;
 	var currentUser = null;
-	var userRoutines=null;
+	var userRoutines = null;
 
 	AV.initialize("6pzfpf5wkg4m52owuwixt5vggrpjincr8xon3pd966fhgj3c",
 			"4wrzupru1m4m7gpafo4llinv7iepyapnycvxygup7uiui77x");
@@ -452,54 +507,66 @@ function BackendManager() {
 			}
 		});
 	};
-	
-	this.fetchOverviewRoutinesByUser=function(user,successCallback){
-		var query=new AV.Query(Routine);
+
+	this.fetchOverviewRoutinesByUser = function(user, successCallback) {
+		var query = new AV.Query(Routine);
 		query.equalTo("user", user);
-		query.select('title','overViewJSONString');
-		query.find({
-			success : function(routines) {
-				console.log("backendManager:fetchOverviewRoutinesByUser success");
-				userRoutines=routines;
-				var overviewMarkersJSONStringArray=[];
-				for(var i in routines){
-					overviewMarkersJSONStringArray.push(routines[i].get('overViewJSONString'));
-				}
-				successCallback(overviewMarkersJSONStringArray);
-			}
-		});
+		query.select('title', 'overViewJSONString');
+		query
+				.find({
+					success : function(routines) {
+						console
+								.log("backendManager:fetchOverviewRoutinesByUser success");
+						userRoutines = routines;
+						var overviewMarkersJSONStringArray = [];
+						for ( var i in routines) {
+							overviewMarkersJSONStringArray.push(
+										{
+											routineId:routines[i].id,
+											overviewJSONString:routines[i].get('overViewJSONString')
+										}
+									);
+						}
+						successCallback(overviewMarkersJSONStringArray);
+					}
+				});
 	};
-	
-	this.deleteRoutineByOverviewMarkerId=function(overviewMarkerId,successCallback){
-		for(var i in userRoutines){
-			var overviewJSONString=userRoutines[i].get('overViewJSONString');
-			if(overviewJSONString.indexOf(overviewMarkerId) !=-1){
+
+	this.deleteRoutineByOverviewMarkerId = function(overviewMarkerId,
+			successCallback) {
+		for ( var i in userRoutines) {
+			var overviewJSONString = userRoutines[i].get('overViewJSONString');
+			if (overviewJSONString.indexOf(overviewMarkerId) != -1) {
 				userRoutines[i].destroy({
-					success: function(){
+					success : function() {
 						successCallback();
 					}
 				});
 			}
 		}
 	};
-	
-	this.fetchRoutineJSONStringByOverviewMarkerId=function(overviewMarkerId,successCallback){	
-		if(userRoutines==null){
+
+	this.fetchRoutineJSONStringByOverviewMarkerId = function(overviewMarkerId,
+			successCallback) {
+		if (userRoutines == null) {
 			return successCallback(null);
-		}else{
-			for(var i in userRoutines){
-				var overviewJSONString=userRoutines[i].get('overViewJSONString');
-				if(overviewJSONString.indexOf(overviewMarkerId) !=-1){
-					var result=userRoutines[i].get('RoutineJSONString');
-					if(result!=null){
-						return successCallback(result);
-					}else{
-						userRoutines[i].fetch().then(function(result){
-							var r=result.get('RoutineJSONString');
-							successCallback(r);
+		} else {
+			for ( var i in userRoutines) {
+				var overviewJSONString = userRoutines[i]
+						.get('overViewJSONString');
+				if (overviewJSONString.indexOf(overviewMarkerId) != -1) {
+					routine = userRoutines[i];
+					var result = userRoutines[i].get('RoutineJSONString');
+					var routineName = userRoutines[i].get('title');
+					if (result != null) {
+						return successCallback(result, routineName);
+					} else {
+						userRoutines[i].fetch().then(function(result) {
+							var r = result.get('RoutineJSONString');
+							successCallback(r, routineName);
 						});
 					}
-				}else{
+				} else {
 					continue;
 				}
 			}
@@ -536,7 +603,7 @@ function BackendManager() {
 			success : function(fetchedRoutine) {
 				routine = fetchedRoutine;
 				successCallback(routine.get('RoutineJSONString'), routine
-						.get('title'),routine.get('overViewJSONString'));
+						.get('title'), routine.get('overViewJSONString'));
 			},
 			error : function(object, error) {
 				alert("The object was not retrieved successfully.");
@@ -544,15 +611,38 @@ function BackendManager() {
 			}
 		});
 	};
+	
+	this.updateAllOverviews=function(allOverviewArray){
+		for(var i in allOverviewArray){
+			var routineId=allOverviewArray[i].routineId;
+			if(routineId!=null){
+				for(var j in userRoutines){
+					if(userRoutines[j].id==routineId){
+						userRoutines[j].set("overViewJSONString",allOverviewArray[i].overViewJSONString);
+					}
+				}
+			}
+		}
+		
+		AV.Object.saveAll(userRoutines, {
+			    success: function(list) {
+			      console.log("update all overviews success");
+			    },
+			    error: function(error) {
+			      console.log("error happenned when update all overview"+error);
+			    },
+		 });
+	};
 
-	this.saveRoutine = function(routineName, routineJSONString,overViewJSONString,callback) {
+	this.saveRoutine = function(routineName, routineJSONString,
+			overViewJSONString, callback) {
 		if (routine == null) {
 			routine = new Routine();
 		}
 		routine.set('title', routineName);
 		routine.set('RoutineJSONString', routineJSONString);
 		routine.set('user', this.getCurrentUser());
-		routine.set('overViewJSONString',overViewJSONString);
+		routine.set('overViewJSONString', overViewJSONString);
 		routine.save(null, {
 			success : function(routineFoo) {
 				routine = routineFoo;
@@ -577,9 +667,12 @@ function BackendManager() {
 			failCallback(error);
 		});
 	};
-	
-	this.saveBase64File=function(base64String,fileName,successCallBack,failCallback){
-		var avFile=new AV.File(fileName,{base64:base64String});
+
+	this.saveBase64File = function(base64String, fileName, successCallBack,
+			failCallback) {
+		var avFile = new AV.File(fileName, {
+			base64 : base64String
+		});
 		avFile.save().then(function() {
 			successCallBack(avFile.url());
 		}, function(error) {
@@ -624,8 +717,8 @@ function BackendManager() {
 }
 
 function MarkerContent(id) {
-	this.id=id;
-	
+	this.id = id;
+
 	var title = "Unknown Location";
 	var address = "Unknown Address";
 	var lat = 0;
@@ -633,49 +726,48 @@ function MarkerContent(id) {
 	var mycomment = "...";
 	var category = "marker";
 	var imgUrls = new Array();
-	var isImgPositionDecided=true;
-	var slideNum=1;
-	
-	var isAvergeOverViewMarker=false;
-	
-	var defaultImgIcon="resource/icons/pic/pic_default.png";
-	var picNoPositionIconUrl="resource/icons/pic/pic_no_position.png";
+	var isImgPositionDecided = true;
+	var slideNum = 1;
+
+	var isAvergeOverViewMarker = false;
+
+	var defaultImgIcon = "resource/icons/pic/pic_default.png";
+	var picNoPositionIconUrl = "resource/icons/pic/pic_no_position.png";
 	var iconUrl = "resource/icons/default/default_default.png";
 
-	this.isAvergeOverViewMarker=function(){
+	this.isAvergeOverViewMarker = function() {
 		return isAvergeOverViewMarker;
 	};
-	
-	this.setIsAvergeOverViewMarker=function(isAverage){
-		isAvergeOverViewMarker=isAverage;
+
+	this.setIsAvergeOverViewMarker = function(isAverage) {
+		isAvergeOverViewMarker = isAverage;
 	};
-	
-	this.getSlideNum=function(){
+
+	this.getSlideNum = function() {
 		return slideNum;
 	};
-	this.setSlideNum=function(num){
-		slideNum=num;
+	this.setSlideNum = function(num) {
+		slideNum = num;
 	};
-	
-	this.setImgPositionDecided=function(arg){
-		isImgPositionDecided=arg;
-		if(isImgPositionDecided){
+
+	this.setImgPositionDecided = function(arg) {
+		isImgPositionDecided = arg;
+		if (isImgPositionDecided) {
 			this.setIconUrl(defaultImgIcon);
-		}else{
+		} else {
 			this.setIconUrl(picNoPositionIconUrl);
 		}
 	};
-	
-	this.isImgPositionDecided=function(){
+
+	this.isImgPositionDecided = function() {
 		return isImgPositionDecided;
 	};
-	
-	
+
 	this.updateContent = function(args) {
-		if(args.slideNum!=null){
+		if (args.slideNum != null) {
 			this.setSlideNum(args.slideNum);
 		}
-		
+
 		if (args.title != null) {
 			this.setTitle(args.title);
 		}
@@ -694,32 +786,30 @@ function MarkerContent(id) {
 
 		if (args.lat != null && args.lng != null) {
 			this.setlatlng(args.lat, args.lng);
-			
+
 		}
 
 		if (args.imgUrls != null && args.imgUrls.length != 0) {
 			this.setImgUrls(args.imgUrls);
-		} 
+		}
 
 		if (args.iconUrl != null) {
 			this.setIconUrl(args.iconUrl);
 		}
-		
-		if(args.isAverage!=null){
+
+		if (args.isAverage != null) {
 			this.setIsAvergeOverViewMarker(args.isAverage);
 		}
 
 		/*
-		if (args.mainPaths != null) {
-			this.mainPaths = args.mainPaths;
-		}
-		*/
+		 * if (args.mainPaths != null) { this.mainPaths = args.mainPaths; }
+		 */
 
 		$.publish('updateInfoWindow', [ this ]);
 
 	};
-	
-	this.addImgUrl=function(url){
+
+	this.addImgUrl = function(url) {
 		imgUrls.push(url);
 		$.publish('updateInfoWindow', [ this ]);
 	};
@@ -730,7 +820,7 @@ function MarkerContent(id) {
 
 	this.setIconUrl = function(arg) {
 		iconUrl = arg;
-		$.publish("iconUrlUpdated",[this]);
+		$.publish("iconUrlUpdated", [ this ]);
 	};
 
 	this.getImgUrls = function() {
@@ -917,7 +1007,7 @@ function MapMarker(id) {
 			category : this.getContent().getCategory(),
 			imgUrls : this.getContent().getImgUrls(),
 			iconUrl : this.getContent().getIconUrl(),
-			slideNum: this.getContent().getSlideNum(),
+			slideNum : this.getContent().getSlideNum(),
 			nextMainMarkerId : this.connectedMainMarker == null ? null
 					: this.connectedMainMarker.id,
 			subMarkerIds : subMarkerIdsArray,

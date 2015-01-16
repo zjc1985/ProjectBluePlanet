@@ -42,9 +42,31 @@ function MapController(){
 	var routineName="Default Routine";
 	
 	this.deleteRoutine=function(overviewMarkerId){
+		
 		model.deleteRoutineByOverviewId(overviewMarkerId, function(){
 			alert("delete routine success");
 			self.loadRoutines();
+		});
+	};
+	
+	this.showRoutineDetail=function(overviewMarkerId){
+		for(var i in model.getModelMarkers()){
+			view.removeById(model.getModelMarkers()[i].id);
+		}
+		
+		model.setCurrenOverviewMarkersByOverviewId(overviewMarkerId);
+		
+		model.loadRoutineByOverviewMarkerId(overviewMarkerId, function(title){
+			routineName=title;
+			var ids=[];
+			for(var i in model.getModelMarkers()){
+				var id=model.getModelMarkers()[i].id;
+				changeSubMarkerShowStatus(id);
+				ids.push(id);
+			}
+			
+			view.fitBoundsByIds(ids);
+			
 		});
 	};
 	
@@ -288,8 +310,8 @@ function MapController(){
 		$.publish('updateUI',[]);
 	};
 		
-	this.showInfoClickHandler=function(viewMarker){
-		var content=model.getMarkerContentById(viewMarker.id);
+	this.showInfoClickHandler=function(markerId){
+		var content=model.getMarkerContentById(markerId);
 		console.log("controller.showInfoClickHandler: "+content.getTitle()+
 				content.getAddress()+
 				content.getCategory()+
@@ -376,6 +398,13 @@ function MapController(){
 		}
 	};
 	
+	this.overviewMarkerClickEventHandler=function(id){
+		view.infocard.show();
+		view.currentMarkerId=id;
+		this.showInfoClickHandler(id);
+		
+	};
+	
 	this.markerClickEventHandler=function(viewMarker){
 		view.infocard.show();
 		
@@ -449,7 +478,7 @@ function MapController(){
 		if(model.getMapMarkerById(viewMarker.id).subMarkersArray.length!=0){
 			changeSubMarkerShowStatus(viewMarker.id);
 		}
-		this.showInfoClickHandler(viewMarker);
+		this.showInfoClickHandler(viewMarker.id);
 		
 		//set max zindex
 		view.setMarkerZIndex(viewMarker.id, MAX_ZINDEX);

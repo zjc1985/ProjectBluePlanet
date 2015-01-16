@@ -271,6 +271,7 @@ function GoogleMapView(oneController) {
 					// ContextMenuItem in the ContextMenuOptions
 					switch (eventName) {
 					case 'showRoutineDetail':
+						controller.showRoutineDetail(id);
 						break;
 					case 'deleteRoutine':
 						controller.deleteRoutine(id);
@@ -635,6 +636,17 @@ function GoogleMapView(oneController) {
 		}
 		map.fitBounds(bounds);
 	};
+	
+	this.fitBoundsByIds=function(ids){
+		var bounds = new google.maps.LatLngBounds();
+		for ( var i in ids) {
+			var overlay=self.getViewOverlaysById(ids[i]);	
+			if (overlay instanceof google.maps.Marker) {
+				bounds.extend(overlay.getPosition());
+			}
+		}
+		map.fitBounds(bounds);
+	};
 
 	this.panByIds = function(ids) {
 		var bounds = new google.maps.LatLngBounds();
@@ -853,7 +865,7 @@ function GoogleMapView(oneController) {
 
 		google.maps.event.addListener(viewMarker, 'click',
 				function(mouseEvent) {
-					controller.overviewMarkerClickEventHandler(viewMarker);
+					controller.overviewMarkerClickEventHandler(viewMarker.id);
 				});
 
 		google.maps.event.addListener(viewMarker, 'dragend', function(

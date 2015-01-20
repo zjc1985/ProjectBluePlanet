@@ -2,6 +2,8 @@ function MapMarkerModel() {
 	var marks = new Array();
 	var currentOverviewMarkers = new Array();
 	var allOverviewMarkers = new Array();
+	
+	var self=this;
 
 	var backendManager = new BackendManager();
 
@@ -157,8 +159,6 @@ function MapMarkerModel() {
 	this.loadAllOverviewRoutine = function(successCallback) {
 		allOverviewMarkers = new Array();
 
-		var self = this;
-
 		var currentUser = backendManager.getCurrentUser();
 
 		backendManager.fetchOverviewRoutinesByUser(currentUser, function(
@@ -178,8 +178,6 @@ function MapMarkerModel() {
 
 	this.loadRoutineByOverviewMarkerId = function(overviewId, successCallback) {
 		marks = new Array();
-
-		var self = this;
 
 		backendManager.fetchRoutineJSONStringByOverviewMarkerId(overviewId,
 				function(marksJSONString, routineName) {
@@ -211,8 +209,6 @@ function MapMarkerModel() {
 
 	this.loadRoutine = function(routineId, successCallback) {
 		marks = new Array();
-
-		var self = this;
 
 		backendManager.fetchRoutineJSONStringById(routineId, function(
 				marksJSONString, title, overViewJSONString) {
@@ -269,8 +265,30 @@ function MapMarkerModel() {
 
 		//save all overview markers
 		//to do...
+		var overviewMap={};
+		for(var i in allOverviewMarkers){
+			var ovMarker=allOverviewMarkers[i];
+			if(ovMarker.routineId in overviewMap){
+				overviewMap[ovMarker.routineId].push(ovMarker.toJSONObject());
+			}else{
+				overviewMap[ovMarker.routineId]=new Array();
+				overviewMap[ovMarker.routineId].push(ovMarker.toJSONObject());
+			}
+		}
 		
+		for(var key in overviewMap){
+			overviewMap[key]=JSON.stringify(overviewMap[key]);
+		}
 		
+		backendManager.updateAllOverviews(overviewMap,function(){	
+			saveCurrentRoutine(routineName,function(){
+				callback();
+			});
+		});
+		
+	};
+	
+	function saveCurrentRoutine(routineName,callback){
 		//save Routine Markers
 		// gen marksJSONArray
 		var marksJSONArray = new Array();
@@ -282,7 +300,7 @@ function MapMarkerModel() {
 			// gen overViewMarksJSONArray
 			var overviewMarkersJSONArray = new Array();
 			if (currentOverviewMarkers.length == 0) {
-				var uuid = this.genUUID();
+				var uuid = self.genUUID();
 				var centreOverViewMarker = new MapMarker(uuid);
 				centreOverViewMarker.content.setIsAvergeOverViewMarker(true);
 				var location = genCentreLocation();
@@ -303,12 +321,10 @@ function MapMarkerModel() {
 					JSON.stringify(overviewMarkersJSONArray), function() {
 						callback();
 					});
+		}else{
+			callback();
 		}
-		
-
-		
-
-	};
+	}
 
 	function genCentreLocation() {
 		var numWithNoSubMarkers = 0;
@@ -612,13 +628,13 @@ function BackendManager() {
 		});
 	};
 	
-	this.updateAllOverviews=function(allOverviewArray){
-		for(var i in allOverviewArray){
-			var routineId=allOverviewArray[i].routineId;
+	this.updateAllOverviews=function(ovMarkerJSONMap,successCallback){
+		for(var key in ovMarkerJSONMap){
+			var routineId=key;
 			if(routineId!=null){
 				for(var j in userRoutines){
 					if(userRoutines[j].id==routineId){
-						userRoutines[j].set("overViewJSONString",allOverviewArray[i].overViewJSONString);
+						userRoutines[j].set("overViewJSONString",ovMarkerJSONMap[key]);
 					}
 				}
 			}
@@ -627,6 +643,7 @@ function BackendManager() {
 		AV.Object.saveAll(userRoutines, {
 			    success: function(list) {
 			      console.log("update all overviews success");
+			      successCallback();
 			    },
 			    error: function(error) {
 			      console.log("error happenned when update all overview"+error);
@@ -646,7 +663,6 @@ function BackendManager() {
 		routine.save(null, {
 			success : function(routineFoo) {
 				routine = routineFoo;
-				alert('save routine successful:' + routineName);
 				callback();
 			},
 			error : function(object, error) {

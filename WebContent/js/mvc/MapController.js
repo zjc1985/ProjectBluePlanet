@@ -635,8 +635,9 @@ function MapController(){
 	};
 	
 	this.saveRoutine=function(){
-		if(routineName!="Default Routine"){
+		if(routineName!="Default Routine" ||model.getModelMarkers().length==0){
 			model.save2Backend(routineName,function(){
+				alert("save success");
 				self.loadRoutines();
 			});
 		}else{
@@ -644,6 +645,7 @@ function MapController(){
 			if (name!=null && name!="") 
 			{
 				model.save2Backend(name,function(){
+					alert("save success");
 					self.loadRoutines();
 				});
 			}else{

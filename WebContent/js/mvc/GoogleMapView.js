@@ -19,6 +19,9 @@ function GoogleMapView(oneController) {
 	var markerCluster;
 
 	var overlays = new Array();
+	
+	var ovLines=new Array();
+	
 	var searchMarkers = [];
 
 	function getOverlayById(id) {
@@ -277,10 +280,13 @@ function GoogleMapView(oneController) {
 						controller.deleteRoutine(id);
 						break;
 					case 'addIcon':
-						
+						controller.addOvMarker({
+							lat : latLng.lat(),
+							lng : latLng.lng()
+						},id);
 						break;
 					case 'deleteIcon':
-						
+						controller.deleteOvMarker(id);
 						break;
 					}
 				});
@@ -386,7 +392,7 @@ function GoogleMapView(oneController) {
 				var id = overlays[i].id;
 				overlays[i].setDraggable(false);
 				if (id != null) {
-					document.getElementById('showInfoItem' + id).style.display = 'none';
+					//document.getElementById('showInfoItem' + id).style.display = 'none';
 					// document.getElementById('addMainlineItem'+id).style.display='none';
 					document.getElementById('addSublineItem' + id).style.display = 'none';
 					document.getElementById('deleteselfItem' + id).style.display = 'none';
@@ -991,6 +997,25 @@ function GoogleMapView(oneController) {
 
 		return line;
 	};
+	
+	this.drawOvLine=function(fromPosition,toPosition){
+			var lineCoordinates = [
+					new google.maps.LatLng(fromPosition.lat, fromPosition.lng),
+					new google.maps.LatLng(toPosition.lat, toPosition.lng) ];
+
+			// Create the polyline, passing the symbol in the 'icons' property.
+			// Give the line an opacity of 0.
+			// Repeat the symbol at intervals of 20 pixels to create the dashed
+			// effect.
+			var line = new google.maps.Polyline({
+				path : lineCoordinates,
+				map : map,
+				strokeOpacity : 0.7,
+				strokeColor : 'black',
+				strokeWeight : 0.6
+			});
+			ovLines.push(line);
+	};
 
 	this.drawSubLine = function(idfrom, idto, num) {
 		if (this.getViewOverlaysById(idto).isShow == true) {
@@ -1029,6 +1054,13 @@ function GoogleMapView(oneController) {
 			line.id = num;
 			overlays.push(line);
 		}
+	};
+	
+	this.removeAllOvLines=function(){
+		for ( var i = 0; i < ovLines.length; i++) {
+			ovLines[i].setMap(null);
+		}
+		ovLines=new Array();
 	};
 
 	this.removeAllLines = function() {

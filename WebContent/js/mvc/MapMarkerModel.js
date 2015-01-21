@@ -6,6 +6,28 @@ function MapMarkerModel() {
 	var self=this;
 
 	var backendManager = new BackendManager();
+	
+	this.isOvMarker=function(id){
+		for(var i in allOverviewMarkers){
+			if(allOverviewMarkers[i].id==id){
+				return true;
+			}
+		}
+		return false;
+	};
+	
+	this.findAverageOvMarkerByOvId=function(id){
+		var ovMarker=self.getMapMarkerById(id);
+		for(var i in allOverviewMarkers){
+			if(ovMarker.routineId==allOverviewMarkers[i].routineId && 
+					allOverviewMarkers[i].content.isAvergeOverViewMarker()){
+				return allOverviewMarkers[i];
+			}else{
+				continue;
+			}
+		}
+		return null;
+	};
 
 	this.getCurrentOverviewMarkers = function() {
 		return currentOverviewMarkers;
@@ -92,7 +114,7 @@ function MapMarkerModel() {
 	this.createOverviewMarker = function(id, content,routineId) {
 		var marker = new MapMarker(id);
 		marker.routineId=routineId;
-		$.publish('createOverViewMarker', [ marker ]);
+		$.publish('createOverViewMarker', [ marker,content ]);
 
 		if (content != null) {
 			marker.content.updateContent(content);
@@ -100,6 +122,31 @@ function MapMarkerModel() {
 		}
 		allOverviewMarkers.push(marker);
 		return marker;
+	};
+	
+	this.deleteOvMarker=function(id){
+		var ovMarker=this.getMapMarkerById(id);
+		if(ovMarker.content.isAvergeOverViewMarker()){
+			alert("this marker can not be deleted");
+			return;
+		}else{
+			for ( var i in allOverviewMarkers) {
+				if (allOverviewMarkers[i].id == id) {
+					allOverviewMarkers.splice(i, 1);
+				}
+			}
+			
+			if(currentOverviewMarkers.length!=0){
+				for ( var i in currentOverviewMarkers) {
+					if (currentOverviewMarkers[i].id == id) {
+						currentOverviewMarkers.splice(i, 1);
+					}
+				}
+			}
+			
+			$.publish('deleteOvMarker', [ id ]);
+			$.publish('updateOvLines');
+		}
 	};
 
 	this.deleteOneMarker = function(id, needDeleteAttackedImg) {

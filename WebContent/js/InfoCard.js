@@ -355,6 +355,12 @@ function infoCard(id){
 	function initPopupEditForm(){
 		var jsonData = [                                  
 		                {image:'resource/icons/default/default_default.png', description:'', value:'resource/icons/default/default_default.png', text:'default'},
+		                {image:'resource/icons/overview/overview_bear.png', description:'', value:'resource/icons/overview/overview_bear.png', text:'overview'},
+		                {image:'resource/icons/overview/overview_city.png', description:'', value:'resource/icons/overview/overview_city.png', text:'overview'},
+		                {image:'resource/icons/overview/overview_fish.png', description:'', value:'resource/icons/overview/overview_fish.png', text:'overview'},
+		                {image:'resource/icons/overview/overview_forest.png', description:'', value:'resource/icons/overview/overview_forest.png', text:'overview'},
+		                {image:'resource/icons/overview/overview_house.png', description:'', value:'resource/icons/overview/overview_house.png', text:'overview'},
+		                {image:'resource/icons/overview/overview_moutain.png', description:'', value:'resource/icons/overview/overview_moutain.png', text:'overview'},
 		                {image:'resource/icons/food/food_default.png', description:'', value:'resource/icons/food/food_default.png', text:'food'},
 		                {image:'resource/icons/pic/pic_default.png', description:'', value:'resource/icons/pic/pic_default.png', text:'pic'},
 		                {image:'resource/icons/event/event_default.png', description:'', value:'resource/icons/event/event_default.png', text:'event'},

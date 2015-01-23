@@ -133,7 +133,19 @@ function MapController(){
 		
 		view.removeAllLines();
 		
-		view.initSlideMode();
+		//hide contentMenu
+		view.hideContextMenuById('addMarkerItem');
+		view.hideContextMenuById('saveRoutineItem');
+		view.hideContextMenuById('uploadItem');
+		
+		for(var i in model.getModelMarkers()){
+			var id=model.getModelMarkers()[i].id;
+			view.setMarkerDragable(id, false);
+			view.hideContextMenuById('addSublineItem' + id);
+			view.hideContextMenuById('deleteselfItem' + id);
+			view.hideContextMenuById('mergeImgUrlItem' + id);
+		}
+		
 		
 		view.clearMarkerCluster();
 		
@@ -148,7 +160,20 @@ function MapController(){
 			isSlideMode=false;
 			view.infocard.showEditButton();
 			view.removeAllLines();
-			view.exitSlideMode();
+			
+			//hide contentMenu
+			view.showContextMenuById('addMarkerItem');
+			view.showContextMenuById('saveRoutineItem');
+			view.showContextMenuById('uploadItem');
+			
+			for(var i in model.getModelMarkers()){
+				var id=model.getModelMarkers()[i].id;
+				view.setMarkerDragable(id, true);
+				view.showContextMenuById('addSublineItem' + id);
+				view.showContextMenuById('deleteselfItem' + id);
+				view.showContextMenuById('mergeImgUrlItem' + id);
+			}
+			
 			for(var i in model.getModelMarkers()){
 				var viewMarker=view.getViewOverlaysById(model.getModelMarkers()[i].id);
 				if(model.getModelMarkers()[i].isSubMarker()){
@@ -656,11 +681,17 @@ function MapController(){
 		
 		//todo: resetId
 		model.loadAllOverviewRoutine(function(){
-			view.fitRoutineBounds();
+			var firstOvMarker=model.getAllOverviewMarkers()[0];
+			if(firstOvMarker!=null){
+				view.fitBoundsByIds([firstOvMarker.id]);
+			}
 			
 			view.setMapZoom(5);
 			
 			self.zoomEventHandler();
+			
+			//todo : need to fix 
+			isUserOwnThisRoutine=true;
 		});
 		
 		/*
@@ -700,7 +731,7 @@ function MapController(){
 		if(routineName!="Default Routine" ||model.getModelMarkers().length==0){
 			model.save2Backend(routineName,function(){
 				alert("save success");
-				self.loadRoutines();
+				//self.loadRoutines();
 			});
 		}else{
 			var name=prompt("routine name?",routineName); 
@@ -708,7 +739,7 @@ function MapController(){
 			{
 				model.save2Backend(name,function(){
 					alert("save success");
-					self.loadRoutines();
+					//self.loadRoutines();
 				});
 			}else{
 				alert('please input your routine name to save');

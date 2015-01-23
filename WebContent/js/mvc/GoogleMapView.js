@@ -303,12 +303,6 @@ function GoogleMapView(oneController) {
 
 		// create an array of ContextMenuItem objects
 		var menuItems = [];
-		menuItems.push({
-			className : 'context_menu_item',
-			eventName : 'showInfo',
-			id : 'showInfoItem' + id,
-			label : 'showInfo'
-		});
 		/*
 		 * don't need mainline in current version menuItems.push({ className :
 		 * 'context_menu_item', eventName : 'addMainline', id:
@@ -375,41 +369,25 @@ function GoogleMapView(oneController) {
 						break;
 					}
 				});
-	}
-	;
-
-	this.initSlideMode = function() {
-		// map context menu
-		document.getElementById('addMarkerItem').style.display = 'none';
-		document.getElementById('saveRoutineItem').style.display = 'none';
-		document.getElementById('loadRoutineItem').style.display = 'none';
-		document.getElementById('uploadItem').style.display = 'none';
-		document.getElementById('showAllItem').style.display = 'none';
-
-		// marker context menu
-		for ( var i in overlays) {
-			if (overlays[i] instanceof google.maps.Marker) {
-				var id = overlays[i].id;
-				overlays[i].setDraggable(false);
-				if (id != null) {
-					//document.getElementById('showInfoItem' + id).style.display = 'none';
-					// document.getElementById('addMainlineItem'+id).style.display='none';
-					document.getElementById('addSublineItem' + id).style.display = 'none';
-					document.getElementById('deleteselfItem' + id).style.display = 'none';
-					document.getElementById('mergeImgUrlItem' + id).style.display = 'none';
-				}
-			}
+	};
+	
+	this.hideContextMenuById=function(id){
+		if(document.getElementById(id)!=null){
+			document.getElementById(id).style.display = 'none';
 		}
-
+	};
+	
+	this.showContextMenuById=function(id){
+		if(document.getElementById(id)!=null){
+			document.getElementById(id).style.display = '';
+		}
 	};
 
 	this.exitSlideMode = function() {
 		// map context menu
 		document.getElementById('addMarkerItem').style.display = '';
 		document.getElementById('saveRoutineItem').style.display = '';
-		document.getElementById('loadRoutineItem').style.display = '';
 		document.getElementById('uploadItem').style.display = '';
-		document.getElementById('showAllItem').style.display = '';
 
 		// marker context menu
 		for ( var i in overlays) {
@@ -419,7 +397,6 @@ function GoogleMapView(oneController) {
 				var id = overlays[i].id;
 
 				if (id != null) {
-					document.getElementById('showInfoItem' + id).style.display = '';
 					// document.getElementById('addMainlineItem'+id).style.display='';
 					document.getElementById('addSublineItem' + id).style.display = '';
 					document.getElementById('deleteselfItem' + id).style.display = '';
@@ -455,24 +432,11 @@ function GoogleMapView(oneController) {
 		});
 		menuItems.push({
 			className : 'context_menu_item',
-			eventName : 'loadRoutine',
-			id : 'loadRoutineItem',
-			label : 'load Routine'
-		});
-		menuItems.push({
-			className : 'context_menu_item',
 			eventName : 'uploadImg',
 			id : 'uploadItem',
 			label : 'upload image'
 		});
 		// a menuItem with no properties will be rendered as a separator
-		menuItems.push({});
-		menuItems.push({
-			className : 'context_menu_item',
-			eventName : 'showAll',
-			id : 'showAllItem',
-			label : 'show all routines'
-		});
 		menuItems.push({});
 		menuItems.push({
 			className : 'context_menu_item',
@@ -531,15 +495,9 @@ function GoogleMapView(oneController) {
 					case 'saveRoutine':
 						controller.saveRoutine();
 						break;
-					case 'loadRoutine':
-						controller.loadRoutines();
-						break;
 					case 'uploadImg':
 						// do somthing upload image
 						self.uploadImgForm.show();
-						break;
-					case 'showAll':
-						controller.showAllRoutineClickHandler();
 						break;
 					case 'startSlide':
 						controller.startSlideMode();

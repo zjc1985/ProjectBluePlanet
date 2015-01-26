@@ -649,8 +649,9 @@ function GoogleMapView(oneController) {
 		var mapOptions = {
 			center : new google.maps.LatLng(37.3841308, -121.9801145),
 			disableDoubleClickZoom : true,
-			zoom : 15,
+			zoom : 5,
 			minZoom : 5,
+			maxZoom : 18,
 			mapTypeId : google.maps.MapTypeId.ROADMAP
 		};
 

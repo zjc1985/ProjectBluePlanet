@@ -7,6 +7,16 @@ function MapMarkerModel() {
 
 	var backendManager = new BackendManager();
 	
+	this.fetchUserIdByRoutineId=function(routineId,successCallBack){
+		backendManager.fetchUserByRoutineId(routineId, function(user){
+			if(user!=null){
+				successCallBack(user.id);
+			}else{
+				successCallBack(null);
+			}	
+		});
+	};
+	
 	this.isOvMarker=function(id){
 		for(var i in allOverviewMarkers){
 			if(allOverviewMarkers[i].id==id){
@@ -203,12 +213,37 @@ function MapMarkerModel() {
 				successCallback);
 	};
 
-	this.loadAllOverviewRoutine = function(successCallback) {
+	this.loadAllOverviewRoutine = function(userId,successCallback) {
 		allOverviewMarkers = new Array();
 
-		var currentUser = backendManager.getCurrentUser();
-
-		backendManager.fetchOverviewRoutinesByUser(currentUser, function(
+		backendManager.getCurrentUser(function(currentUser){
+			if(userId==null){
+				fetchOverviewRoutinesByUser(currentUser,function(){
+					successCallback(true);
+				});
+			}else{
+				backendManager.fetchUserByUserId(userId, function(user){
+					if(user!=null){
+						fetchOverviewRoutinesByUser(user,function(){
+							if(user.id==currentUser.id){
+								//current user own these routines
+								successCallback(true);
+							}else{
+								successCallback(false);
+							}
+						});
+					}else{
+						fetchOverviewRoutinesByUser(currentUser,function(){
+							successCallback(true);
+						});
+					}
+				});
+			};
+		});
+	};
+	
+	function fetchOverviewRoutinesByUser(user,successCallback){
+		backendManager.fetchOverviewRoutinesByUser(user, function(
 				overviewJSONStringArray) {
 			for ( var i in overviewJSONStringArray) {
 				var overviewJSONString = overviewJSONStringArray[i].overviewJSONString;
@@ -221,7 +256,7 @@ function MapMarkerModel() {
 			}
 			successCallback();
 		});
-	};
+	}
 
 	this.loadRoutineByOverviewMarkerId = function(overviewId, successCallback) {
 		marks = new Array();
@@ -272,20 +307,12 @@ function MapMarkerModel() {
 				// parse markers
 				var marksJSONArray = JSON.parse(marksJSONString);
 				for ( var i in marksJSONArray) {
-
 					self.createOneMarker(marksJSONArray[i].id,
 							marksJSONArray[i]);
-
 				}
 
 				for ( var i in marksJSONArray) {
 					var eachJSONObject = marksJSONArray[i];
-					/*
-					 * if (eachJSONObject.nextMainMarkerId != null) {
-					 * self.addMainLine(eachJSONObject.id,
-					 * eachJSONObject.nextMainMarkerId); }
-					 */
-
 					for ( var j in eachJSONObject.subMarkerIds) {
 						self.addSubLine(eachJSONObject.id,
 								eachJSONObject.subMarkerIds[j], 0, 0);
@@ -537,24 +564,24 @@ function BackendManager() {
 		});
 	};
 
-	this.getCurrentUser = function() {
+	this.getCurrentUser = function(successCallback) {
 		currentUser = AV.User.current();
 		if (currentUser) {
 			console.log("welcomse session user:" + currentUser.get('username'));
 
-			return currentUser;
+			successCallback(currentUser);
 
 		} else {
 			AV.User.logIn("guest", "guest", {
 				success : function(user) {
 					console.log("login for user:" + user.get('username'));
 					currentUser = user;
-					return currentUser;
+					successCallback(user);
 				},
 				error : function(user, error) {
 					alert("Error: " + error.code + " " + error.message);
 					alert("log failed. abort save routines");
-					return null;
+					successCallback(null);
 				}
 			});
 		}
@@ -568,6 +595,17 @@ function BackendManager() {
 				console.log("backendManager:fetch routine success");
 				successCallback(routines);
 			}
+		});
+	};
+	
+	this.fetchUserByUserId=function(userId,successCallback){
+		console.log('bM.fetchUserByUserId: userId:'+ userId);
+		var query = new AV.Query(AV.User);
+		query.get(userId,{
+		  success: function(user) {
+			  console.log('bM.fetchUserByUserId: found user, user name'+ user.get('username'));
+			  successCallback(user);
+		  }
 		});
 	};
 
@@ -634,6 +672,20 @@ function BackendManager() {
 				}
 			}
 		}
+	};
+	
+	this.fetchUserByRoutineId=function(routineId,successCallback){
+		var query = new AV.Query(Routine);
+		query.get(routineId, {
+			success : function(fetchedRoutine) {
+				routine = fetchedRoutine;
+				successCallback(routine.get('user'));
+			},
+			error : function(object, error) {
+				alert("The object was not retrieved successfully.");
+				console.log(error);
+			}
+		});
 	};
 
 	this.isUserOwnRoutines = function(user, routineId, successCallback) {

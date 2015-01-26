@@ -32,7 +32,7 @@ $('#login').click(function(){
 	console.log($('#password').val());
 	backendManager.login($('#username').val(),$('#password').val(),function(user){
 		alert('login success,welcome:'+user.get('username'));
-		window.location.href = 'MapMarkerMVC.html';
+		window.location.href = 'MapMarkerMVC.html?userId='+user.id;
 	})
 });
 

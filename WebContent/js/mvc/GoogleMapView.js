@@ -240,6 +240,8 @@ function GoogleMapView(oneController) {
 			id : 'deleteRoutine' + id,
 			label : 'delete this routine'
 		});
+		
+		menuItems.push({});
 
 		menuItems.push({
 			className : 'context_menu_item',
@@ -253,6 +255,15 @@ function GoogleMapView(oneController) {
 			eventName : 'deleteIcon',
 			id : 'deleteIcon' + id,
 			label : 'deleteIcon'
+		});
+		
+		menuItems.push({});
+		
+		menuItems.push({
+			className : 'context_menu_item',
+			eventName : 'copyRoutine',
+			id : 'copyRoutine' + id,
+			label : 'Copy this Routine'
 		});
 
 		contextMenuOptions.menuItems = menuItems;
@@ -287,6 +298,9 @@ function GoogleMapView(oneController) {
 						break;
 					case 'deleteIcon':
 						controller.deleteOvMarker(id);
+						break;
+					case 'copyRoutine':
+						controller.copyRoutine(id);
 						break;
 					}
 				});
@@ -380,31 +394,6 @@ function GoogleMapView(oneController) {
 	this.showContextMenuById=function(id){
 		if(document.getElementById(id)!=null){
 			document.getElementById(id).style.display = '';
-		}
-	};
-
-	this.exitSlideMode = function() {
-		// map context menu
-		document.getElementById('addMarkerItem').style.display = '';
-		document.getElementById('saveRoutineItem').style.display = '';
-		document.getElementById('uploadItem').style.display = '';
-
-		// marker context menu
-		for ( var i in overlays) {
-			if (overlays[i] instanceof google.maps.Marker) {
-				overlays[i].setDraggable(true);
-
-				var id = overlays[i].id;
-
-				if (id != null) {
-					// document.getElementById('addMainlineItem'+id).style.display='';
-					document.getElementById('addSublineItem' + id).style.display = '';
-					document.getElementById('deleteselfItem' + id).style.display = '';
-					document.getElementById('mergeImgUrlItem' + id).style.display = '';
-				}
-
-			}
-
 		}
 	};
 

@@ -17,6 +17,16 @@ function MapMarkerModel() {
 		});
 	};
 	
+	this.copyRoutine2CurrentUser=function(ovMarkerId,successCallback){
+		var routineId=self.getMapMarkerById(ovMarkerId).routineId;
+		backendManager.fetchRoutineJSONStringById(routineId, function(routineJSONString,
+				title,ovJSONString){
+			backendManager.saveRoutine(title, routineJSONString, ovJSONString, function(){
+				successCallback();
+			});
+		});
+	};
+	
 	this.isOvMarker=function(id){
 		for(var i in allOverviewMarkers){
 			if(allOverviewMarkers[i].id==id){
@@ -207,10 +217,10 @@ function MapMarkerModel() {
 	};
 
 	this.isUserOwnRoutine = function(routineId, successCallback) {
-		var currentUser = backendManager.getCurrentUser();
-
-		backendManager.isUserOwnRoutines(currentUser, routineId,
-				successCallback);
+		backendManager.getCurrentUser(function(currentUser){
+			backendManager.isUserOwnRoutines(currentUser, routineId,
+					successCallback);
+		});
 	};
 
 	this.loadAllOverviewRoutine = function(userId,successCallback) {
@@ -330,36 +340,35 @@ function MapMarkerModel() {
 
 	this.save2Backend = function(routineName, callback) {
 		console.log('prepare to save routine ' + routineName);
-		var currentUser = backendManager.getCurrentUser();
-		
-		if (currentUser == null) {
-			alert('no find user abort saving routine');
-			return;
-		}
-
-		//save all overview markers
-		//to do...
-		var overviewMap={};
-		for(var i in allOverviewMarkers){
-			var ovMarker=allOverviewMarkers[i];
-			if(ovMarker.routineId in overviewMap){
-				overviewMap[ovMarker.routineId].push(ovMarker.toJSONObject());
-			}else{
-				overviewMap[ovMarker.routineId]=new Array();
-				overviewMap[ovMarker.routineId].push(ovMarker.toJSONObject());
+		backendManager.getCurrentUser(function(currentUser){
+			if (currentUser == null) {
+				alert('no find user abort saving routine');
+				return;
 			}
-		}
-		
-		for(var key in overviewMap){
-			overviewMap[key]=JSON.stringify(overviewMap[key]);
-		}
-		
-		backendManager.updateAllOverviews(overviewMap,function(){	
-			saveCurrentRoutine(routineName,function(){
-				callback();
+
+			//save all overview markers
+			//to do...
+			var overviewMap={};
+			for(var i in allOverviewMarkers){
+				var ovMarker=allOverviewMarkers[i];
+				if(ovMarker.routineId in overviewMap){
+					overviewMap[ovMarker.routineId].push(ovMarker.toJSONObject());
+				}else{
+					overviewMap[ovMarker.routineId]=new Array();
+					overviewMap[ovMarker.routineId].push(ovMarker.toJSONObject());
+				}
+			}
+			
+			for(var key in overviewMap){
+				overviewMap[key]=JSON.stringify(overviewMap[key]);
+			}
+			
+			backendManager.updateAllOverviews(overviewMap,function(){	
+				saveCurrentRoutine(routineName,function(){
+					callback();
+				});
 			});
 		});
-		
 	};
 	
 	function saveCurrentRoutine(routineName,callback){
@@ -755,20 +764,28 @@ function BackendManager() {
 		if (routine == null) {
 			routine = new Routine();
 		}
-		routine.set('title', routineName);
-		routine.set('RoutineJSONString', routineJSONString);
-		routine.set('user', this.getCurrentUser());
-		routine.set('overViewJSONString', overViewJSONString);
-		routine.save(null, {
-			success : function(routineFoo) {
-				routine = routineFoo;
-				callback();
-			},
-			error : function(object, error) {
-				alert('save routine failed');
-				routine = null;
-			}
+		
+		this.getCurrentUser(function(currentUser){
+			if(currentUser.get('username')!='guest'){
+				routine.set('title', routineName);
+				routine.set('RoutineJSONString', routineJSONString);
+				routine.set('user',currentUser );
+				routine.set('overViewJSONString', overViewJSONString);
+				routine.save(null, {
+					success : function(routineFoo) {
+						routine = routineFoo;
+						callback();
+					},
+					error : function(object, error) {
+						alert('save routine failed');
+						routine = null;
+					}
 
+				});
+			}else{
+				alert('Guest can not save routine. Please login first.');
+			}
+			
 		});
 	};
 

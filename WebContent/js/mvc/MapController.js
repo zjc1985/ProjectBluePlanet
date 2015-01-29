@@ -45,6 +45,21 @@ function MapController(){
 		model.deleteOvMarker(id);
 	};
 	
+	this.copyRoutine=function(ovMarkerId){
+		if(isUserOwnThisRoutine){
+			alert('you have this routine already');
+		}else{
+			model.copyRoutine2CurrentUser(ovMarkerId,function(){
+				var r=confirm("Copy Complete. Do u want to see your own map?");
+				if(r==true){
+					window.location.href = 'MapMarkerMVC.html';
+				}else{
+					return;
+				}
+			});
+		}
+	};
+	
 	this.addOvMarker=function(content,belongId){
 		var id=model.genUUID();
 		var ovMarker=model.getMapMarkerById(belongId);

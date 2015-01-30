@@ -21,7 +21,7 @@ function MapMarkerModel() {
 		var routineId=self.getMapMarkerById(ovMarkerId).routineId;
 		backendManager.fetchRoutineJSONStringById(routineId, function(routineJSONString,
 				title,ovJSONString){
-			backendManager.saveRoutine(title, routineJSONString, ovJSONString, function(){
+			backendManager.saveAsNewRoutine(title, routineJSONString, ovJSONString, function(){
 				successCallback();
 			});
 		});
@@ -757,6 +757,33 @@ function BackendManager() {
 			      console.log("error happenned when update all overview"+error);
 			    },
 		 });
+	};
+	
+	this.saveAsNewRoutine=function(routineName,routineJSONString,
+			overViewJSONString,callback){
+		var routine = new Routine();
+		
+		this.getCurrentUser(function(currentUser){
+			if(currentUser.get('username')!='guest'){
+				routine.set('title', routineName);
+				routine.set('RoutineJSONString', routineJSONString);
+				routine.set('user',currentUser );
+				routine.set('overViewJSONString', overViewJSONString);
+				routine.save(null, {
+					success : function(routineFoo) {
+						callback();
+					},
+					error : function(object, error) {
+						alert('save routine failed');
+						routine = null;
+					}
+
+				});
+			}else{
+				alert('Guest can not save routine. Please login first.');
+			}
+			
+		});
 	};
 
 	this.saveRoutine = function(routineName, routineJSONString,

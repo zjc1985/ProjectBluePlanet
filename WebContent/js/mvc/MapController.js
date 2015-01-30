@@ -136,7 +136,7 @@ function MapController(){
 				alert("all save complete");
 				view.uploadImgForm.UIFinishUpload();
 				view.uploadImgForm.close();
-				view.fitRoutineBounds();			
+				view.fitBoundsByIds([id]);		
 			}
 		},function(error){
 			view.uploadImgForm.completeFileNum++;

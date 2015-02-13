@@ -347,7 +347,6 @@ function MapMarkerModel() {
 			}
 
 			//save all overview markers
-			//to do...
 			var overviewMap={};
 			for(var i in allOverviewMarkers){
 				var ovMarker=allOverviewMarkers[i];
@@ -381,12 +380,13 @@ function MapMarkerModel() {
 			}
 
 			// gen overViewMarksJSONArray
+			var location = genCentreLocation();
 			var overviewMarkersJSONArray = new Array();
 			if (currentOverviewMarkers.length == 0) {
 				var uuid = self.genUUID();
 				var centreOverViewMarker = new MapMarker(uuid);
 				centreOverViewMarker.content.setIsAvergeOverViewMarker(true);
-				var location = genCentreLocation();
+				
 				centreOverViewMarker.content.updateContent(location);
 				overviewMarkersJSONArray.push(centreOverViewMarker.toJSONObject());
 			} else {
@@ -394,14 +394,14 @@ function MapMarkerModel() {
 				for ( var i in currentOverviewMarkers) {
 					var overviewMarker = currentOverviewMarkers[i];
 					if (overviewMarker.content.isAvergeOverViewMarker()) {
-						overviewMarker.content.updateContent(genCentreLocation());
+						overviewMarker.content.updateContent(location);
 					}
 					overviewMarkersJSONArray.push(overviewMarker.toJSONObject());
 				}
 			}
 			
 			backendManager.saveRoutine(routineName, JSON.stringify(marksJSONArray),
-					JSON.stringify(overviewMarkersJSONArray), function() {
+					JSON.stringify(overviewMarkersJSONArray), location,function() {
 						callback();
 					});
 		}else{
@@ -787,7 +787,7 @@ function BackendManager() {
 	};
 
 	this.saveRoutine = function(routineName, routineJSONString,
-			overViewJSONString, callback) {
+			overViewJSONString, location,callback) {
 		if (routine == null) {
 			routine = new Routine();
 		}
@@ -798,6 +798,8 @@ function BackendManager() {
 				routine.set('RoutineJSONString', routineJSONString);
 				routine.set('user',currentUser );
 				routine.set('overViewJSONString', overViewJSONString);
+				var point = new AV.GeoPoint({latitude: location.lat, longitude: location.lng});
+				routine.set('location',point);
 				routine.save(null, {
 					success : function(routineFoo) {
 						routine = routineFoo;

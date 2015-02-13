@@ -57,6 +57,17 @@ if(currentUser.get('username')=="guest"){
 			$("#routineList").append(html);
 		}
 	});
+	
+	
+	
+	backendManager.fetchOverviewRoutinesByUser(currentUser,function(results){
+		
+			
+			//dbb9f6f6-4cfe-4ccc-b8ab-39ff8362cd7c
+		backendManager.fetchRoutineJSONStringByOverviewMarkerId('dbb9f6f6-4cfe-4ccc-b8ab-39ff8362cd7c',function(result){
+			console.log(result);
+		})
+	});
 }
 </script>
 

@@ -19,11 +19,12 @@
 <p>password: <input type="password" id="password" /></p>
 <button id='login'>login</button>
 
+<div>Please contact me if you have interest: lionhart586@hotmail.com</div>
 
 </body>
 </html>
 
-<script type="text/javascript">
+<script type="text/javascript"> 
 
 var backendManager=new BackendManager();
 
@@ -32,7 +33,7 @@ $('#login').click(function(){
 	console.log($('#password').val());
 	backendManager.login($('#username').val(),$('#password').val(),function(user){
 		alert('login success,welcome:'+user.get('username'));
-		window.location.href = 'routines.html';
+		window.location.href = 'MapMarkerMVC.html?userId='+user.id;
 	})
 });
 

@@ -19,6 +19,9 @@ function GoogleMapView(oneController) {
 	var markerCluster;
 
 	var overlays = new Array();
+	
+	var ovLines=new Array();
+	
 	var searchMarkers = [];
 
 	function getOverlayById(id) {
@@ -212,8 +215,8 @@ function GoogleMapView(oneController) {
 
 				});
 	}
-
-	function addMarkerContextMenu(googleMarker) {
+	
+	function addOverviewMarkerContextMenu(googleMarker){
 		// create the ContextMenuOptions object
 		var id = googleMarker.id;
 		var contextMenuOptions = {};
@@ -226,10 +229,94 @@ function GoogleMapView(oneController) {
 		var menuItems = [];
 		menuItems.push({
 			className : 'context_menu_item',
-			eventName : 'showInfo',
-			id : 'showInfoItem' + id,
-			label : 'showInfo'
+			eventName : 'showRoutineDetail',
+			id : 'showRoutineDetail' + id,
+			label : 'show routine Detail'
 		});
+		
+		menuItems.push({
+			className : 'context_menu_item',
+			eventName : 'deleteRoutine',
+			id : 'deleteRoutine' + id,
+			label : 'delete this routine'
+		});
+		
+		menuItems.push({});
+
+		menuItems.push({
+			className : 'context_menu_item',
+			eventName : 'addIcon',
+			id : 'addIcon' + id,
+			label : 'add icon to routine'
+		});
+
+		menuItems.push({
+			className : 'context_menu_item',
+			eventName : 'deleteIcon',
+			id : 'deleteIcon' + id,
+			label : 'deleteIcon'
+		});
+		
+		menuItems.push({});
+		
+		menuItems.push({
+			className : 'context_menu_item',
+			eventName : 'copyRoutine',
+			id : 'copyRoutine' + id,
+			label : 'Copy this Routine'
+		});
+
+		contextMenuOptions.menuItems = menuItems;
+
+		// create the ContextMenu object
+		var contextMenu = new ContextMenu(map, contextMenuOptions);
+
+		// display the ContextMenu on a Map right click
+		google.maps.event.addListener(googleMarker, 'rightclick', function(
+				mouseEvent) {
+			contextMenu.show(mouseEvent.latLng);
+		});
+
+		// listen for the ContextMenu 'menu_item_selected' event
+		google.maps.event.addListener(contextMenu, 'menu_item_selected',
+				function(latLng, eventName) {
+					// latLng is the position of the ContextMenu
+					// eventName is the eventName defined for the clicked
+					// ContextMenuItem in the ContextMenuOptions
+					switch (eventName) {
+					case 'showRoutineDetail':
+						controller.showRoutineDetail(id);
+						break;
+					case 'deleteRoutine':
+						controller.deleteRoutine(id);
+						break;
+					case 'addIcon':
+						controller.addOvMarker({
+							lat : latLng.lat(),
+							lng : latLng.lng()
+						},id);
+						break;
+					case 'deleteIcon':
+						controller.deleteOvMarker(id);
+						break;
+					case 'copyRoutine':
+						controller.copyRoutine(id);
+						break;
+					}
+				});
+	}
+
+	function addMarkerContextMenu(googleMarker) {
+		// create the ContextMenuOptions object
+		var id = googleMarker.id;
+		var contextMenuOptions = {};
+		contextMenuOptions.classNames = {
+			menu : 'context_menu',
+			menuSeparator : 'context_menu_separator'
+		};
+
+		// create an array of ContextMenuItem objects
+		var menuItems = [];
 		/*
 		 * don't need mainline in current version menuItems.push({ className :
 		 * 'context_menu_item', eventName : 'addMainline', id:
@@ -296,59 +383,17 @@ function GoogleMapView(oneController) {
 						break;
 					}
 				});
-	}
-	;
-
-	this.initSlideMode = function() {
-		// map context menu
-		document.getElementById('addMarkerItem').style.display = 'none';
-		document.getElementById('saveRoutineItem').style.display = 'none';
-		document.getElementById('loadRoutineItem').style.display = 'none';
-		document.getElementById('uploadItem').style.display = 'none';
-		document.getElementById('showAllItem').style.display = 'none';
-
-		// marker context menu
-		for ( var i in overlays) {
-			if (overlays[i] instanceof google.maps.Marker) {
-				var id = overlays[i].id;
-				overlays[i].setDraggable(false);
-				if (id != null) {
-					document.getElementById('showInfoItem' + id).style.display = 'none';
-					// document.getElementById('addMainlineItem'+id).style.display='none';
-					document.getElementById('addSublineItem' + id).style.display = 'none';
-					document.getElementById('deleteselfItem' + id).style.display = 'none';
-					document.getElementById('mergeImgUrlItem' + id).style.display = 'none';
-				}
-			}
-		}
-
 	};
-
-	this.exitSlideMode = function() {
-		// map context menu
-		document.getElementById('addMarkerItem').style.display = '';
-		document.getElementById('saveRoutineItem').style.display = '';
-		document.getElementById('loadRoutineItem').style.display = '';
-		document.getElementById('uploadItem').style.display = '';
-		document.getElementById('showAllItem').style.display = '';
-
-		// marker context menu
-		for ( var i in overlays) {
-			if (overlays[i] instanceof google.maps.Marker) {
-				overlays[i].setDraggable(true);
-
-				var id = overlays[i].id;
-
-				if (id != null) {
-					document.getElementById('showInfoItem' + id).style.display = '';
-					// document.getElementById('addMainlineItem'+id).style.display='';
-					document.getElementById('addSublineItem' + id).style.display = '';
-					document.getElementById('deleteselfItem' + id).style.display = '';
-					document.getElementById('mergeImgUrlItem' + id).style.display = '';
-				}
-
-			}
-
+	
+	this.hideContextMenuById=function(id){
+		if(document.getElementById(id)!=null){
+			document.getElementById(id).style.display = 'none';
+		}
+	};
+	
+	this.showContextMenuById=function(id){
+		if(document.getElementById(id)!=null){
+			document.getElementById(id).style.display = '';
 		}
 	};
 
@@ -376,24 +421,11 @@ function GoogleMapView(oneController) {
 		});
 		menuItems.push({
 			className : 'context_menu_item',
-			eventName : 'loadRoutine',
-			id : 'loadRoutineItem',
-			label : 'load Routine'
-		});
-		menuItems.push({
-			className : 'context_menu_item',
 			eventName : 'uploadImg',
 			id : 'uploadItem',
 			label : 'upload image'
 		});
 		// a menuItem with no properties will be rendered as a separator
-		menuItems.push({});
-		menuItems.push({
-			className : 'context_menu_item',
-			eventName : 'showAll',
-			id : 'showAllItem',
-			label : 'show all routines'
-		});
 		menuItems.push({});
 		menuItems.push({
 			className : 'context_menu_item',
@@ -452,15 +484,9 @@ function GoogleMapView(oneController) {
 					case 'saveRoutine':
 						controller.saveRoutine();
 						break;
-					case 'loadRoutine':
-						controller.loadRoutines();
-						break;
 					case 'uploadImg':
 						// do somthing upload image
 						self.uploadImgForm.show();
-						break;
-					case 'showAll':
-						controller.showAllRoutineClickHandler();
 						break;
 					case 'startSlide':
 						controller.startSlideMode();
@@ -563,6 +589,17 @@ function GoogleMapView(oneController) {
 		}
 		map.fitBounds(bounds);
 	};
+	
+	this.fitBoundsByIds=function(ids){
+		var bounds = new google.maps.LatLngBounds();
+		for ( var i in ids) {
+			var overlay=self.getViewOverlaysById(ids[i]);	
+			if (overlay instanceof google.maps.Marker) {
+				bounds.extend(overlay.getPosition());
+			}
+		}
+		map.fitBounds(bounds);
+	};
 
 	this.panByIds = function(ids) {
 		var bounds = new google.maps.LatLngBounds();
@@ -601,8 +638,9 @@ function GoogleMapView(oneController) {
 		var mapOptions = {
 			center : new google.maps.LatLng(37.3841308, -121.9801145),
 			disableDoubleClickZoom : true,
-			zoom : 15,
+			zoom : 5,
 			minZoom : 5,
+			maxZoom : 18,
 			mapTypeId : google.maps.MapTypeId.ROADMAP
 		};
 
@@ -756,7 +794,58 @@ function GoogleMapView(oneController) {
 		};
 
 		overlays.push(viewMarker);
+	};
+	
+	
+	this.addOverviewMarker=function(lat, lng, num,options){
+		var myLatlng = new google.maps.LatLng(lat, lng);
+
+		var viewMarker = new google.maps.Marker({
+			position : myLatlng,
+			map : map
+		});
+
+		// create one custom id in google mark
+		viewMarker.id = num;
+
+		viewMarker.isShow = true;
+		if(options==null||options.needDrag==null||options.needDrag==false){
+			viewMarker.setDraggable(false);
+		}else{
+			viewMarker.setDraggable(true);
+		}
 		
+		addOverviewMarkerContextMenu(viewMarker);
+
+		google.maps.event.addListener(viewMarker, 'click',
+				function(mouseEvent) {
+					controller.overviewMarkerClickEventHandler(viewMarker.id);
+				});
+
+		google.maps.event.addListener(viewMarker, 'dragend', function(
+				mouseEvent) {
+			controller.viewMarkerDragendEventHandler(viewMarker.id, viewMarker
+					.getPosition().lat(), viewMarker.getPosition().lng());
+		});
+
+		viewMarker.hide = function() {
+			viewMarker.setVisible(false);
+			viewMarker.isShow = false;
+		};
+
+		viewMarker.show = function() {
+			viewMarker.setVisible(true);
+			viewMarker.isShow = true;
+		};
+
+		viewMarker.getLatLng = function() {
+			return {
+				lat : viewMarker.getPosition().lat(),
+				lng : viewMarker.getPosition().lng()
+			};
+		};
+
+		overlays.push(viewMarker);
 	};
 
 	this.showAllMarkers = function() {
@@ -856,6 +945,25 @@ function GoogleMapView(oneController) {
 
 		return line;
 	};
+	
+	this.drawOvLine=function(fromPosition,toPosition){
+			var lineCoordinates = [
+					new google.maps.LatLng(fromPosition.lat, fromPosition.lng),
+					new google.maps.LatLng(toPosition.lat, toPosition.lng) ];
+
+			// Create the polyline, passing the symbol in the 'icons' property.
+			// Give the line an opacity of 0.
+			// Repeat the symbol at intervals of 20 pixels to create the dashed
+			// effect.
+			var line = new google.maps.Polyline({
+				path : lineCoordinates,
+				map : map,
+				strokeOpacity : 0.7,
+				strokeColor : 'black',
+				strokeWeight : 0.6
+			});
+			ovLines.push(line);
+	};
 
 	this.drawSubLine = function(idfrom, idto, num) {
 		if (this.getViewOverlaysById(idto).isShow == true) {
@@ -894,6 +1002,13 @@ function GoogleMapView(oneController) {
 			line.id = num;
 			overlays.push(line);
 		}
+	};
+	
+	this.removeAllOvLines=function(){
+		for ( var i = 0; i < ovLines.length; i++) {
+			ovLines[i].setMap(null);
+		}
+		ovLines=new Array();
 	};
 
 	this.removeAllLines = function() {
@@ -1026,6 +1141,10 @@ function GoogleMapView(oneController) {
 		}else{
 			return false;
 		}
+	};
+	
+	this.setMapZoom=function(zoomLevel){
+		map.setZoom(zoomLevel);
 	};
 
 	function gaodeSearch(key) {

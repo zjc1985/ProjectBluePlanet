@@ -684,7 +684,8 @@ function MapController(){
 	};
 	
 	this.markerDeleteClickHandler=function(viewMarker){
-		model.deleteOneMarker(viewMarker.id,true);
+		var r=confirm("Do you want to delete attached img?");
+		model.deleteOneMarker(viewMarker.id,r);
 	};
 		
 	this.addCustomClickEvent=function(position){

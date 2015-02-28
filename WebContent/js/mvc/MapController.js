@@ -390,10 +390,24 @@ function MapController(){
 		}
 	};
 	
-	this.updateMarkerContentById=function(id,content){
+	this.editFormConfirmClick=function(id){
+		//setting dialog
+		view.markerInfoDialog.setTitle(view.markerEditDialog.getTitle());
+		view.markerInfoDialog.setSubTitle('slideNum'+view.markerEditDialog.getSlideNum());
+		view.markerInfoDialog.setDescription(view.markerEditDialog.getDesc());
+		view.markerInfoDialog.setImageSlider(view.markerEditDialog.getUrls());
+		
+		var content={
+			title:view.markerEditDialog.getTitle(),
+			slideNum:view.markerEditDialog.getSlideNum(),
+			mycomment:view.markerEditDialog.getDesc(),
+			imgUrls:view.markerEditDialog.getUrls(),
+			iconUrl:view.markerEditDialog.getIconSelect()
+		};
+		
+		//setting content
 		var mapMarker=model.getMapMarkerById(id);
 		if(model.isOvMarker(id)){
-			mapMarker.content.updateContent(content);
 			var ovMarkers=model.getAllOverviewMarkers();
 			for(var i in ovMarkers){
 				if(ovMarkers[i].routineId==mapMarker.routineId){
@@ -418,41 +432,30 @@ function MapController(){
 	};
 		
 	this.showInfoClickHandler=function(markerId){
+		
+		
 		var content=model.getMarkerContentById(markerId);
-		console.log("controller.showInfoClickHandler: "+content.getTitle()+
-				content.getAddress()+
-				content.getCategory()+
-				content.getMycomment(false));
-		view.infocard.setMaxSlideNum(model.getModelMarkers().length);
 		
-		view.infocard.setDefaultContent({title:content.getTitle(),
-											iconUrl:content.getIconUrl(),
-											address:content.getAddress(),
-											category:content.getCategory(),
-											mycomment:content.getMycomment(true),
-											slideNum:content.getSlideNum(),
-											fullcomment:content.getMycomment(false)});
+		view.markerInfoDialog.setTitle(content.getTitle());
+		view.markerInfoDialog.setSubTitle(content.getSlideNum());
+		view.markerInfoDialog.setDescription(content.getMycomment(true));
+		view.markerInfoDialog.setImageSlider(content.getImgUrls());
+		view.markerInfoDialog.show();
 		
-		view.infocard.setDefaultImgs(content.getImgUrls());
+		view.markerEditDialog.setTitle(content.getTitle());
+		view.markerEditDialog.setMaxSlideNum(model.getModelMarkers().length);
+		view.markerEditDialog.setSlideNum(content.getSlideNum());
+		view.markerEditDialog.setDesc(content.getMycomment(true));
+		view.markerEditDialog.setUrls(content.getImgUrls());
 		
-		
-		
-		if(content.getImgUrls().length!=0){			
-			view.infocard.showContentB();
-		}else{
-			view.infocard.showContentA();
-		}
-		
-		//Don't need show infoWindow right now
-		/*
-		if(viewMarker.infoWindow==null){			
-			viewMarker.infoWindow=view.addInfoWindow(viewMarker, {title:content.getTitle(),},num++);
-			
-		}else{
-			viewMarker.infoWindow.show();
-		};
-		*/
-		
+		var items=[];
+		items.push({url:"resource/icons/default/default_default.png",name:"default"});
+		items.push({url:"resource/icons/default/center_default.png",name:"point"});
+		items.push({url:"resource/icons/sight/sight_default.png",name:"sight default"});
+		items.push({url:"resource/icons/sight/sight_star.png",name:"sight star"});
+		items.push({url:"resource/icons/event/event_default.png",name:"event default"});		
+		view.markerEditDialog.setDropDownItems(items);
+		view.markerEditDialog.setIconSelect({url:content.getIconUrl(),name:"current Icon"});
 	};
 	
 	function changeSubMarkerShowStatus(parentMarkerId){
@@ -506,7 +509,6 @@ function MapController(){
 	};
 	
 	this.overviewMarkerClickEventHandler=function(id,animationTime){
-		view.infocard.show();
 		view.currentMarkerId=id;
 		this.showInfoClickHandler(id);
 		
@@ -535,7 +537,7 @@ function MapController(){
 	};
 	
 	this.markerClickEventHandler=function(viewMarker){
-		view.infocard.show();
+		//view.infocard.show();
 		
 		view.currentMarkerId=viewMarker.id;
 		
@@ -607,6 +609,7 @@ function MapController(){
 		if(model.getMapMarkerById(viewMarker.id).subMarkersArray.length!=0){
 			changeSubMarkerShowStatus(viewMarker.id);
 		}
+		
 		this.showInfoClickHandler(viewMarker.id);
 		
 		//set max zindex
@@ -852,7 +855,7 @@ function MapController(){
 	this.deleteViewMarker=function(){
 		return function(_,modelMarker){
 			view.removeById(modelMarker.id);
-			view.infocard.hide();
+			//view.infocard.hide();
 			$.publish('updateUI',[]);
 		};
 	};
@@ -860,7 +863,7 @@ function MapController(){
 	this.deleteViewOvMarker=function(){
 		return function(_,id){
 			view.removeById(id);
-			view.infocard.hide();
+			//view.infocard.hide();
 		};
 	};
 	
@@ -964,26 +967,6 @@ function MapController(){
 	this.updateMarkerInfoWindow=function(){
 		return function(_,content){
 			
-			
-			var viewMarker=view.getViewOverlaysById(content.id);
-			var contentModel=content;
-			console.log('update marker info window. markerId: '+content.id);
-			console.log('title: '+contentModel.getTitle());
-			
-			if(viewMarker!=null){								
-				view.infocard.setDefaultContent({title:contentModel.getTitle(),
-													address:contentModel.getAddress(),
-													slideNum:contentModel.getSlideNum(),
-												  mycomment:contentModel.getMycomment(true),
-												  category:contentModel.getCategory(),
-												fullcomment:contentModel.getMycomment(false)});
-					
-				view.infocard.setDefaultImgs(contentModel.getImgUrls());
-				
-				if(viewMarker.infoWindow!=null){
-					viewMarker.infoWindow.setContent(contentModel.getTitle());
-				}
-			}
 		};
 	};
 	

@@ -961,18 +961,10 @@ function MarkerContent(id) {
 		if (args.isAverage != null) {
 			this.setIsAvergeOverViewMarker(args.isAverage);
 		}
-
-		/*
-		 * if (args.mainPaths != null) { this.mainPaths = args.mainPaths; }
-		 */
-
-		$.publish('updateInfoWindow', [ this ]);
-
 	};
 
 	this.addImgUrl = function(url) {
 		imgUrls.push(url);
-		$.publish('updateInfoWindow', [ this ]);
 	};
 
 	this.getIconUrl = function() {
@@ -989,7 +981,12 @@ function MarkerContent(id) {
 	};
 
 	this.setImgUrls = function(urlArray) {
-		imgUrls = urlArray;
+		imgUrls=[];
+		for(var i in urlArray){
+			if(urlArray[i].replace(/\s+/g,"")!=''){
+				imgUrls.push(urlArray[i]);
+			}
+		}
 	};
 
 	this.getCategory = function() {
@@ -1036,11 +1033,7 @@ function MarkerContent(id) {
 	};
 
 	this.getMycomment = function(needShort) {
-		if (needShort) {
-			return mycomment.substring(0, 150) + '...';
-		} else {
-			return mycomment;
-		}
+		return mycomment;
 	};
 }
 

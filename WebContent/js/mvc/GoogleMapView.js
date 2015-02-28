@@ -4,7 +4,9 @@ function GoogleMapView(oneController) {
 	this.markerNeedSubLine = null;
 	this.markerNeedMergeImgUrl = null;
 
-	this.infocard = null;
+	this.markerInfoDialog=null;
+	this.markerEditDialog=null;
+	
 	this.uploadImgForm = null;
 	this.popupForm = null;
 	this.currentMarkerId = -1;
@@ -621,8 +623,9 @@ function GoogleMapView(oneController) {
 	};
 
 	this.createView = function() {
+		/*
 		this.infocard = new infoCard("infoCard");
-
+		
 		this.infocard.initDefault('80px', '100px', {
 			title : "unknownTitle"
 		}, null);
@@ -634,6 +637,14 @@ function GoogleMapView(oneController) {
 		});
 
 		this.infocard.hide();
+		*/
+		
+		this.markerInfoDialog=new MarkerInfo('MarkerInfoModel');
+		this.markerEditDialog=new MarkerEditor('EditMarker');
+		this.markerEditDialog.confirmClick(function(){
+			controller.editFormConfirmClick(self.currentMarkerId);
+		});
+		
 
 		var mapOptions = {
 			center : new google.maps.LatLng(37.3841308, -121.9801145),
@@ -684,7 +695,7 @@ function GoogleMapView(oneController) {
 		});
 
 		this.popupForm = new PopupForm("CommentPopupForm");
-		this.infocard.setPopupCommentForm(this.popupForm);
+		//this.infocard.setPopupCommentForm(this.popupForm);
 	};
 
 	this.fromPixelToLatLng = function(point) {
@@ -1042,14 +1053,6 @@ function GoogleMapView(oneController) {
 	};
 
 	this.addInfoWindow = function(marker, content, num) {
-		/*
-		 * var infocard = new infoCard('card' + num);
-		 * infocard.initDefault('0px', '0px', content, null);
-		 * 
-		 * infocard.addEditFormOKButtonEvent(function() { var uContent =
-		 * infocard.editFormClickOK();
-		 * controller.updateMarkerContentById(marker.id, uContent); });
-		 */
 		var infowindow = new google.maps.InfoWindow({
 			content : content.title
 		});

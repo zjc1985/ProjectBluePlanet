@@ -3,6 +3,10 @@ function MarkerInfo(id){
 		$('#'+id).modal('show');
 	};
 	
+	this.hide=function(){
+		$('#'+id).modal('hide');
+	}
+	
 	this.setTitle=function(str){
 		$('#'+id).find('.markerInfoTitle').text(str);
 	};
@@ -37,10 +41,21 @@ function MarkerInfo(id){
 	};
 };
 
+function OvMarkerInfo(id){
+	extend(OvMarkerInfo,MarkerInfo,this,[id]);
+	this.showRoutineDetail=function(handler){
+		$("#"+id).find(".showDetailBtn").click(handler);
+	};
+};
+
 function MarkerEditor(id){
 	
 	this.confirmClick=function(handler){
 		$("#"+id).find(".editConfirmBtn").click(handler);
+	};
+	
+	this.deleteClick=function(handler){
+		$("#"+id).find(".deleteBtn").click(handler);
 	};
 	
 	this.setTitle=function(str){

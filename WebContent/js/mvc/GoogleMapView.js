@@ -5,6 +5,7 @@ function GoogleMapView(oneController) {
 	this.markerNeedMergeImgUrl = null;
 
 	this.markerInfoDialog=null;
+	this.ovMarkerDialog=null;
 	this.markerEditDialog=null;
 	
 	this.uploadImgForm = null;
@@ -319,11 +320,7 @@ function GoogleMapView(oneController) {
 
 		// create an array of ContextMenuItem objects
 		var menuItems = [];
-		/*
-		 * don't need mainline in current version menuItems.push({ className :
-		 * 'context_menu_item', eventName : 'addMainline', id:
-		 * 'addMainlineItem'+id, label : 'addMainline' });
-		 */
+	
 		menuItems.push({
 			className : 'context_menu_item',
 			eventName : 'addSubline',
@@ -623,26 +620,18 @@ function GoogleMapView(oneController) {
 	};
 
 	this.createView = function() {
-		/*
-		this.infocard = new infoCard("infoCard");
-		
-		this.infocard.initDefault('80px', '100px', {
-			title : "unknownTitle"
-		}, null);
-
-		this.infocard.addEditFormOKButtonEvent(function() {
-			var uContent = self.infocard.editFormClickOK();
-			console.log('infocard edit form ok, content:' + uContent.iconUrl);
-			controller.updateMarkerContentById(self.currentMarkerId, uContent);
-		});
-
-		this.infocard.hide();
-		*/
 		
 		this.markerInfoDialog=new MarkerInfo('MarkerInfoModel');
+		this.ovMarkerDialog=new OvMarkerInfo('ovMarkerInfoModel');
+		this.ovMarkerDialog.showRoutineDetail(function(){
+			controller.showRoutineDetail(self.currentMarkerId);
+		});
 		this.markerEditDialog=new MarkerEditor('EditMarker');
 		this.markerEditDialog.confirmClick(function(){
 			controller.editFormConfirmClick(self.currentMarkerId);
+		});
+		this.markerEditDialog.deleteClick(function(){
+			controller.editFormDeleteClick(self.currentMarkerId);
 		});
 		
 
@@ -775,6 +764,16 @@ function GoogleMapView(oneController) {
 		viewMarker.setDraggable(true);
 
 		addMarkerContextMenu(viewMarker);
+		
+		google.maps.event.addListener(viewMarker, 'mouseover', function(
+				mouseEvent) {
+			controller.markerMouseOver(viewMarker.id);
+		});
+		
+		google.maps.event.addListener(viewMarker, 'mouseout', function(
+				mouseEvent) {
+			controller.markerMouseOut(viewMarker.id);
+		});
 
 		google.maps.event.addListener(viewMarker, 'click',
 				function(mouseEvent) {

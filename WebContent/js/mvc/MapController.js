@@ -218,7 +218,7 @@ function MapController(){
 	this.exitSlideMode=function(){	
 		if(isUserOwnThisRoutine){
 			isSlideMode=false;
-			view.infocard.showEditButton();
+			//view.infocard.showEditButton();
 			view.removeAllLines();
 			
 			//hide contentMenu

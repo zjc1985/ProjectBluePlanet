@@ -7,6 +7,8 @@ function GoogleMapView(oneController) {
 	this.markerInfoDialog=null;
 	this.ovMarkerDialog=null;
 	this.markerEditDialog=null;
+	this.navBar=null;
+	this.uploadImgModal=null;
 	
 	this.uploadImgForm = null;
 	this.popupForm = null;
@@ -620,12 +622,45 @@ function GoogleMapView(oneController) {
 	};
 
 	this.createView = function() {
+		this.uploadImgModal = new UploadImageModal('uploadImageModal');
+		this.uploadImgModal.addChangeCallBack(function(imageBase64String, lat, lon,fileName) {
+			controller.uploadImgs(imageBase64String, lat, lon,fileName);
+		});
+		
+		this.navBar=new NavBar('myNavBar');
+		this.navBar.saveLinkClick(function(){
+			controller.saveRoutine();
+		});
+		this.navBar.startSlideClick(function(){
+			controller.startSlideMode();
+		});
+		this.navBar.prevSlideClick(function(){
+			controller.prevSlide();
+		});
+		this.navBar.endSlideClick(function(){
+			controller.exitSlideMode();
+		});
+		this.navBar.createMarkerClick(function(){
+			controller.addMarkerClickEvent(self.getCenter(),{});
+		});
+		this.navBar.createMarkerWithImageClick(function(){
+			self.uploadImgModal.show();
+		});
+		this.navBar.createRoutineClick(function(){
+			
+		});
+		
+		
 		
 		this.markerInfoDialog=new MarkerInfo('MarkerInfoModel');
 		this.ovMarkerDialog=new OvMarkerInfo('ovMarkerInfoModel');
 		this.ovMarkerDialog.showRoutineDetail(function(){
 			controller.showRoutineDetail(self.currentMarkerId);
 		});
+		this.ovMarkerDialog.copyRoutineBtnClick(function(){
+			controller.copyRoutine(self.currentMarkerId);
+		});
+		
 		this.markerEditDialog=new MarkerEditor('EditMarker');
 		this.markerEditDialog.confirmClick(function(){
 			controller.editFormConfirmClick(self.currentMarkerId);

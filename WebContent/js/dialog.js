@@ -1,3 +1,27 @@
+function NavBar(id){
+	this.saveLinkClick=function(handler){
+		$('#'+id).find('.saveLink').click(handler);
+	};
+	this.startSlideClick=function(handler){
+		$('#'+id).find('.startSlideLink').click(handler);
+	};
+	this.prevSlideClick=function(handler){
+		$('#'+id).find('.prevSlideLink').click(handler);
+	};
+	this.endSlideClick=function(handler){
+		$('#'+id).find('.endSlideLink').click(handler);
+	};
+	this.createMarkerClick=function(handler){
+		$('#'+id).find('.createMarkerBtn').click(handler);
+	};
+	this.createMarkerWithImageClick=function(handler){
+		$('#'+id).find('.createMarkerWithImageBtn').click(handler);
+	};
+	this.createRoutineClick=function(handler){
+		$('#'+id).find('.createRoutineBtn').click(handler);
+	};
+};
+
 function MarkerInfo(id){
 	this.show=function(){
 		$('#'+id).modal('show');
@@ -5,7 +29,7 @@ function MarkerInfo(id){
 	
 	this.hide=function(){
 		$('#'+id).modal('hide');
-	}
+	};
 	
 	this.setTitle=function(str){
 		$('#'+id).find('.markerInfoTitle').text(str);
@@ -45,6 +69,9 @@ function OvMarkerInfo(id){
 	extend(OvMarkerInfo,MarkerInfo,this,[id]);
 	this.showRoutineDetail=function(handler){
 		$("#"+id).find(".showDetailBtn").click(handler);
+	};
+	this.copyRoutineBtnClick=function(handler){
+		$("#"+id).find(".copyRoutineBtn").click(handler);
 	};
 };
 
@@ -130,5 +157,93 @@ function MarkerEditor(id){
 	this.getIconSelect=function(){
 		return {url: $('#'+id).find(".selectedImg").attr('src'),
 			name: $('#'+id).find('.selectedTxt').text().replace(/\s+/g,"")};
-	}
+	};
 };
+
+function UploadImageModal(id) {
+	this.fileNum=0;
+	this.completeFileNum=0;
+	
+	this.progressSlice=0;
+	this.currentProgress=0;
+	
+	var self=this;
+	
+	this.UIUploading=function(){
+		$('#'+id).find('.loading').show();
+	};
+	
+	this.UIFinishUpload=function(){
+		$('#'+id).find('.loading').hide();
+	};
+	
+	this.show = function() {
+		$('#'+id).modal('show');
+		self.UIFinishUpload();
+	};
+	
+	this.close=function(){
+		$('#'+id).modal('hide');
+	};
+	
+	this.updateProgress=function(){
+		self.currentProgress=self.currentProgress+self.progressSlice;
+		$('#'+id).find('.progress').text(self.currentProgress+'%');
+	};
+
+	this.addChangeCallBack = function(callBack,allCompleteCallBack) {
+		$('#'+id).find('.file').change(function() {
+			var files = this.files;
+			self.currentProgress=0;
+			self.progressSlice=100 / files.length / 2;
+			
+			self.fileNum=files.length;
+			self.completeFileNum=0;
+			self.UIUploading();
+			
+			for(var i=0;i<files.length;i++){
+				var file = files[i];
+				$.fileExifLoadEnd(file,function(exifObject,imgFile){
+					self.updateProgress();
+					var lat = exifObject.GPSLatitude;
+					var lon = exifObject.GPSLongitude;
+					if (lat != null && lon != null) {
+						//Convert coordinates to WGS84 decimal
+						var latRef = exifObject.GPSLatitudeRef || "N";
+						var lonRef = exifObject.GPSLongitudeRef || "W";
+						lat = (lat[0] + lat[1] / 60 + lat[2] / 3600)
+								* (latRef == "N" ? 1 : -1);
+						lon = (lon[0] + lon[1] / 60 + lon[2] / 3600)
+								* (lonRef == "W" ? -1 : 1);
+					}
+					
+					//compress and change image file to base64 string
+					var outputFormat="jpg";
+					if(imgFile.type=="image/png"){
+						outputFormat="png";
+					}
+					
+					var reader=new FileReader();
+					
+					reader.addEventListener("load",function(event){
+						var picDataUrl=event.target;
+						
+						var sourceImageObject=new Image();
+						sourceImageObject.src=picDataUrl.result;
+						
+						var compressedPicDataUrl=jic.compress(sourceImageObject,30,outputFormat).src;
+		                
+						var base64PicString=compressedPicDataUrl.split(',')[1];
+						
+						callBack(base64PicString,lat,lon,imgFile.name);
+					});
+					
+					reader.readAsDataURL(imgFile);
+					
+				});
+				
+			}	
+		});
+	};
+	
+}

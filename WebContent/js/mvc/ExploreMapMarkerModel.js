@@ -637,7 +637,7 @@ function BackendManager() {
 		var query=new AV.Query(Routine);
 		query.select('title', 'overViewJSONString');
 		query.near('location',locationPoint);
-		query.limit(1);
+		query.limit(10);
 		query.find({
 			success : function(routines) {
 				console.log("backendManager:fetchOverviewRoutinesBylatlng success");

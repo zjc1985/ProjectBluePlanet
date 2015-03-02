@@ -9,18 +9,19 @@ function GoogleMapView(oneController) {
 	this.markerEditDialog=null;
 	this.navBar=null;
 	this.uploadImgModal=null;
+	this.searchMarkerModal=null;
 	
-	this.uploadImgForm = null;
-	this.popupForm = null;
 	this.currentMarkerId = -1;
 
 	var self = this;
 
-	var directionsDisplay = new google.maps.DirectionsRenderer();
-	var directionsService = new google.maps.DirectionsService();
+	//google map components
+	//var directionsDisplay = new google.maps.DirectionsRenderer();
+	//var directionsService = new google.maps.DirectionsService();
+	// var canvasProjectionOverlay = new CanvasProjectionOverlay();
 	var map;
 	var googleOverlay;
-	// var canvasProjectionOverlay = new CanvasProjectionOverlay();
+	
 	var markerCluster;
 
 	var overlays = new Array();
@@ -28,6 +29,7 @@ function GoogleMapView(oneController) {
 	var ovLines=new Array();
 	
 	var searchMarkers = [];
+	var currentGoogleSearchMarker=null;
 
 	function getOverlayById(id) {
 		var length = overlays.length;
@@ -38,6 +40,14 @@ function GoogleMapView(oneController) {
 		}
 		return null;
 	}
+	
+	function cleanSearchMarkers() {
+		for ( var i = 0, marker; marker = searchMarkers[i]; i++) {
+			marker.setMap(null);
+		}
+
+		searchMarkers = [];
+	};
 
 	this.hideEditMenuInContextMenu = function() {
 		document.getElementById('addMarkerItem').style.display = 'none';
@@ -163,38 +173,15 @@ function GoogleMapView(oneController) {
 	}
 
 	function addSearchMarkerContextMenu(googleMarker) {
-		// create the ContextMenuOptions object
-		var contextMenuOptions = {};
-		contextMenuOptions.classNames = {
-			menu : 'context_menu',
-			menuSeparator : 'context_menu_separator'
-		};
-
-		// create an array of ContextMenuItem objects
-		var menuItems = [];
-		menuItems.push({
-			className : 'context_menu_item',
-			eventName : 'select',
-			label : 'Yes this is I want'
-		});
-
-		menuItems.push({
-			className : 'context_menu_item',
-			eventName : 'clearSearch',
-			label : 'clear search results'
-		});
-
-		contextMenuOptions.menuItems = menuItems;
-
-		// create the ContextMenu object
-		var contextMenu = new ContextMenu(map, contextMenuOptions);
-
-		// display the ContextMenu on a Map right click
-		google.maps.event.addListener(googleMarker, 'rightclick', function(
+		
+		google.maps.event.addListener(googleMarker, 'click', function(
 				mouseEvent) {
-			contextMenu.show(mouseEvent.latLng);
+			
+			currentGoogleSearchMarker=googleMarker;			
+			controller.searchMarkerClick({title:googleMarker.getTitle()});
 		});
-
+		
+		/*
 		// listen for the ContextMenu 'menu_item_selected' event
 		google.maps.event.addListener(contextMenu, 'menu_item_selected',
 				function(latLng, eventName) {
@@ -219,299 +206,8 @@ function GoogleMapView(oneController) {
 					}
 
 				});
+		*/
 	}
-	
-	function addOverviewMarkerContextMenu(googleMarker){
-		// create the ContextMenuOptions object
-		var id = googleMarker.id;
-		var contextMenuOptions = {};
-		contextMenuOptions.classNames = {
-			menu : 'context_menu',
-			menuSeparator : 'context_menu_separator'
-		};
-
-		// create an array of ContextMenuItem objects
-		var menuItems = [];
-		menuItems.push({
-			className : 'context_menu_item',
-			eventName : 'showRoutineDetail',
-			id : 'showRoutineDetail' + id,
-			label : 'show routine Detail'
-		});
-		
-		menuItems.push({
-			className : 'context_menu_item',
-			eventName : 'deleteRoutine',
-			id : 'deleteRoutine' + id,
-			label : 'delete this routine'
-		});
-		
-		menuItems.push({});
-
-		menuItems.push({
-			className : 'context_menu_item',
-			eventName : 'addIcon',
-			id : 'addIcon' + id,
-			label : 'add icon to routine'
-		});
-
-		menuItems.push({
-			className : 'context_menu_item',
-			eventName : 'deleteIcon',
-			id : 'deleteIcon' + id,
-			label : 'deleteIcon'
-		});
-		
-		menuItems.push({});
-		
-		menuItems.push({
-			className : 'context_menu_item',
-			eventName : 'copyRoutine',
-			id : 'copyRoutine' + id,
-			label : 'Copy this Routine'
-		});
-
-		contextMenuOptions.menuItems = menuItems;
-
-		// create the ContextMenu object
-		var contextMenu = new ContextMenu(map, contextMenuOptions);
-
-		// display the ContextMenu on a Map right click
-		google.maps.event.addListener(googleMarker, 'rightclick', function(
-				mouseEvent) {
-			contextMenu.show(mouseEvent.latLng);
-		});
-
-		// listen for the ContextMenu 'menu_item_selected' event
-		google.maps.event.addListener(contextMenu, 'menu_item_selected',
-				function(latLng, eventName) {
-					// latLng is the position of the ContextMenu
-					// eventName is the eventName defined for the clicked
-					// ContextMenuItem in the ContextMenuOptions
-					switch (eventName) {
-					case 'showRoutineDetail':
-						controller.showRoutineDetail(id);
-						break;
-					case 'deleteRoutine':
-						controller.deleteRoutine(id);
-						break;
-					case 'addIcon':
-						controller.addOvMarker({
-							lat : latLng.lat(),
-							lng : latLng.lng()
-						},id);
-						break;
-					case 'deleteIcon':
-						controller.deleteOvMarker(id);
-						break;
-					case 'copyRoutine':
-						controller.copyRoutine(id);
-						break;
-					}
-				});
-	}
-
-	function addMarkerContextMenu(googleMarker) {
-		// create the ContextMenuOptions object
-		var id = googleMarker.id;
-		var contextMenuOptions = {};
-		contextMenuOptions.classNames = {
-			menu : 'context_menu',
-			menuSeparator : 'context_menu_separator'
-		};
-
-		// create an array of ContextMenuItem objects
-		var menuItems = [];
-	
-		menuItems.push({
-			className : 'context_menu_item',
-			eventName : 'addSubline',
-			id : 'addSublineItem' + id,
-			label : 'addSubline'
-		});
-
-		menuItems.push({
-			className : 'context_menu_item',
-			eventName : 'deleteself',
-			id : 'deleteselfItem' + id,
-			label : 'delete this marker'
-		});
-
-		menuItems.push({
-			className : 'context_menu_item',
-			eventName : 'mergeImgUrl',
-			id : 'mergeImgUrlItem' + id,
-			label : 'Merge ImgUrl To...'
-		});
-
-		contextMenuOptions.menuItems = menuItems;
-
-		// create the ContextMenu object
-		var contextMenu = new ContextMenu(map, contextMenuOptions);
-
-		// display the ContextMenu on a Map right click
-		google.maps.event.addListener(googleMarker, 'rightclick', function(
-				mouseEvent) {
-			contextMenu.show(mouseEvent.latLng);
-		});
-
-		// listen for the ContextMenu 'menu_item_selected' event
-		google.maps.event.addListener(contextMenu, 'menu_item_selected',
-				function(latLng, eventName) {
-					// latLng is the position of the ContextMenu
-					// eventName is the eventName defined for the clicked
-					// ContextMenuItem in the ContextMenuOptions
-					switch (eventName) {
-					case 'showInfo':
-						console.log('=========show Info========');
-						var point = self.fromLatLngToPixel(googleMarker
-								.getLatLng());
-						console.log(point);
-						console.log(googleMarker.getPosition());
-						console.log(self.fromPixelToLatLng(point));
-						break;
-					case 'addMainline':
-						controller.addMainLineClickHandler(googleMarker);
-						break;
-					case 'addSubline':
-						controller.addSubLineClickHandler(googleMarker);
-						break;
-					case 'deleteself':
-						controller.markerDeleteClickHandler(googleMarker);
-						break;
-					case 'mergeImgUrl':
-						controller.mergeImgUrlClickHandler(googleMarker);
-						break;
-					}
-				});
-	};
-	
-	this.hideContextMenuById=function(id){
-		if(document.getElementById(id)!=null){
-			document.getElementById(id).style.display = 'none';
-		}
-	};
-	
-	this.showContextMenuById=function(id){
-		if(document.getElementById(id)!=null){
-			document.getElementById(id).style.display = '';
-		}
-	};
-
-	function addContextMenu() {
-		// create the ContextMenuOptions object
-		var contextMenuOptions = {};
-		contextMenuOptions.classNames = {
-			menu : 'context_menu',
-			menuSeparator : 'context_menu_separator'
-		};
-
-		// create an array of ContextMenuItem objects
-		var menuItems = [];
-		menuItems.push({
-			className : 'context_menu_item',
-			eventName : 'addMarker',
-			id : 'addMarkerItem',
-			label : 'add Mark'
-		});
-		menuItems.push({
-			className : 'context_menu_item',
-			eventName : 'saveRoutine',
-			id : 'saveRoutineItem',
-			label : 'save Routine'
-		});
-		menuItems.push({
-			className : 'context_menu_item',
-			eventName : 'uploadImg',
-			id : 'uploadItem',
-			label : 'upload image'
-		});
-		// a menuItem with no properties will be rendered as a separator
-		menuItems.push({});
-		menuItems.push({
-			className : 'context_menu_item',
-			eventName : 'startSlide',
-			id : 'startSlideItem',
-			label : 'Start slide mode'
-		});
-		menuItems.push({
-			className : 'context_menu_item',
-			eventName : 'prevSlide',
-			id : 'prevSlideItem',
-			label : 'Prev slide'
-		});
-		menuItems.push({
-			className : 'context_menu_item',
-			eventName : 'exitSlide',
-			id : 'exitSlideItem',
-			label : 'End slide mode'
-		});
-
-		contextMenuOptions.menuItems = menuItems;
-
-		// create the ContextMenu object
-		var contextMenu = new ContextMenu(map, contextMenuOptions);
-
-		// display the ContextMenu on a Map right click
-		google.maps.event.addListener(map, 'rightclick', function(mouseEvent) {
-			contextMenu.show(mouseEvent.latLng);
-		});
-
-		google.maps.event.addListener(map, 'click', function(mouseEvent) {
-			controller.mapClickEventHandler();
-		});
-
-		// zoom_changed
-		google.maps.event.addListener(map, 'zoom_changed', function() {
-			controller.zoomEventHandler();
-		});
-
-		// listen for the ContextMenu 'menu_item_selected' event
-		google.maps.event.addListener(contextMenu, 'menu_item_selected',
-				function(latLng, eventName) {
-					// latLng is the position of the ContextMenu
-					// eventName is the eventName defined for the clicked
-					// ContextMenuItem in the ContextMenuOptions
-					switch (eventName) {
-					case 'addMarker':
-						controller.addMarkerClickEvent({
-							lat : latLng.lat(),
-							lng : latLng.lng()
-						}, {
-							lat : latLng.lat(),
-							lng : latLng.lng()
-						});
-						break;
-					case 'saveRoutine':
-						controller.saveRoutine();
-						break;
-					case 'uploadImg':
-						// do somthing upload image
-						self.uploadImgForm.show();
-						break;
-					case 'startSlide':
-						controller.startSlideMode();
-						break;
-					case 'exitSlide':
-						controller.exitSlideMode();
-						break;
-					case 'prevSlide':
-						controller.prevSlide();
-						break;
-					}
-				});
-	}
-	;
-
-	function cleanSearchMarkers() {
-		for ( var i = 0, marker; marker = searchMarkers[i]; i++) {
-			marker.setMap(null);
-		}
-
-		// For each place, get the icon, place name, and location.
-		searchMarkers = [];
-	}
-	;
 
 	function linkSearchBox() {
 		// Create the search box and link it to the UI element.
@@ -622,6 +318,13 @@ function GoogleMapView(oneController) {
 	};
 
 	this.createView = function() {
+		this.pickRoutineBoard=new PickRoutineModal('pickRoutineModal');
+		
+		this.searchMarkerModal=new SearchMarkerInfo('SearchMarkerInfoModel');
+		this.searchMarkerModal.clearSearchResultsBtnClick(function(){
+			cleanSearchMarkers();
+		});
+		
 		this.uploadImgModal = new UploadImageModal('uploadImageModal');
 		this.uploadImgModal.addChangeCallBack(function(imageBase64String, lat, lon,fileName) {
 			controller.uploadImgs(imageBase64String, lat, lon,fileName);
@@ -649,9 +352,7 @@ function GoogleMapView(oneController) {
 		this.navBar.createRoutineClick(function(){
 			
 		});
-		
-		
-		
+			
 		this.markerInfoDialog=new MarkerInfo('MarkerInfoModel');
 		this.ovMarkerDialog=new OvMarkerInfo('ovMarkerInfoModel');
 		this.ovMarkerDialog.showRoutineDetail(function(){
@@ -685,8 +386,14 @@ function GoogleMapView(oneController) {
 		};
 		googleOverlay.setMap(map);
 
-		// canvasProjectionOverlay.setMap(map);
-		addContextMenu();
+		google.maps.event.addListener(map, 'click', function(mouseEvent) {
+			controller.mapClickEventHandler();
+		});
+
+		// zoom_changed
+		google.maps.event.addListener(map, 'zoom_changed', function() {
+			controller.zoomEventHandler();
+		});
 
 		// init marker cluster
 		var mcOption=mcOptions = {styles: [{
@@ -711,15 +418,6 @@ function GoogleMapView(oneController) {
 
 		linkSearchBox();
 
-		// init image uploader
-		this.uploadImgForm = new UploadFormView("uploadImageForm", "file",
-				"progress", "loading");
-		this.uploadImgForm.addChangeCallBack(function(imageBase64String, lat, lon,fileName) {
-			controller.uploadImgs(imageBase64String, lat, lon,fileName);
-		});
-
-		this.popupForm = new PopupForm("CommentPopupForm");
-		//this.infocard.setPopupCommentForm(this.popupForm);
 	};
 
 	this.fromPixelToLatLng = function(point) {
@@ -797,8 +495,6 @@ function GoogleMapView(oneController) {
 		viewMarker.isShow = true;
 
 		viewMarker.setDraggable(true);
-
-		addMarkerContextMenu(viewMarker);
 		
 		google.maps.event.addListener(viewMarker, 'mouseover', function(
 				mouseEvent) {
@@ -810,10 +506,9 @@ function GoogleMapView(oneController) {
 			controller.markerMouseOut(viewMarker.id);
 		});
 
-		google.maps.event.addListener(viewMarker, 'click',
-				function(mouseEvent) {
-					controller.markerClickEventHandler(viewMarker);
-				});
+		google.maps.event.addListener(viewMarker, 'click',function(mouseEvent) {
+			controller.markerClickEventHandler(viewMarker);
+		});
 
 		google.maps.event.addListener(viewMarker, 'dragend', function(
 				mouseEvent) {
@@ -859,8 +554,6 @@ function GoogleMapView(oneController) {
 		}else{
 			viewMarker.setDraggable(true);
 		}
-		
-		addOverviewMarkerContextMenu(viewMarker);
 
 		google.maps.event.addListener(viewMarker, 'click',
 				function(mouseEvent) {
@@ -972,16 +665,6 @@ function GoogleMapView(oneController) {
 				line.setEditable(false);
 				controller.lineEditEnd(line.getMainLinePath(), idfrom);
 			}
-
-			/*
-			 * if (line.isShowRoute == false) { var o =
-			 * line.getPath().getArray(); var latlngFrom = o[0]; var latlngTo =
-			 * o[1]; calcRoute(latlngFrom,
-			 * latlngTo,function(latlngArray,durationText){ new
-			 * google.maps.Polyline({ path : latlngArray, map : map, strokeColor :
-			 * 'black', strokeWeight : 6, strokeOpacity:0.5, geodesic : true });
-			 * alert(durationText); }); } else { directionsDisplay.setMap(null); }
-			 */
 
 			line.isShowRoute = !line.isShowRoute;
 		});
@@ -1213,7 +896,7 @@ function GoogleMapView(oneController) {
 						});
 
 						searchMarkers.push(marker);
-
+						
 						addSearchMarkerContextMenu(marker);
 
 						bounds.extend(location);

@@ -17,6 +17,25 @@ function MapMarkerModel() {
 		});
 	};
 	
+	//one routine can have multi ovMarkers right now,they have the same title
+	//and description. this method will try to filter the repeat markers
+	this.fetchNonRepeatOvMarkers=function(){
+		var nonRepeatOvMarker=[];
+		for(var i in allOverviewMarkers){
+			var routineId=allOverviewMarkers[i].routineId;
+			var isExist=false;
+			for(var j in nonRepeatOvMarker){
+				if(routineId==nonRepeatOvMarker[j].routineId){
+					isExist=true;
+				}
+			}
+			if(!isExist){
+				nonRepeatOvMarker.push(allOverviewMarkers[i]);
+			}
+		}
+		return nonRepeatOvMarker;
+	};
+	
 	this.copyRoutine2CurrentUser=function(ovMarkerId,successCallback){
 		var routineId=self.getMapMarkerById(ovMarkerId).routineId;
 		backendManager.fetchRoutineJSONStringById(routineId, function(routineJSONString,

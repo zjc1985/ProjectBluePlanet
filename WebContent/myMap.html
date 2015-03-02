@@ -156,7 +156,7 @@
           				role="button" aria-expanded="false">
           				<span class="glyphicon glyphicon-plus" aria-hidden="true"><span class="caret"></span>
           			</a>
-          			<ul class="dropdown-menu" role="menu">
+          			<ul class="dropdown-menu createNew" role="menu">
             			<li><a href="#" class='createMarkerBtn'><span class='glyphicon glyphicon-map-marker'></span> New Blank Marker</a></li>
             			<li><a href="#" class='createMarkerWithImageBtn'><span class='glyphicon glyphicon-picture'></span> New Marker with Image</a></li>
             			<li class="divider"></li>
@@ -220,7 +220,7 @@
 				</div>
 				<div class="modal-body">
 					<div>
-						<input type="file"  class="file" multiple/></br>
+						<input type="file" class="file"/></br>
 						<div class="progress">0%</div>
 						<img class="loading" src="resource/loading.gif" />
 					</div>
@@ -256,10 +256,6 @@
 					<div id="myCarousel" class="carousel slide" data-interval='false'>
 
 						<ol class="carousel-indicators">
-							<!-- 
-							<li data-target="#myCarousel" data-slide-to="0" class="active"></li>
-							<li data-target="#myCarousel" data-slide-to="1"></li>
-							 -->
 						</ol>
 
 						<div class="carousel-inner">
@@ -272,10 +268,52 @@
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-primary">Copy</button>
-					<button type="button" class="btn btn-default" data-toggle="modal"
+					<button type="button" class="btn btn-default EditBtn" data-toggle="modal"
 						data-target="#EditMarker">
 						<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>Edit
 					</button>
+				</div>
+			</div>
+			<!-- /.modal-content -->
+		</div>
+		<!-- /.modal -->
+	</div>
+	
+	<div class="modal fade" id="SearchMarkerInfoModel" tabindex="-1"
+		role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+					<h4 class="modal-title markerInfoTitle">Title</h4>
+					<h5 class="markerInfoSubTitle">SubTitle</h5>
+				</div>
+				<div class="modal-body">
+					<div><p class="markerInfoDescription">
+
+					</p></div>
+
+					<div id="myCarousel" class="carousel slide" data-interval='false'>
+
+						<ol class="carousel-indicators">
+						</ol>
+
+						<div class="carousel-inner">
+						</div>
+						<a class="carousel-control left" href="#myCarousel"
+							data-slide="prev">&lsaquo;</a> <a class="carousel-control right"
+							href="#myCarousel" data-slide="next">&rsaquo;</a>
+					</div>
+
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default pull-left clearResultBtn"
+						data-dismiss="modal">Clear Search Results</button>
+					<button type="button" class="btn btn-primary copyMarkerBtn" 
+						data-toggle="modal"
+						data-target="#pickRoutineModal">
+					Copy</button>
 				</div>
 			</div>
 			<!-- /.modal-content -->
@@ -317,7 +355,7 @@
 						data-dismiss="modal">Show Routine Detail</button>
 					
 					<button type="button" class="btn btn-primary copyRoutineBtn">Copy</button>
-					<button type="button" class="btn btn-default" data-toggle="modal"
+					<button type="button" class="btn btn-default EditBtn" data-toggle="modal"
 						data-target="#EditMarker">
 						<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>Edit
 					</button>
@@ -327,7 +365,7 @@
 		</div>
 		<!-- /.modal -->
 	</div>
-
+	
 	<div class="modal fade" id="EditMarker" tabindex="-1" role="dialog"
 		aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
@@ -390,6 +428,49 @@
 					<button type="button" class="btn btn-default" data-dismiss="modal">
 						Cancel</button>
 					<button type="button" class="btn btn-primary editConfirmBtn" data-dismiss="modal">Confirm</button>
+				</div>
+			</div>
+			<!-- /.modal-content -->
+		</div>
+		<!-- /.modal -->
+	</div>
+	
+	<div class="modal fade" id="pickRoutineModal" tabindex="-1" role="dialog"
+		aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+					<h4 class="modal-title" id="myModalLabel">Pick Routine</h4>
+				</div>
+				<div class="modal-body">
+					<form>
+						<div class="form-group">
+							<label for="editIcon">Routine:</label>
+							<div id="editIcon" class="btn-group">
+								<button id='dropDown1' type="button"
+									class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+									<span class='selectedTxt'>
+										Current Routine
+										<span class="caret"></span>
+									</span>
+								</button>
+								<ul class="dropdown-menu" role="menu">
+								</ul>
+							</div>
+						</div>
+						
+						<div class="form-group">
+							<label for="editDescription">Description:</label> 
+							<textarea class="form-control editDesc" id="editDescription" rows="7" ></textarea>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">
+						Close</button>
+					<button type="button" class="btn btn-primary editConfirmBtn" data-dismiss="modal">Copy</button>
 				</div>
 			</div>
 			<!-- /.modal-content -->

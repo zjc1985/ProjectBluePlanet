@@ -20,6 +20,12 @@ function NavBar(id){
 	this.createRoutineClick=function(handler){
 		$('#'+id).find('.createRoutineBtn').click(handler);
 	};
+	this.disableEditFunction=function(){
+		$('#'+id).find('.createNew').find('li').addClass('disabled');
+	};
+	this.enableEditFunction=function(){
+		$('#'+id).find('.createNew').find('li').removeClass('disabled');
+	};
 };
 
 function MarkerInfo(id){
@@ -43,27 +49,47 @@ function MarkerInfo(id){
 		$('#'+id).find('.markerInfoDescription').text(str);
 	};
 	
+	this.disableEditFunction=function(){
+		$('#'+id).find('.EditBtn').addClass('disabled');
+	};
+	
+	this.enableEditFunction=function(){
+		$('#'+id).find('.EditBtn').removeClass('disabled');
+	};
+	
 	this.setImageSlider=function(urls){
 		$('#'+id).find('.carousel-indicators').empty();
 		$('#'+id).find('.carousel-inner').empty();
 		
 		for(var i in urls){
-			var indicatorsHtml;
-			var imageItemHtml;
-			if(i==0){
-				indicatorsHtml="<li data-target='#myCarousel' data-slide-to='0' class='active'></li>";
-				imageItemHtml="<div class='item active'>"+
-					"<img src="+urls[i]+"></div>";
-			}else{
-				indicatorsHtml="<li data-target='#myCarousel' data-slide-to='"+i+"'></li>";
-				imageItemHtml="<div class='item'>"+
-					"<img src="+urls[i]+"></div>";
+			if(urls[i].replace(/\s+/g,"")!=''){
+				var indicatorsHtml;
+				var imageItemHtml;
+				if(i==0){
+					indicatorsHtml="<li data-target='#myCarousel' data-slide-to='0' class='active'></li>";
+					imageItemHtml="<div class='item active'>"+
+						"<img src="+urls[i]+"></div>";
+				}else{
+					indicatorsHtml="<li data-target='#myCarousel' data-slide-to='"+i+"'></li>";
+					imageItemHtml="<div class='item'>"+
+						"<img src="+urls[i]+"></div>";
+				}
+				$('#'+id).find('.carousel-indicators').append(indicatorsHtml);
+				$('#'+id).find('.carousel-inner').append(imageItemHtml);
 			}
-			$('#'+id).find('.carousel-indicators').append(indicatorsHtml);
-			$('#'+id).find('.carousel-inner').append(imageItemHtml);
 		}
 	};
 };
+
+function SearchMarkerInfo(id){
+	extend(OvMarkerInfo,MarkerInfo,this,[id]);
+	this.copyMarkerBtnClick=function(handler){
+		$("#"+id).find(".copyMarkerBtn").click(handler);
+	};
+	this.clearSearchResultsBtnClick=function(handler){
+		$("#"+id).find(".clearResultBtn").click(handler);
+	};
+}
 
 function OvMarkerInfo(id){
 	extend(OvMarkerInfo,MarkerInfo,this,[id]);
@@ -74,6 +100,33 @@ function OvMarkerInfo(id){
 		$("#"+id).find(".copyRoutineBtn").click(handler);
 	};
 };
+
+function PickRoutineModal(id){
+	this.setDropDownItems=function(items){
+		$('#'+id).find('.dropdown-menu').empty();
+		$('#'+id).find('.dropdown-menu').append("<li><a href='#'>Create New</a></li>");
+		$('#'+id).find('.dropdown-menu').append("<li class='divider'></li>");
+		
+		for(var i in items){
+			var itemHtml="<li><a href='#'>"+items[i].name+"</a></li>";
+			$('#'+id).find('.dropdown-menu').append(itemHtml);
+		}
+		
+		$('#'+id).find(".dropdown-menu li a").click(function(){
+			  var selText = $(this).text();
+			  comboValue=selText;
+			  $('#'+id).find('.selectedTxt').html(selText+' <span class="caret"></span>');
+		});
+	};
+	
+	this.getRoutineNameSelect=function(){
+		return {name: $('#'+id).find('.selectedTxt').text().replace(/\s+/g,"")};
+	};
+	
+	this.setRoutineNameSelect=function(item){
+		$('#'+id).find('.selectedTxt').html(item.name+' <span class="caret"></span>');
+	};
+}
 
 function MarkerEditor(id){
 	

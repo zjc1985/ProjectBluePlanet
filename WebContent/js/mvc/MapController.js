@@ -816,14 +816,14 @@ function MapController(){
 		var ovMarkers=model.fetchNonRepeatOvMarkers();
 		var routineNames=[];
 		for(var i in ovMarkers){
-			routineNames.push({name:ovMarkers[i].content.getTitle()});
+			routineNames.push({name:ovMarkers[i].content.getTitle(),value:ovMarkers[i].id});
 		}
 		
-		view.pickRoutineBoard.setDropDownItems(routineNames);
+		view.searchPickRoutineBoard.setDropDownItems(routineNames);
 		if(model.getCurrentOverviewMarkers().length>0){
 			var title=model.getCurrentOverviewMarkers()[0].content.getTitle();
-			view.pickRoutineBoard.setRoutineNameSelect({name:title});
-		};
+			view.searchPickRoutineBoard.setRoutineNameSelect({name:title,value:model.getCurrentOverviewMarkers()[0].routineId});
+		}
 	};
 	
 	this.testFeature=function(viewMarker){
@@ -871,6 +871,7 @@ function MapController(){
 			view.addOneMark(modelMarker.content.getLat(),
 							modelMarker.content.getLng(), modelMarker.id);
 			view.changeMarkerIcon(modelMarker.id, modelMarker.content.getIconUrl());
+			view.setMarkerAnimation(modelMarker.id, "DROP");
 		};
 	};
 	

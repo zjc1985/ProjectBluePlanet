@@ -9,7 +9,7 @@ function GoogleMapView(oneController) {
 	this.markerEditDialog=null;
 	this.navBar=null;
 	this.uploadImgModal=null;
-	this.searchMarkerModal=null;
+	this.searchPickRoutineBoard=null;
 	
 	this.currentMarkerId = -1;
 
@@ -318,7 +318,32 @@ function GoogleMapView(oneController) {
 	};
 
 	this.createView = function() {
-		this.pickRoutineBoard=new PickRoutineModal('pickRoutineModal');
+		this.searchPickRoutineBoard=new PickRoutineModal('pickRoutineModal');
+		this.searchPickRoutineBoard.confirmClick(function(){
+			var routineId=self.searchPickRoutineBoard.getRoutineNameSelect().value;
+			var description=self.searchPickRoutineBoard.getDesc();
+			if(routineId==''){
+				alert('please select your routine');
+			}
+			
+			if(routineId!='default'){
+				controller.showRoutineDetail(routineId);
+				controller.addMarkerClickEvent({
+					lat : currentGoogleSearchMarker.getPosition().lat(),
+					lng : currentGoogleSearchMarker.getPosition().lng()
+				}, {
+					lat : currentGoogleSearchMarker.getPosition().lat(),
+					lng : currentGoogleSearchMarker.getPosition().lng(),
+					title : currentGoogleSearchMarker.getTitle(),
+					mycomment : description
+				});
+				cleanSearchMarkers();
+				self.searchMarkerModal.hide();
+			}else{
+				alert('please select your routine');
+			}
+			
+		});
 		
 		this.searchMarkerModal=new SearchMarkerInfo('SearchMarkerInfoModel');
 		this.searchMarkerModal.clearSearchResultsBtnClick(function(){

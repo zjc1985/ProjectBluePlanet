@@ -82,7 +82,7 @@ function MarkerInfo(id){
 };
 
 function SearchMarkerInfo(id){
-	extend(OvMarkerInfo,MarkerInfo,this,[id]);
+	extend(SearchMarkerInfo,MarkerInfo,this,[id]);
 	this.copyMarkerBtnClick=function(handler){
 		$("#"+id).find(".copyMarkerBtn").click(handler);
 	};

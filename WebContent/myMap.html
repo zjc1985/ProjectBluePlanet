@@ -11,56 +11,6 @@
 	z-index: 1
 }
 
-#r-result {
-	height: 100%;
-	width: 20%;
-	float: left;
-}
-
-.info {
-	position: absolute;
-	z-index: 2;
-	background-color: white;
-	border-style: groove;
-	border-width: 1px;
-	width: 450px;
-	padding: 5px;
-	top: 70px;
-	left: 30px;
-}
-
-.controls {
-	margin-top: 36px;
-	border: 1px solid transparent;
-	border-radius: 2px 0 0 2px;
-	box-sizing: border-box;
-	-moz-box-sizing: border-box;
-	height: px;
-	outline: none;
-	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-}
-
-/*	start styles for the ContextMenu	*/
-.context_menu {
-	background-color: white;
-	border: 1px solid gray;
-}
-
-.context_menu_item {
-	padding: 3px 6px;
-}
-
-.context_menu_item:hover {
-	background-color: #CCCCCC;
-}
-
-.context_menu_separator {
-	background-color: gray;
-	height: 1px;
-	margin: 0;
-	padding: 0;
-}
-
 .navbar {
     margin-bottom: 0 !important;
 }
@@ -82,13 +32,6 @@
 <script
 	src="js/lib/jquery.magnific-popup.js"></script>
 
-
-<!-- drop down menu -->
-<link rel="stylesheet" type="text/css" href="js/lib/dd.css">
-<link rel="stylesheet" type="text/css" href="js/lib/skin2.css">
-<link rel="stylesheet" type="text/css" href="js/lib/flags.css">
-<script type="text/javascript" src="js/lib/jquery.dd.min.js"></script>
-
 <!-- mvc frame -->
 <script type="text/javascript" src="js/lib/ba-tiny-pubsub.min.js"></script>
 
@@ -104,9 +47,6 @@
 
 <!-- google map cluster -->
 <script type="text/javascript" src="js/lib/markerclusterer_compiled.js"></script>
-
-<!-- userd for google map for context menu -->
-<script type="text/javascript" src="js/lib/ContextMenu.js"></script>
 
 <!-- exif extractor -->
 <script src="js/lib/jquery.exif.js"></script>
@@ -124,9 +64,6 @@
 
 <!-- self dependency -->
 <script src="js/dialog.js"></script>
-<script src="js/UploadFormView.js"></script>
-<script src="js/PopupForm.js"></script>
-<script type="text/javascript" src="js/LineUtil.js"></script>
 <script type="text/javascript" src="js/mvc/GoogleMapView.js"></script>
 <script type="text/javascript" src="js/mvc/MapController.js"></script>
 <script type="text/javascript" src="js/mvc/MapMarkerModel.js"></script>
@@ -198,8 +135,6 @@
 	</nav>
 	
 	<div id="l-map"></div>
-
-	<div id="CommentPopupForm" class="white-popup mfp-hide"></div>
 	
 	<div class="modal-body">
 		<div id="uploadImageForm" class="white-popup mfp-hide">
@@ -483,6 +418,8 @@
 <script type="text/javascript">
 	var controller = new MapController();
 
+	controller.init();
+	
 	controller.loadRoutines();
 
 	function searchLocation() {

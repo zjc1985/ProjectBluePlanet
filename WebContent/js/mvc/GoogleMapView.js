@@ -48,6 +48,10 @@ function GoogleMapView(oneController) {
 
 		searchMarkers = [];
 	};
+	
+	this.getMap=function(){
+		return map;
+	};
 
 	this.hideEditMenuInContextMenu = function() {
 		document.getElementById('addMarkerItem').style.display = 'none';
@@ -76,102 +80,6 @@ function GoogleMapView(oneController) {
 		viewMarker.setZIndex(znumber);
 	};
 
-	function addMainLineContextMenu(line, idfrom) {
-		// create the ContextMenuOptions object
-		var contextMenuOptions = {};
-		contextMenuOptions.classNames = {
-			menu : 'context_menu',
-			menuSeparator : 'context_menu_separator'
-		};
-
-		// create an array of ContextMenuItem objects
-		var menuItems = [];
-		menuItems.push({
-			className : 'context_menu_item',
-			eventName : 'edit',
-			id : 'lineEdieItem',
-			label : 'edit line'
-		}, {}, {
-			className : 'context_menu_item',
-			eventName : 'car',
-			label : 'go with car'
-		}, {
-			className : 'context_menu_item',
-			eventName : 'bike',
-			label : 'go with bike'
-		}, {
-			className : 'context_menu_item',
-			eventName : 'walk',
-			label : 'go with walk'
-		}, {
-			className : 'context_menu_item',
-			eventName : 'line',
-			label : 'direct line'
-		}
-
-		);
-
-		contextMenuOptions.menuItems = menuItems;
-
-		// create the ContextMenu object
-		var contextMenu = new ContextMenu(map, contextMenuOptions);
-
-		// display the ContextMenu on a Map right click
-		google.maps.event.addListener(line, 'rightclick', function(mouseEvent) {
-			contextMenu.show(mouseEvent.latLng);
-		});
-
-		// listen for the ContextMenu 'menu_item_selected' event
-		google.maps.event.addListener(contextMenu, 'menu_item_selected',
-				function(latLng, eventName) {
-					// latLng is the position of the ContextMenu
-					// eventName is the eventName defined for the clicked
-					// ContextMenuItem in the ContextMenuOptions
-					var googlePathArray = line.getPath().getArray();
-					var googleFrom = googlePathArray[0];
-					var googleTo = googlePathArray[googlePathArray.length - 1];
-
-					switch (eventName) {
-					case 'edit':
-						line.setEditable(true);
-						break;
-					case 'line':
-						line.setPath([ googleFrom, googleTo ]);
-						controller.lineEditEnd(line.getMainLinePath(), idfrom);
-						break;
-					case 'car':
-						calcRoute(googleFrom, googleTo,
-								google.maps.TravelMode.DRIVING, function(
-										latlngArray, durationtext) {
-									line.setPath(latlngArray);
-									controller.lineEditEnd(line
-											.getMainLinePath(), idfrom);
-								});
-						break;
-					case 'bike':
-						calcRoute(googleFrom, googleTo,
-								google.maps.TravelMode.BICYCLING, function(
-										latlngArray, durationtext) {
-									line.setPath(latlngArray);
-									controller.lineEditEnd(line
-											.getMainLinePath(), idfrom);
-								});
-						break;
-					case 'walk':
-						calcRoute(googleFrom, googleTo,
-								google.maps.TravelMode.WALKING, function(
-										latlngArray, durationtext) {
-									line.setPath(latlngArray);
-									controller.lineEditEnd(line
-											.getMainLinePath(), idfrom);
-								});
-						break;
-					}
-					;
-
-				});
-	}
-
 	function addSearchMarkerContextMenu(googleMarker) {
 		
 		google.maps.event.addListener(googleMarker, 'click', function(
@@ -180,33 +88,6 @@ function GoogleMapView(oneController) {
 			currentGoogleSearchMarker=googleMarker;			
 			controller.searchMarkerClick({title:googleMarker.getTitle()});
 		});
-		
-		/*
-		// listen for the ContextMenu 'menu_item_selected' event
-		google.maps.event.addListener(contextMenu, 'menu_item_selected',
-				function(latLng, eventName) {
-					// latLng is the position of the ContextMenu
-					// eventName is the eventName defined for the clicked
-					// ContextMenuItem in the ContextMenuOptions
-					switch (eventName) {
-					case 'select':
-						controller.addMarkerClickEvent({
-							lat : latLng.lat(),
-							lng : latLng.lng()
-						}, {
-							lat : latLng.lat(),
-							lng : latLng.lng(),
-							title : googleMarker.getTitle()
-						});
-						cleanSearchMarkers();
-						break;
-					case 'clearSearch':
-						cleanSearchMarkers();
-						break;
-					}
-
-				});
-		*/
 	}
 
 	function linkSearchBox() {
@@ -271,9 +152,11 @@ function GoogleMapView(oneController) {
 	;
 
 	this.getCenter = function() {
+		var wapped=new google.maps.LatLng(map.getCenter().lat(), map.getCenter().lng());
+		
 		return {
-			lat : map.getCenter().lat(),
-			lng : map.getCenter().lng()
+			lat : wapped.lat(),
+			lng : wapped.lng()
 		};
 	};
 
@@ -931,17 +814,55 @@ function GoogleMapView(oneController) {
 				}
 			});
 		});
-	}
-	;
+	};
 };
 
-function CanvasProjectionOverlay() {
-}
-CanvasProjectionOverlay.prototype = new google.maps.OverlayView();
-CanvasProjectionOverlay.prototype.constructor = CanvasProjectionOverlay;
-CanvasProjectionOverlay.prototype.onAdd = function() {
-};
-CanvasProjectionOverlay.prototype.draw = function() {
-};
-CanvasProjectionOverlay.prototype.onRemove = function() {
+function ExploreGoogleMapView(oneController){
+	extend(ExploreGoogleMapView,GoogleMapView,this,[oneController]);
+	
+	var self=this;
+	
+	var centerMarker;
+	
+	this.createSearchView=function(){
+		self.createView();
+		
+		google.maps.event.addListener(this.getMap(), 'center_changed', function() {
+			self.refreshCenterMarker();
+		});
+		
+		google.maps.event.addListener(this.getMap(), 'dragend', function() {
+			controller.dragendEventHandler();
+		});
+	};
+	
+	this.refreshCenterMarker=function(){
+		if(centerMarker==null){
+			centerMarker=new google.maps.Marker({
+				position : this.getMap().getCenter(),
+				map : this.getMap(),
+				icon : 'resource/icons/default/center_default.png'
+			});
+		}else{
+			centerMarker.setPosition(this.getMap().getCenter());
+		}
+	};
+	
+	this.computeDistanceBetween=function(from,to){
+		var googleFrom=new google.maps.LatLng(from.lat,from.lng);
+		var googleTo=new google.maps.LatLng(to.lat,to.lng);
+		return google.maps.geometry.spherical.computeDistanceBetween(googleFrom,
+				googleTo);
+	};
+	
+	this.drawCircle=function(location,radius,color){
+		var latlng=new google.maps.LatLng(location.lat,location.lng);
+		var circle=new google.maps.Circle({
+			center:latlng,
+			fillColor:color,
+			radius:radius,
+			map:self.getMap()
+		});
+		
+	};
 };

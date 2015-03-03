@@ -1,3 +1,33 @@
+function ExploreMapMarkerModel(){
+	extend(ExploreMapMarkerModel,MapMarkerModel,this);
+	this.exploreRanges=[];
+	
+	var self=this;
+	
+	var backendManager=this.getBackendManager();
+	
+	this.createOvMarkersByOverviewJSONStringArray=function(overviewJSONStringArray){
+		for ( var i in overviewJSONStringArray) {
+			var overviewJSONString = overviewJSONStringArray[i].overviewJSONString;
+			var routineId=overviewJSONStringArray[i].routineId;
+			var overviewMarkerArray = JSON.parse(overviewJSONString);
+			for ( var i in overviewMarkerArray) {
+				self.createOverviewMarker(overviewMarkerArray[i].id,
+						overviewMarkerArray[i],routineId);
+			}
+		}
+	};
+	
+	this.fetchOverviewRoutinesByLatlng=function(location,successCallback){
+		backendManager.fetchOverviewRoutinesByLatlng(location, function(
+				overviewJSONStringArray){
+			self.createOvMarkersByOverviewJSONStringArray(overviewJSONStringArray);
+			successCallback(overviewJSONStringArray);
+		});
+	};
+	
+}
+
 function MapMarkerModel() {
 	var marks = new Array();
 	var currentOverviewMarkers = new Array();
@@ -15,6 +45,10 @@ function MapMarkerModel() {
 				successCallBack(null);
 			}	
 		});
+	};
+	
+	this.getBackendManager=function(){
+		return backendManager;
 	};
 	
 	//one routine can have multi ovMarkers right now,they have the same title
@@ -84,7 +118,7 @@ function MapMarkerModel() {
 
 	this.getAllOverviewMarkers = function() {
 		return allOverviewMarkers;
-	}
+	};
 
 	this.genUUID = function() {
 		return uuid.v4();
@@ -660,6 +694,30 @@ function BackendManager() {
 					}
 				});
 	};
+	
+	this.fetchOverviewRoutinesByLatlng=function(location, successCallback){
+		var locationPoint=new AV.GeoPoint({latitude: location.lat, longitude: location.lng});
+		var query=new AV.Query(Routine);
+		query.select('title', 'overViewJSONString');
+		query.near('location',locationPoint);
+		query.limit(10);
+		query.find({
+			success : function(routines) {
+				console.log("backendManager:fetchOverviewRoutinesBylatlng success");
+				userRoutines = routines;
+				var overviewMarkersJSONStringArray = [];
+				for ( var i in routines) {
+					overviewMarkersJSONStringArray.push(
+								{
+									routineId:routines[i].id,
+									overviewJSONString:routines[i].get('overViewJSONString')
+								}
+							);
+				}
+				successCallback(overviewMarkersJSONStringArray);
+			}
+		});
+	};
 
 	this.deleteRoutineByOverviewMarkerId = function(overviewMarkerId,
 			successCallback) {
@@ -1198,6 +1256,12 @@ function MapMarker(id) {
 		return this.content;
 	};
 
+}
+
+function ExploreRange(zoomLevel,location){
+	this.zoomLevel=zoomLevel;
+	this.location=location;
+	this.overviewJSONStringArray=new Array();
 }
 
 function MainLine(id) {

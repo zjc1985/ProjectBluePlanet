@@ -26,12 +26,13 @@ function extend(b, a, t, p) {
 	a.apply(t, p);
 }
 	
-	
+
+
 function MapController(){	
-	var model=new MapMarkerModel();
-	var view=new GoogleMapView(this);
+	var model;
+	var view;
+	
 	var self=this;
-	view.createView();
 	
 	//used for slide
 	var isSlideMode=false;
@@ -46,6 +47,28 @@ function MapController(){
 	var MAX_ZINDEX=200;
 	
 	var routineName="Default Routine";
+	
+	this.getModel=function(){
+		return model;
+	};
+	
+	this.setModel=function(oneModel){
+		model=oneModel;
+	};
+	
+	this.getView=function(){
+		return view;
+	};
+	
+	this.setView=function(oneView){
+		view=oneView;
+	};
+	
+	this.init=function(){
+		model=new MapMarkerModel();
+		view=new GoogleMapView(this);
+		view.createView();
+	};
 	
 	this.deleteOvMarker=function(id){
 		model.deleteOvMarker(id);
@@ -968,3 +991,98 @@ function MapController(){
 	$.subscribe('latlngChanged',this.latlngChangedHandler());
 	$.subscribe('iconUrlUpdated',this.iconUrlUpdatedHandler());
 }
+
+function ExploreMapController(){
+	extend(ExploreMapController,MapController,this);
+	
+	var view;
+	var model;
+	
+	var zoom5ExploreRange=400000;
+	var zoom6ExploreRange=250000;
+	var zoom7ExploreRange=120000;
+	
+	this.init=function(){
+		model=new ExploreMapMarkerModel();
+		view=new ExploreGoogleMapView(this);
+		this.setModel(model);
+		this.setView(view);
+		view.createView();
+		view.createSearchView();
+	};
+	
+	this.dragendEventHandler=function(){
+		if(!view.isInCustomZoom()){
+			console.log('not in custom zoom level return');
+			return;
+		}
+		var zoomLevel=view.getZoom();
+		var center=view.getCenter();
+		
+		var exploreRange=findMinDistanceExploreRange(zoomLevel,center);
+		if(exploreRange==null){
+			model.resetModels();
+			view.resetView();
+			//drawCenterCircle(zoomLevel,center);
+			//add ovMarkers to new ExploreRange;
+			model.fetchOverviewRoutinesByLatlng(center, function(overviewJSONStringArray){
+				var newExploreRange=new ExploreRange(zoomLevel,center);
+				newExploreRange.overviewJSONStringArray=overviewJSONStringArray;
+				model.exploreRanges.push(newExploreRange);
+			});	
+			console.log('new explore range added');
+		}else{
+			console.log('find cached explore range');
+			model.createOvMarkersByOverviewJSONStringArray(exploreRange.overviewJSONStringArray);
+		}
+	};
+	
+	function findMinDistanceExploreRange(currentZoomLevel,centerLocation){
+		var minDistance=900000;
+		var result=null;
+		
+		if(currentZoomLevel==5){
+			minDistance=zoom5ExploreRange;
+		}else if(currentZoomLevel==6){
+			minDistance=zoom6ExploreRange;
+		}else if(currentZoomLevel==7){
+			minDistance=zoom7ExploreRange;
+		}else{
+			minDistance=zoom7ExploreRange;
+		}
+		
+		for(var i in model.exploreRanges){
+			var exploreRange=model.exploreRanges[i];
+			if(exploreRange.zoomLevel==currentZoomLevel){
+				var distance=view.computeDistanceBetween(centerLocation, exploreRange.location);
+				if(distance<minDistance){
+					minDistance=distance;
+					result=exploreRange;
+				}
+			}
+		}
+		
+		return result;
+	}
+	
+	function drawCenterCircle(zoomLevel,center){
+		var radius;
+		var color;
+		if(zoomLevel==5){
+			radius=zoom5ExploreRange;
+			color='blue';
+		}else if(zoomLevel==6){
+			radius=zoom6ExploreRange;
+			color='green';
+		}else if(zoomLevel==7){
+			radius=zoom7ExploreRange;
+			color='red';
+		}else{
+			radius=zoom7ExploreRange;
+			color='red';
+		}
+		view.drawCircle(center, radius, color);
+	}
+}
+
+

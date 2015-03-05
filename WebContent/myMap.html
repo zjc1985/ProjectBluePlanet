@@ -1,0 +1,433 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style type="text/css">
+#l-map {
+	height: 100%;
+	width: 100%;
+	float: left;
+	border-right: 2px solid #bcbcbc;
+	position: absolute;
+	z-index: 1
+}
+
+.navbar {
+    margin-bottom: 0 !important;
+}
+
+</style>
+
+<!-- jquery -->
+<script src="http://lib.sinaapp.com/js/jquery/1.9.1/jquery-1.9.1.min.js"></script>
+
+<!-- jquery ui -->
+<link rel="stylesheet"
+	href="http://lib.sinaapp.com/js/jquery-ui/1.10.2/themes/smoothness/jquery-ui.min.css">
+<script
+	src="http://lib.sinaapp.com/js/jquery-ui/1.10.2/jquery-ui.min.js"></script>
+
+<!-- jquery magnific-popup -->  
+<link rel="stylesheet"
+	href="js/lib/magnific-popup.css">
+<script
+	src="js/lib/jquery.magnific-popup.js"></script>
+
+<!-- mvc frame -->
+<script type="text/javascript" src="js/lib/ba-tiny-pubsub.min.js"></script>
+
+<!-- avos cloud -->
+<script src="https://cn.avoscloud.com/scripts/lib/av-0.3.1.min.js"></script>
+
+<!-- google map -->
+<script type="text/javascript"
+	src="http://ditu.google.cn/maps/api/js?v=3&key=AIzaSyCHRDVOvVhCnFcyHSs2lmhV2HNjcQQzdX0&sensor=false&libraries=places"></script>
+<!-- GaoDe map for china search -->
+<script
+	src="http://webapi.amap.com/maps?v=1.3&key=33ab32ae29c81b098603c17ae539777a"></script>
+
+<!-- google map cluster -->
+<script type="text/javascript" src="js/lib/markerclusterer_compiled.js"></script>
+
+<!-- exif extractor -->
+<script src="js/lib/jquery.exif.js"></script>
+
+<!-- image compress -->
+<script type="text/javascript" src="js/lib/JIC.js"></script>
+
+<!-- uuid generate -->
+<script type="text/javascript" src="js/lib/uuid.js"></script>
+
+<!-- bootstrap -->
+<link rel="stylesheet"
+	href="http://cdn.bootcss.com/bootstrap/3.3.2/css/bootstrap.min.css">
+<script src="http://cdn.bootcss.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+
+<!-- self dependency -->
+<script src="js/dialog.js"></script>
+<script type="text/javascript" src="js/mvc/GoogleMapView.js"></script>
+<script type="text/javascript" src="js/mvc/MapController.js"></script>
+<script type="text/javascript" src="js/mvc/MapMarkerModel.js"></script>
+
+
+
+<title>Map Marker</title>
+</head>
+<body>
+	<nav id="myNavBar" class="navbar navbar-default" role="navigation">
+		<div class='container'>
+			
+		
+		<div class="navbar-header">
+			<a class="navbar-brand" href="#">MapMarker</a>
+		</div>
+		
+		<div>
+			<ul class="nav navbar-nav navbar-left">
+				<li><a href="explore.html"><span class='glyphicon glyphicon-globe'></span> Explore</a></li>
+				<li class="active"><a href="#"><span class='glyphicon glyphicon-user'></span> MyMap</a></li>
+			</ul>
+		</div>
+		
+		<div>
+			<ul class="nav navbar-nav navbar-right">
+				<li class="dropdown">
+          			<a href="#" class="dropdown-toggle" data-toggle="dropdown" 
+          				data-placement="bottom" title="create new..."
+          				role="button" aria-expanded="false">
+          				<span class="glyphicon glyphicon-plus" aria-hidden="true"><span class="caret"></span>
+          			</a>
+          			<ul class="dropdown-menu createNew" role="menu">
+            			<li><a href="#" class='createMarkerBtn'><span class='glyphicon glyphicon-map-marker'></span> New Blank Marker</a></li>
+            			<li><a href="#" class='createMarkerWithImageBtn'><span class='glyphicon glyphicon-picture'></span> New Marker with Image</a></li>
+            			<li class="divider"></li>
+            			<li><a href="#" class='createRoutineBtn'><span class='glyphicon glyphicon-pushpin'></span> New Routine</a></li>
+          			</ul>
+        		</li>
+        		<li class="dropdown">
+          			<a href="#" class="dropdown-toggle" data-toggle="dropdown" 
+          				data-placement="bottom" title="Slide Mode"
+          				role="button" aria-expanded="false">
+          				<span class="glyphicon glyphicon-film" aria-hidden="true"><span class="caret"></span>
+          			</a>
+          			<ul class="dropdown-menu" role="menu">
+            			<li><a href="#" class='startSlideLink'><span class='glyphicon glyphicon-play'></span>
+            				Start Slide</a></li>
+            			<li><a href="#" class='prevSlideLink'><span class='glyphicon glyphicon-backward'></span>
+            				Prev Slide</a></li>
+            			<li><a href="#" class='endSlideLink'><span class='glyphicon glyphicon-stop'></span>
+            				End Slide</a></li>
+          			</ul>
+        		</li>
+        		<li><a href="#" data-toggle="tooltip"  class="saveLink"
+        			data-placement="bottom" title="save routine">
+        			<span class="glyphicon glyphicon-save" aria-hidden="true"></a>
+        		</li>
+			</ul>
+		</div>
+		
+		<div>
+			<div class="navbar-form navbar-left" role="search">
+				<div class="form-group">
+					<input type="text" class="form-control" id='searchValue'
+						placeholder="Search Place Here" size="50">
+				</div>
+				<button type="submit" onClick="searchLocation()" class="btn btn-default">Search</button>
+			</div>
+		</div>
+		</div>
+	</nav>
+	
+	<div id="l-map"></div>
+	
+	<div class="modal-body">
+		<div id="uploadImageForm" class="white-popup mfp-hide">
+			<input type="file" id="file" multiple /></br>
+			<div id="progress">0%</div>
+			<img id="loading" src="resource/loading.gif" />
+		</div>
+	</div>
+	
+	<div class="modal fade" id="uploadImageModal" tabindex="-1"
+		role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+					<h4 class="modal-title markerInfoTitle">Upload Image</h4>
+				</div>
+				<div class="modal-body">
+					<div>
+						<input type="file" class="file"/></br>
+						<div class="progress">0%</div>
+						<img class="loading" src="resource/loading.gif" />
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary">Copy</button>
+					<button type="button" class="btn btn-default" data-toggle="modal"
+						data-target="#EditMarker">
+						<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>Edit
+					</button>
+				</div>
+			</div>
+			<!-- /.modal-content -->
+		</div>
+		<!-- /.modal -->
+	</div>
+	
+	<div class="modal fade" id="MarkerInfoModel" tabindex="-1"
+		role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+					<h4 class="modal-title markerInfoTitle">Title</h4>
+					<h5 class="markerInfoSubTitle">SubTitle</h5>
+				</div>
+				<div class="modal-body">
+					<div><p class="markerInfoDescription">
+						Here's the detail description
+					</p></div>
+
+					<div id="myCarousel" class="carousel slide" data-interval='false'>
+
+						<ol class="carousel-indicators">
+						</ol>
+
+						<div class="carousel-inner">
+						</div>
+						<a class="carousel-control left" href="#myCarousel"
+							data-slide="prev">&lsaquo;</a> <a class="carousel-control right"
+							href="#myCarousel" data-slide="next">&rsaquo;</a>
+					</div>
+
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary">Copy</button>
+					<button type="button" class="btn btn-default EditBtn" data-toggle="modal"
+						data-target="#EditMarker">
+						<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>Edit
+					</button>
+				</div>
+			</div>
+			<!-- /.modal-content -->
+		</div>
+		<!-- /.modal -->
+	</div>
+	
+	<div class="modal fade" id="SearchMarkerInfoModel" tabindex="-1"
+		role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+					<h4 class="modal-title markerInfoTitle">Title</h4>
+					<h5 class="markerInfoSubTitle">SubTitle</h5>
+				</div>
+				<div class="modal-body">
+					<div><p class="markerInfoDescription">
+
+					</p></div>
+
+					<div id="myCarousel" class="carousel slide" data-interval='false'>
+
+						<ol class="carousel-indicators">
+						</ol>
+
+						<div class="carousel-inner">
+						</div>
+						<a class="carousel-control left" href="#myCarousel"
+							data-slide="prev">&lsaquo;</a> <a class="carousel-control right"
+							href="#myCarousel" data-slide="next">&rsaquo;</a>
+					</div>
+
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default pull-left clearResultBtn"
+						data-dismiss="modal">Clear Search Results</button>
+					<button type="button" class="btn btn-primary copyMarkerBtn" 
+						data-toggle="modal"
+						data-target="#pickRoutineModal">
+					Copy</button>
+				</div>
+			</div>
+			<!-- /.modal-content -->
+		</div>
+		<!-- /.modal -->
+	</div>
+	
+	<div class="modal fade" id="ovMarkerInfoModel" tabindex="-1"
+		role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+					<h4 class="modal-title markerInfoTitle">Title</h4>
+					<h5 class="markerInfoSubTitle">SubTitle</h5>
+				</div>
+				<div class="modal-body">
+					<div><p class="markerInfoDescription">
+						Here's the detail description
+					</p></div>
+
+					<div id="myCarousel" class="carousel slide" data-interval='false'>
+
+						<ol class="carousel-indicators">
+
+						</ol>
+
+						<div class="carousel-inner">
+						</div>
+						<a class="carousel-control left" href="#myCarousel"
+							data-slide="prev">&lsaquo;</a> <a class="carousel-control right"
+							href="#myCarousel" data-slide="next">&rsaquo;</a>
+					</div>
+
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary pull-left showDetailBtn"
+						data-dismiss="modal">Show Routine Detail</button>
+					
+					<button type="button" class="btn btn-primary copyRoutineBtn">Copy</button>
+					<button type="button" class="btn btn-default EditBtn" data-toggle="modal"
+						data-target="#EditMarker">
+						<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>Edit
+					</button>
+				</div>
+			</div>
+			<!-- /.modal-content -->
+		</div>
+		<!-- /.modal -->
+	</div>
+	
+	<div class="modal fade" id="EditMarker" tabindex="-1" role="dialog"
+		aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+					<h4 class="modal-title" id="myModalLabel">Edit Marker</h4>
+				</div>
+				<div class="modal-body">
+					<form>
+						<div class="form-group">
+							<label for="editTitle">Title:</label>
+							<input type="text" class="form-control editTitle" id="editTitle">
+						</div>
+						<div class="form-group">
+							<label for="editCost">Cost:</label> 
+							<div class="input-group">
+  								<span class="input-group-addon">$</span>
+  								<input id="editCost" type="text" class="form-control editCost" aria-label="Amount (to the nearest dollar)">
+  								<span class="input-group-addon">.00</span>
+							</div>
+						</div>
+						
+						<div class="form-group">
+							<label for="editSlideNum">SlideNum:</label> 
+							<select id="editSlideNum" class="form-control editSlideNum">
+							</select>
+						</div>
+						<div class="form-group">
+							<label for="editIcon">Icon:</label>
+							<div id="editIcon" class="btn-group">
+								<button id='dropDown1' type="button"
+									class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+									<img class='selectedImg' src="resource/icons/default/default_default.png">
+									<span class='selectedTxt'>
+										default
+										<span class="caret"></span>
+									</span>
+								</button>
+								<ul class="dropdown-menu" role="menu">
+								</ul>
+							</div>
+						</div>
+						
+						<div class="form-group">
+							<label for="editDescription">Description:</label> 
+							<textarea class="form-control editDesc" id="editDescription" rows="7" ></textarea>
+						</div>
+						
+						<div class="form-group">
+							<label for="imageUrls">ImageUrls (use ; to seperate) :</label> 
+							<textarea class="form-control editUrls" id="imageUrls" rows="5" ></textarea>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default pull-left deleteBtn"
+						data-dismiss="modal">Delete</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">
+						Cancel</button>
+					<button type="button" class="btn btn-primary editConfirmBtn" data-dismiss="modal">Confirm</button>
+				</div>
+			</div>
+			<!-- /.modal-content -->
+		</div>
+		<!-- /.modal -->
+	</div>
+	
+	<div class="modal fade" id="pickRoutineModal" tabindex="-1" role="dialog"
+		aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+					<h4 class="modal-title" id="myModalLabel">Pick Routine</h4>
+				</div>
+				<div class="modal-body">
+					<form>
+						<div class="form-group">
+							<label for="editIcon">Routine:</label>
+							<div id="editIcon" class="btn-group">
+								<button id='dropDown1' type="button"
+									class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+									<span class='selectedTxt'>
+										<span class="caret"></span>
+									</span>
+								</button>
+								<ul class="dropdown-menu" role="menu">
+								</ul>
+							</div>
+						</div>
+						
+						<div class="form-group">
+							<label for="editDescription">Description:</label> 
+							<textarea class="form-control editDesc" id="editDescription" rows="7" ></textarea>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">
+						Close</button>
+					<button type="button" class="btn btn-primary editConfirmBtn" data-dismiss="modal">Copy</button>
+				</div>
+			</div>
+			<!-- /.modal-content -->
+		</div>
+		<!-- /.modal -->
+	</div>
+	
+	
+</body>
+</html>
+<script type="text/javascript">
+	var controller = new MapController();
+
+	controller.init();
+	
+	controller.loadRoutines();
+
+	function searchLocation() {
+		controller.searchLocation(document.getElementById("searchValue").value);
+	}
+</script>
+
+

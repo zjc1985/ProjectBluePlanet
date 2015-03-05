@@ -19,17 +19,17 @@ function GoogleMapView(oneController) {
 	//var directionsDisplay = new google.maps.DirectionsRenderer();
 	//var directionsService = new google.maps.DirectionsService();
 	// var canvasProjectionOverlay = new CanvasProjectionOverlay();
-	var map;
-	var googleOverlay;
+	this.map;
+	this.googleOverlay;
 	
-	var markerCluster;
+	this.markerCluster;
 
-	var overlays = new Array();
+	this.overlays = new Array();
 	
-	var ovLines=new Array();
+	this.ovLines=new Array();
 	
-	var searchMarkers = [];
-	var currentGoogleSearchMarker=null;
+	this.searchMarkers = [];
+	this.currentGoogleSearchMarker=null;
 
 	function getOverlayById(id) {
 		var length = overlays.length;
@@ -47,10 +47,6 @@ function GoogleMapView(oneController) {
 		}
 
 		searchMarkers = [];
-	};
-	
-	this.getMap=function(){
-		return map;
 	};
 
 	this.hideEditMenuInContextMenu = function() {
@@ -152,11 +148,9 @@ function GoogleMapView(oneController) {
 	;
 
 	this.getCenter = function() {
-		var wapped=new google.maps.LatLng(map.getCenter().lat(), map.getCenter().lng());
-		
 		return {
-			lat : wapped.lat(),
-			lng : wapped.lng()
+			lat : map.getCenter().lat(),
+			lng : map.getCenter().lng()
 		};
 	};
 
@@ -814,55 +808,6 @@ function GoogleMapView(oneController) {
 				}
 			});
 		});
-	};
-};
-
-function ExploreGoogleMapView(oneController){
-	extend(ExploreGoogleMapView,GoogleMapView,this,[oneController]);
-	
-	var self=this;
-	
-	var centerMarker;
-	
-	this.createSearchView=function(){
-		self.createView();
-		
-		google.maps.event.addListener(this.getMap(), 'center_changed', function() {
-			self.refreshCenterMarker();
-		});
-		
-		google.maps.event.addListener(this.getMap(), 'dragend', function() {
-			controller.dragendEventHandler();
-		});
-	};
-	
-	this.refreshCenterMarker=function(){
-		if(centerMarker==null){
-			centerMarker=new google.maps.Marker({
-				position : this.getMap().getCenter(),
-				map : this.getMap(),
-				icon : 'resource/icons/default/center_default.png'
-			});
-		}else{
-			centerMarker.setPosition(this.getMap().getCenter());
-		}
-	};
-	
-	this.computeDistanceBetween=function(from,to){
-		var googleFrom=new google.maps.LatLng(from.lat,from.lng);
-		var googleTo=new google.maps.LatLng(to.lat,to.lng);
-		return google.maps.geometry.spherical.computeDistanceBetween(googleFrom,
-				googleTo);
-	};
-	
-	this.drawCircle=function(location,radius,color){
-		var latlng=new google.maps.LatLng(location.lat,location.lng);
-		var circle=new google.maps.Circle({
-			center:latlng,
-			fillColor:color,
-			radius:radius,
-			map:self.getMap()
-		});
-		
-	};
+	}
+	;
 };

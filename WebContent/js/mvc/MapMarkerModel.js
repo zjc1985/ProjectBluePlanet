@@ -1,3 +1,33 @@
+function ExploreMapMarkerModel(){
+	extend(ExploreMapMarkerModel,MapMarkerModel,this);
+	this.exploreRanges=[];
+	
+	var self=this;
+	
+	var backendManager=this.getBackendManager();
+	
+	this.createOvMarkersByOverviewJSONStringArray=function(overviewJSONStringArray){
+		for ( var i in overviewJSONStringArray) {
+			var overviewJSONString = overviewJSONStringArray[i].overviewJSONString;
+			var routineId=overviewJSONStringArray[i].routineId;
+			var overviewMarkerArray = JSON.parse(overviewJSONString);
+			for ( var i in overviewMarkerArray) {
+				self.createOverviewMarker(overviewMarkerArray[i].id,
+						overviewMarkerArray[i],routineId);
+			}
+		}
+	};
+	
+	this.fetchOverviewRoutinesByLatlng=function(location,successCallback){
+		backendManager.fetchOverviewRoutinesByLatlng(location, function(
+				overviewJSONStringArray){
+			self.createOvMarkersByOverviewJSONStringArray(overviewJSONStringArray);
+			successCallback(overviewJSONStringArray);
+		});
+	};
+	
+}
+
 function MapMarkerModel() {
 	var marks = new Array();
 	var currentOverviewMarkers = new Array();
@@ -15,6 +45,29 @@ function MapMarkerModel() {
 				successCallBack(null);
 			}	
 		});
+	};
+	
+	this.getBackendManager=function(){
+		return backendManager;
+	};
+	
+	//one routine can have multi ovMarkers right now,they have the same title
+	//and description. this method will try to filter the repeat markers
+	this.fetchNonRepeatOvMarkers=function(){
+		var nonRepeatOvMarker=[];
+		for(var i in allOverviewMarkers){
+			var routineId=allOverviewMarkers[i].routineId;
+			var isExist=false;
+			for(var j in nonRepeatOvMarker){
+				if(routineId==nonRepeatOvMarker[j].routineId){
+					isExist=true;
+				}
+			}
+			if(!isExist){
+				nonRepeatOvMarker.push(allOverviewMarkers[i]);
+			}
+		}
+		return nonRepeatOvMarker;
 	};
 	
 	this.copyRoutine2CurrentUser=function(ovMarkerId,successCallback){
@@ -65,7 +118,7 @@ function MapMarkerModel() {
 
 	this.getAllOverviewMarkers = function() {
 		return allOverviewMarkers;
-	}
+	};
 
 	this.genUUID = function() {
 		return uuid.v4();
@@ -347,7 +400,6 @@ function MapMarkerModel() {
 			}
 
 			//save all overview markers
-			//to do...
 			var overviewMap={};
 			for(var i in allOverviewMarkers){
 				var ovMarker=allOverviewMarkers[i];
@@ -381,12 +433,13 @@ function MapMarkerModel() {
 			}
 
 			// gen overViewMarksJSONArray
+			var location = genCentreLocation();
 			var overviewMarkersJSONArray = new Array();
 			if (currentOverviewMarkers.length == 0) {
 				var uuid = self.genUUID();
 				var centreOverViewMarker = new MapMarker(uuid);
 				centreOverViewMarker.content.setIsAvergeOverViewMarker(true);
-				var location = genCentreLocation();
+				
 				centreOverViewMarker.content.updateContent(location);
 				overviewMarkersJSONArray.push(centreOverViewMarker.toJSONObject());
 			} else {
@@ -394,14 +447,14 @@ function MapMarkerModel() {
 				for ( var i in currentOverviewMarkers) {
 					var overviewMarker = currentOverviewMarkers[i];
 					if (overviewMarker.content.isAvergeOverViewMarker()) {
-						overviewMarker.content.updateContent(genCentreLocation());
+						overviewMarker.content.updateContent(location);
 					}
 					overviewMarkersJSONArray.push(overviewMarker.toJSONObject());
 				}
 			}
 			
 			backendManager.saveRoutine(routineName, JSON.stringify(marksJSONArray),
-					JSON.stringify(overviewMarkersJSONArray), function() {
+					JSON.stringify(overviewMarkersJSONArray), location,function() {
 						callback();
 					});
 		}else{
@@ -641,6 +694,30 @@ function BackendManager() {
 					}
 				});
 	};
+	
+	this.fetchOverviewRoutinesByLatlng=function(location, successCallback){
+		var locationPoint=new AV.GeoPoint({latitude: location.lat, longitude: location.lng});
+		var query=new AV.Query(Routine);
+		query.select('title', 'overViewJSONString');
+		query.near('location',locationPoint);
+		query.limit(10);
+		query.find({
+			success : function(routines) {
+				console.log("backendManager:fetchOverviewRoutinesBylatlng success");
+				userRoutines = routines;
+				var overviewMarkersJSONStringArray = [];
+				for ( var i in routines) {
+					overviewMarkersJSONStringArray.push(
+								{
+									routineId:routines[i].id,
+									overviewJSONString:routines[i].get('overViewJSONString')
+								}
+							);
+				}
+				successCallback(overviewMarkersJSONStringArray);
+			}
+		});
+	};
 
 	this.deleteRoutineByOverviewMarkerId = function(overviewMarkerId,
 			successCallback) {
@@ -787,7 +864,7 @@ function BackendManager() {
 	};
 
 	this.saveRoutine = function(routineName, routineJSONString,
-			overViewJSONString, callback) {
+			overViewJSONString, location,callback) {
 		if (routine == null) {
 			routine = new Routine();
 		}
@@ -798,6 +875,8 @@ function BackendManager() {
 				routine.set('RoutineJSONString', routineJSONString);
 				routine.set('user',currentUser );
 				routine.set('overViewJSONString', overViewJSONString);
+				var point = new AV.GeoPoint({latitude: location.lat, longitude: location.lng});
+				routine.set('location',point);
 				routine.save(null, {
 					success : function(routineFoo) {
 						routine = routineFoo;
@@ -959,18 +1038,10 @@ function MarkerContent(id) {
 		if (args.isAverage != null) {
 			this.setIsAvergeOverViewMarker(args.isAverage);
 		}
-
-		/*
-		 * if (args.mainPaths != null) { this.mainPaths = args.mainPaths; }
-		 */
-
-		$.publish('updateInfoWindow', [ this ]);
-
 	};
 
 	this.addImgUrl = function(url) {
 		imgUrls.push(url);
-		$.publish('updateInfoWindow', [ this ]);
 	};
 
 	this.getIconUrl = function() {
@@ -987,7 +1058,12 @@ function MarkerContent(id) {
 	};
 
 	this.setImgUrls = function(urlArray) {
-		imgUrls = urlArray;
+		imgUrls=[];
+		for(var i in urlArray){
+			if(urlArray[i].replace(/\s+/g,"")!=''){
+				imgUrls.push(urlArray[i]);
+			}
+		}
 	};
 
 	this.getCategory = function() {
@@ -1034,11 +1110,7 @@ function MarkerContent(id) {
 	};
 
 	this.getMycomment = function(needShort) {
-		if (needShort) {
-			return mycomment.substring(0, 150) + '...';
-		} else {
-			return mycomment;
-		}
+		return mycomment;
 	};
 }
 
@@ -1184,6 +1256,12 @@ function MapMarker(id) {
 		return this.content;
 	};
 
+}
+
+function ExploreRange(zoomLevel,location){
+	this.zoomLevel=zoomLevel;
+	this.location=location;
+	this.overviewJSONStringArray=new Array();
 }
 
 function MainLine(id) {

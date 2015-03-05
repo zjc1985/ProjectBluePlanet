@@ -21,11 +21,18 @@ var QueryString = function () {
 	    return query_string;
 	} ();
 
+function extend(b, a, t, p) {
+	b.prototype = a;
+	a.apply(t, p);
+}
+	
+
+
 function MapController(){	
-	var model=new MapMarkerModel();
-	var view=new GoogleMapView(this);
+	var model;
+	var view;
+	
 	var self=this;
-	view.createView();
 	
 	//used for slide
 	var isSlideMode=false;
@@ -41,8 +48,49 @@ function MapController(){
 	
 	var routineName="Default Routine";
 	
+	this.getModel=function(){
+		return model;
+	};
+	
+	this.setModel=function(oneModel){
+		model=oneModel;
+	};
+	
+	this.getView=function(){
+		return view;
+	};
+	
+	this.setView=function(oneView){
+		view=oneView;
+	};
+	
+	this.init=function(){
+		model=new MapMarkerModel();
+		view=new GoogleMapView(this);
+		view.createView();
+	};
+	
 	this.deleteOvMarker=function(id){
 		model.deleteOvMarker(id);
+	};
+	
+	this.markerMouseOver=function(id){
+		
+	};
+	
+	this.markerMouseOut=function(id){
+		
+	};
+	
+	this.editFormDeleteClick=function(id){
+		if(model.isOvMarker(id)){
+			self.deleteRoutine(id);
+			view.ovMarkerDialog.hide();
+		}else{
+			var r=confirm("Do you want to delete attached img?");
+			model.deleteOneMarker(id,r);
+			view.markerInfoDialog.hide();
+		}
 	};
 	
 	this.copyRoutine=function(ovMarkerId){
@@ -117,8 +165,8 @@ function MapController(){
 	
 	this.uploadImgs=function(imageBase64String,lat,lng,fileName){
 		model.saveImageByBase64(imageBase64String,fileName,function(url){
-			view.uploadImgForm.completeFileNum++;
-			view.uploadImgForm.updateProgress();
+			view.uploadImgModal.completeFileNum++;
+			view.uploadImgModal.updateProgress();
 			
 			var hasPositionInImg=true;
 			
@@ -132,15 +180,15 @@ function MapController(){
 			var content=model.getMarkerContentById(id);
 			content.setImgPositionDecided(hasPositionInImg);
 			
-			if(view.uploadImgForm.completeFileNum==view.uploadImgForm.fileNum){
+			if(view.uploadImgModal.completeFileNum==view.uploadImgModal.fileNum){
 				alert("all save complete");
-				view.uploadImgForm.UIFinishUpload();
-				view.uploadImgForm.close();
+				view.uploadImgModal.UIFinishUpload();
+				view.uploadImgModal.close();
 				view.fitBoundsByIds([id]);		
 			}
 		},function(error){
-			view.uploadImgForm.completeFileNum++;
-			view.uploadImgForm.updateProgress();
+			view.uploadImgModal.completeFileNum++;
+			view.uploadImgModal.updateProgress();
 			alert("one save failed"+error);
 		});
 	};
@@ -150,27 +198,19 @@ function MapController(){
 	};
 	
 	function disableEditFunction(){
-		view.infocard.hideEditButton();
-		
-		//hide contentMenu
-		view.hideContextMenuById('addMarkerItem');
-		view.hideContextMenuById('saveRoutineItem');
-		view.hideContextMenuById('uploadItem');
+		//hide Edit Function
+		view.navBar.disableEditFunction();
+		view.markerInfoDialog.disableEditFunction();
+		view.ovMarkerDialog.disableEditFunction();
 		
 		for(var i in model.getModelMarkers()){
 			var id=model.getModelMarkers()[i].id;
 			view.setMarkerDragable(id, false);
-			view.hideContextMenuById('addSublineItem' + id);
-			view.hideContextMenuById('deleteselfItem' + id);
-			view.hideContextMenuById('mergeImgUrlItem' + id);
 		}
 		
 		for(var i in model.getAllOverviewMarkers()){
 			var id=model.getAllOverviewMarkers()[i].id;
 			view.setMarkerDragable(id, false);
-			view.hideContextMenuById('deleteRoutine' + id);
-			view.hideContextMenuById('addIcon' + id);
-			view.hideContextMenuById('deleteIcon' + id);
 		}
 	}
 	
@@ -193,29 +233,23 @@ function MapController(){
 	this.exitSlideMode=function(){	
 		if(isUserOwnThisRoutine){
 			isSlideMode=false;
-			view.infocard.showEditButton();
+
 			view.removeAllLines();
 			
-			//hide contentMenu
-			view.showContextMenuById('addMarkerItem');
-			view.showContextMenuById('saveRoutineItem');
-			view.showContextMenuById('uploadItem');
+			view.navBar.enableEditFunction();
+			
+			view.markerInfoDialog.enableEditFunction();
+			
+			view.ovMarkerDialog.enableEditFunction();
 			
 			for(var i in model.getModelMarkers()){
 				var id=model.getModelMarkers()[i].id;
 				view.setMarkerDragable(id, true);
-				view.showContextMenuById('addSublineItem' + id);
-				view.showContextMenuById('deleteselfItem' + id);
-				view.showContextMenuById('mergeImgUrlItem' + id);
 			}
 			
 			for(var i in model.getAllOverviewMarkers()){
 				var id=model.getAllOverviewMarkers()[i].id;
 				view.setMarkerDragable(id, true);
-				view.showContextMenuById('showRoutineDetail' + id);
-				view.showContextMenuById('deleteRoutine' + id);
-				view.showContextMenuById('addIcon' + id);
-				view.showContextMenuById('deleteIcon' + id);
 			}
 			
 			for(var i in model.getModelMarkers()){
@@ -390,15 +424,37 @@ function MapController(){
 		}
 	};
 	
-	this.updateMarkerContentById=function(id,content){
+	this.editFormConfirmClick=function(id){
+		//setting dialog
+		var dialog;
+		if(model.isOvMarker(id)){
+			dialog=view.ovMarkerDialog;
+		}else{
+			dialog=view.markerInfoDialog;
+		}
+		
+		dialog.setTitle(view.markerEditDialog.getTitle());
+		dialog.setSubTitle('slideNum'+view.markerEditDialog.getSlideNum());
+		dialog.setDescription(view.markerEditDialog.getDesc());
+		dialog.setImageSlider(view.markerEditDialog.getUrls());
+		
+		var content={
+			title:view.markerEditDialog.getTitle(),
+			slideNum:view.markerEditDialog.getSlideNum(),
+			mycomment:view.markerEditDialog.getDesc(),
+			imgUrls:view.markerEditDialog.getUrls(),
+			iconUrl:view.markerEditDialog.getIconSelect().url
+		};
+		
+		//setting content
 		var mapMarker=model.getMapMarkerById(id);
 		if(model.isOvMarker(id)){
-			mapMarker.content.updateContent(content);
 			var ovMarkers=model.getAllOverviewMarkers();
 			for(var i in ovMarkers){
 				if(ovMarkers[i].routineId==mapMarker.routineId){
 					var contentNeedSync={title:content.title,
-							mycomment:content.mycomment};
+							mycomment:content.mycomment,
+							iconUrl:content.iconUrl};
 					ovMarkers[i].content.updateContent(contentNeedSync);
 				}
 			}
@@ -418,41 +474,37 @@ function MapController(){
 	};
 		
 	this.showInfoClickHandler=function(markerId){
-		var content=model.getMarkerContentById(markerId);
-		console.log("controller.showInfoClickHandler: "+content.getTitle()+
-				content.getAddress()+
-				content.getCategory()+
-				content.getMycomment(false));
-		view.infocard.setMaxSlideNum(model.getModelMarkers().length);
 		
-		view.infocard.setDefaultContent({title:content.getTitle(),
-											iconUrl:content.getIconUrl(),
-											address:content.getAddress(),
-											category:content.getCategory(),
-											mycomment:content.getMycomment(true),
-											slideNum:content.getSlideNum(),
-											fullcomment:content.getMycomment(false)});
-		
-		view.infocard.setDefaultImgs(content.getImgUrls());
-		
-		
-		
-		if(content.getImgUrls().length!=0){			
-			view.infocard.showContentB();
+		var dialog;
+		if(model.isOvMarker(markerId)){
+			dialog=view.ovMarkerDialog;
 		}else{
-			view.infocard.showContentA();
+			dialog=view.markerInfoDialog;
 		}
 		
-		//Don't need show infoWindow right now
-		/*
-		if(viewMarker.infoWindow==null){			
-			viewMarker.infoWindow=view.addInfoWindow(viewMarker, {title:content.getTitle(),},num++);
-			
-		}else{
-			viewMarker.infoWindow.show();
-		};
-		*/
+		var content=model.getMarkerContentById(markerId);
 		
+		dialog.setTitle(content.getTitle());
+		dialog.setSubTitle(content.getSlideNum());
+		dialog.setDescription(content.getMycomment(true));
+		dialog.setImageSlider(content.getImgUrls());
+		
+		dialog.show();
+		
+		view.markerEditDialog.setTitle(content.getTitle());
+		view.markerEditDialog.setMaxSlideNum(model.getModelMarkers().length);
+		view.markerEditDialog.setSlideNum(content.getSlideNum());
+		view.markerEditDialog.setDesc(content.getMycomment(true));
+		view.markerEditDialog.setUrls(content.getImgUrls());
+		
+		var items=[];
+		items.push({url:"resource/icons/default/default_default.png",name:"default"});
+		items.push({url:"resource/icons/default/center_default.png",name:"point"});
+		items.push({url:"resource/icons/sight/sight_default.png",name:"sight default"});
+		items.push({url:"resource/icons/sight/sight_star.png",name:"sight star"});
+		items.push({url:"resource/icons/event/event_default.png",name:"event default"});		
+		view.markerEditDialog.setDropDownItems(items);
+		view.markerEditDialog.setIconSelect({url:content.getIconUrl(),name:"current Icon"});
 	};
 	
 	function changeSubMarkerShowStatus(parentMarkerId){
@@ -506,7 +558,6 @@ function MapController(){
 	};
 	
 	this.overviewMarkerClickEventHandler=function(id,animationTime){
-		view.infocard.show();
 		view.currentMarkerId=id;
 		this.showInfoClickHandler(id);
 		
@@ -535,8 +586,6 @@ function MapController(){
 	};
 	
 	this.markerClickEventHandler=function(viewMarker){
-		view.infocard.show();
-		
 		view.currentMarkerId=viewMarker.id;
 		
 		if(view.markerNeedMergeImgUrl!=null){
@@ -580,33 +629,11 @@ function MapController(){
 					{lat:modelMarker.connectedMainMarker.content.getLat(),lng:modelMarker.connectedMainMarker.content.getLng()});
 		}
 		
-		
-		/*
-		if(!modelMarker.isSubMarker()){
-		//show current marker, next marker, preMarker and its mainline, others are hide
-			var nextMarkerId=modelMarker.connectedMainMarker==null?0:modelMarker.connectedMainMarker.id;
-			var preMarkerId=modelMarker.prevMainMarker==null?0:modelMarker.prevMainMarker.id;
-			
-			view.showAllMarkers();
-			
-			var belongRoutineMarkerIds=model.belongWhichHeadIds(modelMarker.id);
-			
-			for(var i=0;i<belongRoutineMarkerIds.length;i++){
-				changeSubMarkerShowStatus(belongRoutineMarkerIds[i],false);
-				view.getViewOverlaysById(belongRoutineMarkerIds[i]).hide();
-				if(view.getViewOverlaysById(belongRoutineMarkerIds[i]).infoWindow!=null){
-					view.getViewOverlaysById(belongRoutineMarkerIds[i]).infoWindow.hide();
-				}
-			}
-			
-			changeMainMarkerShowStatus([viewMarker.id,nextMarkerId,preMarkerId]);
-		}
-		*/
-		
 		//show or hide subMarkers if has
 		if(model.getMapMarkerById(viewMarker.id).subMarkersArray.length!=0){
 			changeSubMarkerShowStatus(viewMarker.id);
 		}
+		
 		this.showInfoClickHandler(viewMarker.id);
 		
 		//set max zindex
@@ -782,38 +809,6 @@ function MapController(){
 		}else{
 			loadAllOvMarkersByUserId(QueryString.userId);
 		}
-		
-		/*
-		if(QueryString.routineId!=null){
-						
-			model.loadRoutine(QueryString.routineId,function(arg){
-				//hide all subMarkers
-				for(var i in model.getModelMarkers()){
-					changeSubMarkerShowStatus(model.getModelMarkers()[i].id);
-				}
-				
-				routineName=arg.routineName;
-				
-				view.fitRoutineBounds();
-				
-				view.setMapZoom(5);
-				
-				self.zoomEventHandler();
-				
-				model.isUserOwnRoutine(QueryString.routineId, function(isUserOwn){
-					isUserOwnThisRoutine=isUserOwn;
-					if(!isUserOwn){
-						console.log('start slide mode');
-						self.startSlideMode();
-					}else{
-
-					}
-					
-					
-				});
-			});
-		}
-		*/
 	};
 	
 	this.saveRoutine=function(){
@@ -836,6 +831,24 @@ function MapController(){
 		}	
 	};
 	
+	this.searchMarkerClick=function(SearchMarkerinfo){
+		view.searchMarkerModal.setTitle(SearchMarkerinfo.title);
+		view.searchMarkerModal.setSubTitle('');
+		view.searchMarkerModal.show();
+		
+		var ovMarkers=model.fetchNonRepeatOvMarkers();
+		var routineNames=[];
+		for(var i in ovMarkers){
+			routineNames.push({name:ovMarkers[i].content.getTitle(),value:ovMarkers[i].id});
+		}
+		
+		view.searchPickRoutineBoard.setDropDownItems(routineNames);
+		if(model.getCurrentOverviewMarkers().length>0){
+			var title=model.getCurrentOverviewMarkers()[0].content.getTitle();
+			view.searchPickRoutineBoard.setRoutineNameSelect({name:title,value:model.getCurrentOverviewMarkers()[0].routineId});
+		}
+	};
+	
 	this.testFeature=function(viewMarker){
 		
 	};
@@ -852,7 +865,7 @@ function MapController(){
 	this.deleteViewMarker=function(){
 		return function(_,modelMarker){
 			view.removeById(modelMarker.id);
-			view.infocard.hide();
+			//view.infocard.hide();
 			$.publish('updateUI',[]);
 		};
 	};
@@ -860,7 +873,7 @@ function MapController(){
 	this.deleteViewOvMarker=function(){
 		return function(_,id){
 			view.removeById(id);
-			view.infocard.hide();
+			//view.infocard.hide();
 		};
 	};
 	
@@ -881,6 +894,7 @@ function MapController(){
 			view.addOneMark(modelMarker.content.getLat(),
 							modelMarker.content.getLng(), modelMarker.id);
 			view.changeMarkerIcon(modelMarker.id, modelMarker.content.getIconUrl());
+			view.setMarkerAnimation(modelMarker.id, "DROP");
 		};
 	};
 	
@@ -964,26 +978,6 @@ function MapController(){
 	this.updateMarkerInfoWindow=function(){
 		return function(_,content){
 			
-			
-			var viewMarker=view.getViewOverlaysById(content.id);
-			var contentModel=content;
-			console.log('update marker info window. markerId: '+content.id);
-			console.log('title: '+contentModel.getTitle());
-			
-			if(viewMarker!=null){								
-				view.infocard.setDefaultContent({title:contentModel.getTitle(),
-													address:contentModel.getAddress(),
-													slideNum:contentModel.getSlideNum(),
-												  mycomment:contentModel.getMycomment(true),
-												  category:contentModel.getCategory(),
-												fullcomment:contentModel.getMycomment(false)});
-					
-				view.infocard.setDefaultImgs(contentModel.getImgUrls());
-				
-				if(viewMarker.infoWindow!=null){
-					viewMarker.infoWindow.setContent(contentModel.getTitle());
-				}
-			}
 		};
 	};
 	
@@ -997,3 +991,98 @@ function MapController(){
 	$.subscribe('latlngChanged',this.latlngChangedHandler());
 	$.subscribe('iconUrlUpdated',this.iconUrlUpdatedHandler());
 }
+
+function ExploreMapController(){
+	extend(ExploreMapController,MapController,this);
+	
+	var view;
+	var model;
+	
+	var zoom5ExploreRange=400000;
+	var zoom6ExploreRange=250000;
+	var zoom7ExploreRange=120000;
+	
+	this.init=function(){
+		model=new ExploreMapMarkerModel();
+		view=new ExploreGoogleMapView(this);
+		this.setModel(model);
+		this.setView(view);
+		view.createView();
+		view.createSearchView();
+	};
+	
+	this.dragendEventHandler=function(){
+		if(!view.isInCustomZoom()){
+			console.log('not in custom zoom level return');
+			return;
+		}
+		var zoomLevel=view.getZoom();
+		var center=view.getCenter();
+		
+		var exploreRange=findMinDistanceExploreRange(zoomLevel,center);
+		if(exploreRange==null){
+			model.resetModels();
+			view.resetView();
+			//drawCenterCircle(zoomLevel,center);
+			//add ovMarkers to new ExploreRange;
+			model.fetchOverviewRoutinesByLatlng(center, function(overviewJSONStringArray){
+				var newExploreRange=new ExploreRange(zoomLevel,center);
+				newExploreRange.overviewJSONStringArray=overviewJSONStringArray;
+				model.exploreRanges.push(newExploreRange);
+			});	
+			console.log('new explore range added');
+		}else{
+			console.log('find cached explore range');
+			model.createOvMarkersByOverviewJSONStringArray(exploreRange.overviewJSONStringArray);
+		}
+	};
+	
+	function findMinDistanceExploreRange(currentZoomLevel,centerLocation){
+		var minDistance=900000;
+		var result=null;
+		
+		if(currentZoomLevel==5){
+			minDistance=zoom5ExploreRange;
+		}else if(currentZoomLevel==6){
+			minDistance=zoom6ExploreRange;
+		}else if(currentZoomLevel==7){
+			minDistance=zoom7ExploreRange;
+		}else{
+			minDistance=zoom7ExploreRange;
+		}
+		
+		for(var i in model.exploreRanges){
+			var exploreRange=model.exploreRanges[i];
+			if(exploreRange.zoomLevel==currentZoomLevel){
+				var distance=view.computeDistanceBetween(centerLocation, exploreRange.location);
+				if(distance<minDistance){
+					minDistance=distance;
+					result=exploreRange;
+				}
+			}
+		}
+		
+		return result;
+	}
+	
+	function drawCenterCircle(zoomLevel,center){
+		var radius;
+		var color;
+		if(zoomLevel==5){
+			radius=zoom5ExploreRange;
+			color='blue';
+		}else if(zoomLevel==6){
+			radius=zoom6ExploreRange;
+			color='green';
+		}else if(zoomLevel==7){
+			radius=zoom7ExploreRange;
+			color='red';
+		}else{
+			radius=zoom7ExploreRange;
+			color='red';
+		}
+		view.drawCircle(center, radius, color);
+	}
+}
+
+

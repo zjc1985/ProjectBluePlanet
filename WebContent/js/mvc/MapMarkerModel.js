@@ -29,8 +29,13 @@ function ExploreMapMarkerModel(){
 }
 
 function MapMarkerModel() {
+	//current routine model markers
 	var marks = new Array();
+	//current routine ov markers
 	var currentOverviewMarkers = new Array();
+	
+	//all the user ov markers
+	//isAverage
 	var allOverviewMarkers = new Array();
 	
 	var self=this;
@@ -390,7 +395,9 @@ function MapMarkerModel() {
 		});
 
 	};
-
+	
+	
+	
 	this.save2Backend = function(routineName, callback) {
 		console.log('prepare to save routine ' + routineName);
 		backendManager.getCurrentUser(function(currentUser){
@@ -607,14 +614,63 @@ function MapMarkerModel() {
 
 function BackendManager() {
 	var Routine = AV.Object.extend("Routine");
+	var AVMarker= AV.Object.extend("Marker");
 
+	//current Routine
 	var routine = null;
+	
+	//current User
 	var currentUser = null;
+	
+	// current Routine Markers
+	var avMarkers=[];
+	
+	//all user routines
 	var userRoutines = null;
+	
+	
 
 	AV.initialize("6pzfpf5wkg4m52owuwixt5vggrpjincr8xon3pd966fhgj3c",
 			"4wrzupru1m4m7gpafo4llinv7iepyapnycvxygup7uiui77x");
 
+	
+	function getAvMarkerByUUID(uuid){
+		for(var i in avMarkers){
+			if(uuid==avMarkers[i].get('uuid')){
+				return avMarkers[i];
+			}
+		}
+		return null;
+	};
+	
+	this.saveCurrentRoutineMarkers=function(markers,ovMarkers){
+		
+		
+		var avMarkersNeed2Save=[];
+		for(var i in markers){
+			var marker=markers[i];
+			var avMarker=getAvMarkerByUUID(marker.uuid);
+			if(avMarker==null){
+				avMarker=new AVMarker();
+				avMarker.set('uuid',marker.uuid);
+			}
+			
+			var point = new AV.GeoPoint({latitude: marker.lat, longitude: marker.lng});
+			avMarker.set('location',point);
+			avMarker.set('title',marker.title);
+			avMarker.set('address',marker.address);
+			avMarker.set('mycomment',marker.mycomment);
+			avMarker.set('category',marker.category);
+			avMarker.set('imgUrls',JSON.stringify(marker.imgUrls));
+			avMarker.set('iconUrl',marker.ivonUrl);
+			avMarker.set('slideNum',marker.slideNum);
+			avMarker.set('subMarkerIds',JSON.stringify(marker.subMarkerIds));
+			avMarker.set('offsetX',marker.offsetX);
+			avMarker.set('offsetY',marker.offsetY);
+			avMarker.set('isOvMarker',false);		
+		}
+	};
+	
 	this.login = function(userName, pwd, successCallback) {
 		AV.User.logIn(userName, pwd, {
 			success : function(user) {
@@ -1229,7 +1285,7 @@ function MapMarker(id) {
 		}
 
 		var object = {
-			id : this.id,
+			uuid : this.id,
 			lat : this.getContent().getLat(),
 			lng : this.getContent().getLng(),
 			title : this.getContent().getTitle(),

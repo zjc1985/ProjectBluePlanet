@@ -20,6 +20,9 @@ function NavBar(id){
 	this.createRoutineClick=function(handler){
 		$('#'+id).find('.createRoutineBtn').click(handler);
 	};
+	this.createRoutineClick=function(handler){
+		$('#'+id).find('.createRoutineBtn').click(handler);
+	};
 	this.disableEditFunction=function(){
 		$('#'+id).find('.createNew').find('li').addClass('disabled');
 	};

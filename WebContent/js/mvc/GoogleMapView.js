@@ -239,6 +239,14 @@ function GoogleMapView(oneController) {
 		});
 		
 		this.navBar=new NavBar('myNavBar');
+		this.navBar.createRoutineClick(function(){
+			controller.createRoutine({
+				lat:self.getCenter().lat,
+				lng:self.getCenter().lng,
+				title:'New Routine',
+				mycomment:'New Routine'
+			});
+		});
 		this.navBar.saveLinkClick(function(){
 			controller.saveRoutine();
 		});

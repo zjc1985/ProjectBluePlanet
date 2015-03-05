@@ -108,6 +108,14 @@ function MapController(){
 		}
 	};
 	
+	this.createRoutine=function(content){
+		var routineId = '-' + model.genUUID();
+		var ovMarkerId = '-' + model.genUUID();
+		
+		content.isAverage=true;
+		model.createOverviewMarker(ovMarkerId, content, routineId);
+	};
+	
 	this.addOvMarker=function(content,belongId){
 		var id=model.genUUID();
 		var ovMarker=model.getMapMarkerById(belongId);

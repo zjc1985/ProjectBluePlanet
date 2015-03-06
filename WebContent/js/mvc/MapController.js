@@ -109,11 +109,7 @@ function MapController(){
 	};
 	
 	this.createRoutine=function(content){
-		var routineId = '-' + model.genUUID();
-		var ovMarkerId = '-' + model.genUUID();
-		
-		content.isAverage=true;
-		model.createOverviewMarker(ovMarkerId, content, routineId);
+		model.createModelRoutine(content);
 	};
 	
 	this.addOvMarker=function(content,belongId){
@@ -133,7 +129,6 @@ function MapController(){
 		if (r==true){
 			model.deleteRoutineByOverviewId(overviewMarkerId, function(){
 				alert("delete routine success");
-				self.loadRoutines();
 			});
 		}
 		else{
@@ -457,14 +452,14 @@ function MapController(){
 		//setting content
 		var mapMarker=model.getMapMarkerById(id);
 		if(model.isOvMarker(id)){
-			var ovMarkers=model.getAllOverviewMarkers();
+			var routine=model.getRoutineById(id);
+			var contentNeedSync={title:content.title,
+					mycomment:content.mycomment};
+			
+			routine.getContent().updateContent(contentNeedSync);
+			var ovMarkers=routine.getOvMarkers();
 			for(var i in ovMarkers){
-				if(ovMarkers[i].routineId==mapMarker.routineId){
-					var contentNeedSync={title:content.title,
-							mycomment:content.mycomment,
-							iconUrl:content.iconUrl};
-					ovMarkers[i].content.updateContent(contentNeedSync);
-				}
+				ovMarkers[i].getContent().updateContent(content);
 			}
 		}else{
 			mapMarker.content.updateContent(content);
@@ -571,14 +566,17 @@ function MapController(){
 		
 		//animated ovmarkers with same routineId
 		var routineId=model.getMapMarkerById(id).routineId;
-		var ovMarkers=model.getAllOverviewMarkers();
+		
+		if(routineId==null){
+			return;
+		}
+		
+		var ovMarkers=model.getMapMarkerById(routineId).ovMarkers;
 		
 		var idsNeed2Bounce=[];
 		for(var i in ovMarkers){
-			if(ovMarkers[i].routineId==routineId){
-				idsNeed2Bounce.push(ovMarkers[i].id);
-				view.setMarkerAnimation(ovMarkers[i].id, "BOUNCE");
-			}
+			idsNeed2Bounce.push(ovMarkers[i].id);
+			view.setMarkerAnimation(ovMarkers[i].id, "BOUNCE");
 		}
 		
 		if(animationTime==null){
@@ -909,11 +907,7 @@ function MapController(){
 	this.createOverviewMarker=function(){
 		return function(_,modelMarker,content){
 			var options={};
-			if(content.isAverage){
-				options.needDrag=false;
-			}else{
-				options.needDrag=true;
-			}
+			options.needDrag=true;
 			
 			view.addOverviewMarker(modelMarker.content.getLat(),
 							modelMarker.content.getLng(), modelMarker.id,options);
@@ -926,27 +920,53 @@ function MapController(){
 		};
 	};
 	
+	this.createModelRoutine=function(){
+		return function(_,modelMarker,content){
+			var options={};
+			options.needDrag=false;
+			
+			view.addOverviewMarker(modelMarker.content.getLat(),
+							modelMarker.content.getLng(), modelMarker.id,options);
+			view.setMarkerZIndex(modelMarker.id, 0);
+			
+			view.changeMarkerIcon(modelMarker.id, modelMarker.content.getIconUrl());
+			
+		};
+	};
+	
+	this.deleteModelRoutine=function(){
+		return function(_,modelRoutine){
+			var ovMarkers=modelRoutine.getOvMarkers();
+			var markers=modelRoutine.getMarkers();
+			view.removeById(modelRoutine.id);
+			for(var i in ovMarkers){
+				view.removeById(ovMarkers[i].id);
+			}
+			for(var j in markers){
+				view.removeById(markers[i].id);
+			}
+			
+		};
+	};
+	
 	this.updateOvLines=function(){
 		return function(_){
 			if(view.isInCustomZoom()){
 				view.removeAllOvLines();
-				var ovMarkers=model.getAllOverviewMarkers();
-				for(var i in ovMarkers){
-					var each=ovMarkers[i];
-					if(each.content.isAvergeOverViewMarker()){
-						continue;
-					}else{
-						var fromOvMarker=model.findAverageOvMarkerByOvId(each.id);
-						if(fromOvMarker!=null){
-							var fromPosition={lat:fromOvMarker.content.getLat(),
-									lng:fromOvMarker.content.getLng()};
-							var toPosition={lat:each.content.getLat(),
-									lng:each.content.getLng()};
-							view.drawOvLine(fromPosition, toPosition);
+				var modelRoutines=model.getModelRoutines();
+				for(var i in modelRoutines){
+					var modelRoutine=modelRoutines[i];
+					if(modelRoutine.ovMarkers.length>0){
+						var from={lat:modelRoutine.getContent().getLat(),
+								lng:modelRoutine.getContent().getLng()};
+						for(var j in modelRoutine.ovMarkers){
+							var ovMarker=modelRoutine.ovMarkers[j];
+							var to={lat:ovMarker.getContent().getLat(),
+									lng:ovMarker.getContent().getLng()};
+							view.drawOvLine(from, to);
 						}
 					}
 				}
-				
 			}else{
 				view.removeAllOvLines();
 			}
@@ -993,6 +1013,8 @@ function MapController(){
 	$.subscribe('deleteOneMarker',this.deleteViewMarker());
 	$.subscribe('createOneMarker',this.createViewMarker());
 	$.subscribe('createOverViewMarker',this.createOverviewMarker());
+	$.subscribe('createModelRoutine',this.createModelRoutine());
+	$.subscribe('deleteModelRoutine',this.deleteModelRoutine());
 	$.subscribe('updateOvLines',this.updateOvLines());
 	$.subscribe('updateUI',this.updateUIRoute());
 	$.subscribe('updateInfoWindow',this.updateMarkerInfoWindow());

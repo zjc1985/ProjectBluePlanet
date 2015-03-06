@@ -38,9 +38,40 @@ function MapMarkerModel() {
 	//isAverage
 	var allOverviewMarkers = new Array();
 	
+	var modelRoutines=[];
+	
 	var self=this;
 
 	var backendManager = new BackendManager();
+	
+	this.getModelRoutines=function(){
+		var results=[]
+		for(var i in modelRoutines){
+			if(!modelRoutines[i].isDelete){
+				results.push(modelRoutines[i]);
+			}
+		}
+		return results;
+	};
+	
+	this.createModelRoutine=function(content){
+		var modelRoutineId='-'+self.genUUID();
+		var marker = new ModelRoutine(modelRoutineId);
+		content.iconUrl='resource/icons/overview/overview_point.png';
+		$.publish('createModelRoutine', [ marker,content ]);
+
+		if (content != null) {
+			marker.content.updateContent(content);
+			marker.updateOffset(content.offsetX, content.offsetY);
+		}
+		modelRoutines.push(marker);
+		
+		var ovMarkerId='-'+self.genUUID();
+		content.iconUrl='resource/icons/default/default_default.png';
+		var ovMarker=self.createOverviewMarker(ovMarkerId, content, modelRoutineId);
+		marker.ovMarkers.push(ovMarker);
+	};
+	
 	
 	this.fetchUserIdByRoutineId=function(routineId,successCallBack){
 		backendManager.fetchUserByRoutineId(routineId, function(user){
@@ -86,9 +117,17 @@ function MapMarkerModel() {
 	};
 	
 	this.isOvMarker=function(id){
-		for(var i in allOverviewMarkers){
-			if(allOverviewMarkers[i].id==id){
+		var routines=self.getModelRoutines();
+		for(var i in routines){
+			if(routines[i].id==id){
 				return true;
+			}
+			
+			var ovMarkers=routines[i].getOvMarkers();
+			for(var j in ovMarkers){
+				if(id==ovMarkers[j].id){
+					return true;
+				}
 			}
 		}
 		return false;
@@ -122,7 +161,48 @@ function MapMarkerModel() {
 	};
 
 	this.getAllOverviewMarkers = function() {
-		return allOverviewMarkers;
+		var results=[];
+		var routines=self.getModelRoutines();
+		for(var i in routines){
+				results.push(routines[i]);
+				var ovMarkers=routines[i].getOvMarkers();
+				for(var j in ovMarkers){
+					results.push(ovMarkers[j]);
+				}
+		}
+		return results;
+	};
+	
+	this.getRoutineById=function(id){
+		var routines=self.getModelRoutines();
+		
+		for(var i in routines){
+			if(routines[i].id==id){
+				return routines[i];
+			}
+			var ovMarkers=routines[i].getOvMarkers();
+			for (var j in ovMarkers){
+				if(ovMarkers[j].id==id){
+					return routines[i];
+				}
+			}
+			var markers=routines[i].getMarkers();
+			for (var k in markers){
+				if(markers[k].id==id){
+					return routines[i];
+				}
+			}
+		}
+		alert('can not found routineId');
+		return null;
+	};
+	
+	this.isSync=function(id){
+		if(id.charAt(0)=='-'){
+			return false;
+		}else{
+			return true;
+		}
 	};
 
 	this.genUUID = function() {
@@ -130,10 +210,20 @@ function MapMarkerModel() {
 	};
 
 	this.deleteRoutineByOverviewId = function(overviewMarkerId, successCallback) {
-		backendManager.deleteRoutineByOverviewMarkerId(overviewMarkerId,
-				function() {
-					successCallback();
-				});
+		var modelRoutine=self.getRoutineById(overviewMarkerId);
+		if(self.isSync(modelRoutine.id)){
+			modelRoutine.setDelete();
+		}else{
+			for ( var i = 0; i < modelRoutines.length; i++) {
+				if (modelRoutine.id==modelRoutines[i].id) {
+					modelRoutines.splice(i, 1);
+					i--;
+				}
+			}
+		}
+		$.publish('deleteModelRoutine', [ modelRoutine ]);
+		$.publish('updateOvLines');
+		$.publish('updateUI');
 	};
 
 	this.saveImage = function(imageFile, successCallback, failCallback) {
@@ -160,7 +250,15 @@ function MapMarkerModel() {
 	};
 
 	this.getModelMarkers = function() {
-		return marks;
+		var results=[];
+		var routines=self.getModelRoutines();
+		for(var i in routines){
+			var markers=routines[i].getMarkers();
+			for(var j in markers){
+				results.push(markers[j]);
+			}
+		}
+		return results
 	};
 
 	this.fetchMaxIdinMarks = function() {
@@ -198,7 +296,6 @@ function MapMarkerModel() {
 			marker.content.updateContent(content);
 			marker.updateOffset(content.offsetX, content.offsetY);
 		}
-		allOverviewMarkers.push(marker);
 		return marker;
 	};
 	
@@ -499,6 +596,29 @@ function MapMarkerModel() {
 	}
 
 	this.getMapMarkerById = function(id) {
+		
+		var routines=self.getModelRoutines();
+		for(var i in routines){
+			var modelRoutine=routines[i];
+			if(modelRoutine.id==id){
+				return modelRoutine;
+			}
+			var ovMarkers=modelRoutine.getOvMarkers();
+			for(var j in ovMarkers){
+				if(id==ovMarkers[j].id){
+					return ovMarkers[j];
+				}
+			}
+			var markers=modelRoutine.getMarkers();
+			for(var k in markers){
+				if(id==markers[k].id){
+					return markers[k];
+				}
+			}
+		}
+		alert('can not find model marker :' + id);
+		return null;
+		/*
 		var marker = getOverlayById(id);
 		if (marker == null) {
 			var length = allOverviewMarkers.length;
@@ -512,6 +632,7 @@ function MapMarkerModel() {
 		} else {
 			return marker;
 		}
+		*/
 
 	};
 
@@ -1170,6 +1291,46 @@ function MarkerContent(id) {
 	};
 }
 
+function ModelRoutine(id){
+	extend(ModelRoutine,MapMarker,this,[id]);
+	
+	this.ovMarkers=[];
+	this.markers=[];
+	
+	this.setDelete=function(){
+		this.isDelete=true;
+		
+		var ovMarkers=this.getOvMarkers();
+		for(var i in ovMarkers){
+			ovMarkers[i].isDelete=true;
+		}
+		var markers=this.getMarkers();
+		for(var j in markers){
+			markers[i].isDelete=true;
+		}
+	};
+	
+	this.getOvMarkers=function(){
+		var results=[];
+		for(var i in this.ovMarkers){
+			if(!this.ovMarkers[i].isDelete){
+				results.push(this.ovMarkers[i]);
+			}
+		}
+		return results
+	};
+	
+	this.getMarkers=function(){
+		var results=[];
+		for(var i in this.markers){
+			if(!this.markers[i].isDelete){
+				results.push(this.markers[i]);
+			}
+		}
+		return results
+	};
+}
+
 function MapMarker(id) {
 	this.id = id;
 	this.content = new MarkerContent(id);
@@ -1198,6 +1359,8 @@ function MapMarker(id) {
 	this.offsetX = 0;
 	this.offsetY = 0;
 
+	this.isDelete=false;
+	
 	this.isSubMarker = function() {
 		if (this.parentSubMarker != null) {
 			return true;

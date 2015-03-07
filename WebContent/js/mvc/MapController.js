@@ -817,24 +817,8 @@ function MapController(){
 		}
 	};
 	
-	this.saveRoutine=function(){
-		if(routineName!="Default Routine" ||model.getModelMarkers().length==0){
-			model.save2Backend(routineName,function(){
-				alert("save success");
-				//self.loadRoutines();
-			});
-		}else{
-			var name=prompt("routine name?",routineName); 
-			if (name!=null && name!="") 
-			{
-				model.save2Backend(name,function(){
-					alert("save success");
-					//self.loadRoutines();
-				});
-			}else{
-				alert('please input your routine name to save');
-			}
-		}	
+	this.sync=function(){
+		model.sync2Cloud();
 	};
 	
 	this.searchMarkerClick=function(SearchMarkerinfo){
@@ -936,8 +920,8 @@ function MapController(){
 	
 	this.deleteModelRoutine=function(){
 		return function(_,modelRoutine){
-			var ovMarkers=modelRoutine.getOvMarkers();
-			var markers=modelRoutine.getMarkers();
+			var ovMarkers=modelRoutine.ovMarkers;
+			var markers=modelRoutine.markers;
 			view.removeById(modelRoutine.id);
 			for(var i in ovMarkers){
 				view.removeById(ovMarkers[i].id);

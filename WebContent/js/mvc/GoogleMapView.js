@@ -248,7 +248,7 @@ function GoogleMapView(oneController) {
 			});
 		});
 		this.navBar.saveLinkClick(function(){
-			controller.saveRoutine();
+			controller.sync();
 		});
 		this.navBar.startSlideClick(function(){
 			controller.startSlideMode();

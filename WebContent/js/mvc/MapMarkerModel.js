@@ -44,8 +44,38 @@ function MapMarkerModel() {
 
 	var backendManager = new BackendManager();
 	
+	this.sync2Cloud=function(){
+		
+		backendManager.getCurrentUser(function(user){
+			var routineJSONs=[];
+			for(var i in modelRoutines){
+				routineJSONs.push(modelRoutines[i].toJSONObject());
+				
+				backendManager.saveOvMarkers(modelRoutines[i].toOvMarkersJSONs());
+			}
+			backendManager.saveRoutines(routineJSONs,user);
+			
+			backendManager.sync(); 
+			
+			for ( var i = 0; i < modelRoutines.length; i++) {
+				if (modelRoutines[i].isDelete==true) {
+					modelRoutines.splice(i, 1);
+					i--;
+				}
+				
+				for(var j=0;j<modelRoutines[i].ovMarkers.length;j++){
+					if(modelRoutines[i].ovMarkers[j].isDelete==true){
+						modelRoutines[i].ovMarkers.splice(j,1);
+						j--;
+					}
+				}
+			}
+		});
+		
+	};
+	
 	this.getModelRoutines=function(){
-		var results=[]
+		var results=[];
 		for(var i in modelRoutines){
 			if(!modelRoutines[i].isDelete){
 				results.push(modelRoutines[i]);
@@ -55,7 +85,7 @@ function MapMarkerModel() {
 	};
 	
 	this.createModelRoutine=function(content){
-		var modelRoutineId='-'+self.genUUID();
+		var modelRoutineId=self.genUUID();
 		var marker = new ModelRoutine(modelRoutineId);
 		content.iconUrl='resource/icons/overview/overview_point.png';
 		$.publish('createModelRoutine', [ marker,content ]);
@@ -66,7 +96,7 @@ function MapMarkerModel() {
 		}
 		modelRoutines.push(marker);
 		
-		var ovMarkerId='-'+self.genUUID();
+		var ovMarkerId=self.genUUID();
 		content.iconUrl='resource/icons/default/default_default.png';
 		var ovMarker=self.createOverviewMarker(ovMarkerId, content, modelRoutineId);
 		marker.ovMarkers.push(ovMarker);
@@ -196,14 +226,6 @@ function MapMarkerModel() {
 		alert('can not found routineId');
 		return null;
 	};
-	
-	this.isSync=function(id){
-		if(id.charAt(0)=='-'){
-			return false;
-		}else{
-			return true;
-		}
-	};
 
 	this.genUUID = function() {
 		return uuid.v4();
@@ -211,16 +233,7 @@ function MapMarkerModel() {
 
 	this.deleteRoutineByOverviewId = function(overviewMarkerId, successCallback) {
 		var modelRoutine=self.getRoutineById(overviewMarkerId);
-		if(self.isSync(modelRoutine.id)){
-			modelRoutine.setDelete();
-		}else{
-			for ( var i = 0; i < modelRoutines.length; i++) {
-				if (modelRoutine.id==modelRoutines[i].id) {
-					modelRoutines.splice(i, 1);
-					i--;
-				}
-			}
-		}
+		modelRoutine.setDelete();
 		$.publish('deleteModelRoutine', [ modelRoutine ]);
 		$.publish('updateOvLines');
 		$.publish('updateUI');
@@ -735,6 +748,7 @@ function MapMarkerModel() {
 
 function BackendManager() {
 	var Routine = AV.Object.extend("Routine");
+	var OvMarker= AV.Object.extend("OvMarker");
 	var AVMarker= AV.Object.extend("Marker");
 
 	//current Routine
@@ -749,11 +763,21 @@ function BackendManager() {
 	//all user routines
 	var userRoutines = null;
 	
+	var avObjects=[];
+	
 	
 
 	AV.initialize("6pzfpf5wkg4m52owuwixt5vggrpjincr8xon3pd966fhgj3c",
 			"4wrzupru1m4m7gpafo4llinv7iepyapnycvxygup7uiui77x");
 
+	function getAVObjectByUUID(uuid){
+		for(var i in avObjects){
+			if(uuid==avObjects[i].get('uuid')){
+				return avObjects[i];
+			}
+		}
+		return null;
+	};
 	
 	function getAvMarkerByUUID(uuid){
 		for(var i in avMarkers){
@@ -764,6 +788,94 @@ function BackendManager() {
 		return null;
 	};
 	
+	this.saveOvMarkers=function(jsons){
+		for(var i in jsons){
+			
+			var markerJSON=jsons[i];
+			
+			var avMarker=getAVObjectByUUID(markerJSON.uuid);
+			if(avMarker!==null && markerJSON.needDelete){
+				avMarker.needDelete=true;
+				continue;
+			}
+			
+			if(avMarker==null && markerJSON.needDelete){
+				continue;
+			}
+			
+			if(avMarker==null){
+				avMarker=new OvMarker();
+				avObjects.push(avMarker);
+			}
+			avMarker.set('uuid',markerJSON.uuid);
+			var point = new AV.GeoPoint({latitude: markerJSON.lat, longitude: markerJSON.lng});
+			avMarker.set('location',point);
+			avMarker.set('title',markerJSON.title);
+			avMarker.set('address',markerJSON.address);
+			avMarker.set('mycomment',markerJSON.mycomment);
+			avMarker.set('category',markerJSON.category);
+			avMarker.set('imgUrls',JSON.stringify(markerJSON.imgUrls));
+			avMarker.set('iconUrl',markerJSON.iconUrl);
+			avMarker.set('slideNum',markerJSON.slideNum);
+			avMarker.set('subMarkerIds',JSON.stringify(markerJSON.subMarkerIds));
+			avMarker.set('offsetX',markerJSON.offsetX);
+			avMarker.set('offsetY',markerJSON.offsetY);
+			avMarker.set('routineId',markerJSON.routineId);
+		}
+	};
+	
+	this.saveRoutines=function(routineJSONs,user){
+		for(var i in routineJSONs){
+			
+			var routineJSON=routineJSONs[i];
+			
+			var avRoutine=getAVObjectByUUID(routineJSON.uuid);
+			if(avRoutine!==null && routineJSON.needDelete){
+				avRoutine.needDelete=true;
+				continue;
+			}
+			
+			if(avRoutine==null && routineJSON.needDelete){
+				continue;
+			}
+			
+			if(avRoutine==null){
+				avRoutine=new Routine();
+				avObjects.push(avRoutine);
+			}
+			avRoutine.set('user',user);
+			avRoutine.set('uuid',routineJSON.uuid);
+			avRoutine.set('title',routineJSON.title);
+			avRoutine.set('descritpion',routineJSON.mycomment);
+			var point = new AV.GeoPoint({latitude: routineJSON.lat, longitude: routineJSON.lng});
+			avRoutine.set('location',point);
+		}
+	};
+	
+	this.sync=function(){
+		//delete
+		var avObjectsNeed2Delete=[];
+		for ( var i = 0; i < avObjects.length; i++) {
+			if (avObjects[i].needDelete==true) {
+				avObjectsNeed2Delete.push(avObjects[i]);
+				avObjects.splice(i, 1);
+				i--;
+			}
+		}
+		
+		for(var i in avObjectsNeed2Delete){
+			avObjectsNeed2Delete[i].destroy();
+		}
+		
+		//save new or update
+		AV.Object.saveAll(avObjects).then(function(){
+			alert('sync success');
+		},function(error){
+			alert(error.message);
+		});
+	};
+	
+	//------------------------------------------------------------
 	this.saveCurrentRoutineMarkers=function(markers,ovMarkers){
 		
 		
@@ -1306,8 +1418,28 @@ function ModelRoutine(id){
 		}
 		var markers=this.getMarkers();
 		for(var j in markers){
-			markers[i].isDelete=true;
+			markers[j].isDelete=true;
 		}
+	};
+	
+	this.toOvMarkersJSONs=function(){
+		var results=[];
+		for(var i in this.ovMarkers){
+			var object=this.ovMarkers[i].toJSONObject();
+			object.routineId=this.id;
+			results.push(object);
+		}
+		return results;
+	};
+	
+	this.toMarkersJSONs=function(){
+		var results=[];
+		for(var i in this.markers){
+			var object=this.markers[i].toJSONObject();
+			object.routineId=this.id;
+			results.push(object);
+		}
+		return results;
 	};
 	
 	this.getOvMarkers=function(){
@@ -1317,7 +1449,7 @@ function ModelRoutine(id){
 				results.push(this.ovMarkers[i]);
 			}
 		}
-		return results
+		return results;
 	};
 	
 	this.getMarkers=function(){
@@ -1327,7 +1459,7 @@ function ModelRoutine(id){
 				results.push(this.markers[i]);
 			}
 		}
-		return results
+		return results;
 	};
 }
 
@@ -1464,6 +1596,7 @@ function MapMarker(id) {
 			mainPaths : this.mainPaths,
 			offsetX : this.offsetX,
 			offsetY : this.offsetY,
+			needDelete : this.isDelete,
 			isAverage : this.getContent().isAvergeOverViewMarker()
 		};
 

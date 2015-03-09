@@ -137,6 +137,8 @@ function MapController(){
 	};
 	
 	this.showRoutineDetail=function(overviewMarkerId){
+		view.setMapStyle2Default();
+		isInCustomZoom=false;
 		//clean last routine markers
 		if(model.currentRoutineId!=null){
 			var lastMarkers=model.getRoutineById(model.currentRoutineId).getMarkers();
@@ -150,20 +152,25 @@ function MapController(){
 		model.currentRoutineId=routine.id;
 		
 		//show current routine markers, hide ovMarkers and change map style
-		var markers=routine.getMarkers();
-		for(var i in markers){
-			var modelMarker=markers[i];
-			view.addOneMark(modelMarker.content.getLat(),
-					modelMarker.content.getLng(), modelMarker.id);
-			view.changeMarkerIcon(modelMarker.id, modelMarker.content.getIconUrl());
-			view.setMarkerAnimation(modelMarker.id, "DROP");
+		if(routine.isLoadMarkers){
+			var markers=routine.getMarkers();
+			for(var i in markers){
+				var modelMarker=markers[i];
+				view.addOneMark(modelMarker.content.getLat(),
+						modelMarker.content.getLng(), modelMarker.id);
+				view.changeMarkerIcon(modelMarker.id, modelMarker.content.getIconUrl());
+				view.setMarkerAnimation(modelMarker.id, "DROP");
+			}
+		}else{
+			model.loadMarkersByRoutineId(routine.id);
+			routine.isLoadMarkers=true;
 		}
 		
 		view.removeAllOvLines();
 		
 		refreshCluster();
 		
-		view.setMapStyle2Default();
+		
 		
 		var overviewModelMarkers=model.getAllOverviewMarkers();
 		for(var i in overviewModelMarkers){
@@ -171,7 +178,7 @@ function MapController(){
 			viewMarker.hide();
 		}
 		
-		isInCustomZoom=false;
+		
 		
 		/*
 		for(var i in model.getModelMarkers()){
@@ -244,8 +251,10 @@ function MapController(){
 		view.markerInfoDialog.disableEditFunction();
 		view.ovMarkerDialog.disableEditFunction();
 		
-		for(var i in model.getModelMarkers()){
-			var id=model.getModelMarkers()[i].id;
+		var routine=model.getRoutineById(model.currentRoutineId);
+		var markers=routine.getMarkers();
+		for(var i in markers){
+			var id=markers[i].id;
 			view.setMarkerDragable(id, false);
 		}
 		
@@ -256,6 +265,11 @@ function MapController(){
 	}
 	
 	this.startSlideMode=function(){
+		if(model.currentRoutineId==null){
+			alert('Please show one routine first');
+			return;
+		}
+		
 		isSlideMode=true;
 		currentSlideNum=1;
 		
@@ -265,8 +279,10 @@ function MapController(){
 		
 		view.clearMarkerCluster();
 		
-		for(var i in model.getModelMarkers()){
-			var viewMarker=view.getViewOverlaysById(model.getModelMarkers()[i].id);
+		var routine=model.getRoutineById(model.currentRoutineId);
+		var markers=routine.getMarkers();
+		for(var i in markers){
+			var viewMarker=view.getViewOverlaysById(markers[i].id);
 			viewMarker.hide();
 		}
 	};
@@ -283,8 +299,11 @@ function MapController(){
 			
 			view.ovMarkerDialog.enableEditFunction();
 			
-			for(var i in model.getModelMarkers()){
-				var id=model.getModelMarkers()[i].id;
+			var routine=model.getRoutineById(model.currentRoutineId);
+			var markers=routine.getMarkers();
+			
+			for(var i in markers){
+				var id=markers[i].id;
 				view.setMarkerDragable(id, true);
 			}
 			
@@ -293,9 +312,9 @@ function MapController(){
 				view.setMarkerDragable(id, true);
 			}
 			
-			for(var i in model.getModelMarkers()){
-				var viewMarker=view.getViewOverlaysById(model.getModelMarkers()[i].id);
-				if(model.getModelMarkers()[i].isSubMarker()){
+			for(var i in markers){
+				var viewMarker=view.getViewOverlaysById(markers[i].id);
+				if(markers[i].isSubMarker()){
 					viewMarker.hide();
 				}else{
 					viewMarker.show();
@@ -309,8 +328,10 @@ function MapController(){
 	this.prevSlide=function(){
 		if(isSlideMode){
 			//hide current slide num and prev slide num
-			for(var i in model.getModelMarkers()){
-				var modelMarker=model.getModelMarkers()[i];
+			var markers=model.getRoutineById(model.currentRoutineId).getMarkers();
+			
+			for(var i in markers){
+				var modelMarker=markers[i];
 				if(modelMarker.content.getSlideNum()==currentSlideNum-1 || modelMarker.content.getSlideNum()==currentSlideNum-2){
 					var viewMarker=view.getViewOverlaysById(modelMarker.id);
 					viewMarker.hide();
@@ -345,15 +366,17 @@ function MapController(){
 	}
 	
 	this.mapClickEventHandler=function(){
-		if(isSlideMode && !view.isInCustomZoom()){
-			if(currentSlideNum>model.getModelMarkers().length){
+		if(isSlideMode && !isInCustomZoom){
+			var markers=model.getRoutineById(model.currentRoutineId).getMarkers();
+			
+			if(currentSlideNum>markers.length){
 				return;
 			}
 			
 			var markerIdsNeed2Show=[];
 			
-			for(var i in model.getModelMarkers()){
-				var modelMarker=model.getModelMarkers()[i];
+			for(var i in markers){
+				var modelMarker=markers[i];
 				if(modelMarker.content.getSlideNum()==currentSlideNum && (!modelMarker.isSubMarker())){
 					markerIdsNeed2Show.push(modelMarker.id);
 				}
@@ -401,7 +424,9 @@ function MapController(){
 		}
 	};
 	
-	this.change2CustomStyle=function(){		
+	this.change2CustomStyle=function(){
+		isInCustomZoom=true;
+		
 		$.publish('updateOvLines');
 			
 		view.clearMarkerCluster();
@@ -422,7 +447,7 @@ function MapController(){
 			}
 		}
 		
-		isInCustomZoom=true;
+		
 	};
 	
 	this.change2DefaultStyle=function(){
@@ -584,7 +609,12 @@ function MapController(){
 		dialog.show();
 		
 		view.markerEditDialog.setTitle(content.getTitle());
-		view.markerEditDialog.setMaxSlideNum(model.getModelMarkers().length);
+		if(model.isOvMarker(markerId)){
+			view.markerEditDialog.setMaxSlideNum(1);
+		}else{
+			var routine=model.getRoutineById(markerId);
+			view.markerEditDialog.setMaxSlideNum(routine.getMarkers().length);
+		}
 		view.markerEditDialog.setSlideNum(content.getSlideNum());
 		view.markerEditDialog.setDesc(content.getMycomment(true));
 		view.markerEditDialog.setUrls(content.getImgUrls());
@@ -860,6 +890,9 @@ function MapController(){
 	function loadAllOvMarkersByUserId(userId){
 		//todo: resetId
 		model.loadAllOverviewRoutine(userId,function(isUserOwnRoutine){
+			isUserOwnThisRoutine=isUserOwnRoutine;
+			$.publish('updateOvLines');
+			/*
 			var firstOvMarker=model.getAllOverviewMarkers()[0];
 			if(firstOvMarker!=null){
 				view.fitBoundsByIds([firstOvMarker.id]);
@@ -878,6 +911,7 @@ function MapController(){
 					disableEditFunction();
 				},100);
 			}
+			*/
 		});
 	}
 	
@@ -919,7 +953,10 @@ function MapController(){
 	};
 	
 	this.sync=function(){
-		model.sync2Cloud();
+		model.sync2Cloud(function(){
+			self.change2CustomStyle();
+			self.loadRoutines();
+		});
 	};
 	
 	this.searchMarkerClick=function(SearchMarkerinfo){
@@ -982,10 +1019,12 @@ function MapController(){
 	
 	this.createViewMarker=function(){
 		return function(_,modelMarker){
-			view.addOneMark(modelMarker.content.getLat(),
-							modelMarker.content.getLng(), modelMarker.id);
-			view.changeMarkerIcon(modelMarker.id, modelMarker.content.getIconUrl());
-			view.setMarkerAnimation(modelMarker.id, "DROP");
+			if(!isInCustomZoom){
+				view.addOneMark(modelMarker.content.getLat(),
+						modelMarker.content.getLng(), modelMarker.id);
+				view.changeMarkerIcon(modelMarker.id, modelMarker.content.getIconUrl());
+				view.setMarkerAnimation(modelMarker.id, "DROP");
+			}
 		};
 	};
 	
@@ -1001,7 +1040,6 @@ function MapController(){
 			}
 			
 			view.changeMarkerIcon(modelMarker.id, modelMarker.content.getIconUrl());
-			
 		};
 	};
 	
@@ -1036,16 +1074,17 @@ function MapController(){
 	
 	this.updateOvLines=function(){
 		return function(_){
-			if(view.isInCustomZoom()){
+			if(isInCustomZoom){
 				view.removeAllOvLines();
 				var modelRoutines=model.getModelRoutines();
 				for(var i in modelRoutines){
 					var modelRoutine=modelRoutines[i];
-					if(modelRoutine.ovMarkers.length>0){
+					var ovMarkers=modelRoutine.getOvMarkers();
+					if(ovMarkers.length>0){
 						var from={lat:modelRoutine.getContent().getLat(),
 								lng:modelRoutine.getContent().getLng()};
-						for(var j in modelRoutine.ovMarkers){
-							var ovMarker=modelRoutine.ovMarkers[j];
+						for(var j in ovMarkers){
+							var ovMarker=ovMarkers[j];
 							var to={lat:ovMarker.getContent().getLat(),
 									lng:ovMarker.getContent().getLng()};
 							view.drawOvLine(from, to);

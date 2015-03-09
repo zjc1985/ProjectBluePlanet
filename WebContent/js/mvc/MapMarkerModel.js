@@ -46,7 +46,51 @@ function MapMarkerModel() {
 
 	var backendManager = new BackendManager();
 	
-	this.sync2Cloud=function(){
+	this.resetModels = function() {
+		modelRoutines=[];
+		backendManager.reset();
+	};
+	
+	this.loadMarkersByRoutineId=function(routineId){
+		backendManager.fetchMarkersByRoutineId(routineId, function(markerContents){
+			for(var i in markerContents){
+				self.createOneMarker(markerContents[i].id, markerContents[i], routineId);
+			}
+			
+		});
+	};
+	
+	this.loadAllOverviewRoutine = function(userId,successCallback) {
+		allOverviewMarkers = new Array();
+
+		backendManager.getCurrentUser(function(currentUser){
+			if(userId==null){
+				backendManager.fetchOverviewRoutinesByUser(currentUser, function(routineJSON,ovMarkersJSON){
+					self.createModelRoutineByGivenId(routineJSON, ovMarkersJSON);
+					successCallback(true);
+				});
+			}else{
+				backendManager.fetchUserByUserId(userId, function(user){
+					if(user!=null){
+						fetchOverviewRoutinesByUser(user,function(){
+							if(user.id==currentUser.id){
+								//current user own these routines
+								successCallback(true);
+							}else{
+								successCallback(false);
+							}
+						});
+					}else{
+						fetchOverviewRoutinesByUser(currentUser,function(){
+							successCallback(true);
+						});
+					}
+				});
+			};
+		});
+	};
+	
+	this.sync2Cloud=function(successCallback){
 		
 		backendManager.getCurrentUser(function(user){
 			var routineJSONs=[];
@@ -58,7 +102,9 @@ function MapMarkerModel() {
 			}
 			backendManager.saveRoutines(routineJSONs,user);
 			
-			backendManager.sync(); 
+			backendManager.sync(function(){
+				successCallback();
+			}); 
 			
 			for ( var i = 0; i < modelRoutines.length; i++) {
 				if (modelRoutines[i].isDelete==true) {
@@ -365,11 +411,7 @@ function MapMarkerModel() {
 		});
 	};
 
-	this.resetModels = function() {
-		marks = new Array();
-		currentOverviewMarkers = new Array();
-		allOverviewMarkers = new Array();
-	};
+	
 
 	this.getModelMarkers = function() {
 		var results=[];
@@ -429,34 +471,7 @@ function MapMarkerModel() {
 		});
 	};
 
-	this.loadAllOverviewRoutine = function(userId,successCallback) {
-		allOverviewMarkers = new Array();
-
-		backendManager.getCurrentUser(function(currentUser){
-			if(userId==null){
-				fetchOverviewRoutinesByUser(currentUser,function(){
-					successCallback(true);
-				});
-			}else{
-				backendManager.fetchUserByUserId(userId, function(user){
-					if(user!=null){
-						fetchOverviewRoutinesByUser(user,function(){
-							if(user.id==currentUser.id){
-								//current user own these routines
-								successCallback(true);
-							}else{
-								successCallback(false);
-							}
-						});
-					}else{
-						fetchOverviewRoutinesByUser(currentUser,function(){
-							successCallback(true);
-						});
-					}
-				});
-			};
-		});
-	};
+	
 	
 	function fetchOverviewRoutinesByUser(user,successCallback){
 		backendManager.fetchOverviewRoutinesByUser(user, function(
@@ -826,6 +841,10 @@ function BackendManager() {
 		return null;
 	};
 	
+	this.reset=function(){
+		avObjects=[];
+	}
+	
 	this.saveMarkers=function(jsons){
 		for(var i in jsons){
 			
@@ -926,7 +945,7 @@ function BackendManager() {
 		}
 	};
 	
-	this.sync=function(){
+	this.sync=function(successCallback){
 		//delete
 		var avObjectsNeed2Delete=[];
 		for ( var i = 0; i < avObjects.length; i++) {
@@ -944,8 +963,33 @@ function BackendManager() {
 		//save new or update
 		AV.Object.saveAll(avObjects).then(function(){
 			alert('sync success');
+			successCallback();
 		},function(error){
 			alert(error.message);
+		});
+	};
+	
+	this.fetchMarkersByRoutineId=function(routineId,successCallback){
+		var query=new AV.Query(AVMarker);
+		query.equalTo("routineId",routineId);
+		query.find().then(function(avMarkers){
+			var markersJSON=[];
+			for(var i in avMarkers){
+				var avMarker=avMarkers[i];
+				avObjects.push(avMarker);
+				var markerContent={
+					id: avMarker.get('uuid'),
+					title:avMarker.get('title'),
+					mycomment:avMarker.get('mycomment'),
+					iconUrl:avMarker.get('iconUrl'),
+					lat:avMarker.get('location').toJSON().latitude,
+					lng:avMarker.get('location').toJSON().longitude,
+					slideNum:avMarker.get('slideNum'),
+					imgUrls:JSON.parse(avMarker.get('imgUrls')),
+				};
+				markersJSON.push(markerContent);
+			}
+			successCallback(markersJSON);
 		});
 	};
 	
@@ -955,7 +999,30 @@ function BackendManager() {
 		query.find().then(function(avRoutines){
 			for(var i in avRoutines){
 				fetchOvMarkersByRoutineId(avRoutines[i]).then(function(routine,ovMarkers){
-					successCallback(routine,ovMarkers);
+					avObjects.push(routine);
+					
+					var routineJSON={
+							id:routine.get('uuid'),
+							title:routine.get('title'),
+							mycomment:routine.get('description'),
+							lat:routine.get('location').toJSON().latitude,
+							lng:routine.get('location').toJSON().longitude
+					};
+					
+					var ovMarkersJSON=[];
+					for(var i in ovMarkers){
+						avObjects.push(ovMarkers[i]);
+						ovMarkersJSON.push({
+							id:ovMarkers[i].get('uuid'),
+							title: ovMarkers[i].get('title'),
+							mycomment:ovMarkers[i].get('mycomment'),
+							iconUrl:ovMarkers[i].get('iconUrl'),
+							lat:ovMarkers[i].get('location').toJSON().latitude,
+							lng:ovMarkers[i].get('location').toJSON().longitude
+						});
+					}
+					
+					successCallback(routineJSON,ovMarkersJSON);
 				});				
 			}
 		});
@@ -1482,6 +1549,8 @@ function ModelRoutine(id){
 	
 	this.ovMarkers=[];
 	this.markers=[];
+	
+	this.isLoadMarkers=false;
 	
 	this.addMarker=function(marker){
 		this.markers.push(marker);

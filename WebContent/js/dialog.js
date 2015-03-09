@@ -2,6 +2,11 @@ function NavBar(id){
 	this.saveLinkClick=function(handler){
 		$('#'+id).find('.saveLink').click(handler);
 	};
+	
+	this.toCustomStyleClick=function(handler){
+		$('#'+id).find('.toCustomStyle').click(handler);
+	};
+	
 	this.startSlideClick=function(handler){
 		$('#'+id).find('.startSlideLink').click(handler);
 	};

@@ -247,6 +247,9 @@ function GoogleMapView(oneController) {
 				mycomment:'New Routine'
 			});
 		});
+		this.navBar.toCustomStyleClick(function(){
+			controller.change2CustomStyle();
+		});
 		this.navBar.saveLinkClick(function(){
 			controller.sync();
 		});

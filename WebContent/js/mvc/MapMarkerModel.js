@@ -120,7 +120,7 @@ function MapMarkerModel() {
 					}
 				}
 				
-				for(var k=0;k<modelRoutines[i].ovMarkers.length;k++){
+				for(var k=0;k<modelRoutines[i].markers.length;k++){
 					if(modelRoutines[i].markers[k].isDelete==true){
 						modelRoutines[i].markers.splice(k,1);
 						k--;
@@ -168,6 +168,7 @@ function MapMarkerModel() {
 		content.iconUrl='resource/icons/default/default_default.png';
 		var ovMarker=self.createOverviewMarker(ovMarkerId, content, modelRoutineId);
 		marker.ovMarkers.push(ovMarker);
+		return modelRoutineId;
 	};
 	
 	this.createModelRoutineByGivenId=function(routineObject,ovMarkerObjects){
@@ -1017,6 +1018,8 @@ function BackendManager() {
 							title: ovMarkers[i].get('title'),
 							mycomment:ovMarkers[i].get('mycomment'),
 							iconUrl:ovMarkers[i].get('iconUrl'),
+							offsetX:ovMarkers[i].get('offsetX'),
+							offsetY:ovMarkers[i].get('offsetY'),
 							lat:ovMarkers[i].get('location').toJSON().latitude,
 							lng:ovMarkers[i].get('location').toJSON().longitude
 						});
@@ -1668,10 +1671,10 @@ function MapMarker(id) {
 	};
 
 	this.updateOffset = function(x, y) {
-		console.log("id " + this.id + " modelMarker.updateOffset: " + x + " "
-				+ y);
-		this.offsetX = x;
-		this.offsetY = y;
+		if(x!=null && y!=null){
+			this.offsetX = x;
+			this.offsetY = y;
+		}
 	};
 
 	this.canAddSubMarker = function(marker) {

@@ -108,8 +108,10 @@ function MapController(){
 		}
 	};
 	
-	this.createRoutine=function(content){
-		model.createModelRoutine(content);
+	this.newRoutineBtnClick=function(content){
+		var routineId=model.createModelRoutine(content);
+		self.showRoutineDetail(routineId);
+		alert('routine created. now you can add this marker now~');
 	};
 	
 	this.addOvMarker=function(content,belongId){
@@ -475,23 +477,43 @@ function MapController(){
 		isInCustomZoom=false;
 	};
 	
+	function adjustLocationByOffset(idParent,idSub){
+		var parentViewMarker=view.getViewOverlaysById(idParent);
+		var parentPoint=view.fromLatLngToPixel(parentViewMarker.getLatLng());
+		var newPoint=parentPoint;
+		var modelMarker=model.getMapMarkerById(idSub);
+		newPoint.x=newPoint.x+modelMarker.offsetX;
+		newPoint.y=newPoint.y+modelMarker.offsetY;
+		var newlatlng=view.fromPixelToLatLng(newPoint);
+		console.log("calculate newlatlng "+newlatlng);
+		modelMarker.getContent().updateContent(newlatlng);
+	}
+	
 	this.zoomEventHandler=function(){
 		console.log("current zoom:"+view.getZoom());
-		//update all subMarker lat lng according to offsets with its parent marker
-		for(var i in model.getModelMarkers()){
-			var modelMarker=model.getModelMarkers()[i];
-			if(modelMarker.isSubMarker()){
-				var parentViewMarker=view.getViewOverlaysById(modelMarker.parentSubMarker.id);
-				var parentPoint=view.fromLatLngToPixel(parentViewMarker.getLatLng());
-				var newPoint=parentPoint;
-				newPoint.x=newPoint.x+modelMarker.offsetX;
-				newPoint.y=newPoint.y+modelMarker.offsetY;
-				var newlatlng=view.fromPixelToLatLng(newPoint);
-				console.log("calculate newlatlng "+newlatlng);
-				modelMarker.content.updateContent(newlatlng);
+		
+		if(isInCustomZoom){
+			//update ovMarker offset
+			var routines=model.getModelRoutines();
+			for(var i in routines){
+				var eachRoutine=routines[i];
+				var ovMarkers=eachRoutine.getOvMarkers();
+				for(var i in ovMarkers){
+					adjustLocationByOffset(eachRoutine.id,ovMarkers[i].id);
+				}
+			}
+			$.publish("updateOvLines");
+		}else{
+			//update all subMarker lat lng according to offsets with its parent marker
+			for(var i in model.getModelMarkers()){
+				var modelMarker=model.getModelMarkers()[i];
+				if(modelMarker.isSubMarker()){				
+					adjustLocationByOffset(modelMarker.parentSubMarker.id,
+							modelMarker.id);
+				}
 			}
 		}
-		
+				
 		/*
 		if(view.isInCustomZoom()){
 			if(!isInCustomZoom){
@@ -784,8 +806,13 @@ function MapController(){
 	
 	//overview marker drag event
 	this.viewMarkerDragendEventHandler=function(id,lat,lng){
-		var viewMarker=model.getMapMarkerById(id);
-		viewMarker.content.updateContent({lat:lat,lng:lng});
+		var ovMarker=model.getMapMarkerById(id);
+		
+		//update offset
+		var routine=model.getRoutineById(id);
+		var offsetResult=calculateOffset(routine.id,id);
+		ovMarker.updateOffset(offsetResult.offsetX,offsetResult.offsetY);		
+		ovMarker.getContent().updateContent({lat:lat,lng:lng});
 		$.publish('updateOvLines');
 	};
 	
@@ -795,6 +822,7 @@ function MapController(){
 		//update lat lng
 		modelMarker.content.updateContent({lat:lat,lng:lng});
 		
+		//gen centre location of the routine
 		var routine=model.getRoutineById(id);
 		routine.updateLocation();
 		
@@ -891,27 +919,7 @@ function MapController(){
 		//todo: resetId
 		model.loadAllOverviewRoutine(userId,function(isUserOwnRoutine){
 			isUserOwnThisRoutine=isUserOwnRoutine;
-			$.publish('updateOvLines');
-			/*
-			var firstOvMarker=model.getAllOverviewMarkers()[0];
-			if(firstOvMarker!=null){
-				view.fitBoundsByIds([firstOvMarker.id]);
-			}
-			
-			view.setMapZoom(5);
-			
-			self.zoomEventHandler();
-			
-			console.log('isUserOwnThisRoutine: '+isUserOwnRoutine);
-			
-			isUserOwnThisRoutine=isUserOwnRoutine;
-						
-			if(!isUserOwnThisRoutine){
-				setTimeout(function(){
-					disableEditFunction();
-				},100);
-			}
-			*/
+			self.zoomEventHandler();	
 		});
 	}
 	

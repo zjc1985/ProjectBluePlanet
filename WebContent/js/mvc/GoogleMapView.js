@@ -10,6 +10,7 @@ function GoogleMapView(oneController) {
 	this.navBar=null;
 	this.uploadImgModal=null;
 	this.searchPickRoutineBoard=null;
+	this.createRoutineModal=null
 	
 	this.currentMarkerId = -1;
 
@@ -201,6 +202,16 @@ function GoogleMapView(oneController) {
 	};
 
 	this.createView = function() {
+		this.createRoutineModal=new createRoutineModal('createNewRoutineModal');
+		this.createRoutineModal.confirmClick(function(){
+			controller.newRoutineBtnClick({
+				lat:self.getCenter().lat,
+				lng:self.getCenter().lng,
+				title:self.createRoutineModal.getTitle(),
+				mycomment:self.createRoutineModal.getDesc()
+			});
+		});
+		
 		this.searchPickRoutineBoard=new PickRoutineModal('pickRoutineModal');
 		this.searchPickRoutineBoard.confirmClick(function(){
 			var routineId=self.searchPickRoutineBoard.getRoutineNameSelect().value;
@@ -240,12 +251,14 @@ function GoogleMapView(oneController) {
 		
 		this.navBar=new NavBar('myNavBar');
 		this.navBar.createRoutineClick(function(){
+			/*
 			controller.createRoutine({
 				lat:self.getCenter().lat,
 				lng:self.getCenter().lng,
 				title:'New Routine',
 				mycomment:'New Routine'
 			});
+			*/
 		});
 		this.navBar.toCustomStyleClick(function(){
 			controller.change2CustomStyle();

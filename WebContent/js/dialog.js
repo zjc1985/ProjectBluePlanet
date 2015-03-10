@@ -160,6 +160,26 @@ function PickRoutineModal(id){
 	};
 }
 
+function createRoutineModal(id){
+	this.setTitle=function(str){
+		$('#'+id).find('.editTitle').val(str);	
+	};
+	this.getTitle=function(){
+		return $('#'+id).find('.editTitle').val();
+	};
+	
+	this.setDesc=function(str){
+		$('#'+id).find('.editDesc').val(str);	
+	};
+	this.getDesc=function(){
+		return $('#'+id).find('.editDesc').val();
+	};
+	
+	this.confirmClick=function(handler){
+		$("#"+id).find(".editConfirmBtn").click(handler);
+	};
+}
+
 function MarkerEditor(id){
 	
 	this.confirmClick=function(handler){

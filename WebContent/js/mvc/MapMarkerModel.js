@@ -51,12 +51,14 @@ function MapMarkerModel() {
 		backendManager.reset();
 	};
 	
-	this.loadMarkersByRoutineId=function(routineId){
+	this.loadMarkersByRoutineId=function(routineId,successCallback){
 		backendManager.fetchMarkersByRoutineId(routineId, function(markerContents){
+			var markers=[];
 			for(var i in markerContents){
-				self.createOneMarker(markerContents[i].id, markerContents[i], routineId);
+				var marker= self.createOneMarker(markerContents[i].id, markerContents[i], routineId);
+				markers.push(marker);
 			}
-			
+			successCallback(markers);
 		});
 	};
 	
@@ -243,8 +245,11 @@ function MapMarkerModel() {
 			// unconnect all sub marker
 			modelMarker.disconnectAllTreeChildMarker();
 
-			var marker=self.getMapMarkerById(id);
-			marker.isDelete=true;
+			var routine=self.getRoutineById(id);
+			
+			modelMarker.isDelete=true;
+				
+			routine.updateLocation();
 
 			if (needDeleteAttackedImg) {
 				var imgUrls = modelMarker.content.getImgUrls();

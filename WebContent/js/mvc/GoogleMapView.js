@@ -10,7 +10,7 @@ function GoogleMapView(oneController) {
 	this.navBar=null;
 	this.uploadImgModal=null;
 	this.searchPickRoutineBoard=null;
-	this.createRoutineModal=null
+	this.createRoutineModal=null;
 	
 	this.currentMarkerId = -1;
 
@@ -172,14 +172,16 @@ function GoogleMapView(oneController) {
 	};
 	
 	this.fitBoundsByIds=function(ids){
-		var bounds = new google.maps.LatLngBounds();
-		for ( var i in ids) {
-			var overlay=self.getViewOverlaysById(ids[i]);	
-			if (overlay instanceof google.maps.Marker) {
-				bounds.extend(overlay.getPosition());
+		if(ids.length>0){
+			var bounds = new google.maps.LatLngBounds();
+			for ( var i in ids) {
+				var overlay=self.getViewOverlaysById(ids[i]);	
+				if (overlay instanceof google.maps.Marker) {
+					bounds.extend(overlay.getPosition());
+				}
 			}
+			map.fitBounds(bounds);
 		}
-		map.fitBounds(bounds);
 	};
 
 	this.panByIds = function(ids) {
@@ -244,6 +246,10 @@ function GoogleMapView(oneController) {
 			cleanSearchMarkers();
 		});
 		
+		this.searchMarkerModal.copyMarkerBtnClick(function(){
+			controller.searchCopyMarkerBtnClick();
+		});
+		
 		this.uploadImgModal = new UploadImageModal('uploadImageModal');
 		this.uploadImgModal.addChangeCallBack(function(imageBase64String, lat, lon,fileName) {
 			controller.uploadImgs(imageBase64String, lat, lon,fileName);
@@ -261,7 +267,7 @@ function GoogleMapView(oneController) {
 			*/
 		});
 		this.navBar.toCustomStyleClick(function(){
-			controller.change2CustomStyle();
+			controller.toCustomStyleBtnClick();
 		});
 		this.navBar.saveLinkClick(function(){
 			controller.sync();
@@ -749,7 +755,7 @@ function GoogleMapView(oneController) {
 		console.log('view.setMapStyle2Default');
 		var defaultStyle=[];
 		map.setOptions({styles: defaultStyle});
-	}
+	};
 	
 	this.setMapStyle2Custom=function(){
 		console.log('view.setMapStyle2Custom');

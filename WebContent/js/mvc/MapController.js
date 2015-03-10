@@ -82,6 +82,27 @@ function MapController(){
 		
 	};
 	
+	this.toCustomStyleBtnClick=function(){
+		self.change2CustomStyle();
+		if(model.currentRoutineId!=null){
+			var currentRoutine=model.getRoutineById(model.currentRoutineId);
+			view.panByIds([currentRoutine.id]);
+		}
+	};
+	
+	this.searchCopyMarkerBtnClick=function(){
+		var items=[];
+		var routines=model.getModelRoutines();
+		for(var i in routines){
+			items.push({
+				value:routines[i].id,
+				name: routines[i].getContent().getTitle()
+			});
+		}
+		view.searchPickRoutineBoard.setDropDownItems(items);
+		view.searchPickRoutineBoard.show();
+	};
+	
 	this.editFormDeleteClick=function(id){
 		if(model.isOvMarker(id)){
 			self.deleteRoutine(id);
@@ -154,17 +175,26 @@ function MapController(){
 		model.currentRoutineId=routine.id;
 		
 		//show current routine markers, hide ovMarkers and change map style
+		var ids=[];
 		if(routine.isLoadMarkers){
 			var markers=routine.getMarkers();
+			
 			for(var i in markers){
 				var modelMarker=markers[i];
+				ids.push(modelMarker.id);
 				view.addOneMark(modelMarker.content.getLat(),
 						modelMarker.content.getLng(), modelMarker.id);
 				view.changeMarkerIcon(modelMarker.id, modelMarker.content.getIconUrl());
 				view.setMarkerAnimation(modelMarker.id, "DROP");
 			}
+			view.fitBoundsByIds(ids);
 		}else{
-			model.loadMarkersByRoutineId(routine.id);
+			model.loadMarkersByRoutineId(routine.id,function(loadMarkers){
+				for(var i in loadMarkers){
+					ids.push(loadMarkers[i].id);
+				}
+				view.fitBoundsByIds(ids);
+			});
 			routine.isLoadMarkers=true;
 		}
 		
@@ -449,32 +479,7 @@ function MapController(){
 			}
 		}
 		
-		
-	};
-	
-	this.change2DefaultStyle=function(){
-		if(isInCustomZoom){
-			view.removeAllOvLines();
-			
-			refreshCluster();
-			
-			view.setMapStyle2Default();
-			
-			var overviewModelMarkers=model.getAllOverviewMarkers();
-			for(var i in overviewModelMarkers){
-				var viewMarker=view.getViewOverlaysById(overviewModelMarkers[i].id);
-				viewMarker.hide();
-			}
-			
-			var modelMarkers=model.getModelMarkers();
-			for(var i in modelMarkers){
-				if(!modelMarkers[i].isSubMarker()){
-					var viewMarker=view.getViewOverlaysById(modelMarkers[i].id);
-					viewMarker.show();
-				}
-			}
-		}
-		isInCustomZoom=false;
+		self.zoomEventHandler();
 	};
 	
 	function adjustLocationByOffset(idParent,idSub){
@@ -903,10 +908,14 @@ function MapController(){
 		//add cluster logic
 		
 		var ids=new Array();
-		for(var i in model.getModelMarkers()){
-			var modelMarker=model.getModelMarkers()[i];
-			if(!modelMarker.isSubMarker()){
-				ids.push(modelMarker.id);
+		if(model.currentRoutineId!=null){
+			var markers=model.getRoutineById(model.currentRoutineId).getMarkers();
+			
+			for(var i in markers){
+				var modelMarker=markers[i];
+				if(!modelMarker.isSubMarker()){
+					ids.push(modelMarker.id);
+				}
 			}
 		}
 		

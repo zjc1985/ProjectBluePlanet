@@ -127,6 +127,15 @@ function PickRoutineModal(id){
 		return $('#'+id).find('.editDesc').val();
 	};
 	
+	this.show=function(){
+		$('#'+id).modal('show');
+	};
+	
+	this.hide=function(){
+		$('#'+id).modal('hide');
+	};
+	
+	
 	this.setDropDownItems=function(items){
 		$('#'+id).find('.dropdown-menu').empty();
 		$('#'+id).find('.dropdown-menu').append("<li><a id='default' href='#'>Create New</a></li>");

@@ -160,6 +160,10 @@ function MapController(){
 	};
 	
 	this.showRoutineDetail=function(overviewMarkerId){
+		view.navBar.showCreateMarkerBtn();
+		view.navBar.showCreateMarkerWithImageBtn();
+		view.navBar.hideCreateRoutineBtn();
+		view.navBar.showSlideDropDown();
 		view.setMapStyle2Default();
 		isInCustomZoom=false;
 		//clean last routine markers
@@ -479,6 +483,10 @@ function MapController(){
 			}
 		}
 		
+		view.navBar.hideCreateMarkerBtn();
+		view.navBar.hideCreateMarkerWithImageBtn();
+		view.navBar.hideSlideDropDown();
+		view.navBar.showCreateRoutineBtn();
 		self.zoomEventHandler();
 	};
 	
@@ -647,11 +655,19 @@ function MapController(){
 		view.markerEditDialog.setUrls(content.getImgUrls());
 		
 		var items=[];
-		items.push({url:"resource/icons/default/default_default.png",name:"default"});
-		items.push({url:"resource/icons/default/center_default.png",name:"point"});
-		items.push({url:"resource/icons/sight/sight_default.png",name:"sight default"});
-		items.push({url:"resource/icons/sight/sight_star.png",name:"sight star"});
-		items.push({url:"resource/icons/event/event_default.png",name:"event default"});		
+		if(isInCustomZoom){
+			items.push({url:"resource/icons/overview/overview_bear.png",name:"bear"});
+			items.push({url:"resource/icons/overview/overview_photo.png",name:"photo"});
+			items.push({url:"resource/icons/overview/overview_eiffel.png",name:"eiffel"});
+			items.push({url:"resource/icons/overview/overview_sun.png",name:"sun"});
+		}else{
+			items.push({url:"resource/icons/default/default_default.png",name:"default"});
+			items.push({url:"resource/icons/default/center_default.png",name:"point"});
+			items.push({url:"resource/icons/sight/sight_default.png",name:"sight default"});
+			items.push({url:"resource/icons/sight/sight_star.png",name:"sight star"});
+			items.push({url:"resource/icons/event/event_default.png",name:"event default"});	
+		}
+			
 		view.markerEditDialog.setDropDownItems(items);
 		view.markerEditDialog.setIconSelect({url:content.getIconUrl(),name:"current Icon"});
 	};

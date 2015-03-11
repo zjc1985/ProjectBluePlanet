@@ -34,6 +34,38 @@ function NavBar(id){
 	this.enableEditFunction=function(){
 		$('#'+id).find('.createNew').find('li').removeClass('disabled');
 	};
+	
+	this.hideCreateMarkerBtn=function(){
+		$('#'+id).find('.createMarkerBtn').addClass('hide');
+	};
+	
+	this.hideCreateMarkerWithImageBtn=function(){
+		$('#'+id).find('.createMarkerWithImageBtn').addClass('hide');
+	};
+	
+	this.hideCreateRoutineBtn=function(){
+		$('#'+id).find('.createRoutineBtn').addClass('hide');
+	};
+	
+	this.showCreateRoutineBtn=function(){
+		$('#'+id).find('.createRoutineBtn').removeClass('hide');
+	};
+	
+	this.showCreateMarkerBtn=function(){
+		$('#'+id).find('.createMarkerBtn').removeClass('hide');
+	};
+	
+	this.showCreateMarkerWithImageBtn=function(){
+		$('#'+id).find('.createMarkerWithImageBtn').removeClass('hide');
+	};
+	
+	this.hideSlideDropDown=function(){
+		$('#'+id).find('.slideDropdown').addClass('hide');
+	};
+	
+	this.showSlideDropDown=function(){
+		$('#'+id).find('.slideDropdown').removeClass('hide');
+	};
 };
 
 function MarkerInfo(id){

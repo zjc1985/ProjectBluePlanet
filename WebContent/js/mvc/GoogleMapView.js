@@ -624,7 +624,7 @@ function GoogleMapView(oneController) {
 			var line = new google.maps.Polyline({
 				path : lineCoordinates,
 				map : map,
-				strokeOpacity : 0.7,
+				strokeOpacity : 0.3,
 				strokeColor : 'black',
 				strokeWeight : 0.6
 			});

@@ -29,10 +29,10 @@ function NavBar(id){
 		$('#'+id).find('.createRoutineBtn').click(handler);
 	};
 	this.disableEditFunction=function(){
-		$('#'+id).find('.createNew').find('li').addClass('disabled');
+		$('#'+id).find('.createDropdown').addClass('hide');
 	};
 	this.enableEditFunction=function(){
-		$('#'+id).find('.createNew').find('li').removeClass('disabled');
+		$('#'+id).find('.createDropdown').removeClass('hide');
 	};
 	
 	this.hideCreateMarkerBtn=function(){

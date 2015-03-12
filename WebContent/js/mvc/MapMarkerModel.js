@@ -74,16 +74,19 @@ function MapMarkerModel() {
 			}else{
 				backendManager.fetchUserByUserId(userId, function(user){
 					if(user!=null){
-						fetchOverviewRoutinesByUser(user,function(){
+						backendManager.fetchOverviewRoutinesByUser(user,function(routineJSON,ovMarkersJSON){
 							if(user.id==currentUser.id){
 								//current user own these routines
+								self.createModelRoutineByGivenId(routineJSON, ovMarkersJSON);
 								successCallback(true);
 							}else{
+								self.createModelRoutineByGivenId(routineJSON, ovMarkersJSON);
 								successCallback(false);
 							}
 						});
 					}else{
-						fetchOverviewRoutinesByUser(currentUser,function(){
+						backendManager.fetchOverviewRoutinesByUser(currentUser,function(routineJSON,ovMarkersJSON){
+							self.createModelRoutineByGivenId(routineJSON, ovMarkersJSON);
 							successCallback(true);
 						});
 					}
@@ -476,24 +479,6 @@ function MapMarkerModel() {
 					successCallback);
 		});
 	};
-
-	
-	
-	function fetchOverviewRoutinesByUser(user,successCallback){
-		backendManager.fetchOverviewRoutinesByUser(user, function(
-				overviewJSONStringArray) {
-			for ( var i in overviewJSONStringArray) {
-				var overviewJSONString = overviewJSONStringArray[i].overviewJSONString;
-				var routineId=overviewJSONStringArray[i].routineId;
-				var overviewMarkerArray = JSON.parse(overviewJSONString);
-				for ( var i in overviewMarkerArray) {
-					self.createOverviewMarker(overviewMarkerArray[i].id,
-							overviewMarkerArray[i],routineId);
-				}
-			}
-			successCallback();
-		});
-	}
 
 	this.loadRoutineByOverviewMarkerId = function(overviewId, successCallback) {
 		marks = new Array();

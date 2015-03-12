@@ -4,37 +4,104 @@
 <meta charset="UTF-8">
 <title>Login</title>
 
+<style type="text/css">
+
+body {
+  padding-top: 40px;
+  padding-bottom: 40px;
+  background-color: #eee;
+}
+
+.form-signin {
+  max-width: 330px;
+  padding: 15px;
+  margin: 0 auto;
+}
+.form-signin .form-signin-heading,
+.form-signin .checkbox {
+  margin-bottom: 10px;
+}
+.form-signin .checkbox {
+  font-weight: normal;
+}
+.form-signin .form-control {
+  position: relative;
+  height: auto;
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+  padding: 10px;
+  font-size: 16px;
+}
+.form-signin .form-control:focus {
+  z-index: 2;
+}
+.form-signin input[type="email"] {
+  margin-bottom: -1px;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+.form-signin input[type="password"] {
+  margin-bottom: 10px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+
+</style>
+
 <!-- jquery -->
 <script src="http://lib.sinaapp.com/js/jquery/1.9.1/jquery-1.9.1.min.js"></script>
 
+<!-- bootstrap -->
+<link rel="stylesheet"
+	href="http://cdn.bootcss.com/bootstrap/3.3.2/css/bootstrap.min.css">
+<script src="http://cdn.bootcss.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+
 <script type="text/javascript" src="js/mvc/MapMarkerModel.js"></script>
 
-<script src="https://cn.avoscloud.com/scripts/lib/av-0.3.1.min.js"></script>
+<script src="https://cn.avoscloud.com/scripts/lib/av-0.5.0.min.js"></script>
 
 </head>
 <body>
 
 
-<p>username: <input type="text" id="username" /></p>
-<p>password: <input type="password" id="password" /></p>
-<button id='login'>login</button>
+	<div class="container">
 
-<div>Please contact me if you have interest: lionhart586@hotmail.com</div>
+		<div class="form-signin">
+			<h2 class="form-signin-heading">Please sign in</h2>
+			<label for="username" class="sr-only">user name</label> 
+			<input id="username" class="form-control" placeholder="user name" required autofocus> 
+			<label for="password" class="sr-only">Password</label> 
+			<input type="password" id="password" class="form-control" placeholder="Password" required>
+			<div class="checkbox">
+				<label> <input type="checkbox" value="remember-me">
+					Remember me
+				</label>
+			</div>
+			<button class="btn btn-lg btn-primary btn-block" id='login'>Sign in</button>
+		</div>
+	</div>
+	<!-- /container -->
+
+	
 
 </body>
 </html>
 
-<script type="text/javascript"> 
+<script type="text/javascript">
+	var backendManager = new BackendManager();
 
-var backendManager=new BackendManager();
-
-$('#login').click(function(){
-	console.log($('#username').val());
-	console.log($('#password').val());
-	backendManager.login($('#username').val(),$('#password').val(),function(user){
-		alert('login success,welcome:'+user.get('username'));
-		window.location.href = 'MapMarkerMVC.html?userId='+user.id;
-	})
-});
-
+	$('#login').click(
+			function() {
+				console.log($('#username').val());
+				console.log($('#password').val());
+				
+				backendManager.login($('#username').val(),
+						$('#password').val(), function(user) {
+							window.location.href = 'myMap.html?userId='
+									+ user.id;
+						})
+				
+			});
 </script>

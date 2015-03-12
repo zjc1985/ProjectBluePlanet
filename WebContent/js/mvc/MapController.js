@@ -192,12 +192,18 @@ function MapController(){
 				view.setMarkerAnimation(modelMarker.id, "DROP");
 			}
 			view.fitBoundsByIds(ids);
+			if(!isUserOwnThisRoutine){
+				disableEditFunction();
+			}
 		}else{
 			model.loadMarkersByRoutineId(routine.id,function(loadMarkers){
 				for(var i in loadMarkers){
 					ids.push(loadMarkers[i].id);
 				}
 				view.fitBoundsByIds(ids);
+				if(!isUserOwnThisRoutine){
+					disableEditFunction();
+				}
 			});
 			routine.isLoadMarkers=true;
 		}
@@ -287,11 +293,13 @@ function MapController(){
 		view.markerInfoDialog.disableEditFunction();
 		view.ovMarkerDialog.disableEditFunction();
 		
-		var routine=model.getRoutineById(model.currentRoutineId);
-		var markers=routine.getMarkers();
-		for(var i in markers){
-			var id=markers[i].id;
-			view.setMarkerDragable(id, false);
+		if(model.currentRoutineId!=null){
+			var routine=model.getRoutineById(model.currentRoutineId);
+			var markers=routine.getMarkers();
+			for(var i in markers){
+				var id=markers[i].id;
+				view.setMarkerDragable(id, false);
+			}
 		}
 		
 		for(var i in model.getAllOverviewMarkers()){
@@ -944,6 +952,14 @@ function MapController(){
 		//todo: resetId
 		model.loadAllOverviewRoutine(userId,function(isUserOwnRoutine){
 			isUserOwnThisRoutine=isUserOwnRoutine;
+			console.log('isUserOwnRoutine:'+isUserOwnThisRoutine);
+			
+			if(!isUserOwnThisRoutine){
+				setTimeout(function(){
+					disableEditFunction();
+				},100);
+			}
+			
 			self.zoomEventHandler();	
 		});
 	}
@@ -953,6 +969,8 @@ function MapController(){
 		model.resetModels();
 		view.resetView();
 		
+		loadAllOvMarkersByUserId(QueryString.userId);
+		/*
 		if(QueryString.routineId!=null){
 			model.fetchUserIdByRoutineId(QueryString.routineId, function(userId){
 				model.loadAllOverviewRoutine(userId,function(isUserOwnRoutine){
@@ -983,6 +1001,7 @@ function MapController(){
 		}else{
 			loadAllOvMarkersByUserId(QueryString.userId);
 		}
+		*/
 	};
 	
 	this.sync=function(){

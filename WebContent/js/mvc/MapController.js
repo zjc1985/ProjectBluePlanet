@@ -45,7 +45,13 @@ function MapController(){
 	
 	var MAX_ZINDEX=200;
 	
-	var routineName="Default Routine";
+	this.isInCustomStyle=function(){
+		return isInCustomZoom;
+	};
+	
+	this.isUserOwn=function(){
+		return isUserOwnThisRoutine;
+	};
 	
 	this.getModel=function(){
 		return model;
@@ -1218,7 +1224,7 @@ function ExploreMapController(){
 	};
 	
 	this.dragendEventHandler=function(){
-		if(!view.isInCustomZoom()){
+		if(!self.isInCustomStyle()){
 			console.log('not in custom zoom level return');
 			return;
 		}
@@ -1231,7 +1237,7 @@ function ExploreMapController(){
 			view.resetView();
 			//drawCenterCircle(zoomLevel,center);
 			//add ovMarkers to new ExploreRange;
-			model.fetchOverviewRoutinesByLatlng(center, function(overviewJSONStringArray){
+			model.fetchOverviewRoutinesByLatlng(center, function(){
 				var newExploreRange=new ExploreRange(zoomLevel,center);
 				newExploreRange.overviewJSONStringArray=overviewJSONStringArray;
 				model.exploreRanges.push(newExploreRange);

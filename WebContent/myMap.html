@@ -465,50 +465,6 @@
 	function searchLocation() {
 		controller.searchLocation(document.getElementById("searchValue").value);
 	}
-	
-	function delay(millis){
-		var promise=new AV.Promise();
-		setTimeout(function(){
-			promise.resolve(['id1','id2','id3','id4']);
-		},millis);
-		return promise;
-	}
-	
-	function handle(name){
-		var promise=new AV.Promise();
-		setTimeout(function(){
-			promise.resolve(name+' handled');
-		},5000);
-		return promise;
-	}
-	
-	$('#myNavBar').find('.test').click(function(){
-		delay(2000).then(function(results){
-			for(var i in results){
-				handle(results[i]).then(function(object){
-					console.log(object);
-				});
-			}
-			
-			/*
-			var promise = AV.Promise.as();
-			
-			results.forEach(function(result){
-				promise = promise.then(function(name) {
-					console.log(name);
-					// Return a promise that will be resolved when the delete is finished.
-					return handle(result);
-				});
-			});
-			
-			return promise;
-			*/
-			
-		}).then(function(){
-			console.log('all handled');
-		});
-	});
-	
 </script>
 
 

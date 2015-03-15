@@ -208,7 +208,7 @@ function MapController(){
 				}
 				view.fitBoundsByIds(ids);
 				if(!isUserOwnThisRoutine){
-					this.disableEditFunction();
+					self.disableEditFunction();
 				}
 			});
 			routine.isLoadMarkers=true;
@@ -641,17 +641,20 @@ function MapController(){
 		
 	this.showInfoClickHandler=function(markerId){
 		
+		var marker=model.getMapMarkerById(markerId);
+		var content=marker.getContent();
+		
 		var dialog;
 		if(model.isOvMarker(markerId)){
 			dialog=view.ovMarkerDialog;
+			var routineMarker=model.getRoutineById(markerId);
+			dialog.setUser(routineMarker.userId, routineMarker.userName);
 		}else{
 			dialog=view.markerInfoDialog;
+			dialog.setSubTitle(content.getSlideNum());
 		}
 		
-		var content=model.getMarkerContentById(markerId);
-		
 		dialog.setTitle(content.getTitle());
-		dialog.setSubTitle(content.getSlideNum());
 		dialog.setDescription(content.getMycomment(true));
 		dialog.setImageSlider(content.getImgUrls());
 		
@@ -962,7 +965,7 @@ function MapController(){
 			
 			if(!isUserOwnThisRoutine){
 				setTimeout(function(){
-					this.disableEditFunction();
+					self.disableEditFunction();
 				},100);
 			}
 			

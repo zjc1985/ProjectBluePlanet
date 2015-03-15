@@ -177,6 +177,8 @@ function MapMarkerModel() {
 	this.createModelRoutineByGivenId=function(routineObject,ovMarkerObjects){
 		var modelRoutineId=routineObject.id;
 		var marker = new ModelRoutine(modelRoutineId);
+		marker.userId=routineObject.userId;
+		marker.userName=routineObject.userName;
 		routineObject.iconUrl='resource/icons/overview/overview_point.png';
 		$.publish('createModelRoutine', [ marker,routineObject ]);
 
@@ -985,6 +987,7 @@ function BackendManager() {
 	this.fetchOverviewRoutinesByLatlng=function(location, successCallback){
 		var locationPoint=new AV.GeoPoint({latitude: location.lat, longitude: location.lng});
 		var query=new AV.Query(Routine);
+		query.include("user");
 		query.near('location',locationPoint);
 		query.limit(10);
 		query.find({
@@ -994,10 +997,13 @@ function BackendManager() {
 					
 					for(var i in results){
 						var routine=results[i].avRoutine;
+						var user=routine.get("user");
 						var ovMarkers=results[i].avOvMarkers;
 						avObjects.push(routine);
 						
 						var routineJSON={
+								userId:user.id,
+								userName:user.get('username'),
 								id:routine.get('uuid'),
 								title:routine.get('title'),
 								mycomment:routine.get('description'),
@@ -1045,6 +1051,8 @@ function BackendManager() {
 					avObjects.push(routine);
 					
 					var routineJSON={
+							userId:user.id,
+							userName:user.get('username'),
 							id:routine.get('uuid'),
 							title:routine.get('title'),
 							mycomment:routine.get('description'),
@@ -1610,6 +1618,9 @@ function ModelRoutine(id){
 	this.markers=[];
 	
 	this.isLoadMarkers=false;
+	
+	this.userId=null;
+	this.userName=null;
 	
 	this.addMarker=function(marker){
 		this.markers.push(marker);

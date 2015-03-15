@@ -147,6 +147,11 @@ function OvMarkerInfo(id){
 	this.copyRoutineBtnClick=function(handler){
 		$("#"+id).find(".copyRoutineBtn").click(handler);
 	};
+	this.setUser=function(userId,userName){
+		$('#'+id).find('.markerInfoSubTitle').empty();
+		var userLink="<a href='myMap.html?userId="+userId+"'>"+userName+"</a>";
+		$('#'+id).find('.markerInfoSubTitle').append(userLink);
+	}
 };
 
 function PickRoutineModal(id){

@@ -199,7 +199,7 @@ function MapController(){
 			}
 			view.fitBoundsByIds(ids);
 			if(!isUserOwnThisRoutine){
-				disableEditFunction();
+				this.disableEditFunction();
 			}
 		}else{
 			model.loadMarkersByRoutineId(routine.id,function(loadMarkers){
@@ -208,7 +208,7 @@ function MapController(){
 				}
 				view.fitBoundsByIds(ids);
 				if(!isUserOwnThisRoutine){
-					disableEditFunction();
+					this.disableEditFunction();
 				}
 			});
 			routine.isLoadMarkers=true;
@@ -293,7 +293,7 @@ function MapController(){
 		view.searchLocation(key);
 	};
 	
-	function disableEditFunction(){
+	this.disableEditFunction=function(){
 		//hide Edit Function
 		view.navBar.disableEditFunction();
 		view.markerInfoDialog.disableEditFunction();
@@ -312,7 +312,7 @@ function MapController(){
 			var id=model.getAllOverviewMarkers()[i].id;
 			view.setMarkerDragable(id, false);
 		}
-	}
+	};
 	
 	this.startSlideMode=function(){
 		if(model.currentRoutineId==null){
@@ -325,7 +325,7 @@ function MapController(){
 		
 		view.removeAllLines();
 		
-		disableEditFunction();
+		this.disableEditFunction();
 		
 		view.clearMarkerCluster();
 		
@@ -962,7 +962,7 @@ function MapController(){
 			
 			if(!isUserOwnThisRoutine){
 				setTimeout(function(){
-					disableEditFunction();
+					this.disableEditFunction();
 				},100);
 			}
 			
@@ -1214,17 +1214,21 @@ function ExploreMapController(){
 	var zoom6ExploreRange=250000;
 	var zoom7ExploreRange=120000;
 	
+	var self=this;
+	
 	this.init=function(){
 		model=new ExploreMapMarkerModel();
 		view=new ExploreGoogleMapView(this);
 		this.setModel(model);
 		this.setView(view);
-		view.createView();
+		//view.createView();
 		view.createSearchView();
+		this.change2CustomStyle();
+		this.disableEditFunction();
 	};
 	
 	this.dragendEventHandler=function(){
-		if(!self.isInCustomStyle()){
+		if(!this.isInCustomStyle()){
 			console.log('not in custom zoom level return');
 			return;
 		}
@@ -1237,15 +1241,19 @@ function ExploreMapController(){
 			view.resetView();
 			//drawCenterCircle(zoomLevel,center);
 			//add ovMarkers to new ExploreRange;
-			model.fetchOverviewRoutinesByLatlng(center, function(){
+			model.fetchOverviewRoutinesByLatlng(center, function(results){
 				var newExploreRange=new ExploreRange(zoomLevel,center);
-				newExploreRange.overviewJSONStringArray=overviewJSONStringArray;
+				newExploreRange.cachedRoutineResults=results;
 				model.exploreRanges.push(newExploreRange);
+				self.disableEditFunction();
+				self.zoomEventHandler();
 			});	
 			console.log('new explore range added');
 		}else{
 			console.log('find cached explore range');
-			model.createOvMarkersByOverviewJSONStringArray(exploreRange.overviewJSONStringArray);
+			model.handlefetchOverviewRoutinesByUserResults(exploreRange.results);
+			self.disableEditFunction();
+			self.zoomEventHandler();
 		}
 	};
 	

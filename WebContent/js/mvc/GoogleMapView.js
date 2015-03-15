@@ -624,9 +624,9 @@ function GoogleMapView(oneController) {
 			var line = new google.maps.Polyline({
 				path : lineCoordinates,
 				map : map,
-				strokeOpacity : 0.3,
+				strokeOpacity : 0.4,
 				strokeColor : 'black',
-				strokeWeight : 0.6
+				strokeWeight : 0.7
 			});
 			ovLines.push(line);
 	};
@@ -862,6 +862,7 @@ function ExploreGoogleMapView(oneController){
 		});
 		
 		google.maps.event.addListener(this.getMap(), 'dragend', function() {
+			centerMarker.setVisible(false);
 			controller.dragendEventHandler();
 		});
 	};
@@ -874,6 +875,7 @@ function ExploreGoogleMapView(oneController){
 				icon : 'resource/icons/default/center_default.png'
 			});
 		}else{
+			centerMarker.setVisible(true);
 			centerMarker.setPosition(this.getMap().getCenter());
 		}
 	};

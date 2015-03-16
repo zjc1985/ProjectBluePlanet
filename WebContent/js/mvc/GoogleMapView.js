@@ -215,7 +215,12 @@ function GoogleMapView(oneController) {
 			});
 		});
 		
-		this.markerPickRoutineModal=new PickRoutineModel('markerPickRoutineModal');
+		this.markerPickRoutineModal=new PickRoutineModal('markerPickRoutineModal');
+		this.markerPickRoutineModal.confirmClick(function(){	
+			var markerId=self.currentMarkerId;
+			var routineId=self.markerPickRoutineModal.getRoutineNameSelect().value;
+			controller.copyMarker(markerId,routineId);
+		});
 		
 		this.searchPickRoutineBoard=new PickRoutineModal('pickRoutineModal');
 		this.searchPickRoutineBoard.confirmClick(function(){

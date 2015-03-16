@@ -320,6 +320,10 @@ function MapMarkerModel() {
 		backendManager.copyRoutine(routineId);
 	};
 	
+	this.copyMarker2CurrentUser=function(markerId,toRoutineId){
+		backendManager.copyMarker(markerId, toRoutineId);
+	};
+	
 	this.isOvMarker=function(id){
 		var routines=self.getModelRoutines();
 		for(var i in routines){
@@ -1090,8 +1094,8 @@ function BackendManager() {
 			var returnValue=[];
 			for(var i in avRoutines){
 				returnValue.push({
-					routineId:avRoutines[i].id,
-					routineName:avRoutines[i].name
+					routineId:avRoutines[i].get('uuid'),
+					routineName:avRoutines[i].get('title')
 				});
 			}
 			successCallback(returnValue);

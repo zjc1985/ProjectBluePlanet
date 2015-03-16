@@ -144,6 +144,16 @@ function MapController(){
 		}
 	};
 	
+	this.copyMarker=function(markerId,toRoutineId){
+		model.copyMarker2CurrentUser(markerId, toRoutineId);
+		var r=confirm("Copy Complete. Do u want to see your own map?");
+		if(r==true){
+			window.location.href = 'myMap.html';
+		}else{
+			return;
+		}
+	};
+	
 	this.newRoutineBtnClick=function(content){
 		var routineId=model.createModelRoutine(content);
 		self.showRoutineDetail(routineId);

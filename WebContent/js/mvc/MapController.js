@@ -96,6 +96,20 @@ function MapController(){
 		}
 	};
 	
+	this.markerCopyBtnClick=function(){
+		var items=[];
+		model.fetchAllRoutineNameAndId(function(results){
+			for(var i in results){
+				items.push({
+					value:results[i].routineId,
+					name:results[i].routineName
+				});
+			}
+			view.markerPickRoutineModal.setDropDownItems(items);
+			view.markerPickRoutineModal.show();
+		});
+	};
+	
 	this.searchCopyMarkerBtnClick=function(){
 		var items=[];
 		var routines=model.getModelRoutines();
@@ -120,18 +134,13 @@ function MapController(){
 		}
 	};
 	
-	this.copyRoutine=function(ovMarkerId){
-		if(isUserOwnThisRoutine){
-			alert('you have this routine already');
+	this.copyRoutine=function(ovMarkerId){	
+		model.copyRoutine2CurrentUser(ovMarkerId);
+		var r=confirm("Copy Complete. Do u want to see your own map?");
+		if(r==true){
+			window.location.href = 'myMap.html';
 		}else{
-			model.copyRoutine2CurrentUser(ovMarkerId,function(){
-				var r=confirm("Copy Complete. Do u want to see your own map?");
-				if(r==true){
-					window.location.href = 'MapMarkerMVC.html';
-				}else{
-					return;
-				}
-			});
+			return;
 		}
 	};
 	

@@ -11,6 +11,7 @@ function GoogleMapView(oneController) {
 	this.uploadImgModal=null;
 	this.searchPickRoutineBoard=null;
 	this.createRoutineModal=null;
+	this.markerPickRoutineModal=null;
 	
 	this.currentMarkerId = -1;
 
@@ -214,6 +215,8 @@ function GoogleMapView(oneController) {
 			});
 		});
 		
+		this.markerPickRoutineModal=new PickRoutineModel('markerPickRoutineModal');
+		
 		this.searchPickRoutineBoard=new PickRoutineModal('pickRoutineModal');
 		this.searchPickRoutineBoard.confirmClick(function(){
 			var routineId=self.searchPickRoutineBoard.getRoutineNameSelect().value;
@@ -292,6 +295,10 @@ function GoogleMapView(oneController) {
 		});
 			
 		this.markerInfoDialog=new MarkerInfo('MarkerInfoModel');
+		this.markerInfoDialog.copyBtnClick(function(){
+			controller.markerCopyBtnClick();
+		});
+		
 		this.ovMarkerDialog=new OvMarkerInfo('ovMarkerInfoModel');
 		this.ovMarkerDialog.showRoutineDetail(function(){
 			controller.showRoutineDetail(self.currentMarkerId);

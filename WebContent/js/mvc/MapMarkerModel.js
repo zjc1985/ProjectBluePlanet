@@ -61,6 +61,14 @@ function MapMarkerModel() {
 		}
 	};
 	
+	this.fetchAllRoutineNameAndId=function(successCallback){
+		backendManager.getCurrentUser(function(currentUser){
+			backendManager.fetchAllRoutineNameAndIdByUser(currentUser, function(returnValue){
+				successCallback(returnValue);
+			});
+		});
+	};
+	
 	this.loadAllOverviewRoutine = function(userId,successCallback) {
 		allOverviewMarkers = new Array();
 
@@ -307,14 +315,9 @@ function MapMarkerModel() {
 		return nonRepeatOvMarker;
 	};
 	
-	this.copyRoutine2CurrentUser=function(ovMarkerId,successCallback){
-		var routineId=self.getMapMarkerById(ovMarkerId).routineId;
-		backendManager.fetchRoutineJSONStringById(routineId, function(routineJSONString,
-				title,ovJSONString){
-			backendManager.saveAsNewRoutine(title, routineJSONString, ovJSONString, function(){
-				successCallback();
-			});
-		});
+	this.copyRoutine2CurrentUser=function(ovMarkerId){
+		var routineId=self.getRoutineById(ovMarkerId).id;
+		backendManager.copyRoutine(routineId);
 	};
 	
 	this.isOvMarker=function(id){
@@ -814,6 +817,48 @@ function BackendManager() {
 	AV.initialize("6pzfpf5wkg4m52owuwixt5vggrpjincr8xon3pd966fhgj3c",
 			"4wrzupru1m4m7gpafo4llinv7iepyapnycvxygup7uiui77x");
 
+	function fetchOvMarkersByRoutineId(avRoutine){
+		var promise=new AV.Promise();
+		var query=new AV.Query(OvMarker);
+		query.equalTo("routineId",avRoutine.get("uuid"));
+		query.find().then(function(avOvMarkers){
+			promise.resolve(avRoutine,avOvMarkers);
+		});
+		return promise;
+	};
+	
+	function fetchOvMarkersInRoutineIds(avRoutines){
+		var promise=new AV.Promise();
+		var query=new AV.Query(OvMarker);
+		var routineIds=[];
+		for(var i in avRoutines){
+			routineIds.push(avRoutines[i].get("uuid"));
+		}
+		query.containedIn("routineId",routineIds);
+		query.find().then(function(avOvMarkers){
+			var results=[];
+			for(var i in avRoutines){
+				results.push({
+					avRoutine:avRoutines[i],
+					avOvMarkers:findOvMarkersByRoutineId(avOvMarkers,avRoutines[i].get("uuid"))
+				});
+			}
+			
+			promise.resolve(results);
+		});
+		return promise;
+	};
+	
+	function findOvMarkersByRoutineId(ovMarkers,routineId){
+		var results=[];
+		for(var i in ovMarkers){
+			if(ovMarkers[i].get("routineId")==routineId){
+				results.push(ovMarkers[i]);
+			}
+		}
+		return results;
+	}
+	
 	function getAVObjectByUUID(uuid){
 		for(var i in avObjects){
 			if(uuid==avObjects[i].get('uuid')){
@@ -1038,6 +1083,21 @@ function BackendManager() {
 		});
 	};
 	
+	this.fetchAllRoutineNameAndIdByUser=function(user,successCallback){
+		var query = new AV.Query(Routine);
+		query.equalTo("user", user);
+		query.find().then(function(avRoutines){
+			var returnValue=[];
+			for(var i in avRoutines){
+				returnValue.push({
+					routineId:avRoutines[i].id,
+					routineName:avRoutines[i].name
+				});
+			}
+			successCallback(returnValue);
+		});
+	};
+	
 	this.fetchOverviewRoutinesByUser = function(user, successCallback) {
 		var query = new AV.Query(Routine);
 		query.equalTo("user", user);
@@ -1085,47 +1145,65 @@ function BackendManager() {
 		});
 	};
 	
-	function fetchOvMarkersByRoutineId(avRoutine){
-		var promise=new AV.Promise();
-		var query=new AV.Query(OvMarker);
-		query.equalTo("routineId",avRoutine.get("uuid"));
-		query.find().then(function(avOvMarkers){
-			promise.resolve(avRoutine,avOvMarkers);
-		});
-		return promise;
-	};
-	
-	function fetchOvMarkersInRoutineIds(avRoutines){
-		var promise=new AV.Promise();
-		var query=new AV.Query(OvMarker);
-		var routineIds=[];
-		for(var i in avRoutines){
-			routineIds.push(avRoutines[i].get("uuid"));
-		}
-		query.containedIn("routineId",routineIds);
-		query.find().then(function(avOvMarkers){
-			var results=[];
-			for(var i in avRoutines){
-				results.push({
-					avRoutine:avRoutines[i],
-					avOvMarkers:findOvMarkersByRoutineId(avOvMarkers,avRoutines[i].get("uuid"))
-				});
+	this.copyRoutine=function(routineId){
+		var newRoutineId=uuid.v4();
+		this.getCurrentUser(function(user){
+			if(user.get("username")=="guest"){
+				alert("please login first");
+				return;
 			}
 			
-			promise.resolve(results);
+			var routineQuery = new AV.Query(Routine);
+			routineQuery.equalTo("uuid",routineId);
+			routineQuery.first().then(function(routine){
+				if(routine!=null){
+					var copyRoutine=routine.clone();
+					copyRoutine.set('uuid',newRoutineId);
+					copyRoutine.set('user',user);
+					copyRoutine.save();
+				}
+			});
+			
+			var ovMarkerQuery=new AV.Query(OvMarker);
+			ovMarkerQuery.equalTo("routineId",routineId);
+			ovMarkerQuery.find().then(function(ovMarkers){
+				var copyMarkers=[];
+				for(var i in ovMarkers){
+					var copyMarker=ovMarkers[i].clone();
+					copyMarker.set("uuid",uuid.v4());
+					copyMarker.set("routineId",newRoutineId);
+					copyMarkers.push(copyMarker);
+					
+				}
+				AV.Object.saveAll(copyMarkers);
+			});
+			
+			var markerQuery=new AV.Query(AVMarker);
+			markerQuery.equalTo("routineId",routineId);
+			markerQuery.find().then(function(ovMarkers){
+				var copyMarkers=[];
+				for(var i in ovMarkers){
+					var copyMarker=ovMarkers[i].clone();
+					copyMarker.set("uuid",uuid.v4());
+					copyMarker.set("routineId",newRoutineId);
+					copyMarkers.push(copyMarker);
+					
+				}
+				AV.Object.saveAll(copyMarkers);
+			});	
 		});
-		return promise;
 	};
 	
-	function findOvMarkersByRoutineId(ovMarkers,routineId){
-		var results=[];
-		for(var i in ovMarkers){
-			if(ovMarkers[i].get("routineId")==routineId){
-				results.push(ovMarkers[i]);
-			}
-		}
-		return results;
-	}
+	this.copyMarker=function(markerId,toRoutineId){
+		var query=new AV.Query(AVMarker);
+		query.equalTo("uuid",markerId);
+		query.first().then(function(marker){
+			var copyMarker=marker.clone();
+			copyMarker.set("uuid",uuid.v4());
+			copyMarker.set("routineId",toRoutineId);
+			copyMarker.save();
+		});
+	};
 	
 	//------------------------------------------------------------
 	this.saveCurrentRoutineMarkers=function(markers,ovMarkers){

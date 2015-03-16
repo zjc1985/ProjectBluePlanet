@@ -81,6 +81,10 @@ function MarkerInfo(id){
 		$('#'+id).find('.markerInfoTitle').text(str);
 	};
 	
+	this.copyBtnClick=function(handler){
+		$("#"+id).find(".copyBtn").click(handler);
+	};
+	
 	this.setSubTitle=function(str){
 		$('#'+id).find('.markerInfoSubTitle').text(str);
 	};

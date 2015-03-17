@@ -81,11 +81,20 @@ function MapController(){
 	};
 	
 	this.markerMouseOver=function(id){
+		var content= model.getMapMarkerById(id).getContent();
 		
+		var contentString = '<div id="content">'+
+	      '<div id="siteNotice">'+
+	      '</div>'+
+	      '<h4>'+content.getTitle()+'</h4>'+
+	      '<div id="bodyContent">'+content.getMycomment()+'</div>'+
+	      '</div>';
+		
+		view.openInfoWindow(id, contentString);
 	};
 	
 	this.markerMouseOut=function(id){
-		
+		view.closInfoWindow();
 	};
 	
 	this.toCustomStyleBtnClick=function(){

@@ -1640,7 +1640,7 @@ function ModelRoutine(id){
 		var e=average(nums);
 		var d=sDeviation(nums);
 		for(var i in nums){
-			if(Math.abs((nums[i])-e)<d){
+			if(Math.abs((nums[i])-e)<=d){
 				refineArray.push(nums[i]);
 			}
 		}

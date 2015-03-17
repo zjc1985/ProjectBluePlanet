@@ -16,6 +16,7 @@ function GoogleMapView(oneController) {
 	this.currentMarkerId = -1;
 
 	var self = this;
+	var infoWindow=null;
 
 	//google map components
 	//var directionsDisplay = new google.maps.DirectionsRenderer();
@@ -53,6 +54,24 @@ function GoogleMapView(oneController) {
 	
 	this.getMap=function(){
 		return map;
+	};
+	
+	this.getInfoWindow=function(){
+		if(infoWindow==null){
+			infoWindow= new google.maps.InfoWindow({
+			    content: ""
+			});
+		}
+		return infoWindow;
+	}
+	
+	this.openInfoWindow=function(id,contentString){
+		this.getInfoWindow().setContent(contentString);
+		this.getInfoWindow().open(map,self.getViewOverlaysById(id));
+	};
+	
+	this.closInfoWindow=function(){
+		this.getInfoWindow().close();
 	};
 
 	this.hideEditMenuInContextMenu = function() {
@@ -504,6 +523,16 @@ function GoogleMapView(oneController) {
 		}else{
 			viewMarker.setDraggable(true);
 		}
+		
+		google.maps.event.addListener(viewMarker, 'mouseover', function(
+				mouseEvent) {
+			controller.markerMouseOver(viewMarker.id);
+		});
+		
+		google.maps.event.addListener(viewMarker, 'mouseout', function(
+				mouseEvent) {
+			controller.markerMouseOut(viewMarker.id);
+		});
 
 		google.maps.event.addListener(viewMarker, 'click',
 				function(mouseEvent) {

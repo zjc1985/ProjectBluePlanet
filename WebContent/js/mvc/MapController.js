@@ -559,54 +559,6 @@ function MapController(){
 				}
 			}
 		}
-				
-		/*
-		if(view.isInCustomZoom()){
-			if(!isInCustomZoom){
-				$.publish('updateOvLines');
-				
-				view.clearMarkerCluster();
-				
-				view.setMapStyle2Custom();
-				
-				var overviewModelMarkers=model.getAllOverviewMarkers();
-				for(var i in overviewModelMarkers){
-					var viewMarker=view.getViewOverlaysById(overviewModelMarkers[i].id);
-					viewMarker.show();
-				}
-				
-				var modelMarkers=model.getModelMarkers();
-				for(var i in modelMarkers){
-					var viewMarker=view.getViewOverlaysById(modelMarkers[i].id);
-					viewMarker.hide();
-				}
-			}
-			isInCustomZoom=true;
-		}else{
-			if(isInCustomZoom){
-				view.removeAllOvLines();
-				
-				refreshCluster();
-				
-				view.setMapStyle2Default();
-				
-				var overviewModelMarkers=model.getAllOverviewMarkers();
-				for(var i in overviewModelMarkers){
-					var viewMarker=view.getViewOverlaysById(overviewModelMarkers[i].id);
-					viewMarker.hide();
-				}
-				
-				var modelMarkers=model.getModelMarkers();
-				for(var i in modelMarkers){
-					if(!modelMarkers[i].isSubMarker()){
-						var viewMarker=view.getViewOverlaysById(modelMarkers[i].id);
-						viewMarker.show();
-					}
-				}
-			}
-			isInCustomZoom=false;
-		}
-		*/
 	};
 	
 	this.editFormConfirmClick=function(id){
@@ -692,13 +644,17 @@ function MapController(){
 		
 		var items=[];
 		if(isInCustomZoom){
+			items.push({url:"resource/icons/default/default_default.png",name:"default"});
 			items.push({url:"resource/icons/overview/overview_bear.png",name:"bear"});
 			items.push({url:"resource/icons/overview/overview_photo.png",name:"photo"});
 			items.push({url:"resource/icons/overview/overview_eiffel.png",name:"eiffel"});
 			items.push({url:"resource/icons/overview/overview_sun.png",name:"sun"});
+			items.push({url:"resource/icons/overview/overview_beach.png",name:"beach"});
+			items.push({url:"resource/icons/overview/overview_bag.png",name:"bag"});
+			items.push({url:"resource/icons/overview/overview_car.png",name:"car"});
+			items.push({url:"resource/icons/overview/overview_star.png",name:"star"});
 		}else{
 			items.push({url:"resource/icons/default/default_default.png",name:"default"});
-			items.push({url:"resource/icons/default/center_default.png",name:"point"});
 			items.push({url:"resource/icons/sight/sight_default.png",name:"sight default"});
 			items.push({url:"resource/icons/sight/sight_star.png",name:"sight star"});
 			items.push({url:"resource/icons/event/event_default.png",name:"event default"});	

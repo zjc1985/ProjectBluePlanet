@@ -556,98 +556,6 @@ function MapMarkerModel() {
 		});
 
 	};
-	
-	
-	
-	this.save2Backend = function(routineName, callback) {
-		console.log('prepare to save routine ' + routineName);
-		backendManager.getCurrentUser(function(currentUser){
-			if (currentUser == null) {
-				alert('no find user abort saving routine');
-				return;
-			}
-
-			//save all overview markers
-			var overviewMap={};
-			for(var i in allOverviewMarkers){
-				var ovMarker=allOverviewMarkers[i];
-				if(ovMarker.routineId in overviewMap){
-					overviewMap[ovMarker.routineId].push(ovMarker.toJSONObject());
-				}else{
-					overviewMap[ovMarker.routineId]=new Array();
-					overviewMap[ovMarker.routineId].push(ovMarker.toJSONObject());
-				}
-			}
-			
-			for(var key in overviewMap){
-				overviewMap[key]=JSON.stringify(overviewMap[key]);
-			}
-			
-			backendManager.updateAllOverviews(overviewMap,function(){	
-				saveCurrentRoutine(routineName,function(){
-					callback();
-				});
-			});
-		});
-	};
-	
-	function saveCurrentRoutine(routineName,callback){
-		//save Routine Markers
-		// gen marksJSONArray
-		var marksJSONArray = new Array();
-		if(marks.length!=0){
-			for ( var i in marks) {
-				marksJSONArray.push(marks[i].toJSONObject());
-			}
-
-			// gen overViewMarksJSONArray
-			var location = genCentreLocation();
-			var overviewMarkersJSONArray = new Array();
-			if (currentOverviewMarkers.length == 0) {
-				var uuid = self.genUUID();
-				var centreOverViewMarker = new MapMarker(uuid);
-				centreOverViewMarker.content.setIsAvergeOverViewMarker(true);
-				
-				centreOverViewMarker.content.updateContent(location);
-				overviewMarkersJSONArray.push(centreOverViewMarker.toJSONObject());
-			} else {
-				// find average Marker and update its lat lng
-				for ( var i in currentOverviewMarkers) {
-					var overviewMarker = currentOverviewMarkers[i];
-					if (overviewMarker.content.isAvergeOverViewMarker()) {
-						overviewMarker.content.updateContent(location);
-					}
-					overviewMarkersJSONArray.push(overviewMarker.toJSONObject());
-				}
-			}
-			
-			backendManager.saveRoutine(routineName, JSON.stringify(marksJSONArray),
-					JSON.stringify(overviewMarkersJSONArray), location,function() {
-						callback();
-					});
-		}else{
-			callback();
-		}
-	}
-
-	function genCentreLocation() {
-		var numWithNoSubMarkers = 0;
-		var allLat = 0.000000;
-		var allLng = 0.000000;
-		for ( var i = 0; i < marks.length; i++) {
-			if (!marks[i].isSubMarker()) {
-				allLat = allLat + marks[i].getContent().getLat();
-				allLng = allLng + marks[i].getContent().getLng();
-				numWithNoSubMarkers++;
-			}
-		}
-		var averageLat = allLat / numWithNoSubMarkers;
-		var averageLng = allLng / numWithNoSubMarkers;
-		return {
-			lat : averageLat,
-			lng : averageLng
-		};
-	}
 
 	function getOverlayById(id) {
 		var length = marks.length;
@@ -1710,22 +1618,61 @@ function ModelRoutine(id){
 	};
 	
 	this.updateLocation=function(){
-		var numWithNoSubMarkers = 0;
-		var allLat = 0.000000;
-		var allLng = 0.000000;
+		var latArray=[];
+		var lngArray=[];
+		
 		var marks=this.getMarkers();
 		for ( var i = 0; i < marks.length; i++) {
 			if (!marks[i].isSubMarker()) {
-				allLat = allLat + marks[i].getContent().getLat();
-				allLng = allLng + marks[i].getContent().getLng();
-				numWithNoSubMarkers++;
+				latArray.push( marks[i].getContent().getLat());
+				lngArray.push( marks[i].getContent().getLng());
 			}
 		}
-		var averageLat = allLat / numWithNoSubMarkers;
-		var averageLng = allLng / numWithNoSubMarkers;
+		
+		var averageLat=refineAverage(latArray);
+		var averageLng=refineAverage(lngArray);
 		
 		this.getContent().updateContent({lat:averageLat,lng:averageLng});
 	};
+	
+	function refineAverage(nums){
+		var refineArray=[];
+		var e=average(nums);
+		var d=sDeviation(nums);
+		for(var i in nums){
+			if(Math.abs((nums[i])-e)<d){
+				refineArray.push(nums[i]);
+			}
+		}
+		
+		return average(refineArray);
+	}
+	
+	
+	function average(nums){
+		var result=0;
+		var length=nums.length;
+		var sum=0.000000;
+		if(length!=0){
+			for(var i in nums){
+				sum=sum+nums[i];
+			}
+			result=sum/length;
+		}
+		return result;
+	}
+	
+	function sDeviation(nums){
+		if(nums.length==0){
+			return 0;
+		}	
+		var e=average(nums);
+		var sum=0;
+		for(var i in nums){
+			sum=sum+(nums[i]-e)*(nums[i]-e);
+		}
+		return Math.sqrt(sum/nums.length); 	
+	}
 	
 	this.setDelete=function(){
 		this.isDelete=true;

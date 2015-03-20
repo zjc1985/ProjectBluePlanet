@@ -87,6 +87,7 @@ function MapController(){
 	      '<div id="siteNotice">'+
 	      '</div>'+
 	      '<h4>'+content.getTitle()+'</h4>'+
+	      '<h6>'+content.getCategoryName()+'</h6>'+
 	      '<div id="bodyContent">'+content.getMycomment()+'</div>'+
 	      '</div>';
 		
@@ -589,6 +590,7 @@ function MapController(){
 			slideNum:parseInt(view.markerEditDialog.getSlideNum()),
 			mycomment:view.markerEditDialog.getDesc(),
 			imgUrls:view.markerEditDialog.getUrls(),
+			category:view.markerEditDialog.getCategoryValue(),
 			iconUrl:view.markerEditDialog.getIconSelect().url
 		};
 		
@@ -597,7 +599,8 @@ function MapController(){
 		if(model.isOvMarker(id)){
 			var routine=model.getRoutineById(id);
 			var contentNeedSync={title:content.title,
-					mycomment:content.mycomment};
+								mycomment:content.mycomment,
+								category:content.category};
 			
 			routine.getContent().updateContent(contentNeedSync);
 			var ovMarkers=routine.getOvMarkers();
@@ -618,7 +621,19 @@ function MapController(){
 		view.showAllMarkers();
 		$.publish('updateUI',[]);
 	};
-		
+	
+	function genMarkerCategoryItems(){
+		return [{name:"arrival & leave",value:1},
+		        {name:"sight",value:2},
+		        {name:"hotel",value:3},
+		        {name:"food",value:4},
+		        {name:"info",value:5},];
+	}
+	
+	function genOvMarkerCategoryItems(){
+		return [{name:"overview",value:6}];
+	}
+	
 	this.showInfoClickHandler=function(markerId){
 		
 		var marker=model.getMapMarkerById(markerId);
@@ -629,9 +644,12 @@ function MapController(){
 			dialog=view.ovMarkerDialog;
 			var routineMarker=model.getRoutineById(markerId);
 			dialog.setUser(routineMarker.userId, routineMarker.userName);
+			view.markerEditDialog.setCategoryDropDownItems(genOvMarkerCategoryItems());
+			dialog.setSubTitle(content.getCategoryName());
 		}else{
 			dialog=view.markerInfoDialog;
-			dialog.setSubTitle(content.getSlideNum());
+			dialog.setSubTitle(content.getCategoryName()+' '+content.getSlideNum());
+			view.markerEditDialog.setCategoryDropDownItems(genMarkerCategoryItems());
 		}
 		
 		dialog.setTitle(content.getTitle());
@@ -641,6 +659,7 @@ function MapController(){
 		dialog.show();
 		
 		view.markerEditDialog.setTitle(content.getTitle());
+		view.markerEditDialog.setCategoryValue(content.getCategory());
 		if(model.isOvMarker(markerId)){
 			view.markerEditDialog.setMaxSlideNum(1);
 		}else{
@@ -651,25 +670,6 @@ function MapController(){
 		view.markerEditDialog.setDesc(content.getMycomment(true));
 		view.markerEditDialog.setUrls(content.getImgUrls());
 		
-		var items=[];
-		if(isInCustomZoom){
-			items.push({url:"resource/icons/default/default_default.png",name:"default"});
-			items.push({url:"resource/icons/overview/overview_bear.png",name:"bear"});
-			items.push({url:"resource/icons/overview/overview_photo.png",name:"photo"});
-			items.push({url:"resource/icons/overview/overview_eiffel.png",name:"eiffel"});
-			items.push({url:"resource/icons/overview/overview_sun.png",name:"sun"});
-			items.push({url:"resource/icons/overview/overview_beach.png",name:"beach"});
-			items.push({url:"resource/icons/overview/overview_bag.png",name:"bag"});
-			items.push({url:"resource/icons/overview/overview_car.png",name:"car"});
-			items.push({url:"resource/icons/overview/overview_star.png",name:"star"});
-		}else{
-			items.push({url:"resource/icons/default/default_default.png",name:"default"});
-			items.push({url:"resource/icons/sight/sight_default.png",name:"sight default"});
-			items.push({url:"resource/icons/sight/sight_star.png",name:"sight star"});
-			items.push({url:"resource/icons/event/event_default.png",name:"event default"});	
-		}
-			
-		view.markerEditDialog.setDropDownItems(items);
 		view.markerEditDialog.setIconSelect({url:content.getIconUrl(),name:"current Icon"});
 	};
 	

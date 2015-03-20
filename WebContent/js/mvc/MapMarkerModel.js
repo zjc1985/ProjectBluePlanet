@@ -206,6 +206,7 @@ function MapMarkerModel() {
 	this.createOverviewMarker = function(id, content,routineId) {
 		var marker = new MapMarker(id);
 		marker.routineId=routineId;
+		marker.getContent().setCategory(6);
 		$.publish('createOverViewMarker', [ marker,content ]);
 
 		if (content != null) {
@@ -934,6 +935,7 @@ function BackendManager() {
 					lng:avMarker.get('location').toJSON().longitude,
 					slideNum:avMarker.get('slideNum'),
 					imgUrls:JSON.parse(avMarker.get('imgUrls')),
+					category:avMarker.get('category')
 				};
 				markersJSON.push(markerContent);
 			}
@@ -964,6 +966,7 @@ function BackendManager() {
 								id:routine.get('uuid'),
 								title:routine.get('title'),
 								mycomment:routine.get('description'),
+								category:routine.get('category'),
 								lat:routine.get('location').toJSON().latitude,
 								lng:routine.get('location').toJSON().longitude
 						};
@@ -978,6 +981,7 @@ function BackendManager() {
 								iconUrl:ovMarkers[i].get('iconUrl'),
 								offsetX:ovMarkers[i].get('offsetX'),
 								offsetY:ovMarkers[i].get('offsetY'),
+								category:ovMarkers[i].get('category'),
 								lat:ovMarkers[i].get('location').toJSON().latitude,
 								lng:ovMarkers[i].get('location').toJSON().longitude
 							});
@@ -1444,22 +1448,22 @@ function BackendManager() {
 function MarkerContent(id) {
 	this.id = id;
 
-	var title = "Unknown Location";
+	var title = "One Marker";
 	var address = "Unknown Address";
 	var lat = 0;
 	var lng = 0;
-	var mycomment = "...";
-	var category = "marker";
+	var mycomment = "";
+	var category = 2;
 	var imgUrls = new Array();
 	var isImgPositionDecided = true;
 	var slideNum = 1;
 
 	var isAvergeOverViewMarker = false;
 
-	var defaultImgIcon = "resource/icons/pic/pic_default.png";
-	var picNoPositionIconUrl = "resource/icons/pic/pic_no_position.png";
+	var defaultImgIcon = "resource/icons/event/event_2.png";
+	var picNoPositionIconUrl = "resource/icons/event/pic_no_position.png";
 	var iconUrl = "resource/icons/default/default_default.png";
-
+	
 	this.isAvergeOverViewMarker = function() {
 		return isAvergeOverViewMarker;
 	};
@@ -1556,6 +1560,34 @@ function MarkerContent(id) {
 	this.getCategory = function() {
 		return category;
 	};
+	
+	this.getCategoryName=function(){
+		var name="sight"
+		 switch(this.getCategory())
+		  {
+		  	case 1:
+		  		name="arrival & leave";
+				break;
+		  	case 2:
+		  		name="sight";
+				break;
+		  	case 3:
+		  		name="hotel";
+				break;
+		  	case 4:
+		  		name="food";
+				break;
+		  	case 5:
+		  		name="info";
+				break;
+		  	case 6:
+		  		name="overview";
+				break;
+		  	default:
+		  		name="sight";
+		  	}
+		return name;
+	};
 
 	this.setCategory = function(nameFoo) {
 		category = nameFoo;
@@ -1606,6 +1638,8 @@ function ModelRoutine(id){
 	
 	this.ovMarkers=[];
 	this.markers=[];
+	
+	this.getContent().setCategory(6);
 	
 	this.isLoadMarkers=false;
 	

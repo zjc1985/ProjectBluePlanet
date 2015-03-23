@@ -87,7 +87,7 @@ function MapController(){
 	      '<div id="siteNotice">'+
 	      '</div>'+
 	      '<h4>'+content.getTitle()+'</h4>'+
-	      '<h6>'+content.getCategoryName()+'</h6>'+
+	      '<h6>'+content.getCategoryName()+ '&nbsp;&nbsp;'+content.getSlideNum()+'</h6>'+
 	      '<div id="bodyContent">'+content.getMycomment()+'</div>'+
 	      '</div>';
 		

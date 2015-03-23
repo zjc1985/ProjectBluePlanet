@@ -152,9 +152,9 @@ function OvMarkerInfo(id){
 		$("#"+id).find(".copyRoutineBtn").click(handler);
 	};
 	this.setUser=function(userId,userName){
-		$('#'+id).find('.markerInfoSubTitle').empty();
+		$('#'+id).find('.userInfo').empty();
 		var userLink="<a href='myMap.html?userId="+userId+"'>"+userName+"</a>";
-		$('#'+id).find('.markerInfoSubTitle').append(userLink);
+		$('#'+id).find('.userInfo').append(userLink);
 	}
 };
 

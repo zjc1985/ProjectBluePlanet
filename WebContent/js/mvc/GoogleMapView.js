@@ -10,10 +10,13 @@ function GoogleMapView(oneController) {
 	this.navBar=null;
 	this.uploadImgModal=null;
 	this.searchPickRoutineBoard=null;
+	this.createRoutineModal=null;
+	this.markerPickRoutineModal=null;
 	
 	this.currentMarkerId = -1;
 
 	var self = this;
+	var infoWindow=null;
 
 	//google map components
 	//var directionsDisplay = new google.maps.DirectionsRenderer();
@@ -51,6 +54,24 @@ function GoogleMapView(oneController) {
 	
 	this.getMap=function(){
 		return map;
+	};
+	
+	this.getInfoWindow=function(){
+		if(infoWindow==null){
+			infoWindow= new google.maps.InfoWindow({
+			    content: ""
+			});
+		}
+		return infoWindow;
+	}
+	
+	this.openInfoWindow=function(id,contentString){
+		this.getInfoWindow().setContent(contentString);
+		this.getInfoWindow().open(map,self.getViewOverlaysById(id));
+	};
+	
+	this.closInfoWindow=function(){
+		this.getInfoWindow().close();
 	};
 
 	this.hideEditMenuInContextMenu = function() {
@@ -171,14 +192,16 @@ function GoogleMapView(oneController) {
 	};
 	
 	this.fitBoundsByIds=function(ids){
-		var bounds = new google.maps.LatLngBounds();
-		for ( var i in ids) {
-			var overlay=self.getViewOverlaysById(ids[i]);	
-			if (overlay instanceof google.maps.Marker) {
-				bounds.extend(overlay.getPosition());
+		if(ids.length>0){
+			var bounds = new google.maps.LatLngBounds();
+			for ( var i in ids) {
+				var overlay=self.getViewOverlaysById(ids[i]);	
+				if (overlay instanceof google.maps.Marker) {
+					bounds.extend(overlay.getPosition());
+				}
 			}
+			map.fitBounds(bounds);
 		}
-		map.fitBounds(bounds);
 	};
 
 	this.panByIds = function(ids) {
@@ -201,6 +224,23 @@ function GoogleMapView(oneController) {
 	};
 
 	this.createView = function() {
+		this.createRoutineModal=new createRoutineModal('createNewRoutineModal');
+		this.createRoutineModal.confirmClick(function(){
+			controller.newRoutineBtnClick({
+				lat:self.getCenter().lat,
+				lng:self.getCenter().lng,
+				title:self.createRoutineModal.getTitle(),
+				mycomment:self.createRoutineModal.getDesc()
+			});
+		});
+		
+		this.markerPickRoutineModal=new PickRoutineModal('markerPickRoutineModal');
+		this.markerPickRoutineModal.confirmClick(function(){	
+			var markerId=self.currentMarkerId;
+			var routineId=self.markerPickRoutineModal.getRoutineNameSelect().value;
+			controller.copyMarker(markerId,routineId);
+		});
+		
 		this.searchPickRoutineBoard=new PickRoutineModal('pickRoutineModal');
 		this.searchPickRoutineBoard.confirmClick(function(){
 			var routineId=self.searchPickRoutineBoard.getRoutineNameSelect().value;
@@ -233,14 +273,31 @@ function GoogleMapView(oneController) {
 			cleanSearchMarkers();
 		});
 		
+		this.searchMarkerModal.copyMarkerBtnClick(function(){
+			controller.searchCopyMarkerBtnClick();
+		});
+		
 		this.uploadImgModal = new UploadImageModal('uploadImageModal');
 		this.uploadImgModal.addChangeCallBack(function(imageBase64String, lat, lon,fileName) {
 			controller.uploadImgs(imageBase64String, lat, lon,fileName);
 		});
 		
 		this.navBar=new NavBar('myNavBar');
+		this.navBar.createRoutineClick(function(){
+			/*
+			controller.createRoutine({
+				lat:self.getCenter().lat,
+				lng:self.getCenter().lng,
+				title:'New Routine',
+				mycomment:'New Routine'
+			});
+			*/
+		});
+		this.navBar.toCustomStyleClick(function(){
+			controller.toCustomStyleBtnClick();
+		});
 		this.navBar.saveLinkClick(function(){
-			controller.saveRoutine();
+			controller.sync();
 		});
 		this.navBar.startSlideClick(function(){
 			controller.startSlideMode();
@@ -262,6 +319,10 @@ function GoogleMapView(oneController) {
 		});
 			
 		this.markerInfoDialog=new MarkerInfo('MarkerInfoModel');
+		this.markerInfoDialog.copyBtnClick(function(){
+			controller.markerCopyBtnClick();
+		});
+		
 		this.ovMarkerDialog=new OvMarkerInfo('ovMarkerInfoModel');
 		this.ovMarkerDialog.showRoutineDetail(function(){
 			controller.showRoutineDetail(self.currentMarkerId);
@@ -462,6 +523,16 @@ function GoogleMapView(oneController) {
 		}else{
 			viewMarker.setDraggable(true);
 		}
+		
+		google.maps.event.addListener(viewMarker, 'mouseover', function(
+				mouseEvent) {
+			controller.markerMouseOver(viewMarker.id);
+		});
+		
+		google.maps.event.addListener(viewMarker, 'mouseout', function(
+				mouseEvent) {
+			controller.markerMouseOut(viewMarker.id);
+		});
 
 		google.maps.event.addListener(viewMarker, 'click',
 				function(mouseEvent) {
@@ -594,9 +665,9 @@ function GoogleMapView(oneController) {
 			var line = new google.maps.Polyline({
 				path : lineCoordinates,
 				map : map,
-				strokeOpacity : 0.7,
+				strokeOpacity : 0.4,
 				strokeColor : 'black',
-				strokeWeight : 0.6
+				strokeWeight : 0.7
 			});
 			ovLines.push(line);
 	};
@@ -725,7 +796,7 @@ function GoogleMapView(oneController) {
 		console.log('view.setMapStyle2Default');
 		var defaultStyle=[];
 		map.setOptions({styles: defaultStyle});
-	}
+	};
 	
 	this.setMapStyle2Custom=function(){
 		console.log('view.setMapStyle2Custom');
@@ -832,6 +903,7 @@ function ExploreGoogleMapView(oneController){
 		});
 		
 		google.maps.event.addListener(this.getMap(), 'dragend', function() {
+			centerMarker.setVisible(false);
 			controller.dragendEventHandler();
 		});
 	};
@@ -844,6 +916,7 @@ function ExploreGoogleMapView(oneController){
 				icon : 'resource/icons/default/center_default.png'
 			});
 		}else{
+			centerMarker.setVisible(true);
 			centerMarker.setPosition(this.getMap().getCenter());
 		}
 	};

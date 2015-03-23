@@ -2,6 +2,11 @@ function NavBar(id){
 	this.saveLinkClick=function(handler){
 		$('#'+id).find('.saveLink').click(handler);
 	};
+	
+	this.toCustomStyleClick=function(handler){
+		$('#'+id).find('.toCustomStyle').click(handler);
+	};
+	
 	this.startSlideClick=function(handler){
 		$('#'+id).find('.startSlideLink').click(handler);
 	};
@@ -20,11 +25,46 @@ function NavBar(id){
 	this.createRoutineClick=function(handler){
 		$('#'+id).find('.createRoutineBtn').click(handler);
 	};
+	this.createRoutineClick=function(handler){
+		$('#'+id).find('.createRoutineBtn').click(handler);
+	};
 	this.disableEditFunction=function(){
-		$('#'+id).find('.createNew').find('li').addClass('disabled');
+		$('#'+id).find('.createDropdown').addClass('hide');
 	};
 	this.enableEditFunction=function(){
-		$('#'+id).find('.createNew').find('li').removeClass('disabled');
+		$('#'+id).find('.createDropdown').removeClass('hide');
+	};
+	
+	this.hideCreateMarkerBtn=function(){
+		$('#'+id).find('.createMarkerBtn').addClass('hide');
+	};
+	
+	this.hideCreateMarkerWithImageBtn=function(){
+		$('#'+id).find('.createMarkerWithImageBtn').addClass('hide');
+	};
+	
+	this.hideCreateRoutineBtn=function(){
+		$('#'+id).find('.createRoutineBtn').addClass('hide');
+	};
+	
+	this.showCreateRoutineBtn=function(){
+		$('#'+id).find('.createRoutineBtn').removeClass('hide');
+	};
+	
+	this.showCreateMarkerBtn=function(){
+		$('#'+id).find('.createMarkerBtn').removeClass('hide');
+	};
+	
+	this.showCreateMarkerWithImageBtn=function(){
+		$('#'+id).find('.createMarkerWithImageBtn').removeClass('hide');
+	};
+	
+	this.hideSlideDropDown=function(){
+		$('#'+id).find('.slideDropdown').addClass('hide');
+	};
+	
+	this.showSlideDropDown=function(){
+		$('#'+id).find('.slideDropdown').removeClass('hide');
 	};
 };
 
@@ -39,6 +79,10 @@ function MarkerInfo(id){
 	
 	this.setTitle=function(str){
 		$('#'+id).find('.markerInfoTitle').text(str);
+	};
+	
+	this.copyBtnClick=function(handler){
+		$("#"+id).find(".copyBtn").click(handler);
 	};
 	
 	this.setSubTitle=function(str){
@@ -107,6 +151,11 @@ function OvMarkerInfo(id){
 	this.copyRoutineBtnClick=function(handler){
 		$("#"+id).find(".copyRoutineBtn").click(handler);
 	};
+	this.setUser=function(userId,userName){
+		$('#'+id).find('.markerInfoSubTitle').empty();
+		var userLink="<a href='myMap.html?userId="+userId+"'>"+userName+"</a>";
+		$('#'+id).find('.markerInfoSubTitle').append(userLink);
+	}
 };
 
 function PickRoutineModal(id){
@@ -118,6 +167,15 @@ function PickRoutineModal(id){
 	this.getDesc=function(){
 		return $('#'+id).find('.editDesc').val();
 	};
+	
+	this.show=function(){
+		$('#'+id).modal('show');
+	};
+	
+	this.hide=function(){
+		$('#'+id).modal('hide');
+	};
+	
 	
 	this.setDropDownItems=function(items){
 		$('#'+id).find('.dropdown-menu').empty();
@@ -132,7 +190,6 @@ function PickRoutineModal(id){
 		$('#'+id).find(".dropdown-menu li a").click(function(){
 			  var selText = $(this).text();
 			  selectedItemValue=$(this).attr('id');
-			  comboValue=selText;
 			  $('#'+id).find('.selectedTxt').html(selText+' <span class="caret"></span>');
 		});
 	};
@@ -152,7 +209,28 @@ function PickRoutineModal(id){
 	};
 }
 
+function createRoutineModal(id){
+	this.setTitle=function(str){
+		$('#'+id).find('.editTitle').val(str);	
+	};
+	this.getTitle=function(){
+		return $('#'+id).find('.editTitle').val();
+	};
+	
+	this.setDesc=function(str){
+		$('#'+id).find('.editDesc').val(str);	
+	};
+	this.getDesc=function(){
+		return $('#'+id).find('.editDesc').val();
+	};
+	
+	this.confirmClick=function(handler){
+		$("#"+id).find(".editConfirmBtn").click(handler);
+	};
+}
+
 function MarkerEditor(id){
+	var self=this;
 	
 	this.confirmClick=function(handler){
 		$("#"+id).find(".editConfirmBtn").click(handler);
@@ -210,20 +288,162 @@ function MarkerEditor(id){
 		$('#'+id).find('.editSlideNum').val(slideNum);
 	};
 	
-	this.setDropDownItems=function(items){
-		$('#'+id).find('.dropdown-menu').empty();
+	this.setCategoryDropDownItems=function(items){
+		//CategoryDropDownMenu
+		$('#'+id).find('.CategoryDropDownMenu').empty();
+		for(var i in items){
+			var itemHtml="<li><a href='#' value='"+items[i].value+"'>"+items[i].name+"</a></li>";
+			$('#'+id).find('.CategoryDropDownMenu').append(itemHtml);
+		}
+		// 1--arrival leave
+		// 2--sight
+		// 3--hotel
+		// 4--food
+		// 5--info
+		// 6--overview
+		$('#'+id).find(".CategoryDropDownMenu li a").click(function(){
+			  var categoryName = $(this).text();
+			  var categoryValue=$(this).attr('value');
+			  $('#'+id).find('.selectedCategory').html(categoryName+' <span class="caret"></span>');
+			  $('#'+id).find(".selectedCategory").attr('value',categoryValue);
+			  
+			  switch(categoryValue)
+			  {
+			  	case "1":
+			  		self.setIconDropDownItems(genALIconItems());
+			  		break;
+			  	case "2":
+			  		self.setIconDropDownItems(genSightIconItems());
+			  		break;
+			  	case "3":
+			  		self.setIconDropDownItems(genHotelIconItems());
+			  		break;
+			  	case "4":
+			  		self.setIconDropDownItems(genFoodIconItems());
+			  		break;
+			  	case "5":
+			  		self.setIconDropDownItems(genInfoIconItems());
+			  		break;
+			  	case "6":
+			  		self.setIconDropDownItems(genOvIconItems());
+			  		break;
+			  	default:
+			  		self.setIconDropDownItems(genSightIconItems());
+			  }
+		});
+	};
+	
+	function genALIconItems(){
+		return [
+			{url:"resource/icons/arriveLeave/al_default.png",name:""},
+			{url:"resource/icons/arriveLeave/al_1.png",name:""}
+		];
+	}
+	
+	function genSightIconItems(){
+		return [
+			{url:"resource/icons/sight/sight_default.png",name:""},
+			{url:"resource/icons/sight/sight_1.png",name:""},
+			{url:"resource/icons/sight/sight_2.png",name:""}
+		];
+	}
+	
+	function genHotelIconItems(){
+		return [
+			{url:"resource/icons/hotel/hotel_default.png",name:""},
+			{url:"resource/icons/hotel/hotel_1.png",name:""}
+		];	
+	}
+	
+	function genFoodIconItems(){
+		return [
+			{url:"resource/icons/food/food_default.png",name:""},
+			{url:"resource/icons/food/food_1.png",name:""}
+		];	
+	}
+	
+	function genInfoIconItems(){
+		return [
+			{url:"resource/icons/event/event_default.png",name:""},
+			{url:"resource/icons/event/event_1.png",name:""},
+			{url:"resource/icons/event/event_2.png",name:""},
+			{url:"resource/icons/event/event_3.png",name:""},
+		];			
+	}
+	
+	function genOvIconItems(){
+		var items=[];
+		items.push({url:"resource/icons/default/default_default.png",name:""});
+		items.push({url:"resource/icons/overview/overview_bear.png",name:""});
+		items.push({url:"resource/icons/overview/overview_photo.png",name:""});
+		items.push({url:"resource/icons/overview/overview_eiffel.png",name:""});
+		items.push({url:"resource/icons/overview/overview_sun.png",name:""});
+		items.push({url:"resource/icons/overview/overview_beach.png",name:""});
+		items.push({url:"resource/icons/overview/overview_bag.png",name:""});
+		items.push({url:"resource/icons/overview/overview_car.png",name:""});
+		items.push({url:"resource/icons/overview/overview_star.png",name:""});
+		return items;
+	}
+	
+	this.setIconDropDownItems=function(items){
+		$('#'+id).find('.iconDropDownMenu').empty();
 		for(var i in items){
 			var itemHtml="<li><a href='#'><img class='icon' src='"+items[i].url+"'>"+items[i].name+"</a></li>";
-			$('#'+id).find('.dropdown-menu').append(itemHtml);
+			$('#'+id).find('.iconDropDownMenu').append(itemHtml);
 		}
 		
-		$('#'+id).find(".dropdown-menu li a").click(function(){
+		$('#'+id).find(".iconDropDownMenu li a").click(function(){
 			  var selText = $(this).text();
 			  var imgSrc=$(this).find('.icon').attr('src');
-			  comboValue=selText;
 			  $('#'+id).find('.selectedTxt').html(selText+' <span class="caret"></span>');
 			  $('#'+id).find(".selectedImg").attr('src',imgSrc);
 		});
+	};
+	
+	this.getCategoryValue=function(){
+		return parseInt(
+				$('#'+id).find(".selectedCategory").attr('value')
+		);
+	};
+	
+	this.setCategoryValue=function(value){
+		 switch(value)
+		  {
+		  	case 1:
+		  		self.setIconDropDownItems(genALIconItems());
+		  		$('#'+id).find('.selectedCategory').html("arrival & leave"+' <span class="caret"></span>');
+				$('#'+id).find(".selectedCategory").attr('value',value);
+		  		break;
+		  	case 2:
+		  		self.setIconDropDownItems(genSightIconItems());
+		  		$('#'+id).find('.selectedCategory').html("sight"+' <span class="caret"></span>');
+				$('#'+id).find(".selectedCategory").attr('value',value);
+		  		break;
+		  	case 3:
+		  		self.setIconDropDownItems(genHotelIconItems());
+		  		$('#'+id).find('.selectedCategory').html("hotel"+' <span class="caret"></span>');
+				$('#'+id).find(".selectedCategory").attr('value',value);
+		  		break;
+		  	case 4:
+		  		self.setIconDropDownItems(genFoodIconItems());
+		  		$('#'+id).find('.selectedCategory').html("food"+' <span class="caret"></span>');
+				$('#'+id).find(".selectedCategory").attr('value',value);
+		  		break;
+		  	case 5:
+		  		self.setIconDropDownItems(genInfoIconItems());
+		  		$('#'+id).find('.selectedCategory').html("info"+' <span class="caret"></span>');
+				$('#'+id).find(".selectedCategory").attr('value',value);
+		  		break;
+		  	case 6:
+		  		self.setIconDropDownItems(genOvIconItems());
+		  		$('#'+id).find('.selectedCategory').html("overview"+' <span class="caret"></span>');
+				$('#'+id).find(".selectedCategory").attr('value',value);
+		  		break;
+		  	default:
+		  		self.setIconDropDownItems(genSightIconItems());
+		  		$('#'+id).find('.selectedCategory').html("sight"+' <span class="caret"></span>');
+		  		$('#'+id).find(".selectedCategory").attr('value',2);
+		  }
 	};
 	
 	this.setIconSelect=function(item){

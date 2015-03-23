@@ -74,17 +74,21 @@
 			
 		
 		<div class="navbar-header">
+			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#collapseNavbar">
+        		<span class="sr-only">Toggle navigation</span>
+        		<span class="icon-bar"></span>
+        		<span class="icon-bar"></span>
+        		<span class="icon-bar"></span>
+      		</button>
 			<a class="navbar-brand" href="#">MapMarker</a>
 		</div>
 		
-		<div>
+		<div class="collapse navbar-collapse" id="collapseNavbar">
 			<ul class="nav navbar-nav navbar-left">
 				<li class="active"><a href="explore.html"><span class='glyphicon glyphicon-globe'></span> Explore</a></li>
-				<li><a href="myMap.html"><span class='glyphicon glyphicon-user'></span> MyMap</a></li>
+				<li ><a href="myMap.html"><span class='glyphicon glyphicon-user'></span> MyMap</a></li>
 			</ul>
-		</div>
 		
-		<div>
 			<ul class="nav navbar-nav navbar-right">
 				<li><a href="#" data-toggle="tooltip"  class="test hide"
         			data-placement="bottom" title="Back to World Map">
@@ -126,9 +130,7 @@
         			<span class="glyphicon glyphicon-save" aria-hidden="true"></a>
         		</li>
 			</ul>
-		</div>
-		
-		<div>
+			
 			<div class="navbar-form navbar-left" role="search">
 				<div class="form-group">
 					<input type="text" class="form-control" id='searchValue'
@@ -139,7 +141,6 @@
 		</div>
 		</div>
 	</nav>
-	
 	<div id="l-map"></div>
 	
 	<div class="modal fade" id="MarkerInfoModel" tabindex="-1"

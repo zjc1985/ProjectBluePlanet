@@ -1121,6 +1121,28 @@ function BackendManager() {
 		});
 	};
 	
+	this.sayHello=function(){
+		AV.Cloud.run('hello', {}, {
+			success: function(result) {
+			    alert(result);
+			},
+			error: function(error) {
+				alert(error);
+			}
+		});
+	};
+	
+	this.cloudFetchMarkersByRoutineId=function(routineId){
+		AV.Cloud.run('hello', {routineId:routineId}, {
+			success: function(result) {
+			    console.log(result);
+			},
+			error: function(error) {
+				alert(error);
+			}
+		});
+	};
+	
 	//------------------------------------------------------------
 	this.saveCurrentRoutineMarkers=function(markers,ovMarkers){
 		

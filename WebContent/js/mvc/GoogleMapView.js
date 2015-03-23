@@ -110,67 +110,46 @@ function GoogleMapView(oneController) {
 			controller.searchMarkerClick({title:googleMarker.getTitle()});
 		});
 	}
+	
+	function linkAutoComplete(){
+		var input = document.getElementById('searchValue');
+		var autocomplete = new google.maps.places.Autocomplete(input);
+		autocomplete.bindTo('bounds', map);
+		
+		searchMarker = new google.maps.Marker({
+		    map: map,
+		    anchorPoint: new google.maps.Point(0, -29)
+		});
+		
+		google.maps.event.addListener(autocomplete, 'place_changed', function() {
+			var place = autocomplete.getPlace();
+			
+			if (!place.geometry) {
+			      return;
+			}
+			
+			if (place.geometry.viewport) {
+			      map.fitBounds(place.geometry.viewport);
+			} else {
+			      map.setCenter(place.geometry.location);
+			      map.setZoom(17);  // Why 17? Because it looks good.
+			}
+			
+			cleanSearchMarkers();
 
-	function linkSearchBox() {
-		// Create the search box and link it to the UI element.
-		var input = /** @type {HTMLInputElement} */
-		(document.getElementById('searchKey'));
-		map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
-
-		var searchButton = document.getElementById('searchButton');
-		map.controls[google.maps.ControlPosition.TOP_LEFT].push(searchButton);
-
-		var searchBox = new google.maps.places.SearchBox(
-		/** @type {HTMLInputElement} */
-		(input));
-
-		// [START region_getplaces]
-		// Listen for the event fired when the user selects an item from the
-		// pick list. Retrieve the matching places for that item.
-		google.maps.event
-				.addListener(
-						searchBox,
-						'places_changed',
-						function() {
-							var places = searchBox.getPlaces();
-
-							cleanSearchMarkers();
-
-							var bounds = new google.maps.LatLngBounds();
-							for ( var i = 0, place; place = places[i]; i++) {
-								var image = {
-									url : place.icon,
-								};
-
-								// Create a marker for each place.
-								var marker = new google.maps.Marker(
-										{
-											map : map,
-											title : place.name,
-											position : place.geometry.location,
-											icon : 'http://www.google.com/intl/en_us/mapfiles/ms/micons/blue-dot.png'
-										});
-
-								searchMarkers.push(marker);
-
-								addSearchMarkerContextMenu(marker);
-
-								bounds.extend(place.geometry.location);
-							}
-
-							map.fitBounds(bounds);
-						});
-		// [END region_getplaces]
-
-		// Bias the SearchBox results towards places that are within the bounds
-		// of the
-		// current map's viewport.
-		google.maps.event.addListener(map, 'bounds_changed', function() {
-			var bounds = map.getBounds();
-			searchBox.setBounds(bounds);
+			var marker = new google.maps.Marker({
+				map : map,
+				title : place.name,
+				position : place.geometry.location,
+				icon : 'resource/icons/default/search_default.png'
+			});
+			
+			searchMarkers.push(marker);
+				
+			addSearchMarkerContextMenu(marker);
+			
 		});
 	}
-	;
 
 	this.getCenter = function() {
 		var wapped=new google.maps.LatLng(map.getCenter().lat(), map.getCenter().lng());
@@ -283,16 +262,6 @@ function GoogleMapView(oneController) {
 		});
 		
 		this.navBar=new NavBar('myNavBar');
-		this.navBar.createRoutineClick(function(){
-			/*
-			controller.createRoutine({
-				lat:self.getCenter().lat,
-				lng:self.getCenter().lng,
-				title:'New Routine',
-				mycomment:'New Routine'
-			});
-			*/
-		});
 		this.navBar.toCustomStyleClick(function(){
 			controller.toCustomStyleBtnClick();
 		});
@@ -313,9 +282,6 @@ function GoogleMapView(oneController) {
 		});
 		this.navBar.createMarkerWithImageClick(function(){
 			self.uploadImgModal.show();
-		});
-		this.navBar.createRoutineClick(function(){
-			
 		});
 			
 		this.markerInfoDialog=new MarkerInfo('MarkerInfoModel');
@@ -385,8 +351,7 @@ function GoogleMapView(oneController) {
 		markerCluster.setGridSize(30);
 		
 
-		linkSearchBox();
-
+		linkAutoComplete();
 	};
 
 	this.fromPixelToLatLng = function(point) {
@@ -767,7 +732,7 @@ function GoogleMapView(oneController) {
 	};
 
 	this.searchLocation = function(key) {
-		gaodeSearch(key);
+		//gaodeSearch(key);
 	};
 
 	this.clearMarkerCluster = function() {

@@ -104,6 +104,7 @@ function MapController(){
 			var currentRoutine=model.getRoutineById(model.currentRoutineId);
 			view.panByIds([currentRoutine.id]);
 		}
+		view.setMapZoom(7);
 	};
 	
 	this.markerCopyBtnClick=function(){
@@ -239,6 +240,8 @@ function MapController(){
 				if(!isUserOwnThisRoutine){
 					self.disableEditFunction();
 				}
+				view.clearMarkerCluster();
+				view.AddMarkers2Cluster(ids);
 			});
 			routine.isLoadMarkers=true;
 		}
@@ -254,38 +257,6 @@ function MapController(){
 			var viewMarker=view.getViewOverlaysById(overviewModelMarkers[i].id);
 			viewMarker.hide();
 		}
-		
-		
-		
-		/*
-		for(var i in model.getModelMarkers()){
-			view.removeById(model.getModelMarkers()[i].id);
-		}
-		
-		model.setCurrenOverviewMarkersByOverviewId(overviewMarkerId);
-		
-		model.loadRoutineByOverviewMarkerId(overviewMarkerId, function(title){
-			routineName=title;
-			var ids=[];
-			for(var i in model.getModelMarkers()){
-				var id=model.getModelMarkers()[i].id;
-				changeSubMarkerShowStatus(id);
-				ids.push(id);
-			}
-			
-			view.fitBoundsByIds(ids);
-			
-			if(view.isInCustomZoom()){
-				view.setMapZoom(8);
-			}
-			
-			if(!isUserOwnThisRoutine){
-				setTimeout(function(){
-					disableEditFunction();
-				},500);
-			}
-		});
-		*/
 	};
 	
 	this.uploadImgs=function(imageBase64String,lat,lng,fileName){
@@ -319,7 +290,7 @@ function MapController(){
 	};
 	
 	this.searchLocation=function(key){
-		view.searchLocation(key);
+		//view.searchLocation(key);
 	};
 	
 	this.disableEditFunction=function(){
@@ -950,7 +921,7 @@ function MapController(){
 			if(!isUserOwnThisRoutine){
 				setTimeout(function(){
 					self.disableEditFunction();
-				},100);
+				},1000);
 			}
 			
 			self.zoomEventHandler();	
@@ -960,41 +931,8 @@ function MapController(){
 	this.loadRoutines=function(){
 		//todo: clean all existOverlay in view
 		model.resetModels();
-		view.resetView();
-		
-		loadAllOvMarkersByUserId(QueryString.userId);
-		/*
-		if(QueryString.routineId!=null){
-			model.fetchUserIdByRoutineId(QueryString.routineId, function(userId){
-				model.loadAllOverviewRoutine(userId,function(isUserOwnRoutine){
-					for(var i in model.getAllOverviewMarkers()){
-						if(model.getAllOverviewMarkers()[i].routineId==QueryString.routineId){
-							var id = model.getAllOverviewMarkers()[i].id;
-							view.fitBoundsByIds([id]);
-							self.overviewMarkerClickEventHandler(id, 10000);
-							break;
-						}
-					}
-					
-					view.setMapZoom(5);
-					
-					self.zoomEventHandler();
-					
-					console.log('isUserOwnThisRoutine: '+isUserOwnRoutine);
-					
-					isUserOwnThisRoutine=isUserOwnRoutine;
-								
-					if(!isUserOwnThisRoutine){
-						setTimeout(function(){
-							disableEditFunction();
-						},100);
-					}
-				});
-			});
-		}else{
-			loadAllOvMarkersByUserId(QueryString.userId);
-		}
-		*/
+		view.resetView();	
+		loadAllOvMarkersByUserId(QueryString.userId);	
 	};
 	
 	this.sync=function(){

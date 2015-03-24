@@ -111,7 +111,7 @@ function GoogleMapView(oneController) {
 		});
 	}
 	
-	function linkAutoComplete(){
+	this.linkAutoComplete=function(){
 		var input = document.getElementById('searchValue');
 		var autocomplete = new google.maps.places.Autocomplete(input);
 		autocomplete.bindTo('bounds', map);
@@ -351,7 +351,7 @@ function GoogleMapView(oneController) {
 		markerCluster.setGridSize(30);
 		
 
-		linkAutoComplete();
+		this.linkAutoComplete();
 	};
 
 	this.fromPixelToLatLng = function(point) {
@@ -872,6 +872,34 @@ function ExploreGoogleMapView(oneController){
 			controller.dragendEventHandler();
 		});
 	};
+	
+	this.linkAutoComplete=function(){
+		var input = document.getElementById('searchValue');
+		var autocomplete = new google.maps.places.Autocomplete(input);
+		autocomplete.bindTo('bounds', self.getMap());
+		
+		searchMarker = new google.maps.Marker({
+		    map: self.getMap(),
+		    anchorPoint: new google.maps.Point(0, -29)
+		});
+		
+		google.maps.event.addListener(autocomplete, 'place_changed', function() {
+			var place = autocomplete.getPlace();
+			
+			if (!place.geometry) {
+			      return;
+			}
+			
+			if (place.geometry.viewport) {
+				self.getMap().fitBounds(place.geometry.viewport);
+			} else {
+				self.getMap().setCenter(place.geometry.location);
+				self.getMap().setZoom(17);  // Why 17? Because it looks good.
+			}
+			
+			controller.dragendEventHandler();
+		});
+	}
 	
 	this.refreshCenterMarker=function(){
 		if(centerMarker==null){

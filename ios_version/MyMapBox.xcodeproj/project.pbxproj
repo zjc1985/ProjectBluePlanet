@@ -14,6 +14,7 @@
 		285E432A1AD61E720030A274 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 285E43291AD61E720030A274 /* Images.xcassets */; };
 		285E432D1AD61E720030A274 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 285E432B1AD61E720030A274 /* LaunchScreen.xib */; };
 		285E43391AD61E720030A274 /* MyMapBoxTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 285E43381AD61E720030A274 /* MyMapBoxTests.m */; };
+		2868F5541ADB92E400DACCA2 /* RoutineInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2868F5531ADB92E400DACCA2 /* RoutineInfoViewController.m */; };
 		53ED110BC35C2D004D4FC1C8 /* libPods-MyMapBox.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DDCD2D0DA0362384E0FDE0D7 /* libPods-MyMapBox.a */; };
 /* End PBXBuildFile section */
 
@@ -41,6 +42,8 @@
 		285E43321AD61E720030A274 /* MyMapBoxTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MyMapBoxTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		285E43371AD61E720030A274 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		285E43381AD61E720030A274 /* MyMapBoxTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MyMapBoxTests.m; sourceTree = "<group>"; };
+		2868F5521ADB92E400DACCA2 /* RoutineInfoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RoutineInfoViewController.h; sourceTree = "<group>"; };
+		2868F5531ADB92E400DACCA2 /* RoutineInfoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RoutineInfoViewController.m; sourceTree = "<group>"; };
 		DDCD2D0DA0362384E0FDE0D7 /* libPods-MyMapBox.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MyMapBox.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E01CF57D6469FFF3BFBA2341 /* Pods-MyMapBox.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MyMapBox.debug.xcconfig"; path = "Pods/Target Support Files/Pods-MyMapBox/Pods-MyMapBox.debug.xcconfig"; sourceTree = "<group>"; };
 		EBA60881B796C5AC77DABE4A /* Pods-MyMapBox.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MyMapBox.release.xcconfig"; path = "Pods/Target Support Files/Pods-MyMapBox/Pods-MyMapBox.release.xcconfig"; sourceTree = "<group>"; };
@@ -102,6 +105,8 @@
 				285E43291AD61E720030A274 /* Images.xcassets */,
 				285E432B1AD61E720030A274 /* LaunchScreen.xib */,
 				285E431C1AD61E720030A274 /* Supporting Files */,
+				2868F5521ADB92E400DACCA2 /* RoutineInfoViewController.h */,
+				2868F5531ADB92E400DACCA2 /* RoutineInfoViewController.m */,
 			);
 			path = MyMapBox;
 			sourceTree = "<group>";
@@ -281,6 +286,7 @@
 				285E43251AD61E720030A274 /* ViewController.m in Sources */,
 				285E43221AD61E720030A274 /* AppDelegate.m in Sources */,
 				285E431F1AD61E720030A274 /* main.m in Sources */,
+				2868F5541ADB92E400DACCA2 /* RoutineInfoViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

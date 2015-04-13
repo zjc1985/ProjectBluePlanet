@@ -8,6 +8,9 @@
 
 #import "ViewController.h"
 #import <Mapbox-iOS-SDK/Mapbox.h>
+#import "RoutineInfoViewController.h"
+
+#define SHOW_ROUTINE_INFO_SEGUE @"showRoutineInfoSegue"
 
 @interface ViewController ()<RMMapViewDelegate,RMTileCacheBackgroundDelegate>
 
@@ -60,6 +63,17 @@
                                                object:app];
 }
 
+-(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
+    if([segue.identifier isEqualToString:SHOW_ROUTINE_INFO_SEGUE]){
+        RoutineInfoViewController *routineInfoVC=segue.destinationViewController;
+        
+    }
+}
+
+#pragma segue
+
+
+
 -(void)alert:(NSString *)content{
     UIAlertView *theAlert=[[UIAlertView alloc] initWithTitle:@"alert" message:content delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
     [theAlert show];
@@ -92,6 +106,9 @@
 
     //[self.mapView setCenterCoordinate:CLLocationCoordinate2DMake(37.743584, -122.472331) animated:YES];
 }
+
+#pragma cach related
+
 - (IBAction)downloadCach:(id)sender {
     [self startBackgroundCach];
 }
@@ -111,8 +128,20 @@
                                                       maxZoom:15];
 }
 
+- (void)tileCache:(RMTileCache *)tileCache didBeginBackgroundCacheWithCount:(NSUInteger)tileCount forTileSource:(id<RMTileSource>)tileSource{
+    NSLog(@"begin background cach. tileCount:%lu ",(unsigned long)tileCount);
+}
+
+- (void)tileCache:(RMTileCache *)tileCache didBackgroundCacheTile:(RMTile)tile withIndex:(NSUInteger)tileIndex ofTotalTileCount:(NSUInteger)totalTileCount{
+    NSLog(@"caching currrent num: %lu with total count %lu",(unsigned long)tileIndex,(unsigned long)totalTileCount);
+    
+    if(tileIndex==totalTileCount){
+        [self alert:@"cach complete"];
+    }
+}
 
 
+#pragma RMMapViewDelegate
 
 -(RMMapLayer *)mapView:(RMMapView *)mapView layerForAnnotation:(RMAnnotation *)annotation{
     if(annotation.isUserLocationAnnotation)
@@ -121,9 +150,24 @@
                         [UIColor colorWithRed:0.224 green:0.671 blue:0.780 alpha:1.000]];
     
     marker.canShowCallout = YES;
+    
+    marker.rightCalloutAccessoryView = [UIButton
+                                        buttonWithType:UIButtonTypeDetailDisclosure];
+
 
     return marker;
 }
+
+
+
+-(void)tapOnCalloutAccessoryControl:(UIControl *)control forAnnotation:(RMAnnotation *)annotation onMap:(RMMapView *)map{
+    [self performSegueWithIdentifier:SHOW_ROUTINE_INFO_SEGUE sender:annotation];
+}
+
+-(void)tapOnLabelForAnnotation:(RMAnnotation *)annotation onMap:(RMMapView *)map{
+    NSLog(@"tap on label");
+}
+
 
 -(BOOL)mapView:(RMMapView *)mapView shouldDragAnnotation:(RMAnnotation *)annotation{
     return YES;
@@ -140,21 +184,10 @@
         NSLog(@"current zoom: %f",mapView.zoom);
         NSLog(@"tileSources num %lu",(unsigned long)[mapView.tileSources count]);
         NSLog(@"tileSources isCacheable %u",[mapView.tileSource isCacheable]);
-
     }
 }
 
-- (void)tileCache:(RMTileCache *)tileCache didBeginBackgroundCacheWithCount:(NSUInteger)tileCount forTileSource:(id<RMTileSource>)tileSource{
-    NSLog(@"begin background cach. tileCount:%lu ",(unsigned long)tileCount);
-}
 
-- (void)tileCache:(RMTileCache *)tileCache didBackgroundCacheTile:(RMTile)tile withIndex:(NSUInteger)tileIndex ofTotalTileCount:(NSUInteger)totalTileCount{
-    NSLog(@"caching currrent num: %lu with total count %lu",(unsigned long)tileIndex,(unsigned long)totalTileCount);
-    
-    if(tileIndex==totalTileCount){
-        [self alert:@"cach complete"];
-    }
-}
 
 
 

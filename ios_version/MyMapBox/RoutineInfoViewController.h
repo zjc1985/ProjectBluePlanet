@@ -7,7 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <Mapbox-iOS-SDK/Mapbox.h>
 
 @interface RoutineInfoViewController : UITableViewController
+
+@property(nonatomic,weak)RMMapView *mapView;
 
 @end

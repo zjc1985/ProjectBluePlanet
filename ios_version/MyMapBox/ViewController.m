@@ -13,6 +13,7 @@
 #define SHOW_ROUTINE_INFO_SEGUE @"showRoutineInfoSegue"
 
 @interface ViewController ()<RMMapViewDelegate,RMTileCacheBackgroundDelegate>
+@property (weak, nonatomic) IBOutlet UIButton *locateButton;
 
 @property(nonatomic,strong) RMMapView *mapView;
 
@@ -22,6 +23,10 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    self.locateButton.layer.borderWidth=0.5f;
+    self.locateButton.layer.cornerRadius = 4.5;
+    
     
      [[RMConfiguration sharedInstance] setAccessToken:@"pk.eyJ1IjoibGlvbmhhcnQ1ODYiLCJhIjoiR1JHd2NnYyJ9.iCg5vA7qQaRxf2Z-T_vEjg"];
     
@@ -54,19 +59,25 @@
     
     CLLocationCoordinate2D center=CLLocationCoordinate2DMake(31.239689, 121.499755);
     self.mapView.centerCoordinate=center;
+    
     [self.view addSubview:self.mapView];
+    [self.view sendSubviewToBack:self.mapView];
     
     UIApplication *app=[UIApplication sharedApplication];
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(applicationWillResignActive:)
                                                  name:UIApplicationWillResignActiveNotification
                                                object:app];
+    
+    [self addMarkerWithTitle:@"Boundary" withCoordinate:CLLocationCoordinate2DMake(37.743584, -122.472331)];
+    [self addMarkerWithTitle:@"Boundary" withCoordinate:CLLocationCoordinate2DMake(37.803965, -122.405895)];
 }
 
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
     if([segue.identifier isEqualToString:SHOW_ROUTINE_INFO_SEGUE]){
+       //prepare for RoutineInfoViewController
         RoutineInfoViewController *routineInfoVC=segue.destinationViewController;
-        
+        routineInfoVC.mapView=self.mapView;
     }
 }
 
@@ -100,11 +111,18 @@
 
 - (IBAction)addMarker:(id)sender {
     
-    RMAnnotation *annotation=[[RMAnnotation alloc] initWithMapView:self.mapView coordinate:self.mapView.centerCoordinate andTitle:@"One Location"];
+    [self.mapView setCenterCoordinate:CLLocationCoordinate2DMake(37.743584, -122.472331) animated:YES];
+    
+    [self addMarkerWithTitle:@"One Location" withCoordinate:self.mapView.centerCoordinate];
+}
+
+-(void)addMarkerWithTitle:(NSString *)title withCoordinate:(CLLocationCoordinate2D)coordinate{
+    RMAnnotation *annotation=[[RMAnnotation alloc] initWithMapView:self.mapView
+                                                        coordinate:coordinate
+                                                          andTitle:title];
     
     [self.mapView addAnnotation:annotation];
 
-    //[self.mapView setCenterCoordinate:CLLocationCoordinate2DMake(37.743584, -122.472331) animated:YES];
 }
 
 #pragma cach related

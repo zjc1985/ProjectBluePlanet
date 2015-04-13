@@ -7,6 +7,7 @@
 //
 
 #import "RoutineInfoViewController.h"
+#import "RoutineDetailMapViewController.h"
 
 @interface RoutineInfoViewController ()
 @property (weak, nonatomic) IBOutlet UILabel *titleLabel;
@@ -31,14 +32,16 @@
     NSLog(@"Pin Routine Detail click");
 }
 
-/*
+
 #pragma mark - Navigation
 
 // In a storyboard-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+    if([segue.destinationViewController isKindOfClass:[RoutineDetailMapViewController class]]){
+        RoutineDetailMapViewController *routineDetailMapVC=(RoutineDetailMapViewController *)segue.destinationViewController;
+        routineDetailMapVC.mapView=self.mapView;
+    }
 }
-*/
+
 
 @end

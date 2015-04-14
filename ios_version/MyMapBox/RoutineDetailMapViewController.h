@@ -9,8 +9,7 @@
 #import "ViewController.h"
 #import <Mapbox-iOS-SDK/Mapbox.h>
 
-@interface RoutineDetailMapViewController : ViewController
+@interface RoutineDetailMapViewController:UIViewController
 
-@property(nonatomic,strong)RMMapView *mapView;
 
 @end

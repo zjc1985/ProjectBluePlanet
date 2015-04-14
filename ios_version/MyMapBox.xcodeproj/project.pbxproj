@@ -14,6 +14,7 @@
 		285E432A1AD61E720030A274 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 285E43291AD61E720030A274 /* Images.xcassets */; };
 		285E432D1AD61E720030A274 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 285E432B1AD61E720030A274 /* LaunchScreen.xib */; };
 		285E43391AD61E720030A274 /* MyMapBoxTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 285E43381AD61E720030A274 /* MyMapBoxTests.m */; };
+		2863907B1ADD136000A5B999 /* CommonUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 2863907A1ADD136000A5B999 /* CommonUtil.m */; };
 		53ED110BC35C2D004D4FC1C8 /* libPods-MyMapBox.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DDCD2D0DA0362384E0FDE0D7 /* libPods-MyMapBox.a */; };
 		8421CB151ADBF8FA002046B9 /* RoutineInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8421CB141ADBF8FA002046B9 /* RoutineInfoViewController.m */; };
 		8421CB181ADC04D0002046B9 /* RoutineDetailMapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8421CB171ADC04D0002046B9 /* RoutineDetailMapViewController.m */; };
@@ -43,6 +44,8 @@
 		285E43321AD61E720030A274 /* MyMapBoxTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MyMapBoxTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		285E43371AD61E720030A274 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		285E43381AD61E720030A274 /* MyMapBoxTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MyMapBoxTests.m; sourceTree = "<group>"; };
+		286390791ADD136000A5B999 /* CommonUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommonUtil.h; sourceTree = "<group>"; };
+		2863907A1ADD136000A5B999 /* CommonUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommonUtil.m; sourceTree = "<group>"; };
 		8421CB131ADBF8FA002046B9 /* RoutineInfoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RoutineInfoViewController.h; sourceTree = "<group>"; };
 		8421CB141ADBF8FA002046B9 /* RoutineInfoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RoutineInfoViewController.m; sourceTree = "<group>"; };
 		8421CB161ADC04D0002046B9 /* RoutineDetailMapViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RoutineDetailMapViewController.h; sourceTree = "<group>"; };
@@ -106,6 +109,8 @@
 				8421CB141ADBF8FA002046B9 /* RoutineInfoViewController.m */,
 				285E43231AD61E720030A274 /* ViewController.h */,
 				285E43241AD61E720030A274 /* ViewController.m */,
+				286390791ADD136000A5B999 /* CommonUtil.h */,
+				2863907A1ADD136000A5B999 /* CommonUtil.m */,
 				285E43261AD61E720030A274 /* Main.storyboard */,
 				8421CB161ADC04D0002046B9 /* RoutineDetailMapViewController.h */,
 				8421CB171ADC04D0002046B9 /* RoutineDetailMapViewController.m */,
@@ -292,6 +297,7 @@
 				8421CB181ADC04D0002046B9 /* RoutineDetailMapViewController.m in Sources */,
 				285E43221AD61E720030A274 /* AppDelegate.m in Sources */,
 				285E431F1AD61E720030A274 /* main.m in Sources */,
+				2863907B1ADD136000A5B999 /* CommonUtil.m in Sources */,
 				8421CB151ADBF8FA002046B9 /* RoutineInfoViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -419,6 +425,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				INFOPLIST_FILE = MyMapBox/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -431,6 +438,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				INFOPLIST_FILE = MyMapBox/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};

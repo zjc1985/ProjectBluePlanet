@@ -11,6 +11,5 @@
 
 @interface RoutineInfoViewController : UITableViewController
 
-@property(nonatomic,weak)RMMapView *mapView;
 
 @end

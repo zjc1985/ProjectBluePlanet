@@ -9,17 +9,21 @@
 #import "ViewController.h"
 #import <Mapbox-iOS-SDK/Mapbox.h>
 #import "RoutineInfoViewController.h"
+#import "CommonUtil.h"
 
 #define SHOW_ROUTINE_INFO_SEGUE @"showRoutineInfoSegue"
 
 @interface ViewController ()<RMMapViewDelegate,RMTileCacheBackgroundDelegate>
-@property (weak, nonatomic) IBOutlet UIButton *locateButton;
 
+@property (weak, nonatomic) IBOutlet UIButton *locateButton;
 @property(nonatomic,strong) RMMapView *mapView;
 
 @end
 
 @implementation ViewController
+
+#define tourMapId  @"lionhart586.gkihab1d"
+#define streetMapId @"lionhart586.lnmjhd7b"
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -31,18 +35,21 @@
      [[RMConfiguration sharedInstance] setAccessToken:@"pk.eyJ1IjoibGlvbmhhcnQ1ODYiLCJhIjoiR1JHd2NnYyJ9.iCg5vA7qQaRxf2Z-T_vEjg"];
     
     RMMapboxSource *tileSource=nil;
-    NSString *filePath=[self dataFilePath];
+    NSString *filePath=[CommonUtil dataFilePath];
+    
     if([[NSFileManager defaultManager] fileExistsAtPath:filePath]){
         NSMutableDictionary *dictionary= [[NSMutableDictionary alloc] initWithContentsOfFile:filePath];
-        NSString *tileJSON=[dictionary objectForKey:@"tileJSON"];
+        NSString *tileJSON=[dictionary objectForKey:@"tileJSONTourMap"];
         NSLog(@"found tileJSON in file");
         tileSource= [[RMMapboxSource alloc] initWithTileJSON:tileJSON];
     }else{
-        tileSource =[[RMMapboxSource alloc] initWithMapID:@"lionhart586.gkihab1d"];
+        tileSource =[[RMMapboxSource alloc] initWithMapID:streetMapId];
+        //RMMapboxSource *detailSource=[[RMMapboxSource alloc] initWithMapID:@"lionhart586.lnmjhd7b"];
+        NSMutableDictionary *dictionary= [NSMutableDictionary dictionaryWithCapacity:10];
+        [dictionary setObject:tileSource.tileJSON forKey:@"tileJSONTourMap"];
+        //[dictionary setObject:detailSource.tileJSON forKey:@"tileJSONDetailMap"];
+        [dictionary writeToFile:filePath atomically:YES];
     }
-    
-   
-    
     
     self.mapView=[[RMMapView alloc] initWithFrame:self.view.bounds
                                     andTilesource:tileSource];
@@ -63,26 +70,20 @@
     [self.view addSubview:self.mapView];
     [self.view sendSubviewToBack:self.mapView];
     
-    UIApplication *app=[UIApplication sharedApplication];
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(applicationWillResignActive:)
-                                                 name:UIApplicationWillResignActiveNotification
-                                               object:app];
-    
-    [self addMarkerWithTitle:@"Boundary" withCoordinate:CLLocationCoordinate2DMake(37.743584, -122.472331)];
-    [self addMarkerWithTitle:@"Boundary" withCoordinate:CLLocationCoordinate2DMake(37.803965, -122.405895)];
+
+    [self addMarkerWithTitle:@"Boundary" withCoordinate:CLLocationCoordinate2DMake(31.216571, 121.391336)];
+    [self addMarkerWithTitle:@"Boundary" withCoordinate:CLLocationCoordinate2DMake(31.237347, 121.416280)];
 }
+
+#pragma segue
 
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
     if([segue.identifier isEqualToString:SHOW_ROUTINE_INFO_SEGUE]){
        //prepare for RoutineInfoViewController
         RoutineInfoViewController *routineInfoVC=segue.destinationViewController;
-        routineInfoVC.mapView=self.mapView;
+        //routineInfoVC.mapView=self.mapView;
     }
 }
-
-#pragma segue
-
 
 
 -(void)alert:(NSString *)content{
@@ -90,31 +91,18 @@
     [theAlert show];
 }
 
--(void)applicationWillResignActive:(NSNotification *)notification{
-    NSString *filePath=[self dataFilePath];
-    NSMutableDictionary *dictionary= [NSMutableDictionary dictionaryWithCapacity:10];
-    
-    RMMapboxSource *source=(RMMapboxSource *)self.mapView.tileSource;
-    
-    [dictionary setObject:source.tileJSON forKey:@"tileJSON"];
-    [dictionary writeToFile:filePath atomically:YES];
-}
-
--(NSString *)dataFilePath{
-    NSArray *path=NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *documentDirectory=[path objectAtIndex:0];
-    return [documentDirectory stringByAppendingPathComponent:@"data.plist"];
-}
-
-
-
 
 - (IBAction)addMarker:(id)sender {
     
-    [self.mapView setCenterCoordinate:CLLocationCoordinate2DMake(37.743584, -122.472331) animated:YES];
+    //[self.mapView setCenterCoordinate:CLLocationCoordinate2DMake(37.743584, -122.472331) animated:YES];
     
     [self addMarkerWithTitle:@"One Location" withCoordinate:self.mapView.centerCoordinate];
 }
+
+- (IBAction)locateButtonClick {
+    [self.mapView setCenterCoordinate:CLLocationCoordinate2DMake(31.216571, 121.391336) animated:YES];
+}
+
 
 -(void)addMarkerWithTitle:(NSString *)title withCoordinate:(CLLocationCoordinate2D)coordinate{
     RMAnnotation *annotation=[[RMAnnotation alloc] initWithMapView:self.mapView
@@ -140,8 +128,8 @@
     
     
     [self.mapView.tileCache beginBackgroundCacheForTileSource:self.mapView.tileSource
-                                                    southWest:CLLocationCoordinate2DMake(37.743584, -122.472331)
-                                                    northEast:CLLocationCoordinate2DMake(37.803965, -122.405895)
+                                                    southWest:CLLocationCoordinate2DMake(31.216571, 121.391336)
+                                                    northEast:CLLocationCoordinate2DMake(31.237347, 121.416280)
                                                       minZoom:12
                                                       maxZoom:15];
 }
@@ -154,7 +142,8 @@
     NSLog(@"caching currrent num: %lu with total count %lu",(unsigned long)tileIndex,(unsigned long)totalTileCount);
     
     if(tileIndex==totalTileCount){
-        [self alert:@"cach complete"];
+        //[self alert:@"cach complete"];
+        NSLog(@"Cach Complete");
     }
 }
 

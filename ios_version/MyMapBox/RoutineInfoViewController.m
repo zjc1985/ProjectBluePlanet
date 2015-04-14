@@ -39,7 +39,6 @@
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if([segue.destinationViewController isKindOfClass:[RoutineDetailMapViewController class]]){
         RoutineDetailMapViewController *routineDetailMapVC=(RoutineDetailMapViewController *)segue.destinationViewController;
-        routineDetailMapVC.mapView=self.mapView;
     }
 }
 

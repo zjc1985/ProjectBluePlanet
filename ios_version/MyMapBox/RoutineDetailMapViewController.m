@@ -52,6 +52,10 @@
     
     self.mapView.delegate=self;
     
+    self.mapView.showsUserLocation=YES;
+    
+    self.mapView.displayHeadingCalibration=YES;
+    
     CLLocationCoordinate2D center=CLLocationCoordinate2DMake(31.216571, 121.391336);
     self.mapView.centerCoordinate=center;
     
@@ -62,7 +66,7 @@
 
 - (IBAction)locateButtonClick:(id)sender {
     NSLog(@"Locate Button CLick");
-    [self.mapView setCenterCoordinate:CLLocationCoordinate2DMake(31.216571, 121.391336) animated:YES];
+    [self.mapView setCenterCoordinate:self.mapView.userLocation.coordinate animated:YES];
 }
 
 /*

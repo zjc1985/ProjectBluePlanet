@@ -85,6 +85,13 @@
     }
 }
 
+-(IBAction)AddRoutineDone:(UIStoryboardSegue *)segue{
+    // get something from addRoutineTVC
+    
+    //and draw marker
+    [self addMarkerWithTitle:@"One Location" withCoordinate:self.mapView.centerCoordinate];
+}
+
 
 -(void)alert:(NSString *)content{
     UIAlertView *theAlert=[[UIAlertView alloc] initWithTitle:@"alert" message:content delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];

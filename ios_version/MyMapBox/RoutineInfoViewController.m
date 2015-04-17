@@ -8,6 +8,7 @@
 
 #import "RoutineInfoViewController.h"
 #import "RoutineDetailMapViewController.h"
+#import "RoutineEditTVC.h"
 
 @interface RoutineInfoViewController ()
 @property (weak, nonatomic) IBOutlet UILabel *titleLabel;
@@ -34,6 +35,12 @@
 
 
 #pragma mark - Navigation
+
+-(IBAction)EditRoutineDone:(UIStoryboardSegue *)segue{
+    if([segue.sourceViewController isKindOfClass:[RoutineEditTVC class]]){
+        NSLog(@"Edit Routine Done");
+    }
+}
 
 // In a storyboard-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {

@@ -15,6 +15,11 @@
 		285E432D1AD61E720030A274 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 285E432B1AD61E720030A274 /* LaunchScreen.xib */; };
 		285E43391AD61E720030A274 /* MyMapBoxTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 285E43381AD61E720030A274 /* MyMapBoxTests.m */; };
 		2863907B1ADD136000A5B999 /* CommonUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 2863907A1ADD136000A5B999 /* CommonUtil.m */; };
+		286390811AE0AD7600A5B999 /* RoutineEditTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 286390801AE0AD7600A5B999 /* RoutineEditTVC.m */; };
+		286390841AE0D44D00A5B999 /* IconSelectTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 286390831AE0D44D00A5B999 /* IconSelectTVC.m */; };
+		286390871AE0DE5200A5B999 /* RoutineAddTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 286390861AE0DE5200A5B999 /* RoutineAddTVC.m */; };
+		2863908A1AE0E9F100A5B999 /* MarkerInfoTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 286390891AE0E9F100A5B999 /* MarkerInfoTVC.m */; };
+		2863908D1AE0EA3E00A5B999 /* MarkerEditTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 2863908C1AE0EA3E00A5B999 /* MarkerEditTVC.m */; };
 		53ED110BC35C2D004D4FC1C8 /* libPods-MyMapBox.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DDCD2D0DA0362384E0FDE0D7 /* libPods-MyMapBox.a */; };
 		8421CB151ADBF8FA002046B9 /* RoutineInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8421CB141ADBF8FA002046B9 /* RoutineInfoViewController.m */; };
 		8421CB181ADC04D0002046B9 /* RoutineDetailMapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8421CB171ADC04D0002046B9 /* RoutineDetailMapViewController.m */; };
@@ -46,6 +51,16 @@
 		285E43381AD61E720030A274 /* MyMapBoxTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MyMapBoxTests.m; sourceTree = "<group>"; };
 		286390791ADD136000A5B999 /* CommonUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommonUtil.h; sourceTree = "<group>"; };
 		2863907A1ADD136000A5B999 /* CommonUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommonUtil.m; sourceTree = "<group>"; };
+		2863907F1AE0AD7600A5B999 /* RoutineEditTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RoutineEditTVC.h; sourceTree = "<group>"; };
+		286390801AE0AD7600A5B999 /* RoutineEditTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RoutineEditTVC.m; sourceTree = "<group>"; };
+		286390821AE0D44D00A5B999 /* IconSelectTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IconSelectTVC.h; sourceTree = "<group>"; };
+		286390831AE0D44D00A5B999 /* IconSelectTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IconSelectTVC.m; sourceTree = "<group>"; };
+		286390851AE0DE5200A5B999 /* RoutineAddTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RoutineAddTVC.h; sourceTree = "<group>"; };
+		286390861AE0DE5200A5B999 /* RoutineAddTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RoutineAddTVC.m; sourceTree = "<group>"; };
+		286390881AE0E9F100A5B999 /* MarkerInfoTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MarkerInfoTVC.h; sourceTree = "<group>"; };
+		286390891AE0E9F100A5B999 /* MarkerInfoTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MarkerInfoTVC.m; sourceTree = "<group>"; };
+		2863908B1AE0EA3E00A5B999 /* MarkerEditTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MarkerEditTVC.h; sourceTree = "<group>"; };
+		2863908C1AE0EA3E00A5B999 /* MarkerEditTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MarkerEditTVC.m; sourceTree = "<group>"; };
 		8421CB131ADBF8FA002046B9 /* RoutineInfoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RoutineInfoViewController.h; sourceTree = "<group>"; };
 		8421CB141ADBF8FA002046B9 /* RoutineInfoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RoutineInfoViewController.m; sourceTree = "<group>"; };
 		8421CB161ADC04D0002046B9 /* RoutineDetailMapViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RoutineDetailMapViewController.h; sourceTree = "<group>"; };
@@ -112,6 +127,16 @@
 				286390791ADD136000A5B999 /* CommonUtil.h */,
 				2863907A1ADD136000A5B999 /* CommonUtil.m */,
 				285E43261AD61E720030A274 /* Main.storyboard */,
+				2863908B1AE0EA3E00A5B999 /* MarkerEditTVC.h */,
+				2863908C1AE0EA3E00A5B999 /* MarkerEditTVC.m */,
+				286390881AE0E9F100A5B999 /* MarkerInfoTVC.h */,
+				286390891AE0E9F100A5B999 /* MarkerInfoTVC.m */,
+				286390851AE0DE5200A5B999 /* RoutineAddTVC.h */,
+				286390861AE0DE5200A5B999 /* RoutineAddTVC.m */,
+				286390821AE0D44D00A5B999 /* IconSelectTVC.h */,
+				286390831AE0D44D00A5B999 /* IconSelectTVC.m */,
+				2863907F1AE0AD7600A5B999 /* RoutineEditTVC.h */,
+				286390801AE0AD7600A5B999 /* RoutineEditTVC.m */,
 				8421CB161ADC04D0002046B9 /* RoutineDetailMapViewController.h */,
 				8421CB171ADC04D0002046B9 /* RoutineDetailMapViewController.m */,
 				285E43291AD61E720030A274 /* Images.xcassets */,
@@ -293,8 +318,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				286390841AE0D44D00A5B999 /* IconSelectTVC.m in Sources */,
+				2863908D1AE0EA3E00A5B999 /* MarkerEditTVC.m in Sources */,
 				285E43251AD61E720030A274 /* ViewController.m in Sources */,
+				286390871AE0DE5200A5B999 /* RoutineAddTVC.m in Sources */,
+				286390811AE0AD7600A5B999 /* RoutineEditTVC.m in Sources */,
 				8421CB181ADC04D0002046B9 /* RoutineDetailMapViewController.m in Sources */,
+				2863908A1AE0E9F100A5B999 /* MarkerInfoTVC.m in Sources */,
 				285E43221AD61E720030A274 /* AppDelegate.m in Sources */,
 				285E431F1AD61E720030A274 /* main.m in Sources */,
 				2863907B1ADD136000A5B999 /* CommonUtil.m in Sources */,

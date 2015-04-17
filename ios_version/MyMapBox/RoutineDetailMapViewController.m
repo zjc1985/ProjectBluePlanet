@@ -9,7 +9,7 @@
 #import "RoutineDetailMapViewController.h"
 #import "CommonUtil.h"
 
-@interface RoutineDetailMapViewController ()<RMMapViewDelegate>
+@interface RoutineDetailMapViewController ()<RMMapViewDelegate,UIActionSheetDelegate>
 
 
 @property (weak, nonatomic) IBOutlet UIButton *locateButton;
@@ -78,5 +78,73 @@
     // Pass the selected object to the new view controller.
 }
 */
+
+- (IBAction)addMarker:(id)sender {
+    UIActionSheet *sheet=[[UIActionSheet alloc] initWithTitle:nil
+                                                     delegate:self
+                                            cancelButtonTitle:@"Cancel"
+                                       destructiveButtonTitle:nil
+                                            otherButtonTitles:@"Add Marker in Center",@"Add Marker with Image",@"Add Marker in Current Location", nil];
+    [sheet showInView:self.view];
+}
+
+
+-(void)addMarkerWithTitle:(NSString *)title withCoordinate:(CLLocationCoordinate2D)coordinate{
+    RMAnnotation *annotation=[[RMAnnotation alloc] initWithMapView:self.mapView
+                                                        coordinate:coordinate
+                                                          andTitle:title];
+    
+    [self.mapView addAnnotation:annotation];
+    
+}
+
+#pragma UIActionSheetDelegate
+
+#define addMarkerInCenter 0;
+#define addMarkerWithImage 1;
+#define addMarkerInCurrentLocation 2;
+
+-(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex{
+    switch (buttonIndex) {
+        case addMarkerInCenter:
+            NSLog(@"add marker in center");
+            break;
+            
+        default:
+            break;
+    }
+}
+
+#pragma RMMapViewDelegate
+
+-(RMMapLayer *)mapView:(RMMapView *)mapView layerForAnnotation:(RMAnnotation *)annotation{
+    if(annotation.isUserLocationAnnotation)
+        return nil;
+    RMMarker *marker = [[RMMarker alloc] initWithMapboxMarkerImage:@"rocket" tintColor:
+                        [UIColor colorWithRed:0.224 green:0.671 blue:0.780 alpha:1.000]];
+    
+    marker.canShowCallout = YES;
+    
+    marker.rightCalloutAccessoryView = [UIButton
+                                        buttonWithType:UIButtonTypeDetailDisclosure];
+    
+    
+    return marker;
+}
+
+
+
+-(void)tapOnCalloutAccessoryControl:(UIControl *)control forAnnotation:(RMAnnotation *)annotation onMap:(RMMapView *)map{
+    [self performSegueWithIdentifier:@"markerDetailSegue" sender:annotation];
+}
+
+-(void)tapOnLabelForAnnotation:(RMAnnotation *)annotation onMap:(RMMapView *)map{
+    NSLog(@"tap on label");
+}
+
+
+-(BOOL)mapView:(RMMapView *)mapView shouldDragAnnotation:(RMAnnotation *)annotation{
+    return YES;
+}
 
 @end

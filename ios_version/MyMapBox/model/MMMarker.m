@@ -1,0 +1,13 @@
+//
+//  MapMarker.m
+//  MyMapBox
+//
+//  Created by yufu on 15/4/19.
+//  Copyright (c) 2015年 yufu. All rights reserved.
+//
+
+#import "MMMarker.h"
+
+@implementation MMMarker
+
+@end

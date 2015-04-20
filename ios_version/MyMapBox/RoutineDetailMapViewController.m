@@ -106,7 +106,7 @@
 
 -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex{
     switch (buttonIndex) {
-        case addMarkerInCenter:
+        case 0:
             NSLog(@"add marker in center");
             break;
             

@@ -10,4 +10,22 @@
 
 @implementation MMMarker
 
+
+-(instancetype)init
+{
+    self=[super init];
+    if(self){
+        self.id=[[NSUUID UUID] UUIDString];
+        self.title=@"One Location";
+        self.myComment=@"";
+        self.slideNum=1;
+        self.category=2;
+        self.lat=0;
+        self.lng=0;
+    }
+    
+    return self;
+}
+
 @end
+

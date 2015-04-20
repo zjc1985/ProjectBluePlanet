@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import <XCTest/XCTest.h>
 #import "MMMarker.h"
+#import "Math.h"
 
 @interface MapMarkerTester : XCTestCase
 
@@ -36,18 +37,29 @@
     XCTAssertEqual(self.marker.lat, expected);
 }
 
-- (void)testExample {
-    // This is an example of a functional test case.
-    XCTAssert(YES, @"Pass");
+-(void)testMapMarkerUUID{
+    NSLog(@"id: %@",self.marker.id);
 }
 
-
-
-- (void)testPerformanceExample {
-    // This is an example of a performance test case.
-    [self measureBlock:^{
-        // Put the code you want to measure the time of here.
-    }];
+-(double)average:(double [])numbers andSize:(NSUInteger )size{
+    double sum=0;
+    double result=0;
+    for (NSUInteger i=0; i<size; i++) {
+        sum=sum+numbers[i];
+    }
+    result=sum/size;
+    return result;
 }
+
+-(void)testAverage{
+    double numbers[6]={2,2,2,3,3,3};
+    double result=[self average:numbers andSize:6];
+    XCTAssertEqual(2.5, result);
+}
+
+-(void)testPow{
+    XCTAssertEqual(4, pow(16, 0.5));
+}
+
 
 @end

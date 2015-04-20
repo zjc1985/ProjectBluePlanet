@@ -9,8 +9,10 @@
 #import "RoutineAddTVC.h"
 
 @interface RoutineAddTVC ()<UITextFieldDelegate>
+
 @property (weak, nonatomic) IBOutlet UITextField *titleTextField;
 @property (weak, nonatomic) IBOutlet UITextView *descriptionTextView;
+
 @end
 
 @implementation RoutineAddTVC
@@ -26,6 +28,15 @@
 
 - (IBAction)cancel:(id)sender {
     [self.presentingViewController dismissViewControllerAnimated:YES completion:nil];
+}
+
+#define ADD_ROUTINE_DONE_UNWIND_SEGUE @"AddRoutineDoneSegue"
+
+-(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
+    if([segue.identifier isEqualToString:ADD_ROUTINE_DONE_UNWIND_SEGUE]){
+        self.routineTitle=self.titleTextField.text;
+        self.routineDescription=self.descriptionTextView.text;
+    }
 }
 
 

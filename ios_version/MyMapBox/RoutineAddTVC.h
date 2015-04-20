@@ -10,4 +10,7 @@
 
 @interface RoutineAddTVC : UITableViewController
 
+@property(nonatomic,strong)NSString *routineTitle;
+@property(nonatomic,strong)NSString *routineDescription;
+
 @end

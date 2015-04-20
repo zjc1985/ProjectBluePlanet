@@ -10,6 +10,9 @@
 #import <Mapbox-iOS-SDK/Mapbox.h>
 #import "RoutineInfoViewController.h"
 #import "CommonUtil.h"
+#import "RoutineAddTVC.h"
+
+#import "MMMarkerManager.h"
 
 #define SHOW_ROUTINE_INFO_SEGUE @"showRoutineInfoSegue"
 
@@ -17,6 +20,7 @@
 
 @property (weak, nonatomic) IBOutlet UIButton *locateButton;
 @property(nonatomic,strong) RMMapView *mapView;
+@property(nonatomic,strong) MMMarkerManager *markerManager;
 
 @end
 
@@ -74,6 +78,13 @@
     [self addMarkerWithTitle:@"Boundary" withCoordinate:CLLocationCoordinate2DMake(31.216571, 121.391336)];
     [self addMarkerWithTitle:@"Boundary" withCoordinate:CLLocationCoordinate2DMake(31.237347, 121.416280)];
 }
+#pragma getters and setters
+-(MMMarkerManager *)markerManager{
+    if(!_markerManager){
+        _markerManager=[[MMMarkerManager alloc]init];
+    }
+    return _markerManager;
+}
 
 #pragma segue
 
@@ -87,9 +98,16 @@
 
 -(IBAction)AddRoutineDone:(UIStoryboardSegue *)segue{
     // get something from addRoutineTVC
-    
-    //and draw marker
-    [self addMarkerWithTitle:@"One Location" withCoordinate:self.mapView.centerCoordinate];
+    if([segue.sourceViewController isKindOfClass:[RoutineAddTVC class]]){
+        RoutineAddTVC *routineAddTVC=(RoutineAddTVC *)segue.sourceViewController;
+        MMRoutine *addedRoutine=[self.markerManager createMMRoutine];
+        addedRoutine.title=routineAddTVC.routineTitle;
+        addedRoutine.myComment=routineAddTVC.routineDescription;
+        
+        
+        //and draw marker
+        [self addMarkerWithTitle: addedRoutine.title withCoordinate:self.mapView.centerCoordinate];
+    }
 }
 
 
@@ -115,7 +133,6 @@
     RMAnnotation *annotation=[[RMAnnotation alloc] initWithMapView:self.mapView
                                                         coordinate:coordinate
                                                           andTitle:title];
-    
     [self.mapView addAnnotation:annotation];
 
 }

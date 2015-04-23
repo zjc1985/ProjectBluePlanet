@@ -8,8 +8,10 @@
 
 #import <UIKit/UIKit.h>
 #import <Mapbox-iOS-SDK/Mapbox.h>
+#import "MMRoutine.h"
 
 @interface RoutineInfoViewController : UITableViewController
 
+@property(nonatomic,strong)MMRoutine *routine;
 
 @end

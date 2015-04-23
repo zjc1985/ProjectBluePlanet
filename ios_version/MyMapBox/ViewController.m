@@ -75,9 +75,17 @@
     [self.view sendSubviewToBack:self.mapView];
     
 
-    [self addMarkerWithTitle:@"Boundary" withCoordinate:CLLocationCoordinate2DMake(31.216571, 121.391336)];
-    [self addMarkerWithTitle:@"Boundary" withCoordinate:CLLocationCoordinate2DMake(31.237347, 121.416280)];
+    [self addMarkerWithTitle:@"Boundary" withCoordinate:CLLocationCoordinate2DMake(31.216571, 121.391336)withCustomData:nil];
+    [self addMarkerWithTitle:@"Boundary" withCoordinate:CLLocationCoordinate2DMake(31.237347, 121.416280)withCustomData:nil];
+    NSLog(@"view did load");
 }
+
+-(void)viewWillAppear:(BOOL)animated{
+    NSLog(@"view will appear");
+    [self updateMapUI];
+}
+
+
 #pragma getters and setters
 -(MMMarkerManager *)markerManager{
     if(!_markerManager){
@@ -91,23 +99,36 @@
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
     if([segue.identifier isEqualToString:SHOW_ROUTINE_INFO_SEGUE]){
        //prepare for RoutineInfoViewController
-        RoutineInfoViewController *routineInfoVC=segue.destinationViewController;
-        //routineInfoVC.mapView=self.mapView;
+        RoutineInfoViewController *routineInfoVC=(RoutineInfoViewController *)segue.destinationViewController;
+        RMAnnotation *annotation=(RMAnnotation *)sender;
+        MMRoutine *routine=(MMRoutine *)annotation.userInfo;
+        routineInfoVC.routine=routine;
+    }else if ([segue.identifier isEqualToString:@"AddRoutineInfoSegue"]){
+        
+        UINavigationController *navController=(UINavigationController *)segue.destinationViewController;
+        RoutineAddTVC *routineAddTVC=navController.viewControllers[0];
+        routineAddTVC.currentLat=self.mapView.centerCoordinate.latitude;
+        routineAddTVC.currentLng=self.mapView.centerCoordinate.longitude;
+        routineAddTVC.markerManager=self.markerManager;
     }
 }
 
 -(IBAction)AddRoutineDone:(UIStoryboardSegue *)segue{
     // get something from addRoutineTVC
     if([segue.sourceViewController isKindOfClass:[RoutineAddTVC class]]){
-        RoutineAddTVC *routineAddTVC=(RoutineAddTVC *)segue.sourceViewController;
-        MMRoutine *addedRoutine=[self.markerManager createMMRoutine];
-        addedRoutine.title=routineAddTVC.routineTitle;
-        addedRoutine.myComment=routineAddTVC.routineDescription;
-        
-        
-        //and draw marker
-        [self addMarkerWithTitle: addedRoutine.title withCoordinate:self.mapView.centerCoordinate];
+        //[self updateMapUI];
     }
+}
+
+-(void)updateMapUI{
+    [self.mapView removeAllAnnotations];
+    for (MMRoutine *eachRoutine in self.markerManager.modelRoutines) {
+        [self addMarkerWithTitle:eachRoutine.title withCoordinate:CLLocationCoordinate2DMake(eachRoutine.lat, eachRoutine.lng) withCustomData:eachRoutine];
+    }
+}
+
+-(IBAction)deleteRoutineDone:(UIStoryboardSegue *)segue{
+    NSLog(@"delete Routine");
 }
 
 
@@ -116,25 +137,17 @@
     [theAlert show];
 }
 
-
-- (IBAction)addMarker:(id)sender {
-    
-    //[self.mapView setCenterCoordinate:CLLocationCoordinate2DMake(37.743584, -122.472331) animated:YES];
-    
-    [self addMarkerWithTitle:@"One Location" withCoordinate:self.mapView.centerCoordinate];
-}
-
 - (IBAction)locateButtonClick {
     [self.mapView setCenterCoordinate:CLLocationCoordinate2DMake(31.216571, 121.391336) animated:YES];
 }
 
 
--(void)addMarkerWithTitle:(NSString *)title withCoordinate:(CLLocationCoordinate2D)coordinate{
+-(void)addMarkerWithTitle:(NSString *)title withCoordinate:(CLLocationCoordinate2D)coordinate withCustomData:(id)customData{
     RMAnnotation *annotation=[[RMAnnotation alloc] initWithMapView:self.mapView
                                                         coordinate:coordinate
                                                           andTitle:title];
+    annotation.userInfo=customData;
     [self.mapView addAnnotation:annotation];
-
 }
 
 #pragma cach related
@@ -177,16 +190,21 @@
 -(RMMapLayer *)mapView:(RMMapView *)mapView layerForAnnotation:(RMAnnotation *)annotation{
     if(annotation.isUserLocationAnnotation)
         return nil;
-    RMMarker *marker = [[RMMarker alloc] initWithMapboxMarkerImage:@"rocket" tintColor:
-                        [UIColor colorWithRed:0.224 green:0.671 blue:0.780 alpha:1.000]];
     
-    marker.canShowCallout = YES;
     
-    marker.rightCalloutAccessoryView = [UIButton
-                                        buttonWithType:UIButtonTypeDetailDisclosure];
+    if ([annotation.userInfo isKindOfClass:[MMRoutine class]]) {
+        RMMarker *marker = [[RMMarker alloc] initWithUIImage:[UIImage imageNamed:@"default_default"]];
+        
+        marker.canShowCallout = YES;
+        
+        marker.rightCalloutAccessoryView = [UIButton
+                                            buttonWithType:UIButtonTypeDetailDisclosure];
+        
+        return marker;
 
-
-    return marker;
+    }
+    
+    return nil;
 }
 
 
@@ -209,12 +227,15 @@
     NSLog(@"change drag state %u",newState);
     
     if(newState==RMMapLayerDragStateNone){
-        NSLog(@"Drage End");
         NSString *subTitle=[NSString stringWithFormat:@"lat: %f lng: %f",annotation.coordinate.latitude,annotation.coordinate.longitude];
         annotation.subtitle=subTitle;
-        NSLog(@"current zoom: %f",mapView.zoom);
-        NSLog(@"tileSources num %lu",(unsigned long)[mapView.tileSources count]);
-        NSLog(@"tileSources isCacheable %u",[mapView.tileSource isCacheable]);
+        if ([annotation.userInfo isKindOfClass:[MMMarker class]]) {
+            NSLog(@"Drage end update location");
+            MMMarker *marker=(MMMarker *)annotation.userInfo;
+            marker.lat=annotation.coordinate.latitude;
+            marker.lng=annotation.coordinate.longitude;
+            NSLog(@"Drage end update marker id:%@ location",marker.id);
+        }
     }
 }
 

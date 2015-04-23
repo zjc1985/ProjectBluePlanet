@@ -10,7 +10,7 @@
 
 @interface MMMarkerManager()
 
-@property(nonatomic,strong)NSMutableArray *modelRoutines;
+
 
 @end
 

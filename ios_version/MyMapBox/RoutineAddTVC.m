@@ -34,10 +34,12 @@
 
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
     if([segue.identifier isEqualToString:ADD_ROUTINE_DONE_UNWIND_SEGUE]){
-        self.routineTitle=self.titleTextField.text;
-        self.routineDescription=self.descriptionTextView.text;
+        MMRoutine *newRoutine=[self.markerManager createMMRoutine];
+        newRoutine.title=self.titleTextField.text;
+        newRoutine.myComment=self.descriptionTextView.text;
+        newRoutine.lat=self.currentLat;
+        newRoutine.lng=self.currentLng;
     }
 }
-
 
 @end

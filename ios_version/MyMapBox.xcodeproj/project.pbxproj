@@ -22,7 +22,6 @@
 		2863908D1AE0EA3E00A5B999 /* MarkerEditTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 2863908C1AE0EA3E00A5B999 /* MarkerEditTVC.m */; };
 		287F47D51AE4D0D600CAF79B /* MMMarkerManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 287F47D41AE4D0D600CAF79B /* MMMarkerManager.m */; };
 		287F47D71AE4D7AE00CAF79B /* MMRoutineTester.m in Sources */ = {isa = PBXBuildFile; fileRef = 287F47D61AE4D7AE00CAF79B /* MMRoutineTester.m */; };
-		287F47DA1AE4E8B900CAF79B /* MMMarker+MapBoxAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = 287F47D91AE4E8B900CAF79B /* MMMarker+MapBoxAnnotation.m */; };
 		53ED110BC35C2D004D4FC1C8 /* libPods-MyMapBox.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DDCD2D0DA0362384E0FDE0D7 /* libPods-MyMapBox.a */; };
 		8421CB151ADBF8FA002046B9 /* RoutineInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8421CB141ADBF8FA002046B9 /* RoutineInfoViewController.m */; };
 		8421CB181ADC04D0002046B9 /* RoutineDetailMapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8421CB171ADC04D0002046B9 /* RoutineDetailMapViewController.m */; };
@@ -70,8 +69,6 @@
 		287F47D31AE4D0D600CAF79B /* MMMarkerManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMMarkerManager.h; path = model/MMMarkerManager.h; sourceTree = "<group>"; };
 		287F47D41AE4D0D600CAF79B /* MMMarkerManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMMarkerManager.m; path = model/MMMarkerManager.m; sourceTree = "<group>"; };
 		287F47D61AE4D7AE00CAF79B /* MMRoutineTester.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMRoutineTester.m; sourceTree = "<group>"; };
-		287F47D81AE4E8B900CAF79B /* MMMarker+MapBoxAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "MMMarker+MapBoxAnnotation.h"; path = "model/MMMarker+MapBoxAnnotation.h"; sourceTree = "<group>"; };
-		287F47D91AE4E8B900CAF79B /* MMMarker+MapBoxAnnotation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "MMMarker+MapBoxAnnotation.m"; path = "model/MMMarker+MapBoxAnnotation.m"; sourceTree = "<group>"; };
 		8421CB131ADBF8FA002046B9 /* RoutineInfoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RoutineInfoViewController.h; sourceTree = "<group>"; };
 		8421CB141ADBF8FA002046B9 /* RoutineInfoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RoutineInfoViewController.m; sourceTree = "<group>"; };
 		8421CB161ADC04D0002046B9 /* RoutineDetailMapViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RoutineDetailMapViewController.h; sourceTree = "<group>"; };
@@ -136,26 +133,9 @@
 		285E431B1AD61E720030A274 /* MyMapBox */ = {
 			isa = PBXGroup;
 			children = (
+				28E7A0EC1AE6538200A27B8A /* Controller */,
 				84DA51631AE3D3F40077202E /* Model */,
-				8421CB131ADBF8FA002046B9 /* RoutineInfoViewController.h */,
-				8421CB141ADBF8FA002046B9 /* RoutineInfoViewController.m */,
-				285E43231AD61E720030A274 /* ViewController.h */,
-				285E43241AD61E720030A274 /* ViewController.m */,
-				286390791ADD136000A5B999 /* CommonUtil.h */,
-				2863907A1ADD136000A5B999 /* CommonUtil.m */,
 				285E43261AD61E720030A274 /* Main.storyboard */,
-				2863908B1AE0EA3E00A5B999 /* MarkerEditTVC.h */,
-				2863908C1AE0EA3E00A5B999 /* MarkerEditTVC.m */,
-				286390881AE0E9F100A5B999 /* MarkerInfoTVC.h */,
-				286390891AE0E9F100A5B999 /* MarkerInfoTVC.m */,
-				286390851AE0DE5200A5B999 /* RoutineAddTVC.h */,
-				286390861AE0DE5200A5B999 /* RoutineAddTVC.m */,
-				286390821AE0D44D00A5B999 /* IconSelectTVC.h */,
-				286390831AE0D44D00A5B999 /* IconSelectTVC.m */,
-				2863907F1AE0AD7600A5B999 /* RoutineEditTVC.h */,
-				286390801AE0AD7600A5B999 /* RoutineEditTVC.m */,
-				8421CB161ADC04D0002046B9 /* RoutineDetailMapViewController.h */,
-				8421CB171ADC04D0002046B9 /* RoutineDetailMapViewController.m */,
 				285E43291AD61E720030A274 /* Images.xcassets */,
 				285E432B1AD61E720030A274 /* LaunchScreen.xib */,
 				285E431C1AD61E720030A274 /* Supporting Files */,
@@ -193,6 +173,31 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		28E7A0EC1AE6538200A27B8A /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				8421CB131ADBF8FA002046B9 /* RoutineInfoViewController.h */,
+				8421CB141ADBF8FA002046B9 /* RoutineInfoViewController.m */,
+				285E43231AD61E720030A274 /* ViewController.h */,
+				285E43241AD61E720030A274 /* ViewController.m */,
+				286390791ADD136000A5B999 /* CommonUtil.h */,
+				2863907A1ADD136000A5B999 /* CommonUtil.m */,
+				2863908B1AE0EA3E00A5B999 /* MarkerEditTVC.h */,
+				2863908C1AE0EA3E00A5B999 /* MarkerEditTVC.m */,
+				286390881AE0E9F100A5B999 /* MarkerInfoTVC.h */,
+				286390891AE0E9F100A5B999 /* MarkerInfoTVC.m */,
+				286390851AE0DE5200A5B999 /* RoutineAddTVC.h */,
+				286390861AE0DE5200A5B999 /* RoutineAddTVC.m */,
+				286390821AE0D44D00A5B999 /* IconSelectTVC.h */,
+				286390831AE0D44D00A5B999 /* IconSelectTVC.m */,
+				2863907F1AE0AD7600A5B999 /* RoutineEditTVC.h */,
+				286390801AE0AD7600A5B999 /* RoutineEditTVC.m */,
+				8421CB161ADC04D0002046B9 /* RoutineDetailMapViewController.h */,
+				8421CB171ADC04D0002046B9 /* RoutineDetailMapViewController.m */,
+			);
+			name = Controller;
+			sourceTree = "<group>";
+		};
 		2C7E3AC1F0D0B65E05834673 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -206,8 +211,6 @@
 			isa = PBXGroup;
 			children = (
 				84DA51641AE3D48C0077202E /* MMMarker.h */,
-				287F47D81AE4E8B900CAF79B /* MMMarker+MapBoxAnnotation.h */,
-				287F47D91AE4E8B900CAF79B /* MMMarker+MapBoxAnnotation.m */,
 				84DA51651AE3D48C0077202E /* MMMarker.m */,
 				84DA51691AE3E5600077202E /* MMRoutine.h */,
 				84DA516A1AE3E5600077202E /* MMRoutine.m */,
@@ -355,7 +358,6 @@
 				286390841AE0D44D00A5B999 /* IconSelectTVC.m in Sources */,
 				2863908D1AE0EA3E00A5B999 /* MarkerEditTVC.m in Sources */,
 				285E43251AD61E720030A274 /* ViewController.m in Sources */,
-				287F47DA1AE4E8B900CAF79B /* MMMarker+MapBoxAnnotation.m in Sources */,
 				286390871AE0DE5200A5B999 /* RoutineAddTVC.m in Sources */,
 				286390811AE0AD7600A5B999 /* RoutineEditTVC.m in Sources */,
 				287F47D51AE4D0D600CAF79B /* MMMarkerManager.m in Sources */,

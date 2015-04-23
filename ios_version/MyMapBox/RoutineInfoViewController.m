@@ -20,8 +20,11 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.titleLabel.text=@"one testing title";
-    //self.descriptionTextField.text=@"one testing description";
+}
+
+-(void)viewWillAppear:(BOOL)animated{
+    self.titleLabel.text=self.routine.title;
+    self.descriptionTextField.text=self.routine.myComment;
 }
 
 - (IBAction)showRoutineDetailClick:(id)sender {
@@ -31,6 +34,7 @@
 
 - (IBAction)PinRoutineClick:(id)sender {
     NSLog(@"Pin Routine Detail click");
+    [self.navigationController popToRootViewControllerAnimated:NO];
 }
 
 
@@ -40,6 +44,10 @@
     if([segue.sourceViewController isKindOfClass:[RoutineEditTVC class]]){
         NSLog(@"Edit Routine Done");
     }
+}
+
+-(void)rollback{
+    NSLog(@"roll back");
 }
 
 // In a storyboard-based application, you will often want to do a little preparation before navigation

@@ -12,7 +12,7 @@
 
 @interface MMMarkerManager : NSObject
 
-
+@property(nonatomic,strong)NSMutableArray *modelRoutines;
 
 -(MMRoutine *)createMMRoutine;
 

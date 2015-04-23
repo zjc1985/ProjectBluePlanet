@@ -16,7 +16,7 @@
 
 @implementation MMMarkerManager
 
-#pragma getters and setters
+#pragma mark - getters and setters
 -(NSMutableArray *)modelRoutines{
     if(!_modelRoutines){
         _modelRoutines=[[NSMutableArray alloc]init];
@@ -24,7 +24,11 @@
     return _modelRoutines;
 }
 
-#pragma interface method
+#pragma mark - interface method
+
+-(void)deleteMMRoutine:(MMRoutine *)routine{
+    [self.modelRoutines removeObject:routine];
+}
 
 -(MMRoutine *)fetchRoutineById:(NSString *)id{
     for(MMRoutine *routine in self.modelRoutines){

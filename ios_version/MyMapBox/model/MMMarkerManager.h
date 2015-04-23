@@ -16,6 +16,8 @@
 
 -(MMRoutine *)createMMRoutineWithLat:(double)lat withLng:(double)lng;
 
+-(void)deleteMMRoutine:(MMRoutine *)routine;
+
 -(MMRoutine *)fetchRoutineById:(NSString *)id;
 
 @end

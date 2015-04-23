@@ -11,6 +11,7 @@
 #import "RoutineInfoViewController.h"
 #import "CommonUtil.h"
 #import "RoutineAddTVC.h"
+#import "RoutineEditTVC.h"
 
 #import "MMMarkerManager.h"
 
@@ -85,42 +86,6 @@
     [self updateMapUI];
 }
 
-
-#pragma getters and setters
--(MMMarkerManager *)markerManager{
-    if(!_markerManager){
-        _markerManager=[[MMMarkerManager alloc]init];
-    }
-    return _markerManager;
-}
-
-#pragma segue
-
--(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
-    
-    if([segue.identifier isEqualToString:SHOW_ROUTINE_INFO_SEGUE]){
-       //prepare for RoutineInfoViewController
-        RoutineInfoViewController *routineInfoVC=(RoutineInfoViewController *)segue.destinationViewController;
-        RMAnnotation *annotation=(RMAnnotation *)sender;
-        MMRoutine *routine=(MMRoutine *)annotation.userInfo;
-        routineInfoVC.routine=routine;
-    }else if ([segue.identifier isEqualToString:@"AddRoutineInfoSegue"]){
-        
-        UINavigationController *navController=(UINavigationController *)segue.destinationViewController;
-        RoutineAddTVC *routineAddTVC=navController.viewControllers[0];
-        routineAddTVC.currentLat=self.mapView.centerCoordinate.latitude;
-        routineAddTVC.currentLng=self.mapView.centerCoordinate.longitude;
-        routineAddTVC.markerManager=self.markerManager;
-    }
-}
-
--(IBAction)AddRoutineDone:(UIStoryboardSegue *)segue{
-    // get something from addRoutineTVC
-    if([segue.sourceViewController isKindOfClass:[RoutineAddTVC class]]){
-        //[self updateMapUI];
-    }
-}
-
 -(void)updateMapUI{
     [self.mapView removeAllAnnotations];
     for (MMRoutine *eachRoutine in self.markerManager.modelRoutines) {
@@ -149,21 +114,6 @@
     to.lng=coordinate.longitude;
 }
 
--(IBAction)deleteRoutineDone:(UIStoryboardSegue *)segue{
-    NSLog(@"delete Routine");
-}
-
-
--(void)alert:(NSString *)content{
-    UIAlertView *theAlert=[[UIAlertView alloc] initWithTitle:@"alert" message:content delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
-    [theAlert show];
-}
-
-- (IBAction)locateButtonClick {
-    [self.mapView setCenterCoordinate:CLLocationCoordinate2DMake(31.216571, 121.391336) animated:YES];
-}
-
-
 -(void)addMarkerWithTitle:(NSString *)title withCoordinate:(CLLocationCoordinate2D)coordinate withCustomData:(id)customData{
     RMAnnotation *annotation=[[RMAnnotation alloc] initWithMapView:self.mapView
                                                         coordinate:coordinate
@@ -178,7 +128,67 @@
     [self.mapView addAnnotation:line];
 }
 
-#pragma cach related
+
+#pragma mark - getters and setters
+-(MMMarkerManager *)markerManager{
+    if(!_markerManager){
+        _markerManager=[[MMMarkerManager alloc]init];
+    }
+    return _markerManager;
+}
+
+
+
+#pragma mark -segue
+
+-(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
+    
+    if([segue.identifier isEqualToString:SHOW_ROUTINE_INFO_SEGUE]){
+       //prepare for RoutineInfoViewController
+        RoutineInfoViewController *routineInfoVC=(RoutineInfoViewController *)segue.destinationViewController;
+        RMAnnotation *annotation=(RMAnnotation *)sender;
+        MMOvMarker *ovMarker=(MMOvMarker *)annotation.userInfo;
+        routineInfoVC.routine=[self.markerManager fetchRoutineById:ovMarker.routineId];
+        
+    }else if ([segue.identifier isEqualToString:@"AddRoutineInfoSegue"]){
+        UINavigationController *navController=(UINavigationController *)segue.destinationViewController;
+        RoutineAddTVC *routineAddTVC=navController.viewControllers[0];
+        routineAddTVC.currentLat=self.mapView.centerCoordinate.latitude;
+        routineAddTVC.currentLng=self.mapView.centerCoordinate.longitude;
+        routineAddTVC.markerManager=self.markerManager;
+    }
+}
+
+-(IBAction)AddRoutineDone:(UIStoryboardSegue *)segue{
+    // get something from addRoutineTVC
+    if([segue.sourceViewController isKindOfClass:[RoutineAddTVC class]]){
+        //[self updateMapUI];
+    }
+}
+
+
+
+-(IBAction)deleteRoutineDone:(UIStoryboardSegue *)segue{
+    NSLog(@"delete Routine");
+    RoutineEditTVC *routineEditTVC=segue.sourceViewController;
+    MMRoutine *routine=routineEditTVC.routine;
+    if (routine) {
+        NSLog(@"prepare to delete routine id: %@",routine.id);
+        [self.markerManager deleteMMRoutine:routine];
+    }
+}
+
+
+-(void)alert:(NSString *)content{
+    UIAlertView *theAlert=[[UIAlertView alloc] initWithTitle:@"alert" message:content delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+    [theAlert show];
+}
+
+- (IBAction)locateButtonClick {
+    [self.mapView setCenterCoordinate:CLLocationCoordinate2DMake(31.216571, 121.391336) animated:YES];
+}
+
+#pragma mark - cach related
 
 - (IBAction)downloadCach:(id)sender {
     [self startBackgroundCach];
@@ -213,7 +223,7 @@
 }
 
 
-#pragma RMMapViewDelegate
+#pragma mark - RMMapViewDelegate
 
 -(RMMapLayer *)mapView:(RMMapView *)mapView layerForAnnotation:(RMAnnotation *)annotation{
     if(annotation.isUserLocationAnnotation)

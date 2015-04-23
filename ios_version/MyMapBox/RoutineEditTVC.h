@@ -7,7 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "MMRoutine.h"
 
 @interface RoutineEditTVC : UITableViewController
+
+@property(nonatomic,strong)MMRoutine *routine;
 
 @end

@@ -63,21 +63,30 @@
     [self.view sendSubviewToBack:self.mapView];
 }
 
+-(void)updateMapUI{
+    for (MMMarker *marker in self.routine.markers) {
+        [self addMarkerWithTitle:marker.title
+                  withCoordinate:CLLocationCoordinate2DMake(marker.lat, marker.lng)
+                  withCustomData:marker];
+    }
+    
+}
+
+-(void)addMarkerWithTitle:(NSString *)title withCoordinate:(CLLocationCoordinate2D)coordinate withCustomData:(id)customData{
+    RMAnnotation *annotation=[[RMAnnotation alloc] initWithMapView:self.mapView
+                                                        coordinate:coordinate
+                                                          andTitle:title];
+    annotation.userInfo=customData;
+    [self.mapView addAnnotation:annotation];
+}
+
+
+#pragma mark - UI action
 
 - (IBAction)locateButtonClick:(id)sender {
     NSLog(@"Locate Button CLick");
     [self.mapView setCenterCoordinate:self.mapView.userLocation.coordinate animated:YES];
 }
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 - (IBAction)addMarker:(id)sender {
     UIActionSheet *sheet=[[UIActionSheet alloc] initWithTitle:nil
@@ -88,17 +97,20 @@
     [sheet showInView:self.view];
 }
 
+#pragma mark - Navigation
 
--(void)addMarkerWithTitle:(NSString *)title withCoordinate:(CLLocationCoordinate2D)coordinate{
-    RMAnnotation *annotation=[[RMAnnotation alloc] initWithMapView:self.mapView
-                                                        coordinate:coordinate
-                                                          andTitle:title];
-    
-    [self.mapView addAnnotation:annotation];
-    
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
 }
 
-#pragma UIActionSheetDelegate
+
+
+
+
+
+#pragma mark - UIActionSheetDelegate
 
 #define addMarkerInCenter 0;
 #define addMarkerWithImage 1;
@@ -120,16 +132,28 @@
 -(RMMapLayer *)mapView:(RMMapView *)mapView layerForAnnotation:(RMAnnotation *)annotation{
     if(annotation.isUserLocationAnnotation)
         return nil;
-    RMMarker *marker = [[RMMarker alloc] initWithMapboxMarkerImage:@"rocket" tintColor:
-                        [UIColor colorWithRed:0.224 green:0.671 blue:0.780 alpha:1.000]];
-    
-    marker.canShowCallout = YES;
-    
-    marker.rightCalloutAccessoryView = [UIButton
-                                        buttonWithType:UIButtonTypeDetailDisclosure];
     
     
-    return marker;
+    
+    if ([annotation.userInfo isKindOfClass:[MMMarker class]]){
+        MMOvMarker *ovMarker=annotation.userInfo;
+        
+        CGPoint anchorPoint;
+        anchorPoint.x=0.5;
+        anchorPoint.y=1;
+        
+        RMMarker *marker = [[RMMarker alloc] initWithUIImage:[UIImage imageNamed:ovMarker.iconUrl]anchorPoint:anchorPoint];
+        
+        marker.canShowCallout=YES;
+        
+        marker.rightCalloutAccessoryView=[UIButton buttonWithType:UIButtonTypeDetailDisclosure];
+        
+        return marker;
+    }
+
+    
+    
+    return nil;
 }
 
 

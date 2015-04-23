@@ -9,7 +9,10 @@
 #import "ViewController.h"
 #import <Mapbox-iOS-SDK/Mapbox.h>
 
+#import "MMRoutine.h"
+
 @interface RoutineDetailMapViewController:UIViewController
 
+@property(nonatomic,strong)MMRoutine *routine;
 
 @end

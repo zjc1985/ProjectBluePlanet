@@ -34,7 +34,6 @@
 
 - (IBAction)PinRoutineClick:(id)sender {
     NSLog(@"Pin Routine Detail click");
-    [self.navigationController popToRootViewControllerAnimated:NO];
 }
 
 
@@ -50,8 +49,16 @@
     NSLog(@"roll back");
 }
 
+#define EDIT_ROUTINE_INFO_SEGUE @"EditRoutineInfoSegue"
+
 // In a storyboard-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    if ([segue.identifier isEqualToString:EDIT_ROUTINE_INFO_SEGUE]) {
+        UINavigationController *navController=(UINavigationController *)segue.destinationViewController;
+        RoutineEditTVC *routineEditTVC=navController.viewControllers[0];
+        routineEditTVC.routine=self.routine;
+    }
+    
     if([segue.destinationViewController isKindOfClass:[RoutineDetailMapViewController class]]){
         RoutineDetailMapViewController *routineDetailMapVC=(RoutineDetailMapViewController *)segue.destinationViewController;
     }

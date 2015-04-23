@@ -11,6 +11,16 @@
 
 @implementation MMRoutine
 
+-(instancetype)initWithLat:(double)lat withlng:(double)lng{
+    self=[super init];
+    if(self){
+        self.lat=lat;
+        self.lng=lng;
+        self.iconUrl=@"overview_point.png";
+    }
+    return self;
+}
+
 #pragma getters and setters
 -(NSMutableArray*)ovMarkers{
     if(!_ovMarkers){
@@ -33,11 +43,19 @@
     [self updateLocation];
 }
 
+-(MMOvMarker *)addDefaultOvMarker{
+    MMOvMarker *ovMarker=[[MMOvMarker alloc]initWithRoutineId:self.id];
+    ovMarker.lat=self.lat;
+    ovMarker.lng=self.lng;
+    [self.ovMarkers addObject:ovMarker];
+    return ovMarker;
+}
+
 -(void)updateLocation{
     NSMutableArray *latArray=[[NSMutableArray alloc]init];
     NSMutableArray *lngArray=[[NSMutableArray alloc]init];
     
-    for (MMMarker *eachMarker in self.markers) {
+    for (MMBaseMarker *eachMarker in self.markers) {
         [latArray addObject:[NSNumber numberWithDouble:eachMarker.lat]];
         [lngArray addObject:[NSNumber numberWithDouble:eachMarker.lng]];
     }

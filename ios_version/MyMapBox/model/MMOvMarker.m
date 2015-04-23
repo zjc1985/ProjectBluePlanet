@@ -1,22 +1,24 @@
 //
-//  MMMarker.m
+//  MMOvMarker.m
 //  MyMapBox
 //
 //  Created by bizappman on 4/23/15.
 //  Copyright (c) 2015 yufu. All rights reserved.
 //
 
-#import "MMMarker.h"
+#import "MMOvMarker.h"
 
-@implementation MMMarker
+@implementation MMOvMarker
+
 
 -(instancetype)initWithRoutineId:(NSString *)routineId
 {
     self=[super init];
     
     if(self){
-        self.category=CategoryInfo;
+        self.category=CategoryOverview;
         self.routineId=routineId;
+        
     }
     
     return self;

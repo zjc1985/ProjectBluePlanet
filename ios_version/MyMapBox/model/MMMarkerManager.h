@@ -8,14 +8,15 @@
 
 #import <Foundation/Foundation.h>
 #import "MMRoutine.h"
-#import "MMMarker.h"
+#import "MMOvMarker.h"
 
 @interface MMMarkerManager : NSObject
 
-@property(nonatomic,strong)NSMutableArray *modelRoutines;
+@property(nonatomic,strong)NSMutableArray *modelRoutines; //of MMROutine
 
--(MMRoutine *)createMMRoutine;
+-(MMRoutine *)createMMRoutineWithLat:(double)lat withLng:(double)lng;
 
+-(MMRoutine *)fetchRoutineById:(NSString *)id;
 
 @end
 

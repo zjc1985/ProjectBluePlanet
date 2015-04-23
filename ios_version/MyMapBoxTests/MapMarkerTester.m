@@ -8,12 +8,12 @@
 
 #import <UIKit/UIKit.h>
 #import <XCTest/XCTest.h>
-#import "MMMarker.h"
+#import "MMBaseMarker.h"
 #import "Math.h"
 
 @interface MapMarkerTester : XCTestCase
 
-@property(nonatomic,strong)MMMarker *marker;
+@property(nonatomic,strong)MMBaseMarker *marker;
 
 @end
 
@@ -23,7 +23,7 @@
 - (void)setUp {
     [super setUp];
     // Put setup code here. This method is called before the invocation of each test method in the class.
-    self.marker=[[MMMarker alloc]init];
+    self.marker=[[MMBaseMarker alloc]init];
 }
 
 - (void)tearDown {

@@ -8,14 +8,20 @@
 
 #import <Foundation/Foundation.h>
 #import "MMMarker.h"
+#import "MMOvMarker.h"
 
-@interface MMRoutine : MMMarker
 
-@property(nonatomic,strong)NSMutableArray *ovMarkers;
-@property(nonatomic,strong)NSMutableArray *markers;
+@interface MMRoutine : MMBaseMarker
 
+@property(nonatomic,strong)NSMutableArray *ovMarkers; //of MMOvMarker
+@property(nonatomic,strong)NSMutableArray *markers; //of MMMarker
+@property(nonatomic)BOOL isLoadMarkers;
+
+-(instancetype)initWithLat:(double)lat withlng:(double)lng;
 
 -(void)addMarker:(MMMarker *)marker;
+
+-(MMOvMarker *)addDefaultOvMarker;
 
 -(void)updateLocation;
 

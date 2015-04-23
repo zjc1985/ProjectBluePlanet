@@ -26,12 +26,20 @@
 
 #pragma interface method
 
--(MMRoutine *)createMMRoutine{
-    MMRoutine *routine=[[MMRoutine alloc]init];
+-(MMRoutine *)fetchRoutineById:(NSString *)id{
+    for(MMRoutine *routine in self.modelRoutines){
+        if([routine.id isEqualToString:id]){
+            return routine;
+        }
+    }
+    return nil;
+}
+
+-(MMRoutine *)createMMRoutineWithLat:(double)lat withLng:(double)lng{
+    MMRoutine *routine=[[MMRoutine alloc]initWithLat:lat withlng:lng];
     
     //create ovmarker
-    MMMarker *ovMarker=[[MMMarker alloc]init];
-    ovMarker.category=CategoryOverview;
+    [routine addDefaultOvMarker];
     
     [self.modelRoutines addObject:routine];
     return routine;

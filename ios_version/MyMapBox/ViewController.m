@@ -97,6 +97,7 @@
 #pragma segue
 
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
+    
     if([segue.identifier isEqualToString:SHOW_ROUTINE_INFO_SEGUE]){
        //prepare for RoutineInfoViewController
         RoutineInfoViewController *routineInfoVC=(RoutineInfoViewController *)segue.destinationViewController;
@@ -124,7 +125,28 @@
     [self.mapView removeAllAnnotations];
     for (MMRoutine *eachRoutine in self.markerManager.modelRoutines) {
         [self addMarkerWithTitle:eachRoutine.title withCoordinate:CLLocationCoordinate2DMake(eachRoutine.lat, eachRoutine.lng) withCustomData:eachRoutine];
+        
+        for (MMOvMarker *ovMarker in eachRoutine.ovMarkers) {
+            [self adjustLocationByOffsetFrom:eachRoutine to:ovMarker];
+            
+            [self addMarkerWithTitle:eachRoutine.title withCoordinate:CLLocationCoordinate2DMake(ovMarker.lat, ovMarker.lng) withCustomData:ovMarker];
+            
+            [self addLineFrom:[[CLLocation alloc]initWithLatitude:eachRoutine.lat longitude:eachRoutine.lng]
+                           to:[[CLLocation alloc]initWithLatitude:ovMarker.lat longitude:ovMarker.lng]];
+        }
     }
+}
+
+
+
+-(void)adjustLocationByOffsetFrom:(MMBaseMarker *)parent to:(MMBaseMarker *)to{
+    CGPoint parentPoint=[self.mapView coordinateToPixel:CLLocationCoordinate2DMake(parent.lat, parent.lng)];
+    CGPoint newPoint=parentPoint;
+    newPoint.x=newPoint.x+to.offsetX;
+    newPoint.y=newPoint.y+to.offsetY;
+    CLLocationCoordinate2D coordinate=[self.mapView pixelToCoordinate:newPoint];
+    to.lat=coordinate.latitude;
+    to.lng=coordinate.longitude;
 }
 
 -(IBAction)deleteRoutineDone:(UIStoryboardSegue *)segue{
@@ -148,6 +170,12 @@
                                                           andTitle:title];
     annotation.userInfo=customData;
     [self.mapView addAnnotation:annotation];
+}
+
+-(void)addLineFrom:(CLLocation *)from to:(CLLocation *)to{
+    NSArray *pointArray=[[NSArray alloc]initWithObjects:from,to,nil];
+    RMPolylineAnnotation *line=[[RMPolylineAnnotation alloc]initWithMapView:self.mapView points:pointArray];
+    [self.mapView addAnnotation:line];
 }
 
 #pragma cach related
@@ -191,17 +219,38 @@
     if(annotation.isUserLocationAnnotation)
         return nil;
     
+    if([annotation isKindOfClass:[RMPolylineAnnotation class]]){
+        RMShapeAnnotation *lineAnnotation=(RMShapeAnnotation *)annotation;
+        RMShape *lineShape=[[RMShape alloc]initWithView:self.mapView];
+        for (CLLocation *eachLocation in lineAnnotation.points) {
+            [lineShape addLineToCoordinate:eachLocation.coordinate];
+        }
+        return lineShape;
+    }
+    
     
     if ([annotation.userInfo isKindOfClass:[MMRoutine class]]) {
-        RMMarker *marker = [[RMMarker alloc] initWithUIImage:[UIImage imageNamed:@"default_default"]];
+        MMRoutine *routine=annotation.userInfo;
         
-        marker.canShowCallout = YES;
+        RMMarker *marker = [[RMMarker alloc] initWithUIImage:[UIImage imageNamed:routine.iconUrl]];
         
-        marker.rightCalloutAccessoryView = [UIButton
-                                            buttonWithType:UIButtonTypeDetailDisclosure];
+        //annotation.enabled=NO;
         
         return marker;
-
+    }else if ([annotation.userInfo isKindOfClass:[MMOvMarker class]]){
+        MMOvMarker *ovMarker=annotation.userInfo;
+        
+        CGPoint anchorPoint;
+        anchorPoint.x=0.5;
+        anchorPoint.y=1;
+        
+        RMMarker *marker = [[RMMarker alloc] initWithUIImage:[UIImage imageNamed:ovMarker.iconUrl]anchorPoint:anchorPoint];
+        
+        marker.canShowCallout=YES;
+        
+        marker.rightCalloutAccessoryView=[UIButton buttonWithType:UIButtonTypeDetailDisclosure];
+        
+        return marker;
     }
     
     return nil;
@@ -219,7 +268,11 @@
 
 
 -(BOOL)mapView:(RMMapView *)mapView shouldDragAnnotation:(RMAnnotation *)annotation{
-    return YES;
+    if([annotation.userInfo isKindOfClass:[MMRoutine class]]){
+        return NO;
+    }else{
+        return YES;
+    }
 }
 
 -(void) mapView:(RMMapView *)mapView annotation:(RMAnnotation *)annotation didChangeDragState:(RMMapLayerDragState)newState fromOldState:(RMMapLayerDragState)oldState{
@@ -229,15 +282,42 @@
     if(newState==RMMapLayerDragStateNone){
         NSString *subTitle=[NSString stringWithFormat:@"lat: %f lng: %f",annotation.coordinate.latitude,annotation.coordinate.longitude];
         annotation.subtitle=subTitle;
-        if ([annotation.userInfo isKindOfClass:[MMMarker class]]) {
-            NSLog(@"Drage end update location");
-            MMMarker *marker=(MMMarker *)annotation.userInfo;
+        if ([annotation.userInfo isKindOfClass:[MMOvMarker class]]) {
+            MMOvMarker *marker=(MMOvMarker *)annotation.userInfo;
             marker.lat=annotation.coordinate.latitude;
             marker.lng=annotation.coordinate.longitude;
             NSLog(@"Drage end update marker id:%@ location",marker.id);
+            
+            MMRoutine *belongRoutine=[self.markerManager fetchRoutineById:marker.routineId];
+            
+            CGPoint offset= [self calculateOffsetFrom:belongRoutine to:marker];
+            
+            marker.offsetX=offset.x;
+            marker.offsetY=offset.y;
+            
+            [self updateMapUI];
         }
     }
 }
+
+-(CGPoint)calculateOffsetFrom:(MMBaseMarker *)from to:(MMBaseMarker *)to{
+    CGPoint parentPoint=[self.mapView coordinateToPixel:CLLocationCoordinate2DMake(from.lat, from.lng)];
+    CGPoint subPoint=[self.mapView coordinateToPixel:CLLocationCoordinate2DMake(to.lat, to.lng)];
+    //NSLog(@"parent: x :%f  y: %f",parentPoint.x,parentPoint.y);
+    //NSLog(@"sub: x :%f  y: %f",subPoint.x,parentPoint.y);
+    CGPoint result;
+    result.x=subPoint.x-parentPoint.x;
+    result.y=subPoint.y-parentPoint.y;
+    NSLog(@"offset: x :%f  y: %f",result.x,result.y);
+    return result;
+}
+
+- (void)afterMapZoom:(RMMapView *)map byUser:(BOOL)wasUserAction{
+    NSLog(@"MapZoom End");
+    [self updateMapUI];
+}
+
+
 
 
 

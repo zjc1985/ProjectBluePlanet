@@ -21,6 +21,16 @@
 
 -(void)addMarker:(MMMarker *)marker;
 
+-(void)deleteMarker:(MMMarker *)marker;
+
+-(double)minLatInMarkers;
+
+-(double)maxLatInMarkers;
+
+-(double)minLngInMarkers;
+
+-(double)maxLngInMarkers;
+
 -(MMOvMarker *)addDefaultOvMarker;
 
 -(void)updateLocation;

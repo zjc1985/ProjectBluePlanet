@@ -7,7 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "MMMarker.h"
 
 @interface MarkerInfoTVC : UITableViewController
+
+@property(nonatomic,strong)MMMarker *marker;
 
 @end

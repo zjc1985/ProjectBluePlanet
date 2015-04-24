@@ -38,9 +38,60 @@
 
 #pragma interface method
 
+-(double)minLatInMarkers{
+    MMMarker *first=[self.markers firstObject];
+    double minLat=first.lat;
+    for (MMMarker *each in self.markers) {
+        if(each.lat<minLat){
+            minLat=each.lat;
+        }
+    }
+    return minLat;
+}
+
+-(double)minLngInMarkers{
+    MMMarker *first=[self.markers firstObject];
+    double minLng=first.lng;
+    for (MMMarker *each in self.markers) {
+        if(each.lng<minLng){
+            minLng=each.lng;
+        }
+    }
+    return minLng;
+}
+
+-(double)maxLatInMarkers{
+    MMMarker *first=[self.markers firstObject];
+    double maxLat=first.lat;
+    for (MMMarker *each in self.markers) {
+        if(each.lat>maxLat){
+            maxLat=each.lat;
+        }
+    }
+    return maxLat;
+}
+
+-(double)maxLngInMarkers{
+    MMMarker *first=[self.markers firstObject];
+    double maxLng=first.lat;
+    for (MMMarker *each in self.markers) {
+        if(each.lng>maxLng){
+            maxLng=each.lng;
+        }
+    }
+    return maxLng;
+}
+
 -(void)addMarker:(MMMarker *)marker{
     [self.markers addObject:marker];
     [self updateLocation];
+}
+
+-(void)deleteMarker:(MMMarker *)marker{
+    [self.markers removeObject:marker];
+    if([self.markers count]>0){
+        [self updateLocation];
+    }
 }
 
 -(MMOvMarker *)addDefaultOvMarker{
@@ -55,7 +106,7 @@
     NSMutableArray *latArray=[[NSMutableArray alloc]init];
     NSMutableArray *lngArray=[[NSMutableArray alloc]init];
     
-    for (MMBaseMarker *eachMarker in self.markers) {
+    for (MMMarker *eachMarker in self.markers) {
         [latArray addObject:[NSNumber numberWithDouble:eachMarker.lat]];
         [lngArray addObject:[NSNumber numberWithDouble:eachMarker.lng]];
     }
@@ -70,7 +121,7 @@
     double d=[self sDeviation:numbers];
     
     for (NSNumber *number in numbers) {
-        if (fabs([number doubleValue]-e)-e<=d) {
+        if (fabs([number doubleValue]-e)<=d) {
             [refineArray addObject:number];
         }
     }

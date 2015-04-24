@@ -20,8 +20,10 @@
 @interface ViewController ()<RMMapViewDelegate,RMTileCacheBackgroundDelegate>
 
 @property (weak, nonatomic) IBOutlet UIButton *locateButton;
+
 @property(nonatomic,strong) RMMapView *mapView;
 @property(nonatomic,strong) MMMarkerManager *markerManager;
+@property(nonatomic,strong) MMRoutine *currentRoutine;
 
 @end
 
@@ -87,6 +89,10 @@
 }
 
 -(void)updateMapUI{
+    [self updateMapUINeedPanToCurrentRoutine:YES];
+}
+
+-(void)updateMapUINeedPanToCurrentRoutine:(BOOL) needPan{
     [self.mapView removeAllAnnotations];
     for (MMRoutine *eachRoutine in self.markerManager.modelRoutines) {
         [self addMarkerWithTitle:eachRoutine.title withCoordinate:CLLocationCoordinate2DMake(eachRoutine.lat, eachRoutine.lng) withCustomData:eachRoutine];
@@ -99,6 +105,10 @@
             [self addLineFrom:[[CLLocation alloc]initWithLatitude:eachRoutine.lat longitude:eachRoutine.lng]
                            to:[[CLLocation alloc]initWithLatitude:ovMarker.lat longitude:ovMarker.lng]];
         }
+    }
+    
+    if(self.currentRoutine && needPan){
+        [self.mapView setCenterCoordinate:CLLocationCoordinate2DMake(self.currentRoutine.lat, self.currentRoutine.lng) animated:YES];
     }
 }
 
@@ -269,6 +279,10 @@
 
 
 -(void)tapOnCalloutAccessoryControl:(UIControl *)control forAnnotation:(RMAnnotation *)annotation onMap:(RMMapView *)map{
+    if([annotation.userInfo isKindOfClass:[MMOvMarker class]]){
+        MMOvMarker *ovMarker=annotation.userInfo;
+        self.currentRoutine=[self.markerManager fetchRoutineById:ovMarker.routineId];
+    }
     [self performSegueWithIdentifier:SHOW_ROUTINE_INFO_SEGUE sender:annotation];
 }
 
@@ -286,8 +300,6 @@
 }
 
 -(void) mapView:(RMMapView *)mapView annotation:(RMAnnotation *)annotation didChangeDragState:(RMMapLayerDragState)newState fromOldState:(RMMapLayerDragState)oldState{
-    
-    NSLog(@"change drag state %u",newState);
     
     if(newState==RMMapLayerDragStateNone){
         NSString *subTitle=[NSString stringWithFormat:@"lat: %f lng: %f",annotation.coordinate.latitude,annotation.coordinate.longitude];
@@ -324,7 +336,7 @@
 
 - (void)afterMapZoom:(RMMapView *)map byUser:(BOOL)wasUserAction{
     NSLog(@"MapZoom End");
-    [self updateMapUI];
+    [self updateMapUINeedPanToCurrentRoutine:NO];
 }
 
 

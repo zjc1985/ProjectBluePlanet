@@ -8,7 +8,12 @@
 
 #import "MarkerEditTVC.h"
 
-@interface MarkerEditTVC ()
+@interface MarkerEditTVC ()<UIActionSheetDelegate>
+@property (weak, nonatomic) IBOutlet UITextField *markerTitleTextField;
+@property (weak, nonatomic) IBOutlet UITextField *markerCostTextField;
+@property (weak, nonatomic) IBOutlet UILabel *markerSlideNumLabel;
+@property (weak, nonatomic) IBOutlet UILabel *markerIconNameLabel;
+@property (weak, nonatomic) IBOutlet UITextView *markerDescriptionTextView;
 
 @end
 
@@ -16,71 +21,43 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
-    
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+    [self updateUI];
+}
+
+-(void)updateUI{
+    self.markerTitleTextField.text=self.marker.title;
+    self.markerCostTextField.text=self.marker.cost;
+    self.markerSlideNumLabel.text=[NSString stringWithFormat:@"%u",self.marker.slideNum];
+    self.markerIconNameLabel.text=self.marker.iconUrl;
+    self.markerDescriptionTextView.text=self.marker.myComment;
+}
+
+-(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
+    if([segue.identifier isEqualToString:@"markerEditDoneSegue"]){
+        self.marker.title=self.markerTitleTextField.text;
+        self.marker.cost=self.markerCostTextField.text;
+        self.marker.myComment=self.markerDescriptionTextView.text;
+    }
+}
+
+- (IBAction)deleteClick:(id)sender {
+    UIActionSheet *actionSheet= [[UIActionSheet alloc]initWithTitle:@"Delete Routine"
+                                                           delegate:self
+                                                  cancelButtonTitle:@"Cancel"
+                                             destructiveButtonTitle:@"Delete"
+                                                  otherButtonTitles:nil];
+    [actionSheet showInView:self.view];
 }
 
 - (IBAction)cancel:(id)sender {
     [self.presentingViewController dismissViewControllerAnimated:YES completion:nil];
 }
 
-
-/*
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:<#@"reuseIdentifier"#> forIndexPath:indexPath];
-    
-    // Configure the cell...
-    
-    return cell;
+-(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex{
+    if(buttonIndex==actionSheet.destructiveButtonIndex){
+        NSLog(@"delete marker");
+        [self performSegueWithIdentifier:@"deleteMarkerUnwindSegue" sender:nil ];
+    }
 }
-*/
-
-/*
-// Override to support conditional editing of the table view.
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Return NO if you do not want the specified item to be editable.
-    return YES;
-}
-*/
-
-/*
-// Override to support editing the table view.
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        // Delete the row from the data source
-        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    } else if (editingStyle == UITableViewCellEditingStyleInsert) {
-        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-    }   
-}
-*/
-
-/*
-// Override to support rearranging the table view.
-- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath {
-}
-*/
-
-/*
-// Override to support conditional rearranging of the table view.
-- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Return NO if you do not want the item to be re-orderable.
-    return YES;
-}
-*/
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end

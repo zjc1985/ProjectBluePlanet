@@ -26,6 +26,7 @@ typedef enum : NSUInteger {
 @property(nonatomic,strong)NSString *iconUrl;
 @property(nonatomic,assign)NSUInteger slideNum;
 @property(nonatomic,assign)NSUInteger category;
+@property(nonatomic,strong)NSString *cost;
 
 @property(nonatomic,assign)double offsetX;
 @property(nonatomic,assign)double offsetY;

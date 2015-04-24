@@ -11,6 +11,12 @@
 
 #import "MMRoutine.h"
 
+typedef enum : NSUInteger {
+    addMarkerInCenter = 0,
+    addMarkerWithImage = 1,
+    addMarkerInCurrentLocation = 2,
+} ActionSheetIndexForAddMarker;
+
 @interface RoutineDetailMapViewController:UIViewController
 
 @property(nonatomic,strong)MMRoutine *routine;

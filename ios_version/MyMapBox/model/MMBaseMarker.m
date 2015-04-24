@@ -26,6 +26,7 @@
         self.offsetX=0;
         self.iconUrl=@"default_default.png";
         self.isDelete=NO;
+        self.cost=@"";
     }
     
     return self;

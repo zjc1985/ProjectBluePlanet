@@ -42,24 +42,32 @@
      [[RMConfiguration sharedInstance] setAccessToken:@"pk.eyJ1IjoibGlvbmhhcnQ1ODYiLCJhIjoiR1JHd2NnYyJ9.iCg5vA7qQaRxf2Z-T_vEjg"];
     
     RMMapboxSource *tileSource=nil;
+    RMMapboxSource *detailTileSource=nil;
+    
     NSString *filePath=[CommonUtil dataFilePath];
     
     if([[NSFileManager defaultManager] fileExistsAtPath:filePath]){
         NSMutableDictionary *dictionary= [[NSMutableDictionary alloc] initWithContentsOfFile:filePath];
         NSString *tileJSON=[dictionary objectForKey:@"tileJSONTourMap"];
+        NSString *detailTileJSON=[dictionary objectForKey:@"tileJSONDetailMap"];
         NSLog(@"found tileJSON in file");
         tileSource= [[RMMapboxSource alloc] initWithTileJSON:tileJSON];
+        detailTileSource=[[RMMapboxSource alloc]initWithTileJSON:detailTileJSON];
+        
     }else{
-        tileSource =[[RMMapboxSource alloc] initWithMapID:streetMapId];
-        //RMMapboxSource *detailSource=[[RMMapboxSource alloc] initWithMapID:@"lionhart586.lnmjhd7b"];
+        tileSource =[[RMMapboxSource alloc] initWithMapID:tourMapId];
+        detailTileSource=[[RMMapboxSource alloc] initWithMapID:streetMapId];
         NSMutableDictionary *dictionary= [NSMutableDictionary dictionaryWithCapacity:10];
         [dictionary setObject:tileSource.tileJSON forKey:@"tileJSONTourMap"];
-        //[dictionary setObject:detailSource.tileJSON forKey:@"tileJSONDetailMap"];
+        [dictionary setObject:detailTileSource.tileJSON forKey:@"tileJSONDetailMap"];
         [dictionary writeToFile:filePath atomically:YES];
     }
     
     self.mapView=[[RMMapView alloc] initWithFrame:self.view.bounds
                                     andTilesource:tileSource];
+    
+    [self.mapView addTileSource:detailTileSource];
+    
     self.mapView.minZoom=3;
     self.mapView.maxZoom=17;
     
@@ -80,7 +88,15 @@
 
     [self addMarkerWithTitle:@"Boundary" withCoordinate:CLLocationCoordinate2DMake(31.216571, 121.391336)withCustomData:nil];
     [self addMarkerWithTitle:@"Boundary" withCoordinate:CLLocationCoordinate2DMake(31.237347, 121.416280)withCustomData:nil];
+    
+    [self ShowTourMapSource];
+    
     NSLog(@"view did load");
+}
+
+-(void)ShowTourMapSource{
+    [self.mapView setHidden:NO forTileSourceAtIndex:0];
+    [self.mapView setHidden:YES forTileSourceAtIndex:1];
 }
 
 -(void)viewWillAppear:(BOOL)animated{
@@ -159,7 +175,6 @@
         RMAnnotation *annotation=(RMAnnotation *)sender;
         MMOvMarker *ovMarker=(MMOvMarker *)annotation.userInfo;
         routineInfoVC.routine=[self.markerManager fetchRoutineById:ovMarker.routineId];
-        
     }else if ([segue.identifier isEqualToString:@"AddRoutineInfoSegue"]){
         UINavigationController *navController=(UINavigationController *)segue.destinationViewController;
         RoutineAddTVC *routineAddTVC=navController.viewControllers[0];

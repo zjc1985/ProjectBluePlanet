@@ -17,6 +17,7 @@
 
 @property (weak, nonatomic) IBOutlet UIButton *locateButton;
 @property (weak, nonatomic) IBOutlet UIToolbar *playRoutineToolBar;
+
 @property(nonatomic,strong) RMMapView *mapView;
 
 @end
@@ -63,8 +64,6 @@
     
     [self.view addSubview:self.mapView];
     [self.view sendSubviewToBack:self.mapView];
-    
-    [self updateMapUI];
     
     NSLog(@"RoutineDetailMapViewTVC did load");
 }

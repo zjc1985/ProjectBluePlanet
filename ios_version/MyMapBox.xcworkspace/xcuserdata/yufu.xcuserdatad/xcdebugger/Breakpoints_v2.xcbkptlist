@@ -10,12 +10,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MyMapBox/ViewController.m"
-            timestampString = "451488839.873019"
+            timestampString = "451744055.435465"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "132"
-            endingLineNumber = "132"
-            landmarkName = "-markerManager"
+            startingLineNumber = "148"
+            endingLineNumber = "148"
+            landmarkName = "-addMarkerWithTitle:withCoordinate:withCustomData:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -26,12 +26,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MyMapBox/ViewController.m"
-            timestampString = "451488839.873019"
+            timestampString = "451744055.435465"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "148"
-            endingLineNumber = "148"
-            landmarkName = "-prepareForSegue:sender:"
+            startingLineNumber = "164"
+            endingLineNumber = "164"
+            landmarkName = "-markerManager"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

@@ -38,7 +38,7 @@
     
     if([[NSFileManager defaultManager] fileExistsAtPath:filePath]){
         NSMutableDictionary *dictionary= [[NSMutableDictionary alloc] initWithContentsOfFile:filePath];
-        NSString *tileJSON=[dictionary objectForKey:@"tileJSONTourMap"];
+        NSString *tileJSON=[dictionary objectForKey:tileJsonDetailMap];
         NSLog(@"found tileJSON in file");
         tileSource= [[RMMapboxSource alloc] initWithTileJSON:tileJSON];
     }else{

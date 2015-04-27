@@ -9,6 +9,7 @@
 #import "RoutineInfoViewController.h"
 #import "RoutineDetailMapViewController.h"
 #import "RoutineEditTVC.h"
+#import "OfflineRoutineVC.h"
 
 @interface RoutineInfoViewController ()
 @property (weak, nonatomic) IBOutlet UILabel *titleLabel;
@@ -20,6 +21,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    NSLog(@"RoutineInfoVC did load");
 }
 
 -(void)viewWillAppear:(BOOL)animated{
@@ -62,6 +64,16 @@
     if([segue.destinationViewController isKindOfClass:[RoutineDetailMapViewController class]]){
         RoutineDetailMapViewController *routineDetailMapVC=(RoutineDetailMapViewController *)segue.destinationViewController;
         routineDetailMapVC.routine=self.routine;
+    }
+    
+    if([segue.destinationViewController isKindOfClass:[OfflineRoutineVC class]]){
+        OfflineRoutineVC *offlineVC=segue.destinationViewController;
+        offlineVC.tileCach=self.mapView.tileCache;
+        offlineVC.tileSource=self.mapView.tileSources[1];
+        offlineVC.southWest=CLLocationCoordinate2DMake(31.216571, 121.391336);
+        offlineVC.northEast=CLLocationCoordinate2DMake(31.237347, 121.416280);
+        offlineVC.minZoom=11;
+        offlineVC.maxZoom=16;
     }
 }
 

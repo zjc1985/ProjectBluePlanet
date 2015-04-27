@@ -8,6 +8,12 @@
 
 #import <Foundation/Foundation.h>
 
+#define tourMapId  @"lionhart586.gkihab1d"
+#define streetMapId @"lionhart586.lnmjhd7b"
+
+#define tileJsonTourMap @"tileJSONTourMap"
+#define tileJsonDetailMap @"tileJSONDetailMap"
+
 @interface CommonUtil : NSObject
 
 +(NSString *)dataFilePath;

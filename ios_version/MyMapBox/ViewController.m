@@ -12,6 +12,7 @@
 #import "CommonUtil.h"
 #import "RoutineAddTVC.h"
 #import "RoutineEditTVC.h"
+#import "OfflineRoutineVC.h"
 
 #import "MMMarkerManager.h"
 
@@ -29,8 +30,7 @@
 
 @implementation ViewController
 
-#define tourMapId  @"lionhart586.gkihab1d"
-#define streetMapId @"lionhart586.lnmjhd7b"
+
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -48,8 +48,8 @@
     
     if([[NSFileManager defaultManager] fileExistsAtPath:filePath]){
         NSMutableDictionary *dictionary= [[NSMutableDictionary alloc] initWithContentsOfFile:filePath];
-        NSString *tileJSON=[dictionary objectForKey:@"tileJSONTourMap"];
-        NSString *detailTileJSON=[dictionary objectForKey:@"tileJSONDetailMap"];
+        NSString *tileJSON=[dictionary objectForKey:tileJsonTourMap];
+        NSString *detailTileJSON=[dictionary objectForKey:tileJsonDetailMap];
         NSLog(@"found tileJSON in file");
         tileSource= [[RMMapboxSource alloc] initWithTileJSON:tileJSON];
         detailTileSource=[[RMMapboxSource alloc]initWithTileJSON:detailTileJSON];
@@ -58,8 +58,8 @@
         tileSource =[[RMMapboxSource alloc] initWithMapID:tourMapId];
         detailTileSource=[[RMMapboxSource alloc] initWithMapID:streetMapId];
         NSMutableDictionary *dictionary= [NSMutableDictionary dictionaryWithCapacity:10];
-        [dictionary setObject:tileSource.tileJSON forKey:@"tileJSONTourMap"];
-        [dictionary setObject:detailTileSource.tileJSON forKey:@"tileJSONDetailMap"];
+        [dictionary setObject:tileSource.tileJSON forKey:tileJsonTourMap];
+        [dictionary setObject:detailTileSource.tileJSON forKey:tileJsonDetailMap];
         [dictionary writeToFile:filePath atomically:YES];
     }
     
@@ -175,12 +175,17 @@
         RMAnnotation *annotation=(RMAnnotation *)sender;
         MMOvMarker *ovMarker=(MMOvMarker *)annotation.userInfo;
         routineInfoVC.routine=[self.markerManager fetchRoutineById:ovMarker.routineId];
+        routineInfoVC.mapView=self.mapView;
     }else if ([segue.identifier isEqualToString:@"AddRoutineInfoSegue"]){
         UINavigationController *navController=(UINavigationController *)segue.destinationViewController;
         RoutineAddTVC *routineAddTVC=navController.viewControllers[0];
         routineAddTVC.currentLat=self.mapView.centerCoordinate.latitude;
         routineAddTVC.currentLng=self.mapView.centerCoordinate.longitude;
         routineAddTVC.markerManager=self.markerManager;
+    }else if ([segue.destinationViewController isKindOfClass:[OfflineRoutineVC class]]){
+        OfflineRoutineVC *offlineVC=segue.destinationViewController;
+        offlineVC.tileCach=self.mapView.tileCache;
+        offlineVC.tileSource=self.mapView.tileSources[1];
     }
 }
 
@@ -231,11 +236,7 @@
                                                     southWest:CLLocationCoordinate2DMake(31.216571, 121.391336)
                                                     northEast:CLLocationCoordinate2DMake(31.237347, 121.416280)
                                                       minZoom:12
-                                                      maxZoom:15];
-}
-
-- (void)tileCache:(RMTileCache *)tileCache didBeginBackgroundCacheWithCount:(NSUInteger)tileCount forTileSource:(id<RMTileSource>)tileSource{
-    NSLog(@"begin background cach. tileCount:%lu ",(unsigned long)tileCount);
+                                                      maxZoom:16];
 }
 
 - (void)tileCache:(RMTileCache *)tileCache didBackgroundCacheTile:(RMTile)tile withIndex:(NSUInteger)tileIndex ofTotalTileCount:(NSUInteger)totalTileCount{

@@ -13,5 +13,6 @@
 @interface RoutineInfoViewController : UITableViewController
 
 @property(nonatomic,strong)MMRoutine *routine;
+@property(nonatomic,strong)RMMapView *mapView;
 
 @end

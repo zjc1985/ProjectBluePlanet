@@ -15,16 +15,19 @@
 #import "OfflineRoutineVC.h"
 
 #import "MMMarkerManager.h"
+#import "MMRoutineCachHelper.h"
 
 #define SHOW_ROUTINE_INFO_SEGUE @"showRoutineInfoSegue"
 
-@interface ViewController ()<RMMapViewDelegate,RMTileCacheBackgroundDelegate>
+@interface ViewController ()<RMMapViewDelegate>
 
 @property (weak, nonatomic) IBOutlet UIButton *locateButton;
 
 @property(nonatomic,strong) RMMapView *mapView;
 @property(nonatomic,strong) MMMarkerManager *markerManager;
 @property(nonatomic,strong) MMRoutine *currentRoutine;
+
+@property(nonatomic,strong) MMRoutineCachHelper *routineCachHelper;
 
 @end
 
@@ -76,8 +79,6 @@
     self.mapView.bouncingEnabled=YES;
     
     self.mapView.delegate=self;
-    
-    self.mapView.tileCache.backgroundCacheDelegate=self;
     
     CLLocationCoordinate2D center=CLLocationCoordinate2DMake(31.239689, 121.499755);
     self.mapView.centerCoordinate=center;
@@ -163,7 +164,12 @@
     return _markerManager;
 }
 
-
+-(MMRoutineCachHelper *)routineCachHelper{
+    if(!_routineCachHelper){
+        _routineCachHelper=[[MMRoutineCachHelper alloc]init];
+    }
+    return _routineCachHelper;
+}
 
 #pragma mark -segue
 
@@ -176,6 +182,7 @@
         MMOvMarker *ovMarker=(MMOvMarker *)annotation.userInfo;
         routineInfoVC.routine=[self.markerManager fetchRoutineById:ovMarker.routineId];
         routineInfoVC.mapView=self.mapView;
+        routineInfoVC.routineCachHelper=self.routineCachHelper;
     }else if ([segue.identifier isEqualToString:@"AddRoutineInfoSegue"]){
         UINavigationController *navController=(UINavigationController *)segue.destinationViewController;
         RoutineAddTVC *routineAddTVC=navController.viewControllers[0];
@@ -184,8 +191,6 @@
         routineAddTVC.markerManager=self.markerManager;
     }else if ([segue.destinationViewController isKindOfClass:[OfflineRoutineVC class]]){
         OfflineRoutineVC *offlineVC=segue.destinationViewController;
-        offlineVC.tileCach=self.mapView.tileCache;
-        offlineVC.tileSource=self.mapView.tileSources[1];
     }
 }
 
@@ -221,33 +226,11 @@
 #pragma mark - cach related
 
 - (IBAction)downloadCach:(id)sender {
-    [self startBackgroundCach];
-}
-
--(void)startBackgroundCach{
-    if ([self.mapView.tileSource isKindOfClass :[RMAbstractWebMapSource class]]) {
-        NSLog(@"is map source");
-    }else{
-        NSLog(@"not map source");
-    }
-    
-    
-    [self.mapView.tileCache beginBackgroundCacheForTileSource:self.mapView.tileSource
-                                                    southWest:CLLocationCoordinate2DMake(31.216571, 121.391336)
-                                                    northEast:CLLocationCoordinate2DMake(31.237347, 121.416280)
-                                                      minZoom:12
-                                                      maxZoom:16];
-}
-
-- (void)tileCache:(RMTileCache *)tileCache didBackgroundCacheTile:(RMTile)tile withIndex:(NSUInteger)tileIndex ofTotalTileCount:(NSUInteger)totalTileCount{
-    NSLog(@"caching currrent num: %lu with total count %lu",(unsigned long)tileIndex,(unsigned long)totalTileCount);
-    
-    if(tileIndex==totalTileCount){
-        //[self alert:@"cach complete"];
-        NSLog(@"Cach Complete");
+    MMRoutine *tempRoutine=[self.markerManager.modelRoutines firstObject];
+    if(tempRoutine){
+        [self.routineCachHelper startCachForRoutine:tempRoutine withTileCach:self.mapView.tileCache withTileSource:self.mapView.tileSources[1]];
     }
 }
-
 
 #pragma mark - RMMapViewDelegate
 

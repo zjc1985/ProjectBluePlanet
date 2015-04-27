@@ -8,15 +8,10 @@
 
 #import <UIKit/UIKit.h>
 #import <Mapbox-iOS-SDK/Mapbox.h>
+#import "MMMarkerManager.h"
 
 @interface OfflineRoutineVC : UIViewController <RMTileCacheBackgroundDelegate>
 
-@property(nonatomic,strong)RMTileCache *tileCach;
-@property(nonatomic,strong)RMMapboxSource *tileSource;
-
-@property(nonatomic)CLLocationCoordinate2D southWest;
-@property(nonatomic)CLLocationCoordinate2D northEast;
-@property(nonatomic)NSUInteger minZoom;
-@property(nonatomic)NSUInteger maxZoom;
+@property(nonatomic,strong)NSMutableArray *routineArray;
 
 @end

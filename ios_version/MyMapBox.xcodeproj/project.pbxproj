@@ -28,6 +28,7 @@
 		53ED110BC35C2D004D4FC1C8 /* libPods-MyMapBox.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DDCD2D0DA0362384E0FDE0D7 /* libPods-MyMapBox.a */; };
 		8421CB151ADBF8FA002046B9 /* RoutineInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8421CB141ADBF8FA002046B9 /* RoutineInfoViewController.m */; };
 		8421CB181ADC04D0002046B9 /* RoutineDetailMapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8421CB171ADC04D0002046B9 /* RoutineDetailMapViewController.m */; };
+		845EB1F51AEE7B2500C719CA /* MMRoutineCachHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 845EB1F41AEE7B2500C719CA /* MMRoutineCachHelper.m */; };
 		84DA51661AE3D48C0077202E /* MMBaseMarker.m in Sources */ = {isa = PBXBuildFile; fileRef = 84DA51651AE3D48C0077202E /* MMBaseMarker.m */; };
 		84DA51681AE3DA420077202E /* MapMarkerTester.m in Sources */ = {isa = PBXBuildFile; fileRef = 84DA51671AE3DA420077202E /* MapMarkerTester.m */; };
 		84DA516B1AE3E5600077202E /* MMRoutine.m in Sources */ = {isa = PBXBuildFile; fileRef = 84DA516A1AE3E5600077202E /* MMRoutine.m */; };
@@ -82,6 +83,8 @@
 		8421CB141ADBF8FA002046B9 /* RoutineInfoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RoutineInfoViewController.m; sourceTree = "<group>"; };
 		8421CB161ADC04D0002046B9 /* RoutineDetailMapViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RoutineDetailMapViewController.h; sourceTree = "<group>"; };
 		8421CB171ADC04D0002046B9 /* RoutineDetailMapViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RoutineDetailMapViewController.m; sourceTree = "<group>"; };
+		845EB1F31AEE7B2500C719CA /* MMRoutineCachHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMRoutineCachHelper.h; sourceTree = "<group>"; };
+		845EB1F41AEE7B2500C719CA /* MMRoutineCachHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMRoutineCachHelper.m; sourceTree = "<group>"; };
 		84DA51641AE3D48C0077202E /* MMBaseMarker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMBaseMarker.h; path = model/MMBaseMarker.h; sourceTree = "<group>"; };
 		84DA51651AE3D48C0077202E /* MMBaseMarker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMBaseMarker.m; path = model/MMBaseMarker.m; sourceTree = "<group>"; };
 		84DA51671AE3DA420077202E /* MapMarkerTester.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MapMarkerTester.m; sourceTree = "<group>"; };
@@ -148,6 +151,8 @@
 				2894ABA91AEE27D500A943D1 /* Main.storyboard */,
 				285E432B1AD61E720030A274 /* LaunchScreen.xib */,
 				285E431C1AD61E720030A274 /* Supporting Files */,
+				845EB1F31AEE7B2500C719CA /* MMRoutineCachHelper.h */,
+				845EB1F41AEE7B2500C719CA /* MMRoutineCachHelper.m */,
 			);
 			path = MyMapBox;
 			sourceTree = "<group>";
@@ -371,6 +376,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				286390841AE0D44D00A5B999 /* IconSelectTVC.m in Sources */,
+				845EB1F51AEE7B2500C719CA /* MMRoutineCachHelper.m in Sources */,
 				2894ABA31AE8E1D600A943D1 /* MMMarker.m in Sources */,
 				2894ABA01AE8C19A00A943D1 /* MMOvMarker.m in Sources */,
 				2863908D1AE0EA3E00A5B999 /* MarkerEditTVC.m in Sources */,

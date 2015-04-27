@@ -17,6 +17,7 @@
         self.lat=lat;
         self.lng=lng;
         self.iconUrl=@"overview_point.png";
+        self.cachProgress=0;
     }
     return self;
 }
@@ -26,6 +27,7 @@
     if(!_ovMarkers){
         _ovMarkers=[[NSMutableArray alloc]init];
     }
+
     return _ovMarkers;
 }
 

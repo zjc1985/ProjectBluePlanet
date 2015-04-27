@@ -67,13 +67,13 @@
     }
     
     if([segue.destinationViewController isKindOfClass:[OfflineRoutineVC class]]){
+        [self.routineCachHelper startCachForRoutine:self.routine
+                                       withTileCach:self.mapView.tileCache
+                                     withTileSource:self.mapView.tileSources[1]];
+        
         OfflineRoutineVC *offlineVC=segue.destinationViewController;
-        offlineVC.tileCach=self.mapView.tileCache;
-        offlineVC.tileSource=self.mapView.tileSources[1];
-        offlineVC.southWest=CLLocationCoordinate2DMake(31.216571, 121.391336);
-        offlineVC.northEast=CLLocationCoordinate2DMake(31.237347, 121.416280);
-        offlineVC.minZoom=11;
-        offlineVC.maxZoom=16;
+        NSMutableArray *routines=[[NSMutableArray alloc]initWithObjects:self.routine, nil];
+        offlineVC.routineArray=routines;
     }
 }
 

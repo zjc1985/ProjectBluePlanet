@@ -17,6 +17,8 @@
 @property(nonatomic,strong)NSMutableArray *markers; //of MMMarker
 @property(nonatomic)BOOL isLoadMarkers;
 
+@property(nonatomic)float cachProgress;
+
 -(instancetype)initWithLat:(double)lat withlng:(double)lng;
 
 -(void)addMarker:(MMMarker *)marker;

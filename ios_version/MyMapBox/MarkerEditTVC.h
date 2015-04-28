@@ -11,6 +11,7 @@
 
 @interface MarkerEditTVC : UITableViewController
 
+@property(nonatomic)NSUInteger markerCount;
 @property(nonatomic,strong)MMMarker *marker;
 
 @end

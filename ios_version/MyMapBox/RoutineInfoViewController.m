@@ -9,7 +9,8 @@
 #import "RoutineInfoViewController.h"
 #import "RoutineDetailMapViewController.h"
 #import "RoutineEditTVC.h"
-#import "OfflineRoutineVC.h"
+#import "OfflineRoutineTVC.h"
+#import "CommonUtil.h"
 
 @interface RoutineInfoViewController ()
 @property (weak, nonatomic) IBOutlet UILabel *titleLabel;
@@ -66,14 +67,28 @@
         routineDetailMapVC.routine=self.routine;
     }
     
-    if([segue.destinationViewController isKindOfClass:[OfflineRoutineVC class]]){
-        [self.routineCachHelper startCachForRoutine:self.routine
-                                       withTileCach:self.mapView.tileCache
-                                     withTileSource:self.mapView.tileSources[1]];
+    if([segue.destinationViewController isKindOfClass:[OfflineRoutineTVC class]]){
         
-        OfflineRoutineVC *offlineVC=segue.destinationViewController;
-        NSMutableArray *routines=[[NSMutableArray alloc]initWithObjects:self.routine, nil];
-        offlineVC.routineArray=routines;
+        BOOL succeedbegin=NO;
+        
+        NSMutableArray *cachedRoutines=[self.markerManager fetchAllCachedModelRoutines];
+        
+        if (self.routine.cachProgress==1) {
+            NSLog(@"%@ already cached",self.routine.title);
+        }else{
+           
+            succeedbegin=[self.routineCachHelper startCachForRoutine:self.routine
+                                                        withTileCach:self.mapView.tileCache
+                                                      withTileSource:self.mapView.tileSources[1]];
+           
+        }
+        
+        if(succeedbegin){
+            [cachedRoutines addObject:self.routine];
+        }
+        
+        OfflineRoutineTVC *offlineTVC=segue.destinationViewController;
+        offlineTVC.modelRoutines=cachedRoutines;
     }
 }
 

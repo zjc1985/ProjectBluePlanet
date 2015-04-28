@@ -10,7 +10,7 @@
 
 @interface MMMarkerManager()
 
-
+@property(nonatomic,strong)NSMutableArray *modelRoutines; //of MMROutine
 
 @end
 
@@ -25,6 +25,22 @@
 }
 
 #pragma mark - interface method
+-(NSMutableArray *)fetchAllCachedModelRoutines{
+    NSMutableArray *result=[[NSMutableArray alloc]init];
+    
+    for (MMRoutine *each in self.modelRoutines) {
+        if(each.cachProgress==1){
+            [result addObject:each];
+        }
+    }
+    
+    return result;
+}
+
+-(NSMutableArray *)fetchAllModelRoutines{
+#warning will add more logic here
+    return self.modelRoutines;
+}
 
 -(void)deleteMMRoutine:(MMRoutine *)routine{
     [self.modelRoutines removeObject:routine];

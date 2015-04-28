@@ -86,6 +86,7 @@
 
 -(void)addMarker:(MMMarker *)marker{
     [self.markers addObject:marker];
+    self.cachProgress=0;
     [self updateLocation];
 }
 

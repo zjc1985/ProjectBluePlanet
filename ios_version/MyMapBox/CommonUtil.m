@@ -16,4 +16,9 @@
     return [documentDirectory stringByAppendingPathComponent:@"data.plist"];
 }
 
++(void)alert:(NSString *)content{
+    UIAlertView *theAlert=[[UIAlertView alloc] initWithTitle:@"alert" message:content delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+    [theAlert show];
+}
+
 @end

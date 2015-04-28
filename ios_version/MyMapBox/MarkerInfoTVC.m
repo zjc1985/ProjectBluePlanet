@@ -56,6 +56,7 @@
         UINavigationController *navController=(UINavigationController *)segue.destinationViewController;
         MarkerEditTVC *markerEditTVC=navController.viewControllers[0];
         markerEditTVC.marker=self.marker;
+        markerEditTVC.markerCount=self.markerCount;
     }
     
 }

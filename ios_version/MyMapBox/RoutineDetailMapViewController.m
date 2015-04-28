@@ -112,8 +112,9 @@
 
 #pragma mark - UI action
 - (IBAction)PlayButtonClick:(id)sender {
-    [self.mapView zoomWithLatitudeLongitudeBoundsSouthWest:CLLocationCoordinate2DMake([self.routine minLatInMarkers], [self.routine minLngInMarkers])
-                                                 northEast:CLLocationCoordinate2DMake([self.routine maxLatInMarkers], [self.routine maxLngInMarkers])
+    
+    [self.mapView zoomWithLatitudeLongitudeBoundsSouthWest:CLLocationCoordinate2DMake(31.216571, 121.391336)
+                                                 northEast:CLLocationCoordinate2DMake(31.237347, 121.416280)
                                                   animated:YES];
 
 }
@@ -139,6 +140,7 @@
     if ([segue.identifier isEqualToString:@"markerDetailSegue"]) {
         MarkerInfoTVC *markerInfoTVC=segue.destinationViewController;
         markerInfoTVC.marker=((RMAnnotation *)sender).userInfo;
+        markerInfoTVC.markerCount=[self.routine.markers count];
     }
 }
 

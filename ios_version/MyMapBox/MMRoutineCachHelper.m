@@ -7,6 +7,7 @@
 //
 
 #import "MMRoutineCachHelper.h"
+#import "CommonUtil.h"
 
 @interface MMRoutineCachHelper ()
 
@@ -19,18 +20,41 @@
 #pragma mark - cach related
 
 
- -(void)startCachForRoutine:(MMRoutine *)routine withTileCach:(RMTileCache *)tilecach withTileSource:(RMMapboxSource *)tileSource{
+ -(BOOL)startCachForRoutine:(MMRoutine *)routine withTileCach:(RMTileCache *)tilecach withTileSource:(RMMapboxSource *)tileSource{
  
      tilecach.backgroundCacheDelegate=self;
- 
-     self.currentCachRoutine=routine;
- 
-     [tilecach beginBackgroundCacheForTileSource:tileSource
-                                       southWest:CLLocationCoordinate2DMake(31.216571, 121.391336)
-                                       northEast:CLLocationCoordinate2DMake(31.237347, 121.416280)
-                                         minZoom:12
-                                         maxZoom:16];
- 
+     
+     if([routine.markers count]==0){
+         [CommonUtil alert:@"can not offline routine with no markers in it"];
+         return NO;
+     }
+     
+     NSUInteger minZoom=12;
+     NSUInteger maxZoom=16;
+     
+     CLLocationCoordinate2D southwest=CLLocationCoordinate2DMake(routine.minLatInMarkers,routine.minLngInMarkers);
+     CLLocationCoordinate2D northEast=CLLocationCoordinate2DMake(routine.maxLatInMarkers,routine.maxLngInMarkers);
+     
+     NSLog(@"south west %f %f",southwest.latitude,southwest.longitude);
+     NSLog(@"north east %f %f",northEast.latitude,southwest.longitude);
+     
+     if ([tilecach tileCountForSouthWest:southwest northEast:northEast minZoom:minZoom maxZoom:maxZoom]>500) {
+         [CommonUtil alert:(@"cach size to big upper 500 tile count")];
+         return NO;
+     }
+     if([tilecach isBackgroundCaching]){
+         return NO;
+     }else{
+         self.currentCachRoutine=routine;
+         
+         [tilecach beginBackgroundCacheForTileSource:tileSource
+                                           southWest:southwest
+                                           northEast:northEast
+                                             minZoom:minZoom
+                                             maxZoom:maxZoom];
+         return YES;
+     }
+
  }
  
  - (void)tileCache:(RMTileCache *)tileCache didBackgroundCacheTile:(RMTile)tile withIndex:(NSUInteger)tileIndex ofTotalTileCount:(NSUInteger)totalTileCount{
@@ -40,7 +64,7 @@
      self.currentCachRoutine.cachProgress=progress;
  
      if(tileIndex==totalTileCount){
-         NSLog(@"Cach Complete");
+         NSLog(@"%@ Cach Complete",self.currentCachRoutine.title);         
          self.currentCachRoutine=nil;
      }
  }

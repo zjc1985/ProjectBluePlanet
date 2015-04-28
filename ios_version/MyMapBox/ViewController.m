@@ -12,12 +12,12 @@
 #import "CommonUtil.h"
 #import "RoutineAddTVC.h"
 #import "RoutineEditTVC.h"
-#import "OfflineRoutineVC.h"
 
 #import "MMMarkerManager.h"
 #import "MMRoutineCachHelper.h"
 
 #define SHOW_ROUTINE_INFO_SEGUE @"showRoutineInfoSegue"
+#define ADD_ROUTINE_SEGUE @"AddRoutineInfoSegue"
 
 @interface ViewController ()<RMMapViewDelegate>
 
@@ -25,7 +25,6 @@
 
 @property(nonatomic,strong) RMMapView *mapView;
 @property(nonatomic,strong) MMMarkerManager *markerManager;
-@property(nonatomic,strong) MMRoutine *currentRoutine;
 
 @property(nonatomic,strong) MMRoutineCachHelper *routineCachHelper;
 
@@ -111,7 +110,7 @@
 
 -(void)updateMapUINeedPanToCurrentRoutine:(BOOL) needPan{
     [self.mapView removeAllAnnotations];
-    for (MMRoutine *eachRoutine in self.markerManager.modelRoutines) {
+    for (MMRoutine *eachRoutine in [self.markerManager fetchAllModelRoutines]) {
         [self addMarkerWithTitle:eachRoutine.title withCoordinate:CLLocationCoordinate2DMake(eachRoutine.lat, eachRoutine.lng) withCustomData:eachRoutine];
         
         for (MMOvMarker *ovMarker in eachRoutine.ovMarkers) {
@@ -124,8 +123,8 @@
         }
     }
     
-    if(self.currentRoutine && needPan){
-        [self.mapView setCenterCoordinate:CLLocationCoordinate2DMake(self.currentRoutine.lat, self.currentRoutine.lng) animated:YES];
+    if(self.markerManager.currentRoutine && needPan){
+        [self.mapView setCenterCoordinate:CLLocationCoordinate2DMake(self.markerManager.currentRoutine.lat, self.markerManager.currentRoutine.lng) animated:YES];
     }
 }
 
@@ -183,14 +182,13 @@
         routineInfoVC.routine=[self.markerManager fetchRoutineById:ovMarker.routineId];
         routineInfoVC.mapView=self.mapView;
         routineInfoVC.routineCachHelper=self.routineCachHelper;
-    }else if ([segue.identifier isEqualToString:@"AddRoutineInfoSegue"]){
+        routineInfoVC.markerManager=self.markerManager;
+    }else if ([segue.identifier isEqualToString:ADD_ROUTINE_SEGUE]){
         UINavigationController *navController=(UINavigationController *)segue.destinationViewController;
         RoutineAddTVC *routineAddTVC=navController.viewControllers[0];
         routineAddTVC.currentLat=self.mapView.centerCoordinate.latitude;
         routineAddTVC.currentLng=self.mapView.centerCoordinate.longitude;
         routineAddTVC.markerManager=self.markerManager;
-    }else if ([segue.destinationViewController isKindOfClass:[OfflineRoutineVC class]]){
-        OfflineRoutineVC *offlineVC=segue.destinationViewController;
     }
 }
 
@@ -213,12 +211,6 @@
     }
 }
 
-
--(void)alert:(NSString *)content{
-    UIAlertView *theAlert=[[UIAlertView alloc] initWithTitle:@"alert" message:content delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
-    [theAlert show];
-}
-
 - (IBAction)locateButtonClick {
     [self.mapView setCenterCoordinate:CLLocationCoordinate2DMake(31.216571, 121.391336) animated:YES];
 }
@@ -226,7 +218,7 @@
 #pragma mark - cach related
 
 - (IBAction)downloadCach:(id)sender {
-    MMRoutine *tempRoutine=[self.markerManager.modelRoutines firstObject];
+    MMRoutine *tempRoutine=[[self.markerManager fetchAllModelRoutines] firstObject];
     if(tempRoutine){
         [self.routineCachHelper startCachForRoutine:tempRoutine withTileCach:self.mapView.tileCache withTileSource:self.mapView.tileSources[1]];
     }
@@ -253,8 +245,6 @@
         
         RMMarker *marker = [[RMMarker alloc] initWithUIImage:[UIImage imageNamed:routine.iconUrl]];
         
-        //annotation.enabled=NO;
-        
         return marker;
     }else if ([annotation.userInfo isKindOfClass:[MMOvMarker class]]){
         MMOvMarker *ovMarker=annotation.userInfo;
@@ -280,7 +270,7 @@
 -(void)tapOnCalloutAccessoryControl:(UIControl *)control forAnnotation:(RMAnnotation *)annotation onMap:(RMMapView *)map{
     if([annotation.userInfo isKindOfClass:[MMOvMarker class]]){
         MMOvMarker *ovMarker=annotation.userInfo;
-        self.currentRoutine=[self.markerManager fetchRoutineById:ovMarker.routineId];
+        self.markerManager.currentRoutine=[self.markerManager fetchRoutineById:ovMarker.routineId];
     }
     [self performSegueWithIdentifier:SHOW_ROUTINE_INFO_SEGUE sender:annotation];
 }

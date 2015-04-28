@@ -7,8 +7,10 @@
 //
 
 #import "MarkerEditTVC.h"
+#import "SlideNumSelectTVC.h"
 
 @interface MarkerEditTVC ()<UIActionSheetDelegate>
+
 @property (weak, nonatomic) IBOutlet UITextField *markerTitleTextField;
 @property (weak, nonatomic) IBOutlet UITextField *markerCostTextField;
 @property (weak, nonatomic) IBOutlet UILabel *markerSlideNumLabel;
@@ -37,6 +39,13 @@
         self.marker.title=self.markerTitleTextField.text;
         self.marker.cost=self.markerCostTextField.text;
         self.marker.myComment=self.markerDescriptionTextView.text;
+        self.marker.slideNum=[self.markerSlideNumLabel.text integerValue];
+    }
+    
+    if([segue.destinationViewController isKindOfClass:[SlideNumSelectTVC class]]){
+        SlideNumSelectTVC *slideNumSelectTVC=segue.destinationViewController;
+        slideNumSelectTVC.slideNumLabel=self.markerSlideNumLabel;
+        slideNumSelectTVC.markerCount=self.markerCount;
     }
 }
 

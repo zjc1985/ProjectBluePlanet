@@ -11,9 +11,11 @@
 
 @interface MMMarkerManager : NSObject
 
-@property(nonatomic,strong)NSMutableArray *modelRoutines; //of MMROutine
+@property(nonatomic,strong) MMRoutine *currentRoutine;
 
-@property(nonatomic,strong)MMRoutine *currentCachRoutine;
+-(NSMutableArray *)fetchAllModelRoutines;
+
+-(NSMutableArray *)fetchAllCachedModelRoutines;
 
 -(MMRoutine *)createMMRoutineWithLat:(double)lat withLng:(double)lng;
 

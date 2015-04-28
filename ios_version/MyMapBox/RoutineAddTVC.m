@@ -37,6 +37,7 @@
         MMRoutine *newRoutine=[self.markerManager createMMRoutineWithLat:self.currentLat withLng:self.currentLng];
         newRoutine.title=self.titleTextField.text;
         newRoutine.myComment=self.descriptionTextView.text;
+        self.markerManager.currentRoutine=newRoutine;
     }
 }
 

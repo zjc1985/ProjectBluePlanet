@@ -27,7 +27,7 @@
 
 -(void)viewWillAppear:(BOOL)animated{
     self.titleLabel.text=self.routine.title;
-    self.descriptionTextField.text=self.routine.myComment;
+    self.descriptionTextField.text=self.routine.mycomment;
 }
 
 - (IBAction)showRoutineDetailClick:(id)sender {
@@ -71,21 +71,21 @@
         
         BOOL succeedbegin=NO;
         
-        NSMutableArray *cachedRoutines=[self.markerManager fetchAllCachedModelRoutines];
+        NSMutableArray *cachedRoutines=[[MMRoutine fetchAllCachedModelRoutines] mutableCopy];
         
-        if (self.routine.cachProgress==1) {
+        if ([self.routine.cachProgress floatValue]==1) {
             NSLog(@"%@ already cached",self.routine.title);
         }else{
-           
             succeedbegin=[self.routineCachHelper startCachForRoutine:self.routine
                                                         withTileCach:self.mapView.tileCache
                                                       withTileSource:self.mapView.tileSources[1]];
-           
         }
+        
         
         if(succeedbegin){
             [cachedRoutines addObject:self.routine];
         }
+         
         
         OfflineRoutineTVC *offlineTVC=segue.destinationViewController;
         offlineTVC.modelRoutines=cachedRoutines;

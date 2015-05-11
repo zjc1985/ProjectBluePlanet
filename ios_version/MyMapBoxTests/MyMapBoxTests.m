@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import <XCTest/XCTest.h>
+#import "AppDelegate.h"
 
 @interface MyMapBoxTests : XCTestCase
 
@@ -30,11 +31,18 @@
     XCTAssert(YES, @"Pass");
 }
 
+-(void)testGetManagedContext{
+    AppDelegate *appDelegate=[UIApplication sharedApplication].delegate;
+    XCTAssertNotNil(appDelegate.managedObjectContext);
+}
+
 - (void)testPerformanceExample {
     // This is an example of a performance test case.
     [self measureBlock:^{
         // Put the code you want to measure the time of here.
     }];
 }
+
+
 
 @end

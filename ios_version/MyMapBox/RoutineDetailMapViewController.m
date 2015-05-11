@@ -78,14 +78,14 @@
     
     for (MMMarker *marker in self.routine.markers) {
         [self addMarkerWithTitle:marker.title
-                  withCoordinate:CLLocationCoordinate2DMake(marker.lat, marker.lng)
+                  withCoordinate:CLLocationCoordinate2DMake([marker.lat doubleValue], [marker.lng doubleValue])
                   withCustomData:marker];
     }
     
     if ([self.routine.markers count]>0) {
         if(self.currentMarker){
             NSLog(@"center to currentMarker");
-            [self.mapView setCenterCoordinate:CLLocationCoordinate2DMake(self.currentMarker.lat, self.currentMarker.lng) animated:YES];
+            [self.mapView setCenterCoordinate:CLLocationCoordinate2DMake([self.currentMarker.lat doubleValue], [self.currentMarker.lng doubleValue]) animated:YES];
         }else{
             NSLog(@"zoom to fit all markers");
             [self.mapView zoomWithLatitudeLongitudeBoundsSouthWest:CLLocationCoordinate2DMake([self.routine minLatInMarkers], [self.routine minLngInMarkers])
@@ -96,7 +96,7 @@
         [self.mapView setZoom:self.mapView.zoom-1 animated:YES];
         
     }else{
-        [self.mapView setCenterCoordinate:CLLocationCoordinate2DMake(self.routine.lat, self.routine.lng) animated:YES];
+        [self.mapView setCenterCoordinate:CLLocationCoordinate2DMake([self.routine.lat doubleValue], [self.routine.lng doubleValue]) animated:YES];
     }
     
 }
@@ -149,10 +149,9 @@
     MarkerEditTVC *markerEditTVC=segue.sourceViewController;
     MMMarker *marker=markerEditTVC.marker;
     if(marker){
-        NSLog(@"delete marker id %@",marker.id);
-        [self.routine deleteMarker:markerEditTVC.marker];
+        NSLog(@"delete marker id %@",marker.uuid);
+        marker.isDelete=[NSNumber numberWithBool:YES];
     }
-    
 }
 
 
@@ -164,9 +163,9 @@
     switch (buttonIndex) {
         case addMarkerInCenter:{
             NSLog(@"add marker in center");
-            newMarker=[[MMMarker alloc]initWithRoutineId:self.routine.id];
-            newMarker.lat=self.mapView.centerCoordinate.latitude;
-            newMarker.lng=self.mapView.centerCoordinate.longitude;
+            newMarker=[MMMarker createMMMarkerInRoutine:self.routine];
+            newMarker.lat=[NSNumber numberWithDouble: self.mapView.centerCoordinate.latitude];
+            newMarker.lng=[NSNumber numberWithDouble:self.mapView.centerCoordinate.longitude];
             break;
         }
         case addMarkerWithImage :{
@@ -175,17 +174,17 @@
         }
         case addMarkerInCurrentLocation:{
             NSLog(@"add marker in current location");
-            newMarker=[[MMMarker alloc]initWithRoutineId:self.routine.id];
-            newMarker.lat=self.mapView.userLocation.coordinate.latitude;
-            newMarker.lng=self.mapView.userLocation.coordinate.longitude;
+            newMarker=[MMMarker createMMMarkerInRoutine:self.routine];
+            newMarker.lat=[NSNumber numberWithDouble: self.mapView.centerCoordinate.latitude];
+            newMarker.lng=[NSNumber numberWithDouble:self.mapView.centerCoordinate.longitude];
             break;
         }
         default:
             break;
     }
     if(newMarker){
-        [self.routine addMarker:newMarker];
-        [self addMarkerWithTitle:newMarker.title withCoordinate:CLLocationCoordinate2DMake(newMarker.lat, newMarker.lng) withCustomData:newMarker];
+        [self addMarkerWithTitle:newMarker.title withCoordinate:CLLocationCoordinate2DMake([newMarker.lat doubleValue], [newMarker.lng doubleValue])
+                  withCustomData:newMarker];
     }
 }
 
@@ -225,9 +224,9 @@
         annotation.subtitle=subTitle;
         if ([annotation.userInfo isKindOfClass:[MMMarker class]]) {
             MMMarker *marker=(MMMarker *)annotation.userInfo;
-            marker.lat=annotation.coordinate.latitude;
-            marker.lng=annotation.coordinate.longitude;
-            NSLog(@"Drage end update marker id:%@ location",marker.id);
+            marker.lat=[NSNumber numberWithDouble:annotation.coordinate.latitude];
+            marker.lng=[NSNumber numberWithDouble:annotation.coordinate.longitude];
+            NSLog(@"Drage end update marker id:%@ location",marker.uuid);
             [self.routine updateLocation];
         }
     }

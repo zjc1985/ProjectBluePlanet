@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "MMRoutine.h"
+#import "MMRoutine+Dao.h"
 
 @interface RoutineEditTVC : UITableViewController
 

@@ -20,7 +20,7 @@
     [super viewDidLoad];
     
     self.titleTextField.text=self.routine.title;
-    self.descriptionTextView.text=self.routine.myComment;
+    self.descriptionTextView.text=self.routine.mycomment;
     
 }
 
@@ -45,7 +45,7 @@
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
     if([segue.identifier isEqualToString:@"EditRoutineDoneSegue"]){
         self.routine.title=self.titleTextField.text;
-        self.routine.myComment=self.descriptionTextView.text;
+        self.routine.mycomment=self.descriptionTextView.text;
     }
 }
 

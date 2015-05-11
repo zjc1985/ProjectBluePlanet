@@ -9,7 +9,8 @@
 #import "ViewController.h"
 #import <Mapbox-iOS-SDK/Mapbox.h>
 
-#import "MMRoutine.h"
+#import "MMRoutine+Dao.h"
+#import "MMMarker+Dao.h"
 
 typedef enum : NSUInteger {
     addMarkerInCenter = 0,

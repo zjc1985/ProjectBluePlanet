@@ -2,39 +2,40 @@
 //  MMRoutine.h
 //  MyMapBox
 //
-//  Created by yufu on 15/4/19.
-//  Copyright (c) 2015年 yufu. All rights reserved.
+//  Created by bizappman on 5/11/15.
+//  Copyright (c) 2015 yufu. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
-#import "MMMarker.h"
-#import "MMOvMarker.h"
+#import <CoreData/CoreData.h>
 
+@class MMMarker, MMOvMarker;
 
-@interface MMRoutine : MMBaseMarker
+@interface MMRoutine : NSManagedObject
 
-@property(nonatomic,strong)NSMutableArray *ovMarkers; //of MMOvMarker
-@property(nonatomic,strong)NSMutableArray *markers; //of MMMarker
-@property(nonatomic)BOOL isLoadMarkers;
+@property (nonatomic, retain) NSNumber * lat;
+@property (nonatomic, retain) NSNumber * lng;
+@property (nonatomic, retain) NSString * title;
+@property (nonatomic, retain) NSString * mycomment;
+@property (nonatomic, retain) NSNumber * isSync;
+@property (nonatomic, retain) NSNumber * isDelete;
+@property (nonatomic, retain) NSString * uuid;
+@property (nonatomic, retain) NSNumber * updateTimestamp;
+@property (nonatomic, retain) NSNumber * cachProgress;
+@property (nonatomic, retain) NSSet *markers;
+@property (nonatomic, retain) NSSet *ovMarkers;
+@end
 
-@property(nonatomic)float cachProgress;
+@interface MMRoutine (CoreDataGeneratedAccessors)
 
--(instancetype)initWithLat:(double)lat withlng:(double)lng;
+- (void)addMarkersObject:(MMMarker *)value;
+- (void)removeMarkersObject:(MMMarker *)value;
+- (void)addMarkers:(NSSet *)values;
+- (void)removeMarkers:(NSSet *)values;
 
--(void)addMarker:(MMMarker *)marker;
-
--(void)deleteMarker:(MMMarker *)marker;
-
--(double)minLatInMarkers;
-
--(double)maxLatInMarkers;
-
--(double)minLngInMarkers;
-
--(double)maxLngInMarkers;
-
--(MMOvMarker *)addDefaultOvMarker;
-
--(void)updateLocation;
+- (void)addOvMarkersObject:(MMOvMarker *)value;
+- (void)removeOvMarkersObject:(MMOvMarker *)value;
+- (void)addOvMarkers:(NSSet *)values;
+- (void)removeOvMarkers:(NSSet *)values;
 
 @end

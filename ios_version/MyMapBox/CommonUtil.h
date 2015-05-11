@@ -7,6 +7,7 @@
 //
 #import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
+@import CoreData;
 
 #define tourMapId  @"lionhart586.gkihab1d"
 #define streetMapId @"lionhart586.lnmjhd7b"
@@ -19,5 +20,7 @@
 +(NSString *)dataFilePath;
 
 +(void)alert:(NSString *)content;
+
++(NSManagedObjectContext *)getContext;
 
 @end

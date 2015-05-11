@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "MMMarker.h"
+#import "MMMarker+Dao.h"
 
 @interface MarkerInfoTVC : UITableViewController
 

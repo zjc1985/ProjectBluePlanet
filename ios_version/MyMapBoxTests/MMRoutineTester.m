@@ -26,8 +26,8 @@
 
 - (void)testExample {
     MMRoutine *routine=[[MMRoutine alloc]init];
-    NSLog(@"id:%@",routine.id);
-    XCTAssertNotNil(routine.id);
+    NSLog(@"id:%@",routine.uuid);
+    XCTAssertNotNil(routine.uuid);
     
 }
 

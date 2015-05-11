@@ -13,7 +13,11 @@
 #import "RoutineAddTVC.h"
 #import "RoutineEditTVC.h"
 
-#import "MMMarkerManager.h"
+#import "MMRoutine.h"
+#import "MMRoutine+Dao.h"
+
+#import "MMOvMarker.h"
+
 #import "MMRoutineCachHelper.h"
 
 #define SHOW_ROUTINE_INFO_SEGUE @"showRoutineInfoSegue"
@@ -24,7 +28,7 @@
 @property (weak, nonatomic) IBOutlet UIButton *locateButton;
 
 @property(nonatomic,strong) RMMapView *mapView;
-@property(nonatomic,strong) MMMarkerManager *markerManager;
+@property(nonatomic,strong) MMRoutine *currentRoutine;
 
 @property(nonatomic,strong) MMRoutineCachHelper *routineCachHelper;
 
@@ -110,34 +114,43 @@
 
 -(void)updateMapUINeedPanToCurrentRoutine:(BOOL) needPan{
     [self.mapView removeAllAnnotations];
-    for (MMRoutine *eachRoutine in [self.markerManager fetchAllModelRoutines]) {
-        [self addMarkerWithTitle:eachRoutine.title withCoordinate:CLLocationCoordinate2DMake(eachRoutine.lat, eachRoutine.lng) withCustomData:eachRoutine];
+    for (MMRoutine *eachRoutine in [MMRoutine fetchAllModelRoutines]) {
+        [self addMarkerWithTitle:eachRoutine.title
+                  withCoordinate:CLLocationCoordinate2DMake([eachRoutine.lat doubleValue], [eachRoutine.lng doubleValue])
+                  withCustomData:eachRoutine];
         
         for (MMOvMarker *ovMarker in eachRoutine.ovMarkers) {
             [self adjustLocationByOffsetFrom:eachRoutine to:ovMarker];
             
-            [self addMarkerWithTitle:eachRoutine.title withCoordinate:CLLocationCoordinate2DMake(ovMarker.lat, ovMarker.lng) withCustomData:ovMarker];
+            [self addMarkerWithTitle:eachRoutine.title
+                      withCoordinate:CLLocationCoordinate2DMake([ovMarker.lat doubleValue], [ovMarker.lng doubleValue])
+                      withCustomData:ovMarker];
             
-            [self addLineFrom:[[CLLocation alloc]initWithLatitude:eachRoutine.lat longitude:eachRoutine.lng]
-                           to:[[CLLocation alloc]initWithLatitude:ovMarker.lat longitude:ovMarker.lng]];
+            [self addLineFrom:[[CLLocation alloc]initWithLatitude:[eachRoutine.lat doubleValue]
+                                                        longitude:[eachRoutine.lng doubleValue]]
+                           to:[[CLLocation alloc]initWithLatitude:[ovMarker.lat doubleValue]
+                                                        longitude:[ovMarker.lng doubleValue]]];
         }
     }
     
-    if(self.markerManager.currentRoutine && needPan){
-        [self.mapView setCenterCoordinate:CLLocationCoordinate2DMake(self.markerManager.currentRoutine.lat, self.markerManager.currentRoutine.lng) animated:YES];
+    if(self.currentRoutine && needPan){
+        [self.mapView setCenterCoordinate:CLLocationCoordinate2DMake([self.currentRoutine.lat doubleValue],
+                                                                     [self.currentRoutine.lng doubleValue])
+                                 animated:YES];
     }
 }
 
 
 
--(void)adjustLocationByOffsetFrom:(MMBaseMarker *)parent to:(MMBaseMarker *)to{
-    CGPoint parentPoint=[self.mapView coordinateToPixel:CLLocationCoordinate2DMake(parent.lat, parent.lng)];
+-(void)adjustLocationByOffsetFrom:(MMRoutine *)parent to:(MMOvMarker *)to{
+    CGPoint parentPoint=[self.mapView coordinateToPixel:CLLocationCoordinate2DMake([parent.lat doubleValue],
+                                                                                   [parent.lng doubleValue])];
     CGPoint newPoint=parentPoint;
-    newPoint.x=newPoint.x+to.offsetX;
-    newPoint.y=newPoint.y+to.offsetY;
+    newPoint.x=newPoint.x+[to.offsetX doubleValue];
+    newPoint.y=newPoint.y+[to.offsetY doubleValue];
     CLLocationCoordinate2D coordinate=[self.mapView pixelToCoordinate:newPoint];
-    to.lat=coordinate.latitude;
-    to.lng=coordinate.longitude;
+    to.lat=[NSNumber numberWithDouble:coordinate.latitude];
+    to.lng=[NSNumber numberWithDouble:coordinate.longitude];
 }
 
 -(void)addMarkerWithTitle:(NSString *)title withCoordinate:(CLLocationCoordinate2D)coordinate withCustomData:(id)customData{
@@ -156,12 +169,6 @@
 
 
 #pragma mark - getters and setters
--(MMMarkerManager *)markerManager{
-    if(!_markerManager){
-        _markerManager=[[MMMarkerManager alloc]init];
-    }
-    return _markerManager;
-}
 
 -(MMRoutineCachHelper *)routineCachHelper{
     if(!_routineCachHelper){
@@ -179,22 +186,22 @@
         RoutineInfoViewController *routineInfoVC=(RoutineInfoViewController *)segue.destinationViewController;
         RMAnnotation *annotation=(RMAnnotation *)sender;
         MMOvMarker *ovMarker=(MMOvMarker *)annotation.userInfo;
-        routineInfoVC.routine=[self.markerManager fetchRoutineById:ovMarker.routineId];
+        routineInfoVC.routine=ovMarker.belongRoutine;
         routineInfoVC.mapView=self.mapView;
         routineInfoVC.routineCachHelper=self.routineCachHelper;
-        routineInfoVC.markerManager=self.markerManager;
     }else if ([segue.identifier isEqualToString:ADD_ROUTINE_SEGUE]){
         UINavigationController *navController=(UINavigationController *)segue.destinationViewController;
         RoutineAddTVC *routineAddTVC=navController.viewControllers[0];
         routineAddTVC.currentLat=self.mapView.centerCoordinate.latitude;
         routineAddTVC.currentLng=self.mapView.centerCoordinate.longitude;
-        routineAddTVC.markerManager=self.markerManager;
     }
 }
 
 -(IBAction)AddRoutineDone:(UIStoryboardSegue *)segue{
     // get something from addRoutineTVC
     if([segue.sourceViewController isKindOfClass:[RoutineAddTVC class]]){
+        RoutineAddTVC *routineAddTVC=segue.sourceViewController;
+        self.currentRoutine=routineAddTVC.addedRoutine;
         //[self updateMapUI];
     }
 }
@@ -202,12 +209,12 @@
 
 
 -(IBAction)deleteRoutineDone:(UIStoryboardSegue *)segue{
-    NSLog(@"delete Routine");
+    NSLog(@"mark delete Routine");
     RoutineEditTVC *routineEditTVC=segue.sourceViewController;
     MMRoutine *routine=routineEditTVC.routine;
     if (routine) {
-        NSLog(@"prepare to delete routine id: %@",routine.id);
-        [self.markerManager deleteMMRoutine:routine];
+        NSLog(@"prepare to mark delete routine id: %@",routine.uuid);
+        [routine markDelete];
     }
 }
 
@@ -218,7 +225,7 @@
 #pragma mark - cach related
 
 - (IBAction)downloadCach:(id)sender {
-    MMRoutine *tempRoutine=[[self.markerManager fetchAllModelRoutines] firstObject];
+    MMRoutine *tempRoutine=[[MMRoutine fetchAllModelRoutines] firstObject];
     if(tempRoutine){
         [self.routineCachHelper startCachForRoutine:tempRoutine withTileCach:self.mapView.tileCache withTileSource:self.mapView.tileSources[1]];
     }
@@ -241,9 +248,7 @@
     
     
     if ([annotation.userInfo isKindOfClass:[MMRoutine class]]) {
-        MMRoutine *routine=annotation.userInfo;
-        
-        RMMarker *marker = [[RMMarker alloc] initWithUIImage:[UIImage imageNamed:routine.iconUrl]];
+        RMMarker *marker = [[RMMarker alloc] initWithUIImage:[UIImage imageNamed:@"overview_point"]];
         
         return marker;
     }else if ([annotation.userInfo isKindOfClass:[MMOvMarker class]]){
@@ -270,7 +275,7 @@
 -(void)tapOnCalloutAccessoryControl:(UIControl *)control forAnnotation:(RMAnnotation *)annotation onMap:(RMMapView *)map{
     if([annotation.userInfo isKindOfClass:[MMOvMarker class]]){
         MMOvMarker *ovMarker=annotation.userInfo;
-        self.markerManager.currentRoutine=[self.markerManager fetchRoutineById:ovMarker.routineId];
+        self.currentRoutine=ovMarker.belongRoutine;
     }
     [self performSegueWithIdentifier:SHOW_ROUTINE_INFO_SEGUE sender:annotation];
 }
@@ -294,26 +299,28 @@
         NSString *subTitle=[NSString stringWithFormat:@"lat: %f lng: %f",annotation.coordinate.latitude,annotation.coordinate.longitude];
         annotation.subtitle=subTitle;
         if ([annotation.userInfo isKindOfClass:[MMOvMarker class]]) {
-            MMOvMarker *marker=(MMOvMarker *)annotation.userInfo;
-            marker.lat=annotation.coordinate.latitude;
-            marker.lng=annotation.coordinate.longitude;
-            NSLog(@"Drage end update marker id:%@ location",marker.id);
+            MMOvMarker *ovMarker=(MMOvMarker *)annotation.userInfo;
+            ovMarker.lat=[NSNumber numberWithDouble: annotation.coordinate.latitude];
+            ovMarker.lng=[NSNumber numberWithDouble: annotation.coordinate.longitude];
+            NSLog(@"Drage end update marker id:%@ location",ovMarker.uuid);
             
-            MMRoutine *belongRoutine=[self.markerManager fetchRoutineById:marker.routineId];
+            MMRoutine *belongRoutine=ovMarker.belongRoutine;
             
-            CGPoint offset= [self calculateOffsetFrom:belongRoutine to:marker];
+            CGPoint offset= [self calculateOffsetFrom:belongRoutine to:ovMarker];
             
-            marker.offsetX=offset.x;
-            marker.offsetY=offset.y;
+            ovMarker.offsetX=[NSNumber numberWithDouble: offset.x];
+            ovMarker.offsetY=[NSNumber numberWithDouble: offset.y];
             
             [self updateMapUI];
         }
     }
 }
 
--(CGPoint)calculateOffsetFrom:(MMBaseMarker *)from to:(MMBaseMarker *)to{
-    CGPoint parentPoint=[self.mapView coordinateToPixel:CLLocationCoordinate2DMake(from.lat, from.lng)];
-    CGPoint subPoint=[self.mapView coordinateToPixel:CLLocationCoordinate2DMake(to.lat, to.lng)];
+-(CGPoint)calculateOffsetFrom:(MMRoutine *)from to:(MMOvMarker *)to{
+    CGPoint parentPoint=[self.mapView coordinateToPixel:CLLocationCoordinate2DMake([from.lat doubleValue],
+                                                                                   [from.lng doubleValue])];
+    CGPoint subPoint=[self.mapView coordinateToPixel:CLLocationCoordinate2DMake([to.lat doubleValue],
+                                                                                [to.lng doubleValue])];
     //NSLog(@"parent: x :%f  y: %f",parentPoint.x,parentPoint.y);
     //NSLog(@"sub: x :%f  y: %f",subPoint.x,parentPoint.y);
     CGPoint result;

@@ -7,6 +7,7 @@
 //
 
 #import "CommonUtil.h"
+#import "AppDelegate.h"
 
 @implementation CommonUtil
 
@@ -19,6 +20,11 @@
 +(void)alert:(NSString *)content{
     UIAlertView *theAlert=[[UIAlertView alloc] initWithTitle:@"alert" message:content delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
     [theAlert show];
+}
+
++(NSManagedObjectContext *)getContext{
+    AppDelegate *appDelegate=[UIApplication sharedApplication].delegate;
+    return [appDelegate managedObjectContext];
 }
 
 @end

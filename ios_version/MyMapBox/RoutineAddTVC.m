@@ -7,6 +7,7 @@
 //
 
 #import "RoutineAddTVC.h"
+#import "MMOvMarker+Dao.h"
 
 @interface RoutineAddTVC ()<UITextFieldDelegate>
 
@@ -36,6 +37,9 @@
     if([segue.identifier isEqualToString:ADD_ROUTINE_DONE_UNWIND_SEGUE]){
         MMRoutine *newRoutine=[MMRoutine createMMRoutineWithLat:self.currentLat
                                                         withLng:self.currentLng];
+        //create default ovMarker
+        [MMOvMarker createMMOvMarkerInRoutine:newRoutine];
+        
         newRoutine.title=self.titleTextField.text;
         newRoutine.mycomment=self.descriptionTextView.text;
     }

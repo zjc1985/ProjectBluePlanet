@@ -209,12 +209,21 @@
 
 
 -(IBAction)deleteRoutineDone:(UIStoryboardSegue *)segue{
-    NSLog(@"mark delete Routine");
     RoutineEditTVC *routineEditTVC=segue.sourceViewController;
     MMRoutine *routine=routineEditTVC.routine;
+    
+    if([self.currentRoutine.uuid isEqualToString:routine.uuid]){
+        self.currentRoutine=nil;
+    }
+    
     if (routine) {
-        NSLog(@"prepare to mark delete routine id: %@",routine.uuid);
-        [routine markDelete];
+        if([routine.isSync boolValue]){
+            NSLog(@"prepare to mark delete routine id: %@",routine.uuid);
+            [routine markDelete];
+        }else{
+            NSLog(@"prepare to mark remove routine id: %@",routine.uuid);
+            [MMRoutine removeRoutine:routine];
+        }
     }
 }
 
@@ -233,6 +242,8 @@
 
 #pragma mark - RMMapViewDelegate
 
+
+//create delegate
 -(RMMapLayer *)mapView:(RMMapView *)mapView layerForAnnotation:(RMAnnotation *)annotation{
     if(annotation.isUserLocationAnnotation)
         return nil;
@@ -248,7 +259,7 @@
     
     
     if ([annotation.userInfo isKindOfClass:[MMRoutine class]]) {
-        RMMarker *marker = [[RMMarker alloc] initWithUIImage:[UIImage imageNamed:@"overview_point"]];
+        RMMarker *marker = [[RMMarker alloc] initWithUIImage:[UIImage imageNamed:@"overview_point.png"]];
         
         return marker;
     }else if ([annotation.userInfo isKindOfClass:[MMOvMarker class]]){
@@ -277,6 +288,7 @@
         MMOvMarker *ovMarker=annotation.userInfo;
         self.currentRoutine=ovMarker.belongRoutine;
     }
+    
     [self performSegueWithIdentifier:SHOW_ROUTINE_INFO_SEGUE sender:annotation];
 }
 

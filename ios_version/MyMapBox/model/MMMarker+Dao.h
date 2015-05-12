@@ -7,10 +7,22 @@
 //
 
 #import "MMMarker.h"
-#import "MMRoutine+Dao.h"
+
+typedef enum : NSUInteger {
+    CategoryArrivalLeave = 1,
+    CategorySight = 2,
+    CategoryHotel = 3,
+    CategoryFood=4,
+    CategoryInfo=5,
+    CategoryOverview=6
+} MMMarkerCategory;
 
 @interface MMMarker (Dao)
 
-+(MMMarker *)createMMMarkerInRoutine:(MMRoutine *)routine;
++(MMMarker *)createMMMarkerInRoutine:(MMRoutine *)routine withLat:(double)lat withLng:(double)lng;
+
++(void)removeMMMarker:(MMMarker *)marker;
+
+-(void)markDelete;
 
 @end

@@ -8,19 +8,20 @@
 
 #import "MMRoutine.h"
 
+
 @interface MMRoutine (Dao)
 
 +(MMRoutine *)createMMRoutineWithLat:(double)lat withLng:(double)lng;
 
 +(void)removeRoutine:(MMRoutine *)routine;
 
+//fetch all routines in db whose isDelete is no
 +(NSArray *)fetchAllModelRoutines;
 
+//fetch routines whose cachprogress is 1
 +(NSArray *)fetchAllCachedModelRoutines;
 
-+(MMRoutine *)fetchRoutineById:(NSString *)id;
-
-
+//+(MMRoutine *)fetchRoutineById:(NSString *)id;
 
 
 -(void)markDelete;

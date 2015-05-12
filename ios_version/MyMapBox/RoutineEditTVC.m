@@ -52,7 +52,6 @@
 
 -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex{
     if(buttonIndex==actionSheet.destructiveButtonIndex){
-        NSLog(@"Delete confirm");
         [self performSegueWithIdentifier:@"deleteRoutineUnwindSegue" sender:nil];
     }
 }

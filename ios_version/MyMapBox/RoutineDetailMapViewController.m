@@ -149,8 +149,12 @@
     MarkerEditTVC *markerEditTVC=segue.sourceViewController;
     MMMarker *marker=markerEditTVC.marker;
     if(marker){
-        NSLog(@"delete marker id %@",marker.uuid);
-        marker.isDelete=[NSNumber numberWithBool:YES];
+        if([marker.isSync boolValue]){
+            NSLog(@"mark delete marker id %@",marker.uuid);
+            [marker markDelete];
+        }else{
+            [MMMarker removeMMMarker:marker];
+        }
     }
 }
 
@@ -163,9 +167,9 @@
     switch (buttonIndex) {
         case addMarkerInCenter:{
             NSLog(@"add marker in center");
-            newMarker=[MMMarker createMMMarkerInRoutine:self.routine];
-            newMarker.lat=[NSNumber numberWithDouble: self.mapView.centerCoordinate.latitude];
-            newMarker.lng=[NSNumber numberWithDouble:self.mapView.centerCoordinate.longitude];
+            newMarker=[MMMarker createMMMarkerInRoutine:self.routine
+                                                withLat:self.mapView.centerCoordinate.latitude
+                                                withLng:self.mapView.centerCoordinate.longitude];
             break;
         }
         case addMarkerWithImage :{
@@ -174,9 +178,9 @@
         }
         case addMarkerInCurrentLocation:{
             NSLog(@"add marker in current location");
-            newMarker=[MMMarker createMMMarkerInRoutine:self.routine];
-            newMarker.lat=[NSNumber numberWithDouble: self.mapView.centerCoordinate.latitude];
-            newMarker.lng=[NSNumber numberWithDouble:self.mapView.centerCoordinate.longitude];
+            newMarker=[MMMarker createMMMarkerInRoutine:self.routine
+                                                withLat:self.mapView.userLocation.coordinate.latitude
+                                                withLng:self.mapView.userLocation.coordinate.longitude];
             break;
         }
         default:

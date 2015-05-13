@@ -108,6 +108,7 @@
 
 -(void)viewWillAppear:(BOOL)animated{
     NSLog(@"view will appear");
+    [self.tabBarController.tabBar setHidden:NO];
     [self updateMapUI];
 }
 

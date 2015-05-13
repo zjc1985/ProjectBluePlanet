@@ -26,6 +26,8 @@
 }
 
 -(void)viewWillAppear:(BOOL)animated{
+    [self.tabBarController.tabBar setHidden:YES];
+    
     self.titleLabel.text=self.routine.title;
     self.descriptionTextField.text=self.routine.mycomment;
 }

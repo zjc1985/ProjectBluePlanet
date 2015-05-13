@@ -12,6 +12,7 @@
 #import "CommonUtil.h"
 #import "RoutineAddTVC.h"
 #import "RoutineEditTVC.h"
+#import "LoginViewController.h"
 
 #import "MMRoutine.h"
 #import "MMRoutine+Dao.h"
@@ -19,9 +20,11 @@
 #import "MMOvMarker.h"
 
 #import "MMRoutineCachHelper.h"
+#import "CloudManager.h"
 
 #define SHOW_ROUTINE_INFO_SEGUE @"showRoutineInfoSegue"
 #define ADD_ROUTINE_SEGUE @"AddRoutineInfoSegue"
+#define LOGIN_SEGUE @"LoginSegue"
 
 @interface ViewController ()<RMMapViewDelegate>
 
@@ -106,6 +109,12 @@
 -(void)viewWillAppear:(BOOL)animated{
     NSLog(@"view will appear");
     [self updateMapUI];
+}
+
+-(void)viewDidAppear:(BOOL)animated{
+    if(![CloudManager currentUser]){
+        [self performSegueWithIdentifier:LOGIN_SEGUE sender:self];
+    }
 }
 
 -(void)updateMapUI{
@@ -194,7 +203,12 @@
         RoutineAddTVC *routineAddTVC=navController.viewControllers[0];
         routineAddTVC.currentLat=self.mapView.centerCoordinate.latitude;
         routineAddTVC.currentLng=self.mapView.centerCoordinate.longitude;
+    }else if([segue.identifier isEqualToString:LOGIN_SEGUE]){
+        //LoginViewController *loginVC=segue.destinationViewController;
+        
     }
+    
+    
 }
 
 -(IBAction)AddRoutineDone:(UIStoryboardSegue *)segue{

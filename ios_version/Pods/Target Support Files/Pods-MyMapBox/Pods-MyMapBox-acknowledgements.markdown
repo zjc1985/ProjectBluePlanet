@@ -1,6 +1,10 @@
 # Acknowledgements
 This application makes use of the following third party libraries:
 
+## AVOSCloud
+
+© Copyright 2015 LeanCloud, Inc. See https://leancloud.cn/terms.html
+
 ## FMDB
 
 If you are using fmdb in your project, I'd love to hear about it.  Let me 

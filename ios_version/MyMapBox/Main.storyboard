@@ -5,6 +5,58 @@
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7520"/>
     </dependencies>
     <scenes>
+        <!--Login-->
+        <scene sceneID="cso-ye-bFW">
+            <objects>
+                <viewController title="Login" id="Sek-y0-bkM" customClass="LoginViewController" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="XK8-UB-Doe">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Please Input your username" minimumFontSize="17" id="f2l-sH-Srw">
+                                <rect key="frame" x="16" y="192" width="288" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                                <connections>
+                                    <outlet property="delegate" destination="Sek-y0-bkM" id="bdK-2h-u5H"/>
+                                </connections>
+                            </textField>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Your Password" minimumFontSize="17" id="xd0-0U-23D">
+                                <rect key="frame" x="16" y="232" width="288" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" secureTextEntry="YES"/>
+                                <connections>
+                                    <outlet property="delegate" destination="Sek-y0-bkM" id="9yk-wA-Zre"/>
+                                </connections>
+                            </textField>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="Nh7-cE-9po">
+                                <rect key="frame" x="141" y="269" width="38" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Login">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="LoginClicked:" destination="Sek-y0-bkM" eventType="touchUpInside" id="rVa-CR-DWb"/>
+                                </connections>
+                            </button>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="login_image" id="Hep-A3-V41">
+                                <rect key="frame" x="138" y="144" width="45" height="40"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </imageView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                    <connections>
+                        <outlet property="pwdTextField" destination="xd0-0U-23D" id="Jse-VQ-NWG"/>
+                        <outlet property="userNameTextField" destination="f2l-sH-Srw" id="VHd-Um-FER"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="uoz-9c-LOa" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="604" y="-996"/>
+        </scene>
         <!--MapMarker-->
         <scene sceneID="ufC-wZ-h7g">
             <objects>
@@ -40,11 +92,12 @@
                     <connections>
                         <outlet property="locateButton" destination="YeN-rg-MC2" id="e1M-Yz-q4g"/>
                         <segue destination="BcZ-vI-Lut" kind="push" identifier="showRoutineInfoSegue" id="vFi-Kg-PaU"/>
+                        <segue destination="Sek-y0-bkM" kind="modal" identifier="LoginSegue" id="5PX-IW-kOt"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="622" y="406"/>
+            <point key="canvasLocation" x="161" y="406"/>
         </scene>
         <!--RoutineInfo-->
         <scene sceneID="yqO-KR-gQk">
@@ -196,7 +249,7 @@
                             <tableViewSection id="X9D-Yi-EDh">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="QTM-N9-8Vf">
-                                        <rect key="frame" x="0.0" y="35" width="320" height="44"/>
+                                        <rect key="frame" x="0.0" y="99" width="320" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="QTM-N9-8Vf" id="5g4-fD-swq">
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
@@ -215,7 +268,7 @@
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="202" id="zyH-hU-Eof">
-                                        <rect key="frame" x="0.0" y="79" width="320" height="202"/>
+                                        <rect key="frame" x="0.0" y="143" width="320" height="202"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="zyH-hU-Eof" id="5MX-Ku-A5P">
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="201"/>
@@ -243,7 +296,7 @@
                             <tableViewSection id="gqe-oC-VRZ">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" rowHeight="56" id="SCJ-ov-59V">
-                                        <rect key="frame" x="0.0" y="301" width="320" height="56"/>
+                                        <rect key="frame" x="0.0" y="365" width="320" height="56"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="SCJ-ov-59V" id="EwM-EP-ABO">
                                             <rect key="frame" x="0.0" y="0.0" width="287" height="55"/>
@@ -1086,7 +1139,7 @@
                         </collectionViewFlowLayout>
                         <cells>
                             <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="jHR-A8-d6S">
-                                <rect key="frame" x="0.0" y="64" width="75" height="75"/>
+                                <rect key="frame" x="0.0" y="0.0" width="75" height="75"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                     <rect key="frame" x="0.0" y="0.0" width="75" height="75"/>
@@ -1160,7 +1213,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="cKI-7F-sSZ" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="234" y="406"/>
+            <point key="canvasLocation" x="-302" y="406"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="VBQ-Ey-CzR">
@@ -1220,6 +1273,7 @@
     </scenes>
     <resources>
         <image name="default_default" width="32" height="37"/>
+        <image name="login_image" width="45" height="40"/>
         <image name="overview_star" width="42" height="37"/>
         <image name="refresh" width="225" height="225"/>
     </resources>
@@ -1229,6 +1283,6 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="ghm-i1-wt0"/>
+        <segue reference="8TM-ih-zCn"/>
     </inferredMetricsTieBreakers>
 </document>

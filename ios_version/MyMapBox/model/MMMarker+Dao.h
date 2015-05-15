@@ -21,6 +21,10 @@ typedef enum : NSUInteger {
 
 +(MMMarker *)createMMMarkerInRoutine:(MMRoutine *)routine withLat:(double)lat withLng:(double)lng;
 
++(MMMarker *)createMMMarkerInRoutine:(MMRoutine *)routine withLat:(double)lat withLng:(double)lng withUUID:(NSString *)uuid;
+
++(MMMarker *)queryMMMarkerWithUUID:(NSString *)uuid;
+
 +(void)removeMMMarker:(MMMarker *)marker;
 
 -(void)markDelete;

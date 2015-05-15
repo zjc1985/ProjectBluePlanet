@@ -8,10 +8,22 @@
 
 #import "MMRoutine.h"
 
+#define KEY_ROUTINE_DESCRITPION @"description"
+#define KEY_ROUTINE_TITLE @"title"
+#define KEY_ROUTINE_IS_DELETE @"isDelete"
+#define KEY_ROUTINE_UPDATE_TIME @"updateTime"
+#define KEY_ROUTINE_LAT @"lat"
+#define KEY_ROUTINE_LNG @"lng"
+#define KEY_ROUTINE_IS_SYNCED @"isSynced"
+#define KEY_ROUTINE_UUID @"uuid"
 
 @interface MMRoutine (Dao)
 
 +(MMRoutine *)createMMRoutineWithLat:(double)lat withLng:(double)lng;
+
++(MMRoutine *)createMMRoutineWithLat:(double)lat withLng:(double)lng withUUID:(NSString *)uuid;
+
++(MMRoutine *)queryMMRoutineWithUUID:(NSString *)uuid;
 
 +(void)removeRoutine:(MMRoutine *)routine;
 

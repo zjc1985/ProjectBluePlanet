@@ -11,28 +11,58 @@
 
 @implementation MMMarker (Dao)
 
++(MMMarker *)queryMMMarkerWithUUID:(NSString *)uuid{
+    NSFetchRequest *request=[[NSFetchRequest alloc]init];
+    NSEntityDescription *e=[NSEntityDescription entityForName:@"MMMarker"
+                                       inManagedObjectContext:[CommonUtil getContext]];
+    request.entity=e;
+    NSSortDescriptor *sd=[NSSortDescriptor sortDescriptorWithKey:@"title" ascending:YES];
+    request.sortDescriptors=@[sd];
+    request.predicate= [NSPredicate predicateWithFormat:@"uuid == %@",uuid];
+    NSError *error;
+    NSArray *result=[[CommonUtil getContext] executeFetchRequest:request error:&error];
+    if(!result){
+        [NSException raise:@"Fetch failed"
+                    format:@"Reason: %@", [error localizedDescription]];
+    }
+    
+    return result.firstObject;
+}
+
++(MMMarker *)createMMMarkerInRoutine:(MMRoutine *)routine withLat:(double)lat withLng:(double)lng withUUID:(NSString *)uuid{
+    MMMarker *result=[self queryMMMarkerWithUUID:uuid];
+    if(result){
+        return result;
+    }else{
+        result=[NSEntityDescription insertNewObjectForEntityForName:@"MMMarker" inManagedObjectContext:[CommonUtil getContext]];
+        
+        result.uuid=uuid;
+        result.belongRoutine=routine;
+        result.title=@"New Marker";
+        result.mycomment=@"";
+        result.category=[NSNumber numberWithInt:CategoryInfo];
+        result.iconUrl=@"default_default";
+        
+        result.lat=[NSNumber numberWithDouble:lat];
+        result.lng=[NSNumber numberWithDouble:lng];
+        
+        result.isSync=[NSNumber numberWithBool:NO];
+        result.isDelete=[NSNumber numberWithBool:NO];
+        result.offsetX=[NSNumber numberWithDouble:0];
+        result.offsetY=[NSNumber numberWithDouble:0];
+        result.slideNum=[NSNumber numberWithInt:1];
+        
+        return result;
+    }
+
+}
+
 +(MMMarker *)createMMMarkerInRoutine:(MMRoutine *)routine withLat:(double)lat withLng:(double)lng{
-    MMMarker *marker=[NSEntityDescription insertNewObjectForEntityForName:@"MMMarker" inManagedObjectContext:[CommonUtil getContext]];
-    
     NSUUID *uuid=[[NSUUID alloc]init];
-    marker.uuid=[uuid UUIDString];
-    
-    marker.belongRoutine=routine;
-    marker.title=@"New Marker";
-    marker.mycomment=@"";
-    marker.category=[NSNumber numberWithInt:CategoryInfo];
-    marker.iconUrl=@"default_default";
-    
-    marker.lat=[NSNumber numberWithDouble:lat];
-    marker.lng=[NSNumber numberWithDouble:lng];
-    
-    marker.isSync=[NSNumber numberWithBool:NO];
-    marker.isDelete=[NSNumber numberWithBool:NO];
-    marker.offsetX=[NSNumber numberWithDouble:0];
-    marker.offsetY=[NSNumber numberWithDouble:0];
-    marker.slideNum=[NSNumber numberWithInt:1];
-    
-    return marker;
+    return [self createMMMarkerInRoutine:routine
+                                 withLat:lat
+                                 withLng:lng
+                                withUUID:[uuid UUIDString]];
 }
 
 +(void)removeMMMarker:(MMMarker *)marker{

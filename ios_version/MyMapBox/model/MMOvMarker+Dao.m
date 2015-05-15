@@ -11,19 +11,45 @@
 
 @implementation MMOvMarker (Dao)
 
++(MMOvMarker *)queryMMOvMarkerWithUUID:(NSString *)uuid{
+    NSFetchRequest *request=[[NSFetchRequest alloc]init];
+    NSEntityDescription *e=[NSEntityDescription entityForName:@"MMOvMarker"
+                                       inManagedObjectContext:[CommonUtil getContext]];
+    request.entity=e;
+    NSSortDescriptor *sd=[NSSortDescriptor sortDescriptorWithKey:@"title" ascending:YES];
+    request.sortDescriptors=@[sd];
+    request.predicate= [NSPredicate predicateWithFormat:@"uuid == %@",uuid];
+    NSError *error;
+    NSArray *result=[[CommonUtil getContext] executeFetchRequest:request error:&error];
+    if(!result){
+        [NSException raise:@"Fetch failed"
+                    format:@"Reason: %@", [error localizedDescription]];
+    }
+    
+    return result.firstObject;
+}
+
++(MMOvMarker *)createMMOvMarkerInRoutine:(MMRoutine *)routine withUUID:(NSString *)uuid{
+    MMOvMarker *result=[self queryMMOvMarkerWithUUID:uuid];
+    if(result){
+        return result;
+    }else{
+        result=[NSEntityDescription insertNewObjectForEntityForName:@"MMOvMarker" inManagedObjectContext:[CommonUtil getContext]];
+        result.uuid=uuid;
+        result.belongRoutine=routine;
+        result.iconUrl=@"default_default";
+        result.offsetX=[NSNumber numberWithInt:0];
+        result.offsetX=[NSNumber numberWithInt:0];
+        
+        result.isSync=[NSNumber numberWithBool:NO];
+        result.isDelete=[NSNumber numberWithBool:NO];
+        return result;
+    }
+}
+
 +(MMOvMarker *)createMMOvMarkerInRoutine:(MMRoutine *)routine{
-    MMOvMarker *ovMarker=[NSEntityDescription insertNewObjectForEntityForName:@"MMOvMarker" inManagedObjectContext:[CommonUtil getContext]];
     NSUUID *uuid=[[NSUUID alloc]init];
-    ovMarker.uuid=[uuid UUIDString];
-    ovMarker.belongRoutine=routine;
-    ovMarker.iconUrl=@"default_default";
-    ovMarker.offsetX=[NSNumber numberWithInt:0];
-    ovMarker.offsetX=[NSNumber numberWithInt:0];
-    
-    ovMarker.isSync=[NSNumber numberWithBool:NO];
-    ovMarker.isDelete=[NSNumber numberWithBool:NO];
-    
-    return ovMarker;
+    return [self createMMOvMarkerInRoutine:routine withUUID:[uuid UUIDString]];
 }
 
 -(void)markDelete{

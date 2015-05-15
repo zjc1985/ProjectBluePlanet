@@ -39,7 +39,11 @@
             [self.presentingViewController dismissViewControllerAnimated:YES completion:nil];
         } else {
             NSLog(@"Login failed");
-            [CommonUtil alert:@"username or pwd not correct"];
+            if(error){
+                [CommonUtil alert:error.localizedDescription];
+            }else{
+                [CommonUtil alert:@"username or pwd not correct"];
+            }
         }
     }];
 }

@@ -18,19 +18,45 @@
 
 #pragma mark - instance method
 
-+(MMRoutine *)createMMRoutineWithLat:(double)lat withLng:(double)lng{
-    MMRoutine *routine=[NSEntityDescription insertNewObjectForEntityForName:@"MMRoutine" inManagedObjectContext:[CommonUtil getContext]];
-    NSUUID *uuid=[[NSUUID alloc]init];
-    routine.uuid=[uuid UUIDString];
-    routine.title=@"New Routine";
-    routine.mycomment=@"";
-    routine.lat=[NSNumber numberWithDouble:lat];
-    routine.lng=[NSNumber numberWithDouble:lng];
-    routine.isDelete=[NSNumber numberWithBool:NO];
-    routine.isSync=[NSNumber numberWithBool:NO];
-    routine.cachProgress=[NSNumber numberWithFloat:0];
++(MMRoutine *)queryMMRoutineWithUUID:(NSString *)uuid{
+    NSFetchRequest *request=[[NSFetchRequest alloc]init];
+    NSEntityDescription *e=[NSEntityDescription entityForName:@"MMRoutine"
+                                       inManagedObjectContext:[CommonUtil getContext]];
+    request.entity=e;
+    NSSortDescriptor *sd=[NSSortDescriptor sortDescriptorWithKey:@"title" ascending:YES];
+    request.sortDescriptors=@[sd];
+    request.predicate= [NSPredicate predicateWithFormat:@"uuid == %@",uuid];
+    NSError *error;
+    NSArray *result=[[CommonUtil getContext] executeFetchRequest:request error:&error];
+    if(!result){
+        [NSException raise:@"Fetch failed"
+                    format:@"Reason: %@", [error localizedDescription]];
+    }
     
-    return routine;
+    return result.firstObject;
+}
+
++(MMRoutine *)createMMRoutineWithLat:(double)lat withLng:(double)lng withUUID:(NSString *)uuid{
+    MMRoutine *result=[self queryMMRoutineWithUUID:uuid];
+    if(result){
+        return result;
+    }else{
+        result=[NSEntityDescription insertNewObjectForEntityForName:@"MMRoutine" inManagedObjectContext:[CommonUtil getContext]];
+        result.uuid=uuid;
+        result.title=@"New Routine";
+        result.mycomment=@"";
+        result.lat=[NSNumber numberWithDouble:lat];
+        result.lng=[NSNumber numberWithDouble:lng];
+        result.isDelete=[NSNumber numberWithBool:NO];
+        result.isSync=[NSNumber numberWithBool:NO];
+        result.cachProgress=[NSNumber numberWithFloat:0];
+        return result;
+    }
+}
+
++(MMRoutine *)createMMRoutineWithLat:(double)lat withLng:(double)lng{
+    NSUUID *uuid=[[NSUUID alloc]init];
+    return [self createMMRoutineWithLat:lat withLng:lng withUUID:[uuid UUIDString]];
 }
 
 +(void)removeRoutine:(MMRoutine *)routine{

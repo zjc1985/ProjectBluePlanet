@@ -10,6 +10,8 @@
 #import <AVOSCloud/AVOSCloud.h>
 #import "CommonUtil.h"
 
+#import "CloudManager.h"
+
 @interface SettingViewController ()
 
 @end
@@ -18,12 +20,11 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+
+-(void)viewWillAppear:(BOOL)animated{
+    [CloudManager syncRoutinesAndOvMarkersWithBlockWhenDone:nil];
 }
 
 - (IBAction)logoutClick:(id)sender {

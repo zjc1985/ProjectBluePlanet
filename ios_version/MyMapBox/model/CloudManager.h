@@ -13,4 +13,8 @@
 
 +(AVUser *)currentUser;
 
++(void)syncRoutinesAndOvMarkersWithBlockWhenDone:(void (^)(NSError *error))block;
+
++(void)syncMarkersByRoutineUUID:(NSString *)routineUUID withClockWhenDone:(void (^)(NSError *error))block;
+
 @end

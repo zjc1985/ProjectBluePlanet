@@ -9,6 +9,8 @@
 #import <UIKit/UIKit.h>
 #import <XCTest/XCTest.h>
 #import <AVOSCloud/AVOSCloud.h>
+#import "CloudManager.h"
+#import "MMRoutine+Dao.h"
 
 @interface AVOSCloudTester : XCTestCase
 
@@ -35,6 +37,18 @@
         NSLog(@"No current user found");
     }
     
+    XCTAssert(YES, @"Pass");
+}
+
+-(void)testQueryRoutine{
+    //D3E26085-70FC-4663-B8FB-AF6DD9EE0984
+    MMRoutine *routine=[MMRoutine queryMMRoutineWithUUID:@"D3E26085-70FC-4663-B8FB-AF6DD9EE0984"];
+    XCTAssertNotNil(routine);
+}
+
+-(void)testSync{
+    [CloudManager syncRoutinesAndOvMarkersWithBlockWhenDone:nil];
+    [NSThread sleepForTimeInterval:50];
     XCTAssert(YES, @"Pass");
 }
 

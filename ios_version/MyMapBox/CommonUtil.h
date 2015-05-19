@@ -23,4 +23,8 @@
 
 +(NSManagedObjectContext *)getContext;
 
++(long long)currentUTCTimeStamp;
+
++(void)resetCoreData;
+
 @end

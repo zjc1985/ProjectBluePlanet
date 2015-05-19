@@ -24,13 +24,19 @@
 
 
 -(void)viewWillAppear:(BOOL)animated{
-    [CloudManager syncRoutinesAndOvMarkersWithBlockWhenDone:nil];
+}
+
+- (IBAction)syncClick:(id)sender {
+    [CloudManager syncRoutinesAndOvMarkersWithBlockWhenDone:^(NSError *error) {
+        NSLog(@"sync complete");
+    }];
 }
 
 - (IBAction)logoutClick:(id)sender {
     [AVUser logOut];
     
     //todo clean core data data
+    [CommonUtil resetCoreData];
     
     [CommonUtil alert:@"logout success"];
 }

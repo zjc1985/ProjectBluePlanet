@@ -27,4 +27,13 @@
     return [appDelegate managedObjectContext];
 }
 
++(void)resetCoreData{
+    AppDelegate *appDelegate=[UIApplication sharedApplication].delegate;
+    [appDelegate resetCoreData];
+}
+
++(long long)currentUTCTimeStamp{
+     return (long long)([[NSDate date] timeIntervalSince1970] * 1000.0);
+}
+
 @end

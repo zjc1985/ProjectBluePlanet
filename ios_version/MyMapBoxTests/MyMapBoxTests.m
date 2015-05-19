@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import <XCTest/XCTest.h>
 #import "AppDelegate.h"
+#import "CommonUtil.h"
 
 @interface MyMapBoxTests : XCTestCase
 
@@ -36,11 +37,13 @@
     XCTAssertNotNil(appDelegate.managedObjectContext);
 }
 
-- (void)testPerformanceExample {
-    // This is an example of a performance test case.
-    [self measureBlock:^{
-        // Put the code you want to measure the time of here.
-    }];
+-(void)testGetUtcTime{
+    NSLog(@"====================");
+    
+    long long milliseconds = (long long)([[NSDate date] timeIntervalSince1970] * 1000.0);
+    NSLog(@"utc time 1:%lld",[CommonUtil currentUTCTimeStamp]);
+    NSLog(@"utc time 2: %lld",milliseconds);
+    XCTAssert(YES, @"Pass");
 }
 
 

@@ -284,7 +284,9 @@
         anchorPoint.x=0.5;
         anchorPoint.y=1;
         
-        RMMarker *marker = [[RMMarker alloc] initWithUIImage:[UIImage imageNamed:ovMarker.iconUrl]anchorPoint:anchorPoint];
+        //RMMarker *marker = [[RMMarker alloc] initWithUIImage:[UIImage imageNamed:ovMarker.iconUrl]anchorPoint:anchorPoint];
+        RMMarker *marker = [[RMMarker alloc] initWithUIImage:[UIImage imageNamed:@"default_default"]anchorPoint:anchorPoint];
+        
         
         marker.canShowCallout=YES;
         
@@ -337,6 +339,7 @@
             
             ovMarker.offsetX=[NSNumber numberWithDouble: offset.x];
             ovMarker.offsetY=[NSNumber numberWithDouble: offset.y];
+            ovMarker.updateTimestamp=[NSNumber numberWithLongLong:[CommonUtil currentUTCTimeStamp]];
             
             [self updateMapUI];
         }

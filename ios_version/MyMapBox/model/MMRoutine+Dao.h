@@ -30,6 +30,8 @@
 //fetch all routines in db whose isDelete is no
 +(NSArray *)fetchAllModelRoutines;
 
++(NSArray *)fetchALLRoutinesIncludeMarkDelete;
+
 //fetch routines whose cachprogress is 1
 +(NSArray *)fetchAllCachedModelRoutines;
 
@@ -47,5 +49,7 @@
 -(double)maxLngInMarkers;
 
 -(void)updateLocation;
+
+-(NSDictionary *)convertToDictionary;
 
 @end

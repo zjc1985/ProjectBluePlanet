@@ -8,6 +8,7 @@
 
 #import "AppDelegate.h"
 #import <AVOSCloud/AVOSCloud.h>
+#import "CloudManager.h"
 
 @interface AppDelegate ()
 
@@ -20,7 +21,12 @@
     // Override point for customization after application launch.
     [AVOSCloud setApplicationId:@"6pzfpf5wkg4m52owuwixt5vggrpjincr8xon3pd966fhgj3c"
                       clientKey:@"4wrzupru1m4m7gpafo4llinv7iepyapnycvxygup7uiui77x"];
-    
+    /*
+    [[NSNotificationCenter defaultCenter] addObserver:[CloudManager class]
+                                             selector:@selector(contextWillSave:)
+                                                 name:NSManagedObjectContextWillSaveNotification
+                                               object:nil];
+    */
     return YES;
 }
 
@@ -127,6 +133,25 @@
     _managedObjectContext = [[NSManagedObjectContext alloc] init];
     [_managedObjectContext setPersistentStoreCoordinator:coordinator];
     return _managedObjectContext;
+}
+
+-(void)resetCoreData{
+    NSError * error;
+    // retrieve the store URL
+    NSURL * storeURL = [[self.managedObjectContext persistentStoreCoordinator] URLForPersistentStore:[[[self.managedObjectContext persistentStoreCoordinator] persistentStores] lastObject]];
+    // lock the current context
+    [self.managedObjectContext lock];
+    [self.managedObjectContext reset];//to drop pending changes
+    //delete the store from the current managedObjectContext
+    if ([[self.managedObjectContext persistentStoreCoordinator] removePersistentStore:[[[self.managedObjectContext persistentStoreCoordinator] persistentStores] lastObject] error:&error])
+    {
+        // remove the file containing the data
+        [[NSFileManager defaultManager] removeItemAtURL:storeURL error:&error];
+        //recreate the store like in the  appDelegate method
+        [[self.managedObjectContext persistentStoreCoordinator] addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:nil error:&error];//recreates the persistent store
+    }
+    [self.managedObjectContext unlock];
+    //that's it !
 }
 
 

@@ -23,8 +23,15 @@
 
 +(MMOvMarker *)createMMOvMarkerInRoutine:(MMRoutine *)routine withUUID:(NSString *)uuid;
 
++(void)removeMMOvMarker:(MMOvMarker *)ovMarker;
+
 +(MMOvMarker *)queryMMOvMarkerWithUUID:(NSString *)uuid;
 
++(NSArray *)fetchAllMMovMarkersIncludeMarkDelete;
+
+
 -(void)markDelete;
+
+-(NSDictionary *)convertToDictionary;
 
 @end

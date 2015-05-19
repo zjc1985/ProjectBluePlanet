@@ -42,11 +42,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MyMapBox/RoutineEditTVC.m"
-            timestampString = "450942933.280486"
+            timestampString = "453635374.343943"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "41"
-            endingLineNumber = "41"
+            startingLineNumber = "42"
+            endingLineNumber = "42"
             landmarkName = "-deleteRoutineClick:"
             landmarkType = "5">
          </BreakpointContent>
@@ -340,11 +340,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MyMapBox/AppDelegate.m"
-            timestampString = "453190814.424514"
+            timestampString = "453634446.909168"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "62"
-            endingLineNumber = "62"
+            startingLineNumber = "68"
+            endingLineNumber = "68"
             landmarkName = "-saveContext"
             landmarkType = "5">
          </BreakpointContent>
@@ -384,15 +384,15 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MyMapBox/model/CloudManager.m"
-            timestampString = "453287783.14848"
+            timestampString = "453634446.909168"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "37"
-            endingLineNumber = "37"
+            startingLineNumber = "47"
+            endingLineNumber = "47"
             landmarkName = "+syncRoutinesAndOvMarkersWithBlockWhenDone:"
             landmarkType = "5">
          </BreakpointContent>
@@ -410,6 +410,22 @@
             startingLineNumber = "50"
             endingLineNumber = "50"
             landmarkName = "-testSync"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MyMapBoxTests/MyMapBoxTests.m"
+            timestampString = "453627553.724659"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "45"
+            endingLineNumber = "45"
+            landmarkName = "-testGetUtcTime"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

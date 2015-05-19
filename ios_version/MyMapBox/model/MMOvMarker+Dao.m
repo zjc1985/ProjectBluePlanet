@@ -8,8 +8,12 @@
 
 #import "MMOvMarker+Dao.h"
 #import "CommonUtil.h"
+#import "MMRoutine.h"
 
 @implementation MMOvMarker (Dao)
++(void)removeMMOvMarker:(MMOvMarker *)ovMarker{
+    [[CommonUtil getContext]deleteObject:ovMarker];
+}
 
 +(MMOvMarker *)queryMMOvMarkerWithUUID:(NSString *)uuid{
     NSFetchRequest *request=[[NSFetchRequest alloc]init];
@@ -52,8 +56,58 @@
     return [self createMMOvMarkerInRoutine:routine withUUID:[uuid UUIDString]];
 }
 
++(NSArray *)fetchAllMMovMarkersIncludeMarkDelete{
+    NSFetchRequest *request=[[NSFetchRequest alloc]init];
+    NSEntityDescription *e=[NSEntityDescription entityForName:@"MMOvMarker"
+                                       inManagedObjectContext:[CommonUtil getContext]];
+    request.entity=e;
+    NSSortDescriptor *sd=[NSSortDescriptor sortDescriptorWithKey:@"uuid" ascending:YES];
+    request.sortDescriptors=@[sd];
+    NSError *error;
+    NSArray *result=[[CommonUtil getContext] executeFetchRequest:request error:&error];
+    if(!result){
+        [NSException raise:@"Fetch failed"
+                    format:@"Reason: %@", [error localizedDescription]];
+    }
+    
+    return result;
+}
+
+
 -(void)markDelete{
     self.isDelete=[NSNumber numberWithBool:YES];
 }
+
+-(NSDictionary *)convertToDictionary{
+    NSMutableDictionary *dic=[[NSMutableDictionary alloc]init];
+    [dic setValue:self.offsetX forKey:KEY_OVMARKER_OFFSET_X];
+    [dic setValue:self.offsetY forKey:KEY_OVMARKER_OFFSET_Y];
+    [dic setValue:self.belongRoutine.uuid forKey:KEY_OVMARKER_ROUTINE_ID];
+    [dic setValue:self.isDelete forKey:KEY_OVMARKER_IS_DELETE];
+    [dic setValue:self.updateTimestamp forKey:KEY_OVMARKER_UPDATE_TIME];
+    [dic setValue:@"resource/icons/default/default_default.png" forKey:KEY_OVMARKER_ICON_URL];
+    [dic setValue:self.isSync forKey:KEY_OVMARKER_IS_SYNCED];
+    [dic setValue:self.uuid forKey:KEY_OVMARKER_UUID];
+    return dic;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 @end

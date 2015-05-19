@@ -111,7 +111,7 @@
                             <tableViewSection headerTitle="" id="tus-yO-2Mk">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" textLabel="rJ2-0I-Egl" rowHeight="60" style="IBUITableViewCellStyleDefault" id="1wH-6x-F4r">
-                                        <rect key="frame" x="0.0" y="35" width="320" height="60"/>
+                                        <rect key="frame" x="0.0" y="99" width="320" height="60"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="1wH-6x-F4r" id="l0p-TE-aKO">
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="59"/>
@@ -127,7 +127,7 @@
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="207" id="wSS-Or-uWm">
-                                        <rect key="frame" x="0.0" y="95" width="320" height="207"/>
+                                        <rect key="frame" x="0.0" y="159" width="320" height="207"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="wSS-Or-uWm" id="xXh-96-AxR">
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="206"/>
@@ -155,7 +155,7 @@
                             <tableViewSection headerTitle="" id="YZb-Au-smD">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="gwC-Pp-P32">
-                                        <rect key="frame" x="0.0" y="322" width="320" height="44"/>
+                                        <rect key="frame" x="0.0" y="386" width="320" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="gwC-Pp-P32" id="u5Y-Cc-x3n">
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
@@ -176,7 +176,7 @@
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="oUy-hj-wrb">
-                                        <rect key="frame" x="0.0" y="366" width="320" height="44"/>
+                                        <rect key="frame" x="0.0" y="430" width="320" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="oUy-hj-wrb" id="DEX-f9-mFE">
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
@@ -194,7 +194,7 @@
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="3Fg-Pw-Ecv">
-                                        <rect key="frame" x="0.0" y="410" width="320" height="44"/>
+                                        <rect key="frame" x="0.0" y="474" width="320" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="3Fg-Pw-Ecv" id="6HB-WL-iJO">
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
@@ -613,7 +613,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="offlineStatue" rowHeight="58" id="wAb-QJ-XtI" customClass="OfflineRoutineTableViewCell">
-                                <rect key="frame" x="0.0" y="22" width="320" height="58"/>
+                                <rect key="frame" x="0.0" y="86" width="320" height="58"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="wAb-QJ-XtI" id="jZp-f3-HbD">
                                     <rect key="frame" x="0.0" y="0.0" width="320" height="57"/>
@@ -1233,6 +1233,16 @@
                                 </state>
                                 <connections>
                                     <action selector="logoutClick:" destination="FKA-pb-CQP" eventType="touchUpInside" id="Z1d-b8-Zhd"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="AQY-T2-XnQ">
+                                <rect key="frame" x="143" y="231" width="35" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Sync">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="syncClick:" destination="FKA-pb-CQP" eventType="touchUpInside" id="8di-W0-9wL"/>
                                 </connections>
                             </button>
                         </subviews>

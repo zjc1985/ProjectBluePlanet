@@ -19,5 +19,7 @@
 
 - (void)saveContext;
 
+- (void)resetCoreData;
+
 @end
 

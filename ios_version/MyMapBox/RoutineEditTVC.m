@@ -7,6 +7,7 @@
 //
 
 #import "RoutineEditTVC.h"
+#import "CommonUtil.h"
 
 @interface RoutineEditTVC ()<UITextFieldDelegate,UIActionSheetDelegate>
 @property (weak, nonatomic) IBOutlet UITextField *titleTextField;
@@ -46,6 +47,7 @@
     if([segue.identifier isEqualToString:@"EditRoutineDoneSegue"]){
         self.routine.title=self.titleTextField.text;
         self.routine.mycomment=self.descriptionTextView.text;
+        self.routine.updateTimestamp=[NSNumber numberWithLongLong: [CommonUtil currentUTCTimeStamp]];
     }
 }
 

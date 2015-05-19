@@ -81,6 +81,23 @@
     return result;
 }
 
++(NSArray *)fetchALLRoutinesIncludeMarkDelete{
+    NSFetchRequest *request=[[NSFetchRequest alloc]init];
+    NSEntityDescription *e=[NSEntityDescription entityForName:@"MMRoutine"
+                                       inManagedObjectContext:[CommonUtil getContext]];
+    request.entity=e;
+    NSSortDescriptor *sd=[NSSortDescriptor sortDescriptorWithKey:@"title" ascending:YES];
+    request.sortDescriptors=@[sd];
+    NSError *error;
+    NSArray *result=[[CommonUtil getContext] executeFetchRequest:request error:&error];
+    if(!result){
+        [NSException raise:@"Fetch failed"
+                    format:@"Reason: %@", [error localizedDescription]];
+    }
+    
+    return result;
+}
+
 +(NSArray *)fetchAllCachedModelRoutines{
     NSFetchRequest *request=[[NSFetchRequest alloc]init];
     NSEntityDescription *e=[NSEntityDescription entityForName:@"MMRoutine"
@@ -212,6 +229,33 @@
     }
     return pow(sum/[numbers count], 0.5);
 }
+
+-(NSDictionary *)convertToDictionary{
+    NSMutableDictionary *dic=[[NSMutableDictionary alloc]init];
+    
+    [dic setValue:self.mycomment forKey:KEY_ROUTINE_DESCRITPION];
+    [dic setValue:self.title forKey:KEY_ROUTINE_TITLE];
+    [dic setValue:self.isDelete forKey:KEY_ROUTINE_IS_DELETE];
+    [dic setValue:self.updateTimestamp forKey:KEY_ROUTINE_UPDATE_TIME];
+    [dic setValue:self.lat forKey:KEY_ROUTINE_LAT];
+    [dic setValue:self.lng forKey:KEY_ROUTINE_LNG];
+    [dic setValue:self.isSync forKey:KEY_ROUTINE_IS_SYNCED];
+    [dic setValue:self.uuid forKey:KEY_ROUTINE_UUID];
+
+    return dic;
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

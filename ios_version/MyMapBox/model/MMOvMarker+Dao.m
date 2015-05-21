@@ -76,6 +76,7 @@
 
 -(void)markDelete{
     self.isDelete=[NSNumber numberWithBool:YES];
+    self.updateTimestamp=[NSNumber numberWithLongLong:[CommonUtil currentUTCTimeStamp]];
 }
 
 -(NSDictionary *)convertToDictionary{

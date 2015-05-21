@@ -23,12 +23,19 @@
 }
 
 
+- (IBAction)showNetworkTypeClick:(id)sender {
+    NSNumber *type=[CommonUtil dataNetworkTypeFromStatusBar];
+    [CommonUtil alert:[NSString stringWithFormat:@"net type: %ld",(long)[type integerValue]]];
+}
+
+
 -(void)viewWillAppear:(BOOL)animated{
 }
 
 - (IBAction)syncClick:(id)sender {
     [CloudManager syncRoutinesAndOvMarkersWithBlockWhenDone:^(NSError *error) {
         NSLog(@"sync complete");
+        [CommonUtil alert:@"sync complete"];
     }];
 }
 

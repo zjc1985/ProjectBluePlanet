@@ -80,7 +80,7 @@
     self.mapView.minZoom=3;
     self.mapView.maxZoom=17;
     
-    self.mapView.zoom=15;
+    self.mapView.zoom=3;
     
     self.mapView.bouncingEnabled=YES;
     
@@ -109,12 +109,20 @@
 -(void)viewWillAppear:(BOOL)animated{
     NSLog(@"view will appear");
     [self.tabBarController.tabBar setHidden:NO];
-    [self updateMapUI];
-}
-
--(void)viewDidAppear:(BOOL)animated{
+    
     if(![CloudManager currentUser]){
         [self performSegueWithIdentifier:LOGIN_SEGUE sender:self];
+    }else{
+        if([CommonUtil isFastNetWork]){
+            [CloudManager syncRoutinesAndOvMarkersWithBlockWhenDone:^(NSError *error) {
+                if(error){
+                    NSLog(@"error happend: %@",error.localizedDescription);
+                }
+                [self updateMapUI];
+            }];
+        }else{
+            [self updateMapUI];
+        }
     }
 }
 
@@ -242,17 +250,15 @@
     }
 }
 
-- (IBAction)locateButtonClick {
-    [self.mapView setCenterCoordinate:CLLocationCoordinate2DMake(31.216571, 121.391336) animated:YES];
-}
-
 #pragma mark - cach related
 
 - (IBAction)downloadCach:(id)sender {
+    /*
     MMRoutine *tempRoutine=[[MMRoutine fetchAllModelRoutines] firstObject];
     if(tempRoutine){
         [self.routineCachHelper startCachForRoutine:tempRoutine withTileCach:self.mapView.tileCache withTileSource:self.mapView.tileSources[1]];
     }
+     */
 }
 
 #pragma mark - RMMapViewDelegate

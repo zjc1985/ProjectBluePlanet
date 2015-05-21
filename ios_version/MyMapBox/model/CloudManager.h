@@ -15,8 +15,7 @@
 
 +(void)syncRoutinesAndOvMarkersWithBlockWhenDone:(void (^)(NSError *error))block;
 
-+(void)syncMarkersByRoutineUUID:(NSString *)routineUUID withClockWhenDone:(void (^)(NSError *error))block;
++(void)syncMarkersByRoutineUUID:(NSString *)routineUUID withBlockWhenDone:(void (^)(NSError *error))block;
 
-+(void)contextWillSave:(NSNotification *)notify;
 
 @end

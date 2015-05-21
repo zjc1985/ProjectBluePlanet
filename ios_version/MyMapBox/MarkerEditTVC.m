@@ -8,6 +8,7 @@
 
 #import "MarkerEditTVC.h"
 #import "SlideNumSelectTVC.h"
+#import "CommonUtil.h"
 
 @interface MarkerEditTVC ()<UIActionSheetDelegate>
 
@@ -38,6 +39,7 @@
         self.marker.title=self.markerTitleTextField.text;
         self.marker.mycomment=self.markerDescriptionTextView.text;
         self.marker.slideNum=[NSNumber numberWithInteger:[self.markerSlideNumLabel.text integerValue]];
+        self.marker.updateTimestamp=[NSNumber numberWithLongLong:[CommonUtil currentUTCTimeStamp]];
     }
     
     if([segue.destinationViewController isKindOfClass:[SlideNumSelectTVC class]]){

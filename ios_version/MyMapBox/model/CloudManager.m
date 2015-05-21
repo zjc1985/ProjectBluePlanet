@@ -10,6 +10,7 @@
 #import "AppDelegate.h"
 #import "MMRoutine+Dao.h"
 #import "MMOvMarker+Dao.h"
+#import "MMMarker+Dao.h"
 #import "CommonUtil.h"
 
 #define KEY_RESPONSE_ROUTINES_UPDATED @"routinesUpdate"
@@ -20,14 +21,130 @@
 #define KEY_RESPONSE_OV_MARKERS_NEW @"ovMarkersNew"
 #define KEY_RESPONSE_OV_MARKER_DELETE @"ovMarkersDelete"
 
-@implementation CloudManager
+#define KEY_REQUEST_ROUTINE_ID @"routineId"
+#define KEY_REQUEST_SYNC_MARKERS @"syncMarkers"
 
-+(void)contextWillSave:(NSNotification *)notify{
-    NSLog(@"Context will save");
-}
+#define KEY_RESPONSE_MARKERS_UPDATED @"markersUpdate"
+#define KEY_RESPONSE_MARKERS_NEW @"markersNew"
+#define KEY_RESPONSE_MARKERS_DELETE @"markersDelete"
+
+@implementation CloudManager
 
 +(AVUser *)currentUser{
     return [AVUser currentUser];
+}
+
+
+
++(void)syncMarkersByRoutineUUID:(NSString *)routineUUID withBlockWhenDone:(void (^)(NSError *))block{
+    //save db context
+    AppDelegate *appDelegate=[UIApplication sharedApplication].delegate;
+    [appDelegate saveContext];
+    
+    MMRoutine *belongRoutine=[MMRoutine queryMMRoutineWithUUID:routineUUID];
+    
+    if (belongRoutine) {
+        if([belongRoutine.isSync boolValue]){
+            [self doSyncMarker:belongRoutine block:block];
+        }else{
+            [self syncRoutinesAndOvMarkersWithBlockWhenDone:^(NSError *error) {
+                if(!error){
+                    [self doSyncMarker:belongRoutine block:block];
+                }
+            }];
+        }
+    }else{
+        NSLog(@"syncMarkersByRoutineUUID: not found related routine with uuid %@",routineUUID);
+    }
+}
+
++ (void)doSyncMarker:(MMRoutine *)belongRoutine block:(void (^)(NSError *))block {
+    //prepare request params
+    NSMutableDictionary *params=[[NSMutableDictionary alloc]init];
+    [params setValue:[self allMarkerDictionaryWith:belongRoutine] forKey:KEY_REQUEST_SYNC_MARKERS];
+    [params setValue:belongRoutine.uuid forKey:KEY_REQUEST_ROUTINE_ID];
+    
+    //call cloud
+    [AVCloud callFunctionInBackground:@"syncMarkersByRoutineId" withParameters:params block:^(id object, NSError *error) {
+        if(!error){
+            NSDictionary *response=object;
+            
+            [self handleMarkersUpdate:[response objectForKey:KEY_RESPONSE_MARKERS_UPDATED]];
+            [self handleMarkersNew:[response objectForKey:KEY_RESPONSE_MARKERS_NEW]];
+            [self handleMarkersDelete:[response objectForKey:KEY_RESPONSE_MARKERS_DELETE]];
+            
+            //server will not return client new object when sync, so need set these objects isSynced to YES after sync
+            for (MMMarker *each in [belongRoutine allMarks]) {
+                if(![each.isSync boolValue]){
+                    each.isSync=[NSNumber numberWithBool:YES];
+                    each.updateTimestamp=[NSNumber numberWithLongLong:[CommonUtil currentUTCTimeStamp]];
+                }
+            }
+            
+        }
+        
+        block(error);
+    }];
+}
+
++(void)handleMarkersDelete:(NSArray *)array{
+    for (NSDictionary *markerDic in array) {
+        MMMarker *marker=[MMMarker queryMMMarkerWithUUID:[markerDic objectForKey:KEY_MARKER_UUID]];
+        if(marker){
+            [MMMarker removeMMMarker:marker];
+        }
+    }
+}
+
++(void)handleMarkersNew:(NSArray *)array{
+    for (NSDictionary *markerDic in array) {
+        MMRoutine *routine=[MMRoutine queryMMRoutineWithUUID:[markerDic objectForKey:KEY_MARKER_ROUTINE_ID]];
+        
+        if(routine){
+            NSNumber *lat=[markerDic objectForKey:KEY_MARKER_LAT];
+            NSNumber *lng=[markerDic objectForKey:KEY_MARKER_LNG];
+            
+            MMMarker *marker=[MMMarker createMMMarkerInRoutine:routine
+                                                       withLat:[lat doubleValue]
+                                                       withLng:[lng doubleValue]
+                                                      withUUID:[markerDic objectForKey:KEY_MARKER_UUID]];
+            marker.iconUrl=[markerDic objectForKey:KEY_MARKER_ICON_URL];
+            marker.category=[markerDic objectForKey:KEY_MARKER_CATEGORY];
+            marker.title=[markerDic objectForKey:KEY_MARKER_TITLE];
+            marker.slideNum=[markerDic objectForKey:KEY_MARKER_SLIDE_NUM];
+            marker.mycomment=[markerDic objectForKey:KEY_MARKER_MYCOMMENT];
+            marker.offsetX=[markerDic objectForKey:KEY_MARKER_OFFSETX];
+            marker.offsetY=[markerDic objectForKey:KEY_MARKER_OFFSETY];
+            marker.isSync=[NSNumber numberWithBool:YES];
+            marker.updateTimestamp=[markerDic objectForKey:KEY_MARKER_UPDATE_TIME];
+            marker.imgUrls=[markerDic objectForKey:KEY_MARKER_IMAGE_URLS];
+        }
+    }
+
+}
+
++(void)handleMarkersUpdate:(NSArray *)array{
+    for (NSDictionary *markerDic in array) {
+        MMMarker *marker=[MMMarker queryMMMarkerWithUUID:[markerDic objectForKey:KEY_MARKER_UUID]];
+        if(marker){
+            marker.iconUrl=[markerDic objectForKey:KEY_MARKER_ICON_URL];
+            marker.category=[markerDic objectForKey:KEY_MARKER_CATEGORY];
+            marker.title=[markerDic objectForKey:KEY_MARKER_TITLE];
+            marker.slideNum=[markerDic objectForKey:KEY_MARKER_SLIDE_NUM];
+            marker.lat=[markerDic objectForKey:KEY_MARKER_LAT];
+            marker.lng=[markerDic objectForKey:KEY_MARKER_LNG];
+            marker.mycomment=[markerDic objectForKey:KEY_MARKER_MYCOMMENT];
+            marker.offsetX=[markerDic objectForKey:KEY_MARKER_OFFSETX];
+            marker.offsetY=[markerDic objectForKey:KEY_MARKER_OFFSETY];
+            marker.isSync=[NSNumber numberWithBool:YES];
+            marker.updateTimestamp=[markerDic objectForKey:KEY_MARKER_UPDATE_TIME];
+            marker.imgUrls=[markerDic objectForKey:KEY_MARKER_IMAGE_URLS];
+            MMRoutine *routine=[MMRoutine queryMMRoutineWithUUID:[markerDic objectForKey:KEY_MARKER_ROUTINE_ID]];
+            if(routine){
+                marker.belongRoutine=routine;
+            }
+        }
+    }
 }
 
 
@@ -60,6 +177,13 @@
                 if(![each.isSync boolValue]){
                     each.isSync=[NSNumber numberWithBool:YES];
                     each.updateTimestamp=[NSNumber numberWithLongLong:[CommonUtil currentUTCTimeStamp]];
+                    
+                    for (MMOvMarker *eachOvMarker in each.ovMarkers) {
+                        if(![eachOvMarker.isSync boolValue]){
+                            eachOvMarker.isSync=[NSNumber numberWithBool:YES];
+                            eachOvMarker.updateTimestamp=[NSNumber numberWithLongLong:[CommonUtil currentUTCTimeStamp]];
+                        }
+                    }
                 }
             }
             
@@ -67,6 +191,15 @@
         
         block(error);
     }];
+}
+
++(NSArray *)allMarkerDictionaryWith:(MMRoutine *)routine{
+    NSMutableArray *result=[[NSMutableArray alloc]init];
+    NSArray *allMarkers=[routine.markers allObjects];
+    for (MMMarker *each in allMarkers) {
+        [result addObject:[each convertToDictionary]];
+    }
+    return result;
 }
 
 +(NSArray *)allRoutinesDictionary{
@@ -165,8 +298,6 @@
 
 
 
-+(void)syncMarkersByRoutineUUID:(NSString *)routineUUID withClockWhenDone:(void (^)(NSError *))block{
-    
-}
+
 
 @end

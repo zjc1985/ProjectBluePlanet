@@ -8,6 +8,7 @@
 
 #import "MMMarker+Dao.h"
 #import "CommonUtil.h"
+#import "MMRoutine.h"
 
 @implementation MMMarker (Dao)
 
@@ -42,6 +43,7 @@
         result.mycomment=@"";
         result.category=[NSNumber numberWithInt:CategoryInfo];
         result.iconUrl=@"default_default";
+        result.imgUrls=@"[]";
         
         result.lat=[NSNumber numberWithDouble:lat];
         result.lng=[NSNumber numberWithDouble:lng];
@@ -71,6 +73,30 @@
 
 -(void)markDelete{
     self.isDelete=[NSNumber numberWithBool:YES];
+    self.updateTimestamp=[NSNumber numberWithLongLong:[CommonUtil currentUTCTimeStamp]];
+}
+
+-(NSDictionary *)convertToDictionary{
+    NSMutableDictionary *dic=[[NSMutableDictionary alloc]init];
+    
+    [dic setValue:@"resource/icons/default/default_default.png" forKey:KEY_MARKER_ICON_URL];
+    [dic setValue:self.uuid forKey:KEY_MARKER_UUID];
+    [dic setValue:self.category forKey:KEY_MARKER_CATEGORY];
+    [dic setValue:self.title forKey:KEY_MARKER_TITLE];
+    [dic setValue:self.slideNum forKey:KEY_MARKER_SLIDE_NUM];
+    [dic setValue:self.lat forKey:KEY_MARKER_LAT];
+    [dic setValue:self.lng forKey:KEY_MARKER_LNG];
+    [dic setValue:self.mycomment forKey:KEY_MARKER_MYCOMMENT];
+    [dic setValue:@"" forKey:KEY_MARKER_ADDRESS];
+    [dic setValue:self.offsetX forKey:KEY_MARKER_OFFSETX];
+    [dic setValue:self.offsetY forKey:KEY_MARKER_OFFSETY];
+    [dic setValue:self.belongRoutine.uuid forKey:KEY_MARKER_ROUTINE_ID];
+    [dic setValue:self.isDelete forKey:KEY_MARKER_IS_DELETE];
+    [dic setValue:self.isSync forKey:KEY_MARKER_IS_SYNCED];
+    [dic setValue:self.updateTimestamp forKey:KEY_MARKER_UPDATE_TIME];
+    [dic setValue:self.imgUrls forKey:KEY_MARKER_IMAGE_URLS];
+    
+    return dic;
 }
 
 

@@ -8,6 +8,23 @@
 
 #import "MMMarker.h"
 
+#define KEY_MARKER_ICON_URL @"iconUrl"
+#define KEY_MARKER_UUID @"uuid"
+#define KEY_MARKER_CATEGORY @"category"
+#define KEY_MARKER_TITLE @"title"
+#define KEY_MARKER_SLIDE_NUM @"slideNum"
+#define KEY_MARKER_LAT @"lat"
+#define KEY_MARKER_LNG @"lng"
+#define KEY_MARKER_MYCOMMENT @"mycomment"
+#define KEY_MARKER_ADDRESS @"address"
+#define KEY_MARKER_OFFSETX @"offsetX"
+#define KEY_MARKER_OFFSETY @"offsetY"
+#define KEY_MARKER_ROUTINE_ID @"routineId"
+#define KEY_MARKER_IS_DELETE @"isDelete"
+#define KEY_MARKER_IS_SYNCED @"isSynced"
+#define KEY_MARKER_UPDATE_TIME @"updateTime"
+#define KEY_MARKER_IMAGE_URLS @"imageUrls"
+
 typedef enum : NSUInteger {
     CategoryArrivalLeave = 1,
     CategorySight = 2,
@@ -28,5 +45,7 @@ typedef enum : NSUInteger {
 +(void)removeMMMarker:(MMMarker *)marker;
 
 -(void)markDelete;
+
+-(NSDictionary *)convertToDictionary;
 
 @end

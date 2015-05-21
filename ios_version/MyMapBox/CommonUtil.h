@@ -27,4 +27,8 @@
 
 +(void)resetCoreData;
 
++(BOOL)isFastNetWork;
+
++(NSNumber *)dataNetworkTypeFromStatusBar;
+
 @end

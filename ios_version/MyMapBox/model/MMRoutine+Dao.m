@@ -18,6 +18,7 @@
 
 #pragma mark - instance method
 
+
 +(MMRoutine *)queryMMRoutineWithUUID:(NSString *)uuid{
     NSFetchRequest *request=[[NSFetchRequest alloc]init];
     NSEntityDescription *e=[NSEntityDescription entityForName:@"MMRoutine"
@@ -105,7 +106,7 @@
     request.entity=e;
     NSSortDescriptor *sd=[NSSortDescriptor sortDescriptorWithKey:@"title" ascending:YES];
     request.sortDescriptors=@[sd];
-    request.predicate= [NSPredicate predicateWithFormat:@"cachProgress == 1"];
+    request.predicate= [NSPredicate predicateWithFormat:@"cachProgress > 0"];
     NSError *error;
     NSArray *result=[[CommonUtil getContext] executeFetchRequest:request error:&error];
     if(!result){
@@ -118,9 +119,12 @@
 
 -(void)markDelete{
     self.isDelete=[NSNumber numberWithBool:YES];
+    NSNumber *timestamp=[NSNumber numberWithLongLong:[CommonUtil currentUTCTimeStamp]];
+    self.updateTimestamp=timestamp;
     
     for (MMOvMarker *eachOvMarker in self.ovMarkers) {
         [eachOvMarker markDelete];
+        
     }
     
     for (MMMarker *eachMarker in self.markers) {
@@ -140,6 +144,9 @@
     
     self.lat=[NSNumber numberWithDouble: [self refineAverage:latArray]];
     self.lng=[NSNumber numberWithDouble: [self refineAverage:lngArray]];
+    
+    NSNumber *timestamp=[NSNumber numberWithLongLong:[CommonUtil currentUTCTimeStamp]];
+    self.updateTimestamp=timestamp;
 }
 
 -(double)minLatInMarkers{
@@ -179,7 +186,7 @@
 
 -(double)maxLngInMarkers{
     MMMarker *first=[[self.markers allObjects] firstObject];
-    double maxLng=[first.lat doubleValue];
+    double maxLng=[first.lng doubleValue];
     for (MMMarker *each in self.markers) {
         if([each.lng doubleValue]>maxLng){
             maxLng=[each.lng doubleValue];
@@ -188,7 +195,32 @@
     return maxLng;
 }
 
+-(NSArray *)allMarks{
+    NSArray *markers=[self.markers allObjects];
+    NSMutableArray *result=[[NSMutableArray alloc]init];
+    for (MMMarker *each in markers) {
+        if(![each.isDelete boolValue]){
+            [result addObject:each];
+        }
+    }
+    return result;
+}
 
+-(BOOL)isMarkersSyncWithCloud{
+    if([[self.markers allObjects] count]==0){
+        return NO;
+    }
+    
+    BOOL result=YES;
+    
+    for (MMMarker *marker in [self allMarks]) {
+        if(![marker.isSync boolValue]){
+            result=NO;
+        }
+    }
+    
+    return result;
+}
 
 #pragma mark - private method
 

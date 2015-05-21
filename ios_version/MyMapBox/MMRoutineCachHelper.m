@@ -38,10 +38,13 @@
      NSLog(@"south west %f %f",southwest.latitude,southwest.longitude);
      NSLog(@"north east %f %f",northEast.latitude,southwest.longitude);
      
+     /*
      if ([tilecach tileCountForSouthWest:southwest northEast:northEast minZoom:minZoom maxZoom:maxZoom]>500) {
          [CommonUtil alert:(@"cach size to big upper 500 tile count")];
          return NO;
      }
+      */
+     
      if([tilecach isBackgroundCaching]){
          return NO;
      }else{

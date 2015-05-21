@@ -37,6 +37,10 @@
 
 //+(MMRoutine *)fetchRoutineById:(NSString *)id;
 
+//return all markers whose isDelete is NO
+-(NSArray *)allMarks;
+
+-(BOOL)isMarkersSyncWithCloud;
 
 -(void)markDelete;
 

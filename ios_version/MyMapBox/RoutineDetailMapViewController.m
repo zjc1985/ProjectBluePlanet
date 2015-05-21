@@ -10,12 +10,14 @@
 #import "CommonUtil.h"
 #import "MarkerInfoTVC.h"
 #import "MarkerEditTVC.h"
+#import "CloudManager.h"
 
 @interface RoutineDetailMapViewController ()<RMMapViewDelegate,UIActionSheetDelegate>
 
 @property(nonatomic,strong) MMMarker *currentMarker;
 
 @property (weak, nonatomic) IBOutlet UIButton *locateButton;
+@property (weak, nonatomic) IBOutlet UIButton *syncButton;
 @property (weak, nonatomic) IBOutlet UIToolbar *playRoutineToolBar;
 
 @property(nonatomic,strong) RMMapView *mapView;
@@ -32,6 +34,8 @@
     
     self.locateButton.layer.borderWidth=0.5f;
     self.locateButton.layer.cornerRadius = 4.5;
+    self.syncButton.layer.borderWidth=0.5f;
+    self.syncButton.layer.cornerRadius=4.5;
     
     RMMapboxSource *tileSource=nil;
     NSString *filePath=[CommonUtil dataFilePath];
@@ -60,7 +64,6 @@
     
     self.mapView.displayHeadingCalibration=YES;
     
-    //[self.mapView setUserTrackingMode:RMUserTrackingModeFollowWithHeading animated:YES];
     
     [self.view addSubview:self.mapView];
     [self.view sendSubviewToBack:self.mapView];
@@ -68,7 +71,17 @@
     NSLog(@"RoutineDetailMapViewTVC did load");
 }
 
--(void)viewDidAppear:(BOOL)animated{
+-(void)viewWillAppear:(BOOL)animated{
+    if([CommonUtil isFastNetWork]){
+        [CloudManager syncMarkersByRoutineUUID:self.routine.uuid withBlockWhenDone:^(NSError *error) {
+            if(error){
+                NSLog(@"error happened :%@",error.localizedDescription);
+            }
+            
+            [self updateMapUI];
+        }];
+    }
+    
     [self updateMapUI];
 }
 
@@ -76,25 +89,32 @@
     NSLog(@"update ui");
     [self.mapView removeAllAnnotations];
     
-    for (MMMarker *marker in self.routine.markers) {
+    for (MMMarker *marker in [self.routine allMarks]) {
         [self addMarkerWithTitle:marker.title
                   withCoordinate:CLLocationCoordinate2DMake([marker.lat doubleValue], [marker.lng doubleValue])
                   withCustomData:marker];
     }
     
-    if ([self.routine.markers count]>0) {
+    if ([[self.routine allMarks] count]>0) {
         if(self.currentMarker){
             NSLog(@"center to currentMarker");
             [self.mapView setCenterCoordinate:CLLocationCoordinate2DMake([self.currentMarker.lat doubleValue], [self.currentMarker.lng doubleValue]) animated:YES];
         }else{
             NSLog(@"zoom to fit all markers");
-            [self.mapView zoomWithLatitudeLongitudeBoundsSouthWest:CLLocationCoordinate2DMake([self.routine minLatInMarkers], [self.routine minLngInMarkers])
-                                                         northEast:CLLocationCoordinate2DMake([self.routine maxLatInMarkers], [self.routine maxLngInMarkers])
+            
+            CLLocationCoordinate2D minLocation=CLLocationCoordinate2DMake([self.routine minLatInMarkers], [self.routine minLngInMarkers]);
+            CLLocationCoordinate2D maxLocation=CLLocationCoordinate2DMake([self.routine maxLatInMarkers], [self.routine maxLngInMarkers]);
+            
+            //[self addMarkerWithTitle:@"southweat" withCoordinate:minLocation withCustomData:nil];
+            //[self addMarkerWithTitle:@"northEast" withCoordinate:maxLocation withCustomData:nil];
+            
+            [self.mapView zoomWithLatitudeLongitudeBoundsSouthWest:minLocation
+                                                         northEast:maxLocation
                                                           animated:YES];
+            
+            
+            [self.mapView setZoom:self.mapView.zoom-0.5 animated:YES];
         }
-        
-        [self.mapView setZoom:self.mapView.zoom-1 animated:YES];
-        
     }else{
         [self.mapView setCenterCoordinate:CLLocationCoordinate2DMake([self.routine.lat doubleValue], [self.routine.lng doubleValue]) animated:YES];
     }
@@ -118,6 +138,17 @@
                                                   animated:YES];
 
 }
+- (IBAction)refreshButtonClick:(id)sender {
+    NSString *currentRoutineUUID=self.routine.uuid;
+    [CloudManager syncMarkersByRoutineUUID:self.routine.uuid withBlockWhenDone:^(NSError *error) {
+        if(!error){
+            self.routine=[MMRoutine queryMMRoutineWithUUID:currentRoutineUUID];
+            if(self.routine){
+                [self updateMapUI];
+            }
+        }
+    }];
+}
 
 - (IBAction)locateButtonClick:(id)sender {
     NSLog(@"Locate Button CLick");
@@ -140,7 +171,7 @@
     if ([segue.identifier isEqualToString:@"markerDetailSegue"]) {
         MarkerInfoTVC *markerInfoTVC=segue.destinationViewController;
         markerInfoTVC.marker=((RMAnnotation *)sender).userInfo;
-        markerInfoTVC.markerCount=[self.routine.markers count];
+        markerInfoTVC.markerCount=[[self.routine allMarks] count];
     }
 }
 
@@ -207,11 +238,18 @@
         anchorPoint.x=0.5;
         anchorPoint.y=1;
         
-        RMMarker *marker = [[RMMarker alloc] initWithUIImage:[UIImage imageNamed:modelMarker.iconUrl]anchorPoint:anchorPoint];
+        //RMMarker *marker = [[RMMarker alloc] initWithUIImage:[UIImage imageNamed:modelMarker.iconUrl]anchorPoint:anchorPoint];
+        RMMarker *marker = [[RMMarker alloc] initWithUIImage:[UIImage imageNamed:@"default_default"]anchorPoint:anchorPoint];
         
         marker.canShowCallout=YES;
         
         marker.rightCalloutAccessoryView=[UIButton buttonWithType:UIButtonTypeDetailDisclosure];
+        
+        return marker;
+    }else{
+        RMMarker *marker = [[RMMarker alloc] initWithUIImage:[UIImage imageNamed:@"overview_star"]];
+        
+        marker.canShowCallout=YES;
         
         return marker;
     }
@@ -230,6 +268,7 @@
             MMMarker *marker=(MMMarker *)annotation.userInfo;
             marker.lat=[NSNumber numberWithDouble:annotation.coordinate.latitude];
             marker.lng=[NSNumber numberWithDouble:annotation.coordinate.longitude];
+            marker.updateTimestamp=[NSNumber numberWithLongLong:[CommonUtil currentUTCTimeStamp]];
             NSLog(@"Drage end update marker id:%@ location",marker.uuid);
             [self.routine updateLocation];
         }

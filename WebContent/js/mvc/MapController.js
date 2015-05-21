@@ -81,7 +81,12 @@ function MapController(){
 	};
 	
 	this.markerMouseOver=function(id){
-		var content= model.getMapMarkerById(id).getContent();
+		var content;
+		if(model.isOvMarker(id)){
+			content=model.getRoutineById(id).getContent();
+		}else{
+			content=model.getMapMarkerById(id).getContent();
+		}
 		
 		var contentString = '<div id="content">'+
 	      '<div id="siteNotice">'+
@@ -609,7 +614,7 @@ function MapController(){
 		
 		var marker=model.getMapMarkerById(markerId);
 		var content=marker.getContent();
-		
+			
 		var dialog;
 		if(model.isOvMarker(markerId)){
 			dialog=view.ovMarkerDialog;
@@ -617,28 +622,35 @@ function MapController(){
 			dialog.setUser(routineMarker.userId, routineMarker.userName);
 			view.markerEditDialog.setCategoryDropDownItems(genOvMarkerCategoryItems());
 			dialog.setSubTitle(content.getCategoryName());
+			dialog.setTitle(routineMarker.getContent().getTitle());
+			dialog.setDescription(routineMarker.getContent().getMycomment(true));
 		}else{
 			dialog=view.markerInfoDialog;
 			dialog.setSubTitle(content.getCategoryName()+' '+content.getSlideNum());
 			view.markerEditDialog.setCategoryDropDownItems(genMarkerCategoryItems());
+			dialog.setTitle(content.getTitle());
+			dialog.setDescription(content.getMycomment(true));
 		}
 		
-		dialog.setTitle(content.getTitle());
-		dialog.setDescription(content.getMycomment(true));
 		dialog.setImageSlider(content.getImgUrls());
 		
 		dialog.show();
 		
-		view.markerEditDialog.setTitle(content.getTitle());
-		view.markerEditDialog.setCategoryValue(content.getCategory());
+		
+		var routine=model.getRoutineById(markerId);
+		view.markerEditDialog.setCategoryValue(routine.getContent().getCategory());
+		
 		if(model.isOvMarker(markerId)){
+			view.markerEditDialog.setTitle(routine.getContent().getTitle());
 			view.markerEditDialog.setMaxSlideNum(1);
+			view.markerEditDialog.setDesc(routine.getContent().getMycomment(true));
 		}else{
-			var routine=model.getRoutineById(markerId);
+			view.markerEditDialog.setTitle(content.getTitle());
 			view.markerEditDialog.setMaxSlideNum(routine.getMarkers().length);
+			view.markerEditDialog.setDesc(content.getMycomment(true));
 		}
 		view.markerEditDialog.setSlideNum(content.getSlideNum());
-		view.markerEditDialog.setDesc(content.getMycomment(true));
+		
 		view.markerEditDialog.setUrls(content.getImgUrls());
 		
 		view.markerEditDialog.setIconSelect({url:content.getIconUrl(),name:"current Icon"});
@@ -1018,6 +1030,7 @@ function MapController(){
 			
 			view.addOverviewMarker(modelMarker.content.getLat(),
 							modelMarker.content.getLng(), modelMarker.id,options);
+			
 			if(content.isAverage){
 				view.setMarkerZIndex(modelMarker.id, 0);
 			}

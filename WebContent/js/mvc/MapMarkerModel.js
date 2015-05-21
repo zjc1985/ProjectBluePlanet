@@ -888,7 +888,7 @@ function BackendManager() {
 			avRoutine.set('user',user);
 			avRoutine.set('uuid',routineJSON.uuid);
 			avRoutine.set('title',routineJSON.title);
-			avRoutine.set('descritpion',routineJSON.mycomment);
+			avRoutine.set('description',routineJSON.mycomment);
 			var point = new AV.GeoPoint({latitude: routineJSON.lat, longitude: routineJSON.lng});
 			avRoutine.set('location',point);
 		}
@@ -918,6 +918,13 @@ function BackendManager() {
 		});
 	};
 	
+	function gcjLocation(avLocation){
+		var lat=avLocation.toJSON().latitude;
+		var lng=avLocation.toJSON().longitude;
+		var gcj=wgs2gcj(lat,lng);
+		return gcj;
+	}
+	
 	this.fetchMarkersByRoutineId=function(routineId,successCallback){
 		var query=new AV.Query(AVMarker);
 		query.equalTo("routineId",routineId);
@@ -931,8 +938,8 @@ function BackendManager() {
 					title:avMarker.get('title'),
 					mycomment:avMarker.get('mycomment'),
 					iconUrl:avMarker.get('iconUrl'),
-					lat:avMarker.get('location').toJSON().latitude,
-					lng:avMarker.get('location').toJSON().longitude,
+					lat:gcjLocation(avMarker.get('location')).lat,
+					lng:gcjLocation(avMarker.get('location')).lng,
 					slideNum:avMarker.get('slideNum'),
 					imgUrls:JSON.parse(avMarker.get('imgUrls')),
 					category:avMarker.get('category')
@@ -960,6 +967,9 @@ function BackendManager() {
 						var ovMarkers=results[i].avOvMarkers;
 						avObjects.push(routine);
 						
+						var routineLat=gcjLocation(routine.get('location')).lat;
+						var routineLng=gcjLocation(routine.get('location')).lng;
+						
 						var routineJSON={
 								userId:user.id,
 								userName:user.get('username'),
@@ -967,8 +977,8 @@ function BackendManager() {
 								title:routine.get('title'),
 								mycomment:routine.get('description'),
 								category:routine.get('category'),
-								lat:routine.get('location').toJSON().latitude,
-								lng:routine.get('location').toJSON().longitude
+								lat:routineLat,
+								lng:routineLng
 						};
 						
 						var ovMarkersJSON=[];
@@ -982,8 +992,8 @@ function BackendManager() {
 								offsetX:ovMarkers[i].get('offsetX'),
 								offsetY:ovMarkers[i].get('offsetY'),
 								category:ovMarkers[i].get('category'),
-								lat:ovMarkers[i].get('location').toJSON().latitude,
-								lng:ovMarkers[i].get('location').toJSON().longitude
+								lat:ovMarkers[i].get('location')==null?routineLat:gcjLocation(ovMarkers[i].get('location')).lat,
+								lng:ovMarkers[i].get('location')==null?routineLng:gcjLocation(ovMarkers[i].get('location')).lng
 							});
 						}
 						returnValue.push({
@@ -1026,14 +1036,17 @@ function BackendManager() {
 					var ovMarkers=results[i].avOvMarkers;
 					avObjects.push(routine);
 					
+					var routineLat=gcjLocation(routine.get('location')).lat;
+					var routineLng=gcjLocation(routine.get('location')).lng;
+					
 					var routineJSON={
 							userId:user.id,
 							userName:user.get('username'),
 							id:routine.get('uuid'),
 							title:routine.get('title'),
 							mycomment:routine.get('description'),
-							lat:routine.get('location').toJSON().latitude,
-							lng:routine.get('location').toJSON().longitude
+							lat:routineLat,
+							lng:routineLng
 					};
 					
 					var ovMarkersJSON=[];
@@ -1046,8 +1059,8 @@ function BackendManager() {
 							iconUrl:ovMarkers[i].get('iconUrl'),
 							offsetX:ovMarkers[i].get('offsetX'),
 							offsetY:ovMarkers[i].get('offsetY'),
-							lat:ovMarkers[i].get('location').toJSON().latitude,
-							lng:ovMarkers[i].get('location').toJSON().longitude
+							lat:ovMarkers[i].get('location')==null?routineLat:gcjLocation(ovMarkers[i].get('location')).lat,
+							lng:ovMarkers[i].get('location')==null?routineLng:gcjLocation(ovMarkers[i].get('location')).lng
 						});
 					}
 					returnValue.push({
@@ -1615,19 +1628,29 @@ function MarkerContent(id) {
 		category = nameFoo;
 	};
 
-	this.getLat = function() {
-		return lat;
-	};
-
 	this.setlatlng = function(latFoo, lngFoo) {
-		lat = latFoo;
-		lng = lngFoo;
+		//var wgs=gcj2wgs(latFoo,lngFoo);
+		
+		//lat = wgs.lat;
+		//lng = wgs.lng;
+		
+		lat=latFoo;
+		lng=lngFoo;
+		
 		$.publish('latlngChanged', [ this ]);
 		$.publish('updateUI', []);
 	};
 
 	this.getLng = function() {
+		//var gcj=wgs2gcj(lat,lng);
+		//return gcj.lng;
 		return lng;
+	};
+	
+	this.getLat = function() {
+		//var gcj=wgs2gcj(lat,lng);
+		//return gcj.lat;
+		return lat;
 	};
 
 	this.getAddress = function() {
@@ -1900,10 +1923,13 @@ function MapMarker(id) {
 			subMarkerIdsArray.push(this.subMarkersArray[i].id);
 		}
 
+		var wgs=gcj2wgs(this.getContent().getLat(),this.getContent().getLng());
+		
+		
 		var object = {
 			uuid : this.id,
-			lat : this.getContent().getLat(),
-			lng : this.getContent().getLng(),
+			lat : wgs.lat,
+			lng : wgs.lng,
 			title : this.getContent().getTitle(),
 			address : this.getContent().getAddress(),
 			mycomment : this.getContent().getMycomment(false),

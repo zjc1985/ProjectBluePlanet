@@ -7,7 +7,9 @@
 //
 #import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
+#import "MMMarker.h"
 @import CoreData;
+@import CoreLocation;
 
 #define tourMapId  @"lionhart586.gkihab1d"
 #define streetMapId @"lionhart586.lnmjhd7b"
@@ -30,5 +32,9 @@
 +(BOOL)isFastNetWork;
 
 +(NSNumber *)dataNetworkTypeFromStatusBar;
+
++(CLLocationCoordinate2D) minLocationInMMMarkers:(NSArray *) markers;  //of MMMarker
+
++(CLLocationCoordinate2D) maxLocationInMMMarkers:(NSArray *) markers; //of MMMarker
 
 @end

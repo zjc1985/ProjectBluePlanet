@@ -122,6 +122,11 @@
                   withCoordinate:CLLocationCoordinate2DMake([marker.lat doubleValue], [marker.lng doubleValue])
                   withCustomData:marker];
     }
+    
+    [self.mapView zoomWithLatitudeLongitudeBoundsSouthWest:[CommonUtil minLocationInMMMarkers:currentSlideIndicatorMarkers]
+                                                 northEast:[CommonUtil maxLocationInMMMarkers:currentSlideIndicatorMarkers]
+                                                  animated:YES];
+    //[self.mapView setZoom:self.mapView.zoom-0.5 animated:YES];
 }
 
 -(NSArray *)markersSortedBySlideNum{
@@ -205,7 +210,7 @@
 }
 
 - (IBAction)slideNextClick:(id)sender {
-    if(self.slideIndicator>=0 && self.slideIndicator<[self.routine allMarks].count-1){
+    if(self.slideIndicator>=0 && self.slideIndicator<[self markersSortedBySlideNum].count-1){
         self.slideIndicator++;
         [self updateMapUI];
     }

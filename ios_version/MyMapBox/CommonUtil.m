@@ -68,4 +68,39 @@
     }
     return [dataNetworkItemView valueForKey:@"dataNetworkType"];
 }
+
++(CLLocationCoordinate2D)minLocationInMMMarkers:(NSArray *)markers{
+    MMMarker *first=[markers firstObject];
+    double minLng=[first.lng doubleValue];
+    double minlat=[first.lat doubleValue];
+    
+    for (MMMarker *each in markers) {
+        if([each.lng doubleValue]<minLng){
+            minLng=[each.lng doubleValue];
+        }
+        
+        if([each.lat doubleValue]<minlat){
+            minlat=[each.lat doubleValue];
+        }
+    }
+    
+    return CLLocationCoordinate2DMake(minlat, minLng);
+}
+
++(CLLocationCoordinate2D)maxLocationInMMMarkers:(NSArray *)markers{
+    MMMarker *first=[markers firstObject];
+    double maxLat=[first.lat doubleValue];
+    double maxlng=[first.lng doubleValue];
+    
+    for (MMMarker *each in markers) {
+        if([each.lat doubleValue]>maxLat){
+            maxLat=[each.lat doubleValue];
+        }
+        if([each.lng doubleValue]>maxlng){
+            maxlng=[each.lng doubleValue];
+        }
+    }
+    return CLLocationCoordinate2DMake(maxLat, maxlng);
+}
+
 @end

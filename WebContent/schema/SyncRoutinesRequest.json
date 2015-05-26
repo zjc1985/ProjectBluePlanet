@@ -1,0 +1,17 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "additionalProperties": true,
+    "description": "MapMarker cloud",
+    "properties": {
+        "syncRoutines": {
+        	"$ref": "SyncRoutine.json"
+        },
+        "syncOvMarkers":{
+        	"$ref": "SyncOvMarker.json"
+        }
+    },
+    "required": [
+    ],
+    "title": "SyncRoutinesRequest",
+    "type": "object"
+}

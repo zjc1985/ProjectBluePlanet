@@ -41,7 +41,7 @@
     NSUInteger numFinishCach=0;
     
     for (MMRoutine *each in self.modelRoutines) {
-        if(each.cachProgress==1){
+        if([each.cachProgress floatValue]==1){
             numFinishCach++;
         }
     }
@@ -71,9 +71,9 @@
     MMRoutine *eachRoutine=self.modelRoutines[indexPath.row];
     
     cell.routineTitleLabel.text=eachRoutine.title;
-    NSLog(@"%f",eachRoutine.cachProgress);
-    cell.routineProgressLabel.text=[NSString stringWithFormat:@"%u%%", (NSUInteger)(eachRoutine.cachProgress*100)];
-    cell.routineProgressBar.progress=eachRoutine.cachProgress;
+    NSLog(@"%f",[eachRoutine.cachProgress floatValue]);
+    cell.routineProgressLabel.text=[NSString stringWithFormat:@"%u%%", (NSUInteger)([eachRoutine.cachProgress floatValue]*100)];
+    cell.routineProgressBar.progress=[eachRoutine.cachProgress floatValue];
     return cell;
 }
 

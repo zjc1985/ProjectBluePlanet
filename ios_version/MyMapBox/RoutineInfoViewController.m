@@ -11,6 +11,8 @@
 #import "RoutineEditTVC.h"
 #import "OfflineRoutineTVC.h"
 #import "CommonUtil.h"
+#import "MMRoutine+Dao.h"
+#import "CloudManager.h"
 
 @interface RoutineInfoViewController ()
 @property (weak, nonatomic) IBOutlet UILabel *titleLabel;
@@ -26,8 +28,10 @@
 }
 
 -(void)viewWillAppear:(BOOL)animated{
+    [self.tabBarController.tabBar setHidden:YES];
+    
     self.titleLabel.text=self.routine.title;
-    self.descriptionTextField.text=self.routine.myComment;
+    self.descriptionTextField.text=self.routine.mycomment;
 }
 
 - (IBAction)showRoutineDetailClick:(id)sender {
@@ -54,6 +58,8 @@
 
 #define EDIT_ROUTINE_INFO_SEGUE @"EditRoutineInfoSegue"
 
+
+
 // In a storyboard-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([segue.identifier isEqualToString:EDIT_ROUTINE_INFO_SEGUE]) {
@@ -68,28 +74,40 @@
     }
     
     if([segue.destinationViewController isKindOfClass:[OfflineRoutineTVC class]]){
-        
-        BOOL succeedbegin=NO;
-        
-        NSMutableArray *cachedRoutines=[self.markerManager fetchAllCachedModelRoutines];
-        
-        if (self.routine.cachProgress==1) {
-            NSLog(@"%@ already cached",self.routine.title);
+        if([CommonUtil isFastNetWork]){
+            if([self.routine isMarkersSyncWithCloud]){
+                [self prepareCach:segue];
+            }else{
+                [CloudManager syncMarkersByRoutineUUID:self.routine.uuid withBlockWhenDone:^(NSError *error) {
+                    [self prepareCach:segue];
+                }];
+            }
         }else{
-           
-            succeedbegin=[self.routineCachHelper startCachForRoutine:self.routine
-                                                        withTileCach:self.mapView.tileCache
-                                                      withTileSource:self.mapView.tileSources[1]];
-           
+            [CommonUtil alert:@"Please turn on wifi or lte to offline"];
         }
-        
-        if(succeedbegin){
-            [cachedRoutines addObject:self.routine];
-        }
-        
-        OfflineRoutineTVC *offlineTVC=segue.destinationViewController;
-        offlineTVC.modelRoutines=cachedRoutines;
     }
+}
+
+- (void)prepareCach:(UIStoryboardSegue *)segue {
+    BOOL succeedbegin=NO;
+    
+    NSMutableArray *cachedRoutines=[[MMRoutine fetchAllCachedModelRoutines] mutableCopy];
+    
+    if ([self.routine.cachProgress floatValue]==1) {
+        NSLog(@"%@ already cached",self.routine.title);
+    }else{
+        succeedbegin=[self.routineCachHelper startCachForRoutine:self.routine
+                                                    withTileCach:self.mapView.tileCache
+                                                  withTileSource:self.mapView.tileSources[1]];
+    }
+    
+    
+    if(succeedbegin){
+        [cachedRoutines addObject:self.routine];
+    }
+    
+    OfflineRoutineTVC *offlineTVC=segue.destinationViewController;
+    offlineTVC.modelRoutines=cachedRoutines;
 }
 
 

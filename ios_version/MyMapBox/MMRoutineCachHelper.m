@@ -32,16 +32,19 @@
      NSUInteger minZoom=12;
      NSUInteger maxZoom=16;
      
-     CLLocationCoordinate2D southwest=CLLocationCoordinate2DMake(routine.minLatInMarkers,routine.minLngInMarkers);
-     CLLocationCoordinate2D northEast=CLLocationCoordinate2DMake(routine.maxLatInMarkers,routine.maxLngInMarkers);
+     CLLocationCoordinate2D southwest=CLLocationCoordinate2DMake([routine minLatInMarkers],[routine minLngInMarkers]);
+     CLLocationCoordinate2D northEast=CLLocationCoordinate2DMake([routine maxLatInMarkers],[routine maxLngInMarkers]);
      
      NSLog(@"south west %f %f",southwest.latitude,southwest.longitude);
      NSLog(@"north east %f %f",northEast.latitude,southwest.longitude);
      
+     /*
      if ([tilecach tileCountForSouthWest:southwest northEast:northEast minZoom:minZoom maxZoom:maxZoom]>500) {
          [CommonUtil alert:(@"cach size to big upper 500 tile count")];
          return NO;
      }
+      */
+     
      if([tilecach isBackgroundCaching]){
          return NO;
      }else{
@@ -61,14 +64,12 @@
      NSLog(@"MMRoutineCachHelper caching currrent num: %u with total count %u",tileIndex,totalTileCount);
      float progress=(float)tileIndex/(float)totalTileCount;
  
-     self.currentCachRoutine.cachProgress=progress;
+     self.currentCachRoutine.cachProgress=[NSNumber numberWithFloat: progress];
  
      if(tileIndex==totalTileCount){
          NSLog(@"%@ Cach Complete",self.currentCachRoutine.title);         
          self.currentCachRoutine=nil;
      }
  }
-
-
 
 @end

@@ -7,6 +7,7 @@
 //
 
 #import "RoutineEditTVC.h"
+#import "CommonUtil.h"
 
 @interface RoutineEditTVC ()<UITextFieldDelegate,UIActionSheetDelegate>
 @property (weak, nonatomic) IBOutlet UITextField *titleTextField;
@@ -20,7 +21,7 @@
     [super viewDidLoad];
     
     self.titleTextField.text=self.routine.title;
-    self.descriptionTextView.text=self.routine.myComment;
+    self.descriptionTextView.text=self.routine.mycomment;
     
 }
 
@@ -45,14 +46,14 @@
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
     if([segue.identifier isEqualToString:@"EditRoutineDoneSegue"]){
         self.routine.title=self.titleTextField.text;
-        self.routine.myComment=self.descriptionTextView.text;
+        self.routine.mycomment=self.descriptionTextView.text;
+        self.routine.updateTimestamp=[NSNumber numberWithLongLong: [CommonUtil currentUTCTimeStamp]];
     }
 }
 
 
 -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex{
     if(buttonIndex==actionSheet.destructiveButtonIndex){
-        NSLog(@"Delete confirm");
         [self performSegueWithIdentifier:@"deleteRoutineUnwindSegue" sender:nil];
     }
 }

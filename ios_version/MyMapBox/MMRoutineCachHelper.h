@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <Mapbox-iOS-SDK/Mapbox.h>
 #import "MMRoutine.h"
+#import "MMRoutine+Dao.h"
 
 @interface MMRoutineCachHelper : NSObject<RMTileCacheBackgroundDelegate>
 

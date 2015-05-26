@@ -1,0 +1,63 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "additionalProperties": true,
+    "description": "MapMarker cloud",
+    "properties": {
+        "iconUrl": {
+            "type": "string"
+        },
+        "uuid": {
+            "type": "string"
+        },
+        "category": {
+            "type": "integer"
+        },
+        "title": {
+            "type": "string"
+        },
+        "slideNum": {
+            "type": "integer"
+        },
+        "lat": {
+            "type": "number"
+        },
+        "lng": {
+            "type": "number"
+        },
+        "mycomment": {
+            "type": "string"
+        },
+        "imgUrls": {
+            "type": "string"
+        },
+        "address": {
+            "type": "string"
+        },
+        "offsetX": {
+            "type": "number"
+        },
+		"offsetY": {
+            "type": "number"
+        },
+        "routineId": {
+            "type": "integer"
+        },
+		"isDelete":{
+            "type": "boolean"
+        },
+		"isSynced":{
+            "type": "boolean"
+        },
+		"updateTime":{
+			"type": "integer"
+		}
+    },
+    "required": [
+		"uuid",
+		"isDelete",
+		"isSynced",
+		"updateTime"
+    ],
+    "title": "SyncMarker",
+    "type": "object"
+}

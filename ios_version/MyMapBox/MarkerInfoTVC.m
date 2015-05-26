@@ -34,11 +34,10 @@
 -(void)updateUI{
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
     self.markerTitleLabel.text=self.marker.title;
-    self.markerSlideNumLabel.text=[NSString stringWithFormat:@"%u",self.marker.slideNum];
-    self.markerCostLabel.text=self.marker.cost;
+    self.markerSlideNumLabel.text=[NSString stringWithFormat:@"%u",[self.marker.slideNum integerValue]];
     //will do image thing later
     
-    self.markerDescription.text=self.marker.myComment;
+    self.markerDescription.text=self.marker.mycomment;
 
 }
 

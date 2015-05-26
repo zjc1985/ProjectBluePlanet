@@ -7,12 +7,15 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "MMMarkerManager.h"
+#import "MMRoutine+Dao.h"
 
 @interface RoutineAddTVC : UITableViewController
 
-@property(nonatomic,strong)MMMarkerManager *markerManager;
+//in
 @property(nonatomic)double currentLat;
 @property(nonatomic)double currentLng;
+
+//out
+@property(nonatomic,strong) MMRoutine *addedRoutine;
 
 @end

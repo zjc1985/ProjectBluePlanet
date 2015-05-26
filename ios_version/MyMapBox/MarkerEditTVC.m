@@ -8,6 +8,7 @@
 
 #import "MarkerEditTVC.h"
 #import "SlideNumSelectTVC.h"
+#import "CommonUtil.h"
 
 @interface MarkerEditTVC ()<UIActionSheetDelegate>
 
@@ -28,18 +29,17 @@
 
 -(void)updateUI{
     self.markerTitleTextField.text=self.marker.title;
-    self.markerCostTextField.text=self.marker.cost;
-    self.markerSlideNumLabel.text=[NSString stringWithFormat:@"%u",self.marker.slideNum];
+    self.markerSlideNumLabel.text=[NSString stringWithFormat:@"%u",[self.marker.slideNum integerValue]];
     self.markerIconNameLabel.text=self.marker.iconUrl;
-    self.markerDescriptionTextView.text=self.marker.myComment;
+    self.markerDescriptionTextView.text=self.marker.mycomment;
 }
 
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
     if([segue.identifier isEqualToString:@"markerEditDoneSegue"]){
         self.marker.title=self.markerTitleTextField.text;
-        self.marker.cost=self.markerCostTextField.text;
-        self.marker.myComment=self.markerDescriptionTextView.text;
-        self.marker.slideNum=[self.markerSlideNumLabel.text integerValue];
+        self.marker.mycomment=self.markerDescriptionTextView.text;
+        self.marker.slideNum=[NSNumber numberWithInteger:[self.markerSlideNumLabel.text integerValue]];
+        self.marker.updateTimestamp=[NSNumber numberWithLongLong:[CommonUtil currentUTCTimeStamp]];
     }
     
     if([segue.destinationViewController isKindOfClass:[SlideNumSelectTVC class]]){

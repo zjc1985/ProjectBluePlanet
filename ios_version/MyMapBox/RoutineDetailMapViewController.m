@@ -19,8 +19,13 @@
 @property (weak, nonatomic) IBOutlet UIButton *locateButton;
 @property (weak, nonatomic) IBOutlet UIButton *syncButton;
 @property (weak, nonatomic) IBOutlet UIToolbar *playRoutineToolBar;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *SlidePlayButton;
 
 @property(nonatomic,strong) RMMapView *mapView;
+
+//slide show related
+@property (nonatomic, assign) NSInteger slideIndicator;
+
 
 @end
 
@@ -31,6 +36,8 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    self.slideIndicator=-1;
     
     self.locateButton.layer.borderWidth=0.5f;
     self.locateButton.layer.cornerRadius = 4.5;
@@ -87,6 +94,57 @@
 
 -(void)updateMapUI{
     NSLog(@"update ui");
+    if(self.slideIndicator<0){
+        [self updateUIInNormalMode];
+    }else{
+        [self updateUIInSlideMode];
+    }
+}
+
+-(void)updateUIInSlideMode{
+    [self.SlidePlayButton setImage:[UIImage imageNamed:@"icon_stop"]];
+    
+    [self.mapView removeAllAnnotations];
+    
+    NSMutableArray *markersNeedToShow=[[NSMutableArray alloc]init];
+    NSMutableArray *currentSlideIndicatorMarkers=[[NSMutableArray alloc]init];
+    NSArray *markersSortedBySlideNum=[self markersSortedBySlideNum];
+    
+    for (NSUInteger i=0; i<self.slideIndicator+1; i++) {
+        [markersNeedToShow addObjectsFromArray:[markersSortedBySlideNum objectAtIndex:i]];
+        if (i==self.slideIndicator) {
+            [currentSlideIndicatorMarkers addObjectsFromArray:[markersSortedBySlideNum objectAtIndex:i]];
+        }
+    }
+    
+    for (MMMarker *marker in markersNeedToShow) {
+        [self addMarkerWithTitle:marker.title
+                  withCoordinate:CLLocationCoordinate2DMake([marker.lat doubleValue], [marker.lng doubleValue])
+                  withCustomData:marker];
+    }
+}
+
+-(NSArray *)markersSortedBySlideNum{
+    NSMutableArray *result=[[NSMutableArray alloc]init];
+    NSArray *allMarkers=[self.routine allMarks];
+    for (NSUInteger i=1; i<allMarkers.count+1; i++) {
+        NSMutableArray *markersWithSameSlideNum=[[NSMutableArray alloc]init];
+        for (MMMarker *marker in allMarkers) {
+            if ([marker.slideNum unsignedIntegerValue] ==i) {
+                [markersWithSameSlideNum addObject:marker];
+            }
+        }
+        
+        if(markersWithSameSlideNum.count>0){
+            [result addObject:markersWithSameSlideNum];
+        }
+    }
+    return result;
+}
+
+-(void)updateUIInNormalMode{
+    [self.SlidePlayButton setImage:[UIImage imageNamed:@"icon_play"]];
+    
     [self.mapView removeAllAnnotations];
     
     for (MMMarker *marker in [self.routine allMarks]) {
@@ -118,7 +176,6 @@
     }else{
         [self.mapView setCenterCoordinate:CLLocationCoordinate2DMake([self.routine.lat doubleValue], [self.routine.lng doubleValue]) animated:YES];
     }
-    
 }
 
 -(void)addMarkerWithTitle:(NSString *)title withCoordinate:(CLLocationCoordinate2D)coordinate withCustomData:(id)customData{
@@ -132,12 +189,29 @@
 
 #pragma mark - UI action
 - (IBAction)PlayButtonClick:(id)sender {
-    
-    [self.mapView zoomWithLatitudeLongitudeBoundsSouthWest:CLLocationCoordinate2DMake(31.216571, 121.391336)
-                                                 northEast:CLLocationCoordinate2DMake(31.237347, 121.416280)
-                                                  animated:YES];
+    if(self.slideIndicator<0){
+        self.slideIndicator=0;
+    }else{
+        self.slideIndicator=-1;
+    }
+    [self updateMapUI];
+}
+
+- (IBAction)slidePrevClick:(id)sender {
+    if(self.slideIndicator>0){
+        self.slideIndicator--;
+        [self updateMapUI];
+    }
+}
+
+- (IBAction)slideNextClick:(id)sender {
+    if(self.slideIndicator>=0 && self.slideIndicator<[self.routine allMarks].count-1){
+        self.slideIndicator++;
+        [self updateMapUI];
+    }
 
 }
+
 - (IBAction)refreshButtonClick:(id)sender {
     NSString *currentRoutineUUID=self.routine.uuid;
     [CloudManager syncMarkersByRoutineUUID:self.routine.uuid withBlockWhenDone:^(NSError *error) {

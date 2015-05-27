@@ -122,11 +122,43 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MyMapBox/RoutineDetailMapViewController.m"
-            timestampString = "453895432.208353"
+            timestampString = "454329066.779546"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "199"
-            endingLineNumber = "199"
+            startingLineNumber = "249"
+            endingLineNumber = "249"
+            landmarkName = "-prepareForSegue:sender:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MyMapBox/RoutineDetailMapViewController.m"
+            timestampString = "454329066.779546"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "258"
+            endingLineNumber = "258"
+            landmarkName = "-DeleteMarkerDone:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MyMapBox/RoutineDetailMapViewController.m"
+            timestampString = "454329066.779546"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "286"
+            endingLineNumber = "286"
             landmarkName = "-actionSheet:clickedButtonAtIndex:"
             landmarkType = "5">
          </BreakpointContent>
@@ -138,44 +170,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MyMapBox/RoutineDetailMapViewController.m"
-            timestampString = "453895432.208353"
+            timestampString = "454329066.779546"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "208"
-            endingLineNumber = "208"
+            startingLineNumber = "281"
+            endingLineNumber = "281"
             landmarkName = "-actionSheet:clickedButtonAtIndex:"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "MyMapBox/RoutineDetailMapViewController.m"
-            timestampString = "453895432.208353"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "236"
-            endingLineNumber = "236"
-            landmarkName = "-mapView:layerForAnnotation:"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "MyMapBox/RoutineDetailMapViewController.m"
-            timestampString = "453895432.208353"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "231"
-            endingLineNumber = "231"
-            landmarkName = "-mapView:layerForAnnotation:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -191,39 +191,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "91"
             endingLineNumber = "91"
-            landmarkName = "-updateMapUI"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "MyMapBox/RoutineDetailMapViewController.m"
-            timestampString = "453895432.208353"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "99"
-            endingLineNumber = "99"
-            landmarkName = "-updateMapUI"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "MyMapBox/RoutineDetailMapViewController.m"
-            timestampString = "453895432.208353"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "117"
-            endingLineNumber = "117"
-            landmarkName = "-updateMapUI"
+            landmarkName = "-viewWillAppear:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -420,12 +388,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MyMapBox/RoutineDetailMapViewController.m"
-            timestampString = "453895432.208353"
+            timestampString = "454329066.779546"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "145"
-            endingLineNumber = "145"
-            landmarkName = "-refreshButtonClick:"
+            startingLineNumber = "195"
+            endingLineNumber = "195"
+            landmarkName = "-PlayButtonClick:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -436,12 +404,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MyMapBox/RoutineDetailMapViewController.m"
-            timestampString = "453895432.208353"
+            timestampString = "454329066.779546"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "144"
-            endingLineNumber = "144"
-            landmarkName = "-refreshButtonClick:"
+            startingLineNumber = "194"
+            endingLineNumber = "194"
+            landmarkName = "-PlayButtonClick:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -452,12 +420,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MyMapBox/RoutineDetailMapViewController.m"
-            timestampString = "453895432.208353"
+            timestampString = "454329066.779546"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "179"
-            endingLineNumber = "179"
-            landmarkName = "-DeleteMarkerDone:"
+            startingLineNumber = "229"
+            endingLineNumber = "229"
+            landmarkName = "-locateButtonClick:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -474,6 +442,22 @@
             startingLineNumber = "199"
             endingLineNumber = "199"
             landmarkName = "-allMarks"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MyMapBox/RoutineDetailMapViewController.m"
+            timestampString = "454329066.779546"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "107"
+            endingLineNumber = "107"
+            landmarkName = "-updateUIInSlideMode"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

@@ -108,7 +108,7 @@
                                                        withLat:[lat doubleValue]
                                                        withLng:[lng doubleValue]
                                                       withUUID:[markerDic objectForKey:KEY_MARKER_UUID]];
-            marker.iconUrl=[markerDic objectForKey:KEY_MARKER_ICON_URL];
+            marker.iconUrl=[self iconUrlToName:[markerDic objectForKey:KEY_MARKER_ICON_URL]];
             marker.category=[markerDic objectForKey:KEY_MARKER_CATEGORY];
             marker.title=[markerDic objectForKey:KEY_MARKER_TITLE];
             marker.slideNum=[markerDic objectForKey:KEY_MARKER_SLIDE_NUM];
@@ -127,7 +127,7 @@
     for (NSDictionary *markerDic in array) {
         MMMarker *marker=[MMMarker queryMMMarkerWithUUID:[markerDic objectForKey:KEY_MARKER_UUID]];
         if(marker){
-            marker.iconUrl=[markerDic objectForKey:KEY_MARKER_ICON_URL];
+            marker.iconUrl=[self iconUrlToName: [markerDic objectForKey:KEY_MARKER_ICON_URL]];
             marker.category=[markerDic objectForKey:KEY_MARKER_CATEGORY];
             marker.title=[markerDic objectForKey:KEY_MARKER_TITLE];
             marker.slideNum=[markerDic objectForKey:KEY_MARKER_SLIDE_NUM];
@@ -234,7 +234,7 @@
             }
             
             ovMarker.updateTimestamp=[ovMarkerDic objectForKey:KEY_OVMARKER_UPDATE_TIME];
-            ovMarker.iconUrl=[ovMarkerDic objectForKey:KEY_OVMARKER_ICON_URL];
+            ovMarker.iconUrl=[self iconUrlToName: [ovMarkerDic objectForKey:KEY_OVMARKER_ICON_URL]];
             ovMarker.isSync=[NSNumber numberWithBool:YES];
         }
     }
@@ -253,7 +253,7 @@
         MMOvMarker *ovMarker=[MMOvMarker createMMOvMarkerInRoutine:belongRoutine
                                                           withUUID:[ovMarkerDic objectForKey:KEY_OVMARKER_UUID]];
         ovMarker.updateTimestamp=[ovMarkerDic objectForKey:KEY_OVMARKER_UPDATE_TIME];
-        ovMarker.iconUrl=[ovMarkerDic objectForKey:KEY_OVMARKER_ICON_URL];
+        ovMarker.iconUrl=[self iconUrlToName:[ovMarkerDic objectForKey:KEY_OVMARKER_ICON_URL]];
         ovMarker.isSync=[NSNumber numberWithBool:YES];
         ovMarker.offsetX=[ovMarkerDic objectForKey:KEY_OVMARKER_OFFSET_X];
         ovMarker.offsetY=[ovMarkerDic objectForKey:KEY_OVMARKER_OFFSET_Y];
@@ -297,6 +297,16 @@
 }
 
 
++(NSString *)iconUrlToName:(NSString *)url{
+    NSString *trimUrl=[url stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    NSArray *strArray=[trimUrl componentsSeparatedByString:@"/"];
+    NSString *result= [strArray lastObject];
+    if(result){
+        return result;
+    }else{
+        return @"default_default.png";
+    }
+}
 
 
 

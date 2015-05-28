@@ -290,21 +290,26 @@
         anchorPoint.x=0.5;
         anchorPoint.y=1;
         
-        //RMMarker *marker = [[RMMarker alloc] initWithUIImage:[UIImage imageNamed:ovMarker.iconUrl]anchorPoint:anchorPoint];
-        RMMarker *marker = [[RMMarker alloc] initWithUIImage:[UIImage imageNamed:@"default_default"]anchorPoint:anchorPoint];
+        UIImage *iconImage=[UIImage imageNamed:ovMarker.iconUrl];
+        if(!iconImage){
+            iconImage=[UIImage imageNamed:@"default_default.png"];
+        }
+        
+        RMMarker *marker = [[RMMarker alloc] initWithUIImage: iconImage anchorPoint:anchorPoint];
+        //RMMarker *marker = [[RMMarker alloc] initWithUIImage:[UIImage imageNamed:@"default_default"]anchorPoint:anchorPoint];
         
         
         marker.canShowCallout=YES;
         
         marker.rightCalloutAccessoryView=[UIButton buttonWithType:UIButtonTypeDetailDisclosure];
         
+        //[marker setFrame:CGRectMake(0, 0, 32, 37)];
+        
         return marker;
     }
     
     return nil;
 }
-
-
 
 -(void)tapOnCalloutAccessoryControl:(UIControl *)control forAnnotation:(RMAnnotation *)annotation onMap:(RMMapView *)map{
     if([annotation.userInfo isKindOfClass:[MMOvMarker class]]){

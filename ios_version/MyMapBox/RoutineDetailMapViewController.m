@@ -126,7 +126,7 @@
     [self.mapView zoomWithLatitudeLongitudeBoundsSouthWest:[CommonUtil minLocationInMMMarkers:currentSlideIndicatorMarkers]
                                                  northEast:[CommonUtil maxLocationInMMMarkers:currentSlideIndicatorMarkers]
                                                   animated:YES];
-    //[self.mapView setZoom:self.mapView.zoom-0.5 animated:YES];
+    [self.mapView setZoom:self.mapView.zoom-0.5 animated:YES];
 }
 
 -(NSArray *)markersSortedBySlideNum{
@@ -197,6 +197,7 @@
     if(self.slideIndicator<0){
         self.slideIndicator=0;
     }else{
+        self.currentMarker=nil;
         self.slideIndicator=-1;
     }
     [self updateMapUI];
@@ -317,8 +318,14 @@
         anchorPoint.x=0.5;
         anchorPoint.y=1;
         
-        //RMMarker *marker = [[RMMarker alloc] initWithUIImage:[UIImage imageNamed:modelMarker.iconUrl]anchorPoint:anchorPoint];
-        RMMarker *marker = [[RMMarker alloc] initWithUIImage:[UIImage imageNamed:@"default_default"]anchorPoint:anchorPoint];
+        UIImage *iconImage=[UIImage imageNamed:modelMarker.iconUrl];
+        
+        if(!iconImage){
+            iconImage=[UIImage imageNamed:@"default_default.png"];
+        }
+        
+        RMMarker *marker = [[RMMarker alloc] initWithUIImage:iconImage anchorPoint:anchorPoint];
+        //RMMarker *marker = [[RMMarker alloc] initWithUIImage:[UIImage imageNamed:@"default_default"]anchorPoint:anchorPoint];
         
         marker.canShowCallout=YES;
         

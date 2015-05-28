@@ -46,6 +46,31 @@
     XCTAssert(YES, @"Pass");
 }
 
+-(void)testSplitString{
+    NSString *str=@"resource/icons/default/default_default.png";
+    NSLog(@"%@",[self iconUrlToName:str]);
+    XCTAssertTrue([@"default_default.png" isEqualToString:[self iconUrlToName:str]]);
+}
+
+-(void)testSplitString_2{
+    NSString *str=@"default_default.png";
+    NSLog(@"%@",[self iconUrlToName:str]);
+    XCTAssertTrue([@"default_default.png" isEqualToString:[self iconUrlToName:str]]);
+}
+
+
+-(NSString *)iconUrlToName:(NSString *)url{
+    NSString *trimUrl=[url stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    NSArray *strArray=[trimUrl componentsSeparatedByString:@"/"];
+    return [strArray lastObject];
+}
+
+
+
+
+
+
+
 
 
 @end

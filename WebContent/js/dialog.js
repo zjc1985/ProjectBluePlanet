@@ -333,53 +333,53 @@ function MarkerEditor(id){
 	
 	function genALIconItems(){
 		return [
-			{url:"resource/icons/arriveLeave/al_default.png",name:""},
-			{url:"resource/icons/arriveLeave/al_1.png",name:""}
+			{url:"resource/icons/al_default.png",name:""},
+			{url:"resource/icons/al_1.png",name:""}
 		];
 	}
 	
 	function genSightIconItems(){
 		return [
-			{url:"resource/icons/sight/sight_default.png",name:""},
-			{url:"resource/icons/sight/sight_1.png",name:""},
-			{url:"resource/icons/sight/sight_2.png",name:""}
+			{url:"resource/icons/sight_default.png",name:""},
+			{url:"resource/icons/sight_1.png",name:""},
+			{url:"resource/icons/sight_2.png",name:""}
 		];
 	}
 	
 	function genHotelIconItems(){
 		return [
-			{url:"resource/icons/hotel/hotel_default.png",name:""},
-			{url:"resource/icons/hotel/hotel_1.png",name:""}
+			{url:"resource/icons/hotel_default.png",name:""},
+			{url:"resource/icons/hotel_1.png",name:""}
 		];	
 	}
 	
 	function genFoodIconItems(){
 		return [
-			{url:"resource/icons/food/food_default.png",name:""},
-			{url:"resource/icons/food/food_1.png",name:""}
+			{url:"resource/icons/food_default.png",name:""},
+			{url:"resource/icons/food_1.png",name:""}
 		];	
 	}
 	
 	function genInfoIconItems(){
 		return [
-			{url:"resource/icons/event/event_default.png",name:""},
-			{url:"resource/icons/event/event_1.png",name:""},
-			{url:"resource/icons/event/event_2.png",name:""},
-			{url:"resource/icons/event/event_3.png",name:""},
+			{url:"resource/icons/event_default.png",name:""},
+			{url:"resource/icons/event_1.png",name:""},
+			{url:"resource/icons/event_2.png",name:""},
+			{url:"resource/icons/event_3.png",name:""},
 		];			
 	}
 	
 	function genOvIconItems(){
 		var items=[];
-		items.push({url:"resource/icons/default/default_default.png",name:""});
-		items.push({url:"resource/icons/overview/overview_bear.png",name:""});
-		items.push({url:"resource/icons/overview/overview_photo.png",name:""});
-		items.push({url:"resource/icons/overview/overview_eiffel.png",name:""});
-		items.push({url:"resource/icons/overview/overview_sun.png",name:""});
-		items.push({url:"resource/icons/overview/overview_beach.png",name:""});
-		items.push({url:"resource/icons/overview/overview_bag.png",name:""});
-		items.push({url:"resource/icons/overview/overview_car.png",name:""});
-		items.push({url:"resource/icons/overview/overview_star.png",name:""});
+		items.push({url:"resource/icons/default_default.png",name:""});
+		items.push({url:"resource/icons/overview_bear.png",name:""});
+		items.push({url:"resource/icons/overview_photo.png",name:""});
+		items.push({url:"resource/icons/overview_eiffel.png",name:""});
+		items.push({url:"resource/icons/overview_sun.png",name:""});
+		items.push({url:"resource/icons/overview_beach.png",name:""});
+		items.push({url:"resource/icons/overview_bag.png",name:""});
+		items.push({url:"resource/icons/overview_car.png",name:""});
+		items.push({url:"resource/icons/overview_star.png",name:""});
 		return items;
 	}
 	

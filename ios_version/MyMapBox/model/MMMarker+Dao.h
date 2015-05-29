@@ -23,7 +23,7 @@
 #define KEY_MARKER_IS_DELETE @"isDelete"
 #define KEY_MARKER_IS_SYNCED @"isSynced"
 #define KEY_MARKER_UPDATE_TIME @"updateTime"
-#define KEY_MARKER_IMAGE_URLS @"imageUrls"
+#define KEY_MARKER_IMAGE_URLS @"imgUrls"
 
 typedef enum : NSUInteger {
     CategoryArrivalLeave = 1,
@@ -45,6 +45,10 @@ typedef enum : NSUInteger {
 +(void)removeMMMarker:(MMMarker *)marker;
 
 -(void)markDelete;
+
+-(NSString *)subDescription;
+
+-(NSArray *)imageUrlsArray;
 
 -(NSDictionary *)convertToDictionary;
 

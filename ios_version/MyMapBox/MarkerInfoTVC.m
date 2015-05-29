@@ -12,8 +12,7 @@
 @interface MarkerInfoTVC ()
 
 @property (weak, nonatomic) IBOutlet UILabel *markerTitleLabel;
-@property (weak, nonatomic) IBOutlet UILabel *markerSlideNumLabel;
-@property (weak, nonatomic) IBOutlet UILabel *markerCostLabel;
+@property (weak, nonatomic) IBOutlet UILabel *markerSubInfoLabel;
 @property (weak, nonatomic) IBOutlet UIImageView *markerIconImage;
 @property (weak, nonatomic) IBOutlet UITextView *markerDescription;
 
@@ -27,18 +26,17 @@
     // Uncomment the following line to preserve selection between presentations.
     // self.clearsSelectionOnViewWillAppear = NO;
     
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     [self updateUI];
 }
 
 -(void)updateUI{
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+    self.markerIconImage.image=[UIImage imageNamed:self.marker.iconUrl];
     self.markerTitleLabel.text=self.marker.title;
-    self.markerSlideNumLabel.text=[NSString stringWithFormat:@"%u",[self.marker.slideNum integerValue]];
-    //will do image thing later
+    self.markerSubInfoLabel.text=[self.marker subDescription];
+     //will do image thing later
     
     self.markerDescription.text=self.marker.mycomment;
-
 }
 
 -(void)viewWillAppear:(BOOL)animated{
@@ -57,7 +55,6 @@
         markerEditTVC.marker=self.marker;
         markerEditTVC.markerCount=self.markerCount;
     }
-    
 }
 
 @end

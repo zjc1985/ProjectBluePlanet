@@ -71,15 +71,67 @@
     [[CommonUtil getContext] deleteObject:marker];
 }
 
+-(NSArray *)imageUrlsArray{
+    NSError *error;
+    NSData *data=[self.imgUrls dataUsingEncoding:NSUTF8StringEncoding];
+    if(data){
+        NSArray *jsonObject=[NSJSONSerialization JSONObjectWithData:data
+                                                            options:NSJSONReadingAllowFragments
+                                                              error:&error];
+        
+        NSMutableArray *result=[[NSMutableArray alloc]init];
+        
+        if(jsonObject!=nil && error==nil){
+            for (NSString *url in jsonObject) {
+                [result addObject: [url stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]]];
+            }
+            return result;
+        }else{
+            return nil;
+        }
+    }else{
+        return nil;
+    }
+}
+
 -(void)markDelete{
     self.isDelete=[NSNumber numberWithBool:YES];
     self.updateTimestamp=[NSNumber numberWithLongLong:[CommonUtil currentUTCTimeStamp]];
 }
 
+-(NSString *)subDescription{
+    NSString *categoryName;
+    switch ([self.category integerValue]) {
+        case CategoryArrivalLeave:
+            categoryName=@"Arrive & Leave";
+            break;
+        case CategorySight:
+            categoryName=@"Sight";
+            break;
+        case CategoryHotel:
+            categoryName=@"Hotel";
+            break;
+        case CategoryFood:
+            categoryName=@"Food";
+            break;
+        case CategoryInfo:
+            categoryName=@"Info";
+            break;
+        case CategoryOverview:
+            categoryName=@"Overview";
+            break;
+        default:
+            categoryName=@"Info";
+            break;
+    }
+    
+    return [NSString stringWithFormat:@"%@ %u",categoryName,[self.slideNum integerValue]];
+}
+
 -(NSDictionary *)convertToDictionary{
     NSMutableDictionary *dic=[[NSMutableDictionary alloc]init];
     
-    [dic setValue:@"resource/icons/default/default_default.png" forKey:KEY_MARKER_ICON_URL];
+    [dic setValue:self.iconUrl forKey:KEY_MARKER_ICON_URL];
     [dic setValue:self.uuid forKey:KEY_MARKER_UUID];
     [dic setValue:self.category forKey:KEY_MARKER_CATEGORY];
     [dic setValue:self.title forKey:KEY_MARKER_TITLE];

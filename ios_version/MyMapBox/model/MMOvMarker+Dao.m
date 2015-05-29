@@ -86,28 +86,11 @@
     [dic setValue:self.belongRoutine.uuid forKey:KEY_OVMARKER_ROUTINE_ID];
     [dic setValue:self.isDelete forKey:KEY_OVMARKER_IS_DELETE];
     [dic setValue:self.updateTimestamp forKey:KEY_OVMARKER_UPDATE_TIME];
-    [dic setValue:@"resource/icons/default/default_default.png" forKey:KEY_OVMARKER_ICON_URL];
+    [dic setValue:self.iconUrl forKey:KEY_OVMARKER_ICON_URL];
     [dic setValue:self.isSync forKey:KEY_OVMARKER_IS_SYNCED];
     [dic setValue:self.uuid forKey:KEY_OVMARKER_UUID];
     return dic;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

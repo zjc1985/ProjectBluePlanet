@@ -11,6 +11,7 @@
 #import <AVOSCloud/AVOSCloud.h>
 #import "CloudManager.h"
 #import "MMRoutine+Dao.h"
+#import "MMMarker+Dao.h"
 
 @interface AVOSCloudTester : XCTestCase
 
@@ -42,7 +43,7 @@
 
 -(void)testQueryRoutine{
     //D3E26085-70FC-4663-B8FB-AF6DD9EE0984
-    MMRoutine *routine=[MMRoutine queryMMRoutineWithUUID:@"D3E26085-70FC-4663-B8FB-AF6DD9EE0984"];
+    MMRoutine *routine=[MMRoutine queryMMRoutineWithUUID:@"71e091ee-a165-4c73-83d1-94051f66d327"];
     XCTAssertNotNil(routine);
 }
 

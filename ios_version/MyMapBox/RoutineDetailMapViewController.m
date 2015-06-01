@@ -76,9 +76,9 @@
     [self.view sendSubviewToBack:self.mapView];
     
     NSLog(@"RoutineDetailMapViewTVC did load");
-}
-
--(void)viewWillAppear:(BOOL)animated{
+    
+    [self updateMapUI];
+    
     if([CommonUtil isFastNetWork]){
         [CloudManager syncMarkersByRoutineUUID:self.routine.uuid withBlockWhenDone:^(NSError *error) {
             if(error){
@@ -88,12 +88,13 @@
             [self updateMapUI];
         }];
     }
-    
-    [self updateMapUI];
 }
 
+-(void)viewWillAppear:(BOOL)animated{
+    }
+
 -(void)updateMapUI{
-    NSLog(@"update ui");
+    
     if(self.slideIndicator<0){
         [self updateUIInNormalMode];
     }else{
@@ -102,6 +103,8 @@
 }
 
 -(void)updateUIInSlideMode{
+    NSLog(@"update ui in slide mode");
+    
     [self.SlidePlayButton setImage:[UIImage imageNamed:@"icon_stop"]];
     
     [self.mapView removeAllAnnotations];
@@ -148,6 +151,8 @@
 }
 
 -(void)updateUIInNormalMode{
+    NSLog(@"update ui in normal mode");
+    
     [self.SlidePlayButton setImage:[UIImage imageNamed:@"icon_play"]];
     
     [self.mapView removeAllAnnotations];

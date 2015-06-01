@@ -92,10 +92,6 @@
     [self.view addSubview:self.mapView];
     [self.view sendSubviewToBack:self.mapView];
     
-
-    [self addMarkerWithTitle:@"Boundary" withCoordinate:CLLocationCoordinate2DMake(31.216571, 121.391336)withCustomData:nil];
-    [self addMarkerWithTitle:@"Boundary" withCoordinate:CLLocationCoordinate2DMake(31.237347, 121.416280)withCustomData:nil];
-    
     [self ShowTourMapSource];
     
     NSLog(@"view did load");
@@ -113,6 +109,8 @@
     if(![CloudManager currentUser]){
         [self performSegueWithIdentifier:LOGIN_SEGUE sender:self];
     }else{
+        [self updateMapUI];
+        
         if([CommonUtil isFastNetWork]){
             [CloudManager syncRoutinesAndOvMarkersWithBlockWhenDone:^(NSError *error) {
                 if(error){
@@ -120,8 +118,6 @@
                 }
                 [self updateMapUI];
             }];
-        }else{
-            [self updateMapUI];
         }
     }
 }

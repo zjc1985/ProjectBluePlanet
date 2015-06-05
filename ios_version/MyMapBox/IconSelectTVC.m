@@ -7,8 +7,12 @@
 //
 
 #import "IconSelectTVC.h"
+#import "IconSelectTableViewCell.h"
+#import "MMMarkerIconInfo.h"
 
 @interface IconSelectTVC ()
+
+@property(nonatomic,strong) NSIndexPath* checkedIndexPath;
 
 @end
 
@@ -28,24 +32,45 @@
     // Uncheck the previous checked row
     if(self.checkedIndexPath)
     {
-        UITableViewCell* uncheckCell = [tableView
+        UITableViewCell *uncheckCell = [tableView
                                         cellForRowAtIndexPath:self.checkedIndexPath];
         uncheckCell.accessoryType = UITableViewCellAccessoryNone;
     }
-    UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
+    
+    IconSelectTableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
+   
+    UIImage *image=[UIImage imageNamed:cell.iconName];
+    if(image){
+        self.iconNameLabel.text=cell.iconName;
+        self.iconImageView.image=image;
+    }
+    
     cell.accessoryType = UITableViewCellAccessoryCheckmark;
     self.checkedIndexPath = indexPath;
 }
 
-/*
+#pragma mark - Table view data source
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return [MMMarkerIconInfo allMMMarkerIconInfo].count;
+}
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:<#@"reuseIdentifier"#> forIndexPath:indexPath];
+    IconSelectTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"iconCell" forIndexPath:indexPath];
     
-    // Configure the cell...
+    MMMarkerIconInfo *iconInfo=[[MMMarkerIconInfo allMMMarkerIconInfo] objectAtIndex:indexPath.row];
+    
+    cell.iconName=iconInfo.iconName;
+    cell.category=iconInfo.category;
+    
+    if ([self.iconNameLabel.text isEqualToString:iconInfo.iconName]) {
+        cell.accessoryType = UITableViewCellAccessoryCheckmark;
+        self.checkedIndexPath=indexPath;
+    }
     
     return cell;
 }
-*/
+
 
 /*
 // Override to support conditional editing of the table view.

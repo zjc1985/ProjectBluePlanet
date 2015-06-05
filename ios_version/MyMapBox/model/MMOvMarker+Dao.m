@@ -41,7 +41,7 @@
         result=[NSEntityDescription insertNewObjectForEntityForName:@"MMOvMarker" inManagedObjectContext:[CommonUtil getContext]];
         result.uuid=uuid;
         result.belongRoutine=routine;
-        result.iconUrl=@"default_default";
+        result.iconUrl=@"default_default.png";
         result.offsetX=[NSNumber numberWithInt:0];
         result.offsetX=[NSNumber numberWithInt:0];
         

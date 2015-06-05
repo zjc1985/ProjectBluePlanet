@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		28307D521B1D7E060050AA58 /* MMMarkerIconInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 28307D511B1D7E060050AA58 /* MMMarkerIconInfo.m */; };
+		28307D551B1D881F0050AA58 /* IconSelectTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 28307D541B1D881F0050AA58 /* IconSelectTableViewCell.m */; };
 		285E431F1AD61E720030A274 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 285E431E1AD61E720030A274 /* main.m */; };
 		285E43221AD61E720030A274 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 285E43211AD61E720030A274 /* AppDelegate.m */; };
 		285E43251AD61E720030A274 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 285E43241AD61E720030A274 /* ViewController.m */; };
@@ -54,6 +56,10 @@
 
 /* Begin PBXFileReference section */
 		21A0A51ABFCCA5850AF318AF /* Pods-MyMapBoxTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MyMapBoxTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-MyMapBoxTests/Pods-MyMapBoxTests.release.xcconfig"; sourceTree = "<group>"; };
+		28307D501B1D7E060050AA58 /* MMMarkerIconInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMMarkerIconInfo.h; path = model/MMMarkerIconInfo.h; sourceTree = "<group>"; };
+		28307D511B1D7E060050AA58 /* MMMarkerIconInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMMarkerIconInfo.m; path = model/MMMarkerIconInfo.m; sourceTree = "<group>"; };
+		28307D531B1D881F0050AA58 /* IconSelectTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IconSelectTableViewCell.h; sourceTree = "<group>"; };
+		28307D541B1D881F0050AA58 /* IconSelectTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IconSelectTableViewCell.m; sourceTree = "<group>"; };
 		285E43191AD61E720030A274 /* MyMapBox.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MyMapBox.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		285E431D1AD61E720030A274 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		285E431E1AD61E720030A274 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -171,6 +177,8 @@
 		285E431B1AD61E720030A274 /* MyMapBox */ = {
 			isa = PBXGroup;
 			children = (
+				28307D531B1D881F0050AA58 /* IconSelectTableViewCell.h */,
+				28307D541B1D881F0050AA58 /* IconSelectTableViewCell.m */,
 				28E475551AEF2AAB00449DBC /* OfflineRoutineTableViewCell.h */,
 				28E475561AEF2AAB00449DBC /* OfflineRoutineTableViewCell.m */,
 				845EB1F31AEE7B2500C719CA /* MMRoutineCachHelper.h */,
@@ -285,6 +293,8 @@
 				288B09A71B01A12C00066C59 /* MMOvMarker+Dao.m */,
 				288B09AB1B0320B200066C59 /* CloudManager.h */,
 				288B09AC1B0320B200066C59 /* CloudManager.m */,
+				28307D501B1D7E060050AA58 /* MMMarkerIconInfo.h */,
+				28307D511B1D7E060050AA58 /* MMMarkerIconInfo.m */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -459,6 +469,7 @@
 				28E261D61B007E920019611C /* MMRoutine+Dao.m in Sources */,
 				286390841AE0D44D00A5B999 /* IconSelectTVC.m in Sources */,
 				28E261F41B0095CE0019611C /* MMRoutine.m in Sources */,
+				28307D551B1D881F0050AA58 /* IconSelectTableViewCell.m in Sources */,
 				845EB1F51AEE7B2500C719CA /* MMRoutineCachHelper.m in Sources */,
 				28E4755A1AEF88C500449DBC /* SlideNumSelectTVC.m in Sources */,
 				28E475571AEF2AAB00449DBC /* OfflineRoutineTableViewCell.m in Sources */,
@@ -478,6 +489,7 @@
 				28E261F71B0095CE0019611C /* MMOvMarker.m in Sources */,
 				285E431F1AD61E720030A274 /* main.m in Sources */,
 				288B09A51B00BC1500066C59 /* MMMarker+Dao.m in Sources */,
+				28307D521B1D7E060050AA58 /* MMMarkerIconInfo.m in Sources */,
 				2863907B1ADD136000A5B999 /* CommonUtil.m in Sources */,
 				288B09AD1B0320B200066C59 /* CloudManager.m in Sources */,
 				8421CB151ADBF8FA002046B9 /* RoutineInfoViewController.m in Sources */,

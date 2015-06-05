@@ -44,11 +44,19 @@ typedef enum : NSUInteger {
 
 +(void)removeMMMarker:(MMMarker *)marker;
 
++(NSString *)CategoryNameWithMMMarkerCategory:(MMMarkerCategory)categoryNum;
+
 -(void)markDelete;
+
+-(NSString *)categoryName;
 
 -(NSString *)subDescription;
 
 -(NSArray *)imageUrlsArray;
+
+-(void)addImageUrl:(NSString *)imgUrl;
+
+-(void)removeImageUrl:(NSString *)imgUrl;
 
 -(NSDictionary *)convertToDictionary;
 

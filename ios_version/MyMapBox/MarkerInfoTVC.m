@@ -32,6 +32,41 @@
     // Uncomment the following line to preserve selection between presentations.
     // self.clearsSelectionOnViewWillAppear = NO;
     
+    
+    UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(markerImageClicked)];
+    singleTap.numberOfTapsRequired = 1;
+    [self.markerImage setUserInteractionEnabled:YES];
+    [self.markerImage addGestureRecognizer:singleTap];
+}
+
+-(void)viewDidAppear:(BOOL)animated{
+    [self updateUI];
+}
+
+-(void)markerImageClicked{
+    if ([self.marker imageUrlsArray].count>0) {
+        self.photos=[NSMutableArray array];
+        for (NSString *urlString in [self.marker imageUrlsArray]) {
+            NSURL *url=[NSURL URLWithString:urlString];
+            [self.photos addObject:[MWPhoto photoWithURL:url]];
+        }
+        
+        MWPhotoBrowser *browser = [[MWPhotoBrowser alloc] initWithDelegate:self];
+        
+        [browser setCurrentPhotoIndex:0];
+        
+        [self.navigationController pushViewController:browser animated:YES];
+        [browser showNextPhotoAnimated:YES];
+        [browser showPreviousPhotoAnimated:YES];
+    }
+}
+
+-(void)updateUI{
+    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+    self.markerIconImage.image=[UIImage imageNamed:self.marker.iconUrl];
+    self.markerTitleLabel.text=self.marker.title;
+    self.markerSubInfoLabel.text=[self.marker subDescription];
+    
     NSString *imageUrlString=[[self.marker imageUrlsArray] firstObject];
     if(imageUrlString){
         NSURL *url=[NSURL URLWithString:imageUrlString];
@@ -46,36 +81,6 @@
         
     }
     
-    UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(markerImageClicked)];
-    singleTap.numberOfTapsRequired = 1;
-    [self.markerImage setUserInteractionEnabled:YES];
-    [self.markerImage addGestureRecognizer:singleTap];
-    
-    [self updateUI];
-}
-
--(void)markerImageClicked{
-    self.photos=[NSMutableArray array];
-    for (NSString *urlString in [self.marker imageUrlsArray]) {
-        NSURL *url=[NSURL URLWithString:urlString];
-        [self.photos addObject:[MWPhoto photoWithURL:url]];
-    }
-    
-    MWPhotoBrowser *browser = [[MWPhotoBrowser alloc] initWithDelegate:self];
-
-    [browser setCurrentPhotoIndex:0];
-    
-    [self.navigationController pushViewController:browser animated:YES];
-    [browser showNextPhotoAnimated:YES];
-    [browser showPreviousPhotoAnimated:YES];
-}
-
--(void)updateUI{
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
-    self.markerIconImage.image=[UIImage imageNamed:self.marker.iconUrl];
-    self.markerTitleLabel.text=self.marker.title;
-    self.markerSubInfoLabel.text=[self.marker subDescription];
-     //will do image thing later
     if (!self.marker.mycomment.length) {
         self.markerDescription.text=@"No Description";
     }else{

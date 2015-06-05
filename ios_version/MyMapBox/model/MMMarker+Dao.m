@@ -42,7 +42,7 @@
         result.title=@"New Marker";
         result.mycomment=@"";
         result.category=[NSNumber numberWithInt:CategoryInfo];
-        result.iconUrl=@"default_default";
+        result.iconUrl=@"event_default.png";
         result.imgUrls=@"[]";
         
         result.lat=[NSNumber numberWithDouble:lat];
@@ -71,6 +71,34 @@
     [[CommonUtil getContext] deleteObject:marker];
 }
 
++(NSString *)CategoryNameWithMMMarkerCategory:(MMMarkerCategory)categoryNum{
+    NSString *categoryName;
+    switch (categoryNum) {
+        case CategoryArrivalLeave:
+            categoryName=@"Arrive & Leave";
+            break;
+        case CategorySight:
+            categoryName=@"Sight";
+            break;
+        case CategoryHotel:
+            categoryName=@"Hotel";
+            break;
+        case CategoryFood:
+            categoryName=@"Food";
+            break;
+        case CategoryInfo:
+            categoryName=@"Info";
+            break;
+        case CategoryOverview:
+            categoryName=@"Overview";
+            break;
+        default:
+            categoryName=@"Info";
+            break;
+    }
+    return categoryName;
+}
+
 -(NSArray *)imageUrlsArray{
     NSError *error;
     NSData *data=[self.imgUrls dataUsingEncoding:NSUTF8StringEncoding];
@@ -94,38 +122,46 @@
     }
 }
 
+-(void)addImageUrl:(NSString *)imgUrl{
+    NSMutableArray *imageArray=[[NSMutableArray alloc]initWithArray:[self imageUrlsArray]];
+    [imageArray addObject:imgUrl];
+    
+    NSError *error;
+    NSData *data= [NSJSONSerialization dataWithJSONObject:imageArray
+                                    options:NSJSONWritingPrettyPrinted
+                                                    error:&error];
+    if(!error){
+        NSString *jsonString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+        self.imgUrls=jsonString;
+    }
+}
+
+-(void)removeImageUrl:(NSString *)imgUrl{
+    NSMutableArray *imageArray=[[NSMutableArray alloc]initWithArray:[self imageUrlsArray]];
+    [imageArray removeObject:imgUrl];
+    
+    NSError *error;
+    NSData *data= [NSJSONSerialization dataWithJSONObject:imageArray
+                                                  options:NSJSONWritingPrettyPrinted
+                                                    error:&error];
+    if(!error){
+        NSString *jsonString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+        self.imgUrls=jsonString;
+    }
+}
+
 -(void)markDelete{
     self.isDelete=[NSNumber numberWithBool:YES];
     self.updateTimestamp=[NSNumber numberWithLongLong:[CommonUtil currentUTCTimeStamp]];
 }
 
+
+-(NSString *)categoryName{
+    return [MMMarker CategoryNameWithMMMarkerCategory:[self.category integerValue]];
+}
+
 -(NSString *)subDescription{
-    NSString *categoryName;
-    switch ([self.category integerValue]) {
-        case CategoryArrivalLeave:
-            categoryName=@"Arrive & Leave";
-            break;
-        case CategorySight:
-            categoryName=@"Sight";
-            break;
-        case CategoryHotel:
-            categoryName=@"Hotel";
-            break;
-        case CategoryFood:
-            categoryName=@"Food";
-            break;
-        case CategoryInfo:
-            categoryName=@"Info";
-            break;
-        case CategoryOverview:
-            categoryName=@"Overview";
-            break;
-        default:
-            categoryName=@"Info";
-            break;
-    }
-    
-    return [NSString stringWithFormat:@"%@ %u",categoryName,[self.slideNum integerValue]];
+    return [NSString stringWithFormat:@"%@ %u",[self categoryName],[self.slideNum integerValue]];
 }
 
 -(NSDictionary *)convertToDictionary{

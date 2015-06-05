@@ -7,9 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "MMMarker.h"
 
 @interface IconSelectTVC : UITableViewController
 
-@property(nonatomic,strong) NSIndexPath* checkedIndexPath;
+//iconUrl
+@property(nonatomic,weak)UILabel *iconNameLabel;
+@property (weak, nonatomic) IBOutlet UIImageView *iconImageView;
 
 @end

@@ -58,12 +58,26 @@
     XCTAssertTrue([@"default_default.png" isEqualToString:[self iconUrlToName:str]]);
 }
 
+-(void)testNSArrayDeleteObject{
+    NSMutableArray *array=[NSMutableArray new];
+    [array addObject: @"this is 1"];
+    [array addObject:@"this is 2"];
+    
+    [array removeObject:@"this is 1"];
+
+    [array removeObject:@"this is 2"];
+    
+    NSLog(@"%u",array.count);
+     XCTAssert(YES, @"Pass");
+}
 
 -(NSString *)iconUrlToName:(NSString *)url{
     NSString *trimUrl=[url stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     NSArray *strArray=[trimUrl componentsSeparatedByString:@"/"];
     return [strArray lastObject];
 }
+
+
 
 
 

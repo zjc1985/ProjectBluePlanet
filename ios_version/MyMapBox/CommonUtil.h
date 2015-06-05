@@ -37,4 +37,6 @@
 
 +(CLLocationCoordinate2D) maxLocationInMMMarkers:(NSArray *) markers; //of MMMarker
 
++(UIImage *)compressForUpload:(UIImage *)original scale:(CGFloat)scale;
+
 @end

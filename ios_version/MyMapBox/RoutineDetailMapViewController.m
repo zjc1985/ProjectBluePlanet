@@ -58,7 +58,6 @@
     
     self.mapView=[[RMMapView alloc] initWithFrame:self.view.bounds
                                     andTilesource:tileSource];
-    //self.mapView.minZoom=3;
     self.mapView.maxZoom=17;
     
     self.mapView.zoom=15;
@@ -91,7 +90,11 @@
 }
 
 -(void)viewWillAppear:(BOOL)animated{
-    }
+}
+
+-(void)viewDidAppear:(BOOL)animated{
+    [self updateMapUI];
+}
 
 -(void)updateMapUI{
     
@@ -129,6 +132,7 @@
     [self.mapView zoomWithLatitudeLongitudeBoundsSouthWest:[CommonUtil minLocationInMMMarkers:currentSlideIndicatorMarkers]
                                                  northEast:[CommonUtil maxLocationInMMMarkers:currentSlideIndicatorMarkers]
                                                   animated:YES];
+    
     [self.mapView setZoom:self.mapView.zoom-0.5 animated:YES];
 }
 
@@ -261,6 +265,8 @@
 }
 
 -(IBAction)DeleteMarkerDone:(UIStoryboardSegue *)segue{
+    self.currentMarker=nil;
+    
     NSLog(@"prepare delete marker");
     MarkerEditTVC *markerEditTVC=segue.sourceViewController;
     MMMarker *marker=markerEditTVC.marker;
@@ -272,6 +278,8 @@
             [MMMarker removeMMMarker:marker];
         }
     }
+    
+    
 }
 
 

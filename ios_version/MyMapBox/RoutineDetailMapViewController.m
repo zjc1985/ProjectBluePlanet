@@ -102,6 +102,8 @@
         [self updateUIInNormalMode];
     }else{
         [self updateUIInSlideMode];
+        //strange that some marker will not animated until call updateUISlidemode twice...
+        [self updateUIInSlideMode];
     }
 }
 
@@ -112,14 +114,22 @@
     
     [self.mapView removeAllAnnotations];
     
-    NSMutableArray *markersNeedToShow=[[NSMutableArray alloc]init];
-    NSMutableArray *currentSlideIndicatorMarkers=[[NSMutableArray alloc]init];
     NSArray *markersSortedBySlideNum=[self markersSortedBySlideNum];
     
-    for (NSUInteger i=0; i<self.slideIndicator+1; i++) {
+    NSMutableArray *markersNeedToShow=[[NSMutableArray alloc]init];
+    NSMutableArray *markersNeedInView=[[NSMutableArray alloc]init];
+    NSMutableArray *currentSlideIndicatorMarkers=[[NSMutableArray alloc]init];
+   
+    
+    for (NSInteger i=0; i<self.slideIndicator+1; i++) {
         [markersNeedToShow addObjectsFromArray:[markersSortedBySlideNum objectAtIndex:i]];
+        
         if (i==self.slideIndicator) {
             [currentSlideIndicatorMarkers addObjectsFromArray:[markersSortedBySlideNum objectAtIndex:i]];
+            [markersNeedInView addObjectsFromArray:[markersSortedBySlideNum objectAtIndex:i]];
+            if((i-1)>=0){
+                [markersNeedInView addObjectsFromArray:[markersSortedBySlideNum objectAtIndex:i-1]];
+            }
         }
     }
     
@@ -129,11 +139,48 @@
                   withCustomData:marker];
     }
     
-    [self.mapView zoomWithLatitudeLongitudeBoundsSouthWest:[CommonUtil minLocationInMMMarkers:currentSlideIndicatorMarkers]
-                                                 northEast:[CommonUtil maxLocationInMMMarkers:currentSlideIndicatorMarkers]
+    
+    
+    [self.mapView zoomWithLatitudeLongitudeBoundsSouthWest:[CommonUtil minLocationInMMMarkers:markersNeedInView]
+                                                 northEast:[CommonUtil maxLocationInMMMarkers:markersNeedInView]
                                                   animated:YES];
     
+    
+    
     [self.mapView setZoom:self.mapView.zoom-0.5 animated:YES];
+    
+    [self animateMMMarkers:currentSlideIndicatorMarkers];
+}
+
+-(void)animateMMMarkers:(NSArray *)markers{
+    // move marker up and down:
+    CABasicAnimation *hover = [CABasicAnimation animationWithKeyPath:@"position"];
+    // fromValue and toValue will be relative instead of absolute values
+    hover.additive = YES;
+    hover.fromValue = [NSValue valueWithCGPoint:CGPointZero];
+    // y increases downwards on iOS
+    hover.toValue = [NSValue valueWithCGPoint:CGPointMake(0.0, -15.0)];
+    // Animate back to normal afterwards
+    hover.autoreverses = YES;
+    // The duration for one part of the animation (1 up and 1 down)
+    hover.duration = 1;
+    // The number of times the animation should repeat
+    hover.repeatCount = INFINITY;
+    // adding easing to our animation
+    //hover.timingFunction = [CAMediaTimingFunction functionWithName:
+    //                        kCAMediaTimingFunctionEaseInEaseOut];
+    
+    for (MMMarker *eachMMMarker in markers) {
+        for (RMAnnotation *eachAnnotation in [self.mapView annotations]) {
+            if([eachAnnotation.userInfo isKindOfClass:[MMMarker class]]){
+                MMMarker *marker=eachAnnotation.userInfo;
+                if([marker.uuid isEqualToString:eachMMMarker.uuid]){
+                    NSLog(@"Add animated to marker:%@",eachMMMarker.title);
+                    [eachAnnotation.layer addAnimation:hover forKey:@"hover"];
+                }
+            }
+        }
+    }
 }
 
 -(NSArray *)markersSortedBySlideNum{
@@ -339,6 +386,8 @@
         
         RMMarker *marker = [[RMMarker alloc] initWithUIImage:iconImage anchorPoint:anchorPoint];
         //RMMarker *marker = [[RMMarker alloc] initWithUIImage:[UIImage imageNamed:@"default_default"]anchorPoint:anchorPoint];
+        
+        
         
         marker.canShowCallout=YES;
         

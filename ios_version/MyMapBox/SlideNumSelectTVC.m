@@ -33,6 +33,8 @@
     cell.accessoryType = UITableViewCellAccessoryCheckmark;
     self.checkedIndexPath = indexPath;
     self.slideNumLabel.text=[NSString stringWithFormat:@"%d",indexPath.row+1];
+    
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 #pragma mark - Table view data source

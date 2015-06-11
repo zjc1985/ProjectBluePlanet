@@ -47,6 +47,8 @@
     
     cell.accessoryType = UITableViewCellAccessoryCheckmark;
     self.checkedIndexPath = indexPath;
+    
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 #pragma mark - Table view data source

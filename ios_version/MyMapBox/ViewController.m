@@ -28,8 +28,6 @@
 
 @interface ViewController ()<RMMapViewDelegate>
 
-@property (weak, nonatomic) IBOutlet UIButton *locateButton;
-
 @property(nonatomic,strong) RMMapView *mapView;
 @property(nonatomic,strong) MMRoutine *currentRoutine;
 
@@ -43,10 +41,6 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
-    self.locateButton.layer.borderWidth=0.5f;
-    self.locateButton.layer.cornerRadius = 4.5;
-    
     
      [[RMConfiguration sharedInstance] setAccessToken:@"pk.eyJ1IjoibGlvbmhhcnQ1ODYiLCJhIjoiR1JHd2NnYyJ9.iCg5vA7qQaRxf2Z-T_vEjg"];
     

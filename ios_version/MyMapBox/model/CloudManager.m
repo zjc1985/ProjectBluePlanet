@@ -12,6 +12,7 @@
 #import "MMOvMarker+Dao.h"
 #import "MMMarker+Dao.h"
 #import "CommonUtil.h"
+#import "MMSearchedOvMarker.h"
 
 #define KEY_RESPONSE_ROUTINES_UPDATED @"routinesUpdate"
 #define KEY_RESPONSE_ROUTINES_NEW   @"routinesNew"
@@ -29,6 +30,49 @@
 #define KEY_RESPONSE_MARKERS_DELETE @"markersDelete"
 
 @implementation CloudManager
+
++(void)searchRoutinesByLat:(NSNumber *)lat lng:(NSNumber *)lng withLimit:(NSNumber *)limit withPage:(NSNumber *)page withBlockWhenDone:(void (^)(NSError *, NSArray *))block{
+    NSMutableDictionary *params=[[NSMutableDictionary alloc]init];
+    [params setObject:lat forKey:@"lat"];
+    [params setObject:lng forKey:@"lng"];
+    [params setObject:limit forKey:@"limit"];
+    [params setObject:page forKey:@"page"];
+    
+    [AVCloud callFunctionInBackground:@"searchRoutinesByLatlng" withParameters:params block:^(id object, NSError *error) {
+        NSMutableArray *routines=[[NSMutableArray alloc]init];
+        
+        if (!error) {
+            NSDictionary *response=object;
+            for (NSDictionary *eachSearchResult in response) {
+                
+                
+                //handle routine
+                NSDictionary *routineDic=[eachSearchResult objectForKey:@"searchedRoutine"];
+                MMSearchedRoutine *searchedRoutine=[[MMSearchedRoutine alloc]initWithUUID:[routineDic objectForKey:@"uuid"]
+                                                                                  withLat:[routineDic objectForKey:@"lat"]
+                                                                                  withLng:[routineDic objectForKey:@"lng"]];
+                searchedRoutine.title=[routineDic objectForKey:@"title"];
+                searchedRoutine.mycomment=[routineDic objectForKey:@"description"];
+                searchedRoutine.userId=[routineDic objectForKey:@"userId"];
+                searchedRoutine.userName=[routineDic objectForKey:@"userName"];
+                
+                //handle ovMarkers
+                for (NSDictionary *ovMarkerDic in [eachSearchResult objectForKey:@"searchedOvMarkers"]) {
+                    MMSearchedOvMarker *searchedOvMarker=[[MMSearchedOvMarker alloc]initWithUUID:[ovMarkerDic objectForKey:@"uuid"]
+                                                                                     withOffsetX:[ovMarkerDic objectForKey:@"offsetX"]
+                                                                                     withOffsetY:[ovMarkerDic objectForKey:@"offsetY"]];
+                    searchedOvMarker.iconUrl=[ovMarkerDic objectForKey:@"iconUrl"];
+                    [searchedRoutine.ovMarkers addObject:searchedOvMarker];
+                }
+                
+                [routines addObject:searchedRoutine];
+            }
+        }
+        
+        block(error,routines);
+    }];
+
+}
 
 +(AVUser *)currentUser{
     return [AVUser currentUser];

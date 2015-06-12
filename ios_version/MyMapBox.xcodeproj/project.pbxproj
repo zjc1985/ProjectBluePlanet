@@ -28,6 +28,10 @@
 		288B09B11B03222A00066C59 /* AVOSCloudTester.m in Sources */ = {isa = PBXBuildFile; fileRef = 288B09B01B03222A00066C59 /* AVOSCloudTester.m */; };
 		288B09B41B0328D700066C59 /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 288B09B31B0328D700066C59 /* LoginViewController.m */; };
 		2894ABAA1AEE27D500A943D1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2894ABA91AEE27D500A943D1 /* Main.storyboard */; };
+		28C442E41B2A859200DDC54C /* MMSearchedOvMarker.m in Sources */ = {isa = PBXBuildFile; fileRef = 28C442E31B2A859200DDC54C /* MMSearchedOvMarker.m */; };
+		28C442E71B2A85D300DDC54C /* MMSearchedRoutine.m in Sources */ = {isa = PBXBuildFile; fileRef = 28C442E61B2A85D300DDC54C /* MMSearchedRoutine.m */; };
+		28C442EA1B2A884600DDC54C /* MMSearchdeMarker.m in Sources */ = {isa = PBXBuildFile; fileRef = 28C442E91B2A884600DDC54C /* MMSearchdeMarker.m */; };
+		28C442ED1B2AE70800DDC54C /* ExploreRoutineVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 28C442EC1B2AE70800DDC54C /* ExploreRoutineVC.m */; };
 		28E261CA1B00535A0019611C /* MyMapBox.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 28E261C81B00535A0019611C /* MyMapBox.xcdatamodeld */; };
 		28E261D61B007E920019611C /* MMRoutine+Dao.m in Sources */ = {isa = PBXBuildFile; fileRef = 28E261D51B007E920019611C /* MMRoutine+Dao.m */; };
 		28E261F41B0095CE0019611C /* MMRoutine.m in Sources */ = {isa = PBXBuildFile; fileRef = 28E261F31B0095CE0019611C /* MMRoutine.m */; };
@@ -95,6 +99,14 @@
 		288B09B21B0328D700066C59 /* LoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoginViewController.h; sourceTree = "<group>"; };
 		288B09B31B0328D700066C59 /* LoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoginViewController.m; sourceTree = "<group>"; };
 		2894ABA91AEE27D500A943D1 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
+		28C442E21B2A859200DDC54C /* MMSearchedOvMarker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMSearchedOvMarker.h; path = model/MMSearchedOvMarker.h; sourceTree = "<group>"; };
+		28C442E31B2A859200DDC54C /* MMSearchedOvMarker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMSearchedOvMarker.m; path = model/MMSearchedOvMarker.m; sourceTree = "<group>"; };
+		28C442E51B2A85D300DDC54C /* MMSearchedRoutine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMSearchedRoutine.h; path = model/MMSearchedRoutine.h; sourceTree = "<group>"; };
+		28C442E61B2A85D300DDC54C /* MMSearchedRoutine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMSearchedRoutine.m; path = model/MMSearchedRoutine.m; sourceTree = "<group>"; };
+		28C442E81B2A884600DDC54C /* MMSearchdeMarker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMSearchdeMarker.h; path = model/MMSearchdeMarker.h; sourceTree = "<group>"; };
+		28C442E91B2A884600DDC54C /* MMSearchdeMarker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMSearchdeMarker.m; path = model/MMSearchdeMarker.m; sourceTree = "<group>"; };
+		28C442EB1B2AE70800DDC54C /* ExploreRoutineVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExploreRoutineVC.h; sourceTree = "<group>"; };
+		28C442EC1B2AE70800DDC54C /* ExploreRoutineVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExploreRoutineVC.m; sourceTree = "<group>"; };
 		28E261C91B00535A0019611C /* MyMapBox.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = MyMapBox.xcdatamodel; sourceTree = "<group>"; };
 		28E261D41B007E920019611C /* MMRoutine+Dao.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "MMRoutine+Dao.h"; path = "model/MMRoutine+Dao.h"; sourceTree = "<group>"; };
 		28E261D51B007E920019611C /* MMRoutine+Dao.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "MMRoutine+Dao.m"; path = "model/MMRoutine+Dao.m"; sourceTree = "<group>"; };
@@ -261,6 +273,8 @@
 				288B09B31B0328D700066C59 /* LoginViewController.m */,
 				84F46A7E1B0396DF008B7F13 /* SettingViewController.h */,
 				84F46A7F1B0396E0008B7F13 /* SettingViewController.m */,
+				28C442EB1B2AE70800DDC54C /* ExploreRoutineVC.h */,
+				28C442EC1B2AE70800DDC54C /* ExploreRoutineVC.m */,
 			);
 			name = Controller;
 			sourceTree = "<group>";
@@ -295,6 +309,12 @@
 				288B09AC1B0320B200066C59 /* CloudManager.m */,
 				28307D501B1D7E060050AA58 /* MMMarkerIconInfo.h */,
 				28307D511B1D7E060050AA58 /* MMMarkerIconInfo.m */,
+				28C442E51B2A85D300DDC54C /* MMSearchedRoutine.h */,
+				28C442E61B2A85D300DDC54C /* MMSearchedRoutine.m */,
+				28C442E21B2A859200DDC54C /* MMSearchedOvMarker.h */,
+				28C442E31B2A859200DDC54C /* MMSearchedOvMarker.m */,
+				28C442E81B2A884600DDC54C /* MMSearchdeMarker.h */,
+				28C442E91B2A884600DDC54C /* MMSearchdeMarker.m */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -477,14 +497,17 @@
 				285E43251AD61E720030A274 /* ViewController.m in Sources */,
 				288B09B41B0328D700066C59 /* LoginViewController.m in Sources */,
 				286390871AE0DE5200A5B999 /* RoutineAddTVC.m in Sources */,
+				28C442E41B2A859200DDC54C /* MMSearchedOvMarker.m in Sources */,
 				288B09A81B01A12D00066C59 /* MMOvMarker+Dao.m in Sources */,
 				28E261FA1B0095CE0019611C /* MMMarker.m in Sources */,
 				286390811AE0AD7600A5B999 /* RoutineEditTVC.m in Sources */,
 				8421CB181ADC04D0002046B9 /* RoutineDetailMapViewController.m in Sources */,
 				84F46A801B0396E0008B7F13 /* SettingViewController.m in Sources */,
 				28E261CA1B00535A0019611C /* MyMapBox.xcdatamodeld in Sources */,
+				28C442EA1B2A884600DDC54C /* MMSearchdeMarker.m in Sources */,
 				2863908A1AE0E9F100A5B999 /* MarkerInfoTVC.m in Sources */,
 				28E475541AEF28C600449DBC /* OfflineRoutineTVC.m in Sources */,
+				28C442E71B2A85D300DDC54C /* MMSearchedRoutine.m in Sources */,
 				285E43221AD61E720030A274 /* AppDelegate.m in Sources */,
 				28E261F71B0095CE0019611C /* MMOvMarker.m in Sources */,
 				285E431F1AD61E720030A274 /* main.m in Sources */,
@@ -493,6 +516,7 @@
 				2863907B1ADD136000A5B999 /* CommonUtil.m in Sources */,
 				288B09AD1B0320B200066C59 /* CloudManager.m in Sources */,
 				8421CB151ADBF8FA002046B9 /* RoutineInfoViewController.m in Sources */,
+				28C442ED1B2AE70800DDC54C /* ExploreRoutineVC.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

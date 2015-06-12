@@ -29,7 +29,7 @@
          return NO;
      }
      
-     NSUInteger minZoom=12;
+     NSUInteger minZoom=8;
      NSUInteger maxZoom=16;
      
      CLLocationCoordinate2D southwest=CLLocationCoordinate2DMake([routine minLatInMarkers],[routine minLngInMarkers]);

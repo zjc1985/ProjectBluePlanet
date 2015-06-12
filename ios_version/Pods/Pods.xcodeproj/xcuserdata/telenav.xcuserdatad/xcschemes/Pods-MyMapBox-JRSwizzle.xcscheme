@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0510"
+   LastUpgradeVersion = "0640"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "24E13AA4D02C20E65FA537B3"
+               BlueprintIdentifier = "14AFD0AD5CE05F8595A4DE57"
                BuildableName = "libPods-MyMapBox-JRSwizzle.a"
                BlueprintName = "Pods-MyMapBox-JRSwizzle"
                ReferencedContainer = "container:Pods.xcodeproj">

@@ -166,7 +166,7 @@ function MapMarkerModel() {
 	this.createModelRoutine=function(content){
 		var modelRoutineId=self.genUUID();
 		var marker = new ModelRoutine(modelRoutineId);
-		content.iconUrl='resource/icons/overview/overview_point.png';
+		content.iconUrl='resource/icons/overview_point.png';
 		$.publish('createModelRoutine', [ marker,content ]);
 
 		if (content != null) {
@@ -176,7 +176,7 @@ function MapMarkerModel() {
 		modelRoutines.push(marker);
 		
 		var ovMarkerId=self.genUUID();
-		content.iconUrl='resource/icons/default/default_default.png';
+		content.iconUrl='resource/icons/default_default.png';
 		var ovMarker=self.createOverviewMarker(ovMarkerId, content, modelRoutineId);
 		marker.ovMarkers.push(ovMarker);
 		return modelRoutineId;
@@ -187,7 +187,7 @@ function MapMarkerModel() {
 		var marker = new ModelRoutine(modelRoutineId);
 		marker.userId=routineObject.userId;
 		marker.userName=routineObject.userName;
-		routineObject.iconUrl='resource/icons/overview/overview_point.png';
+		routineObject.iconUrl='resource/icons/overview_point.png';
 		$.publish('createModelRoutine', [ marker,routineObject ]);
 
 		if (routineObject != null) {
@@ -725,7 +725,14 @@ function BackendManager() {
 	
 	var avObjects=[];
 	
-	
+	function iconNameToUrl(iconName){
+		var strArray=iconName.trim().split("/");
+		if(strArray.length>2){
+			return "resource/icons/"+strArray.pop();
+		}else{
+			return "resource/icons/"+iconName.trim();
+		}
+	}
 
 	AV.initialize("6pzfpf5wkg4m52owuwixt5vggrpjincr8xon3pd966fhgj3c",
 			"4wrzupru1m4m7gpafo4llinv7iepyapnycvxygup7uiui77x");
@@ -888,7 +895,7 @@ function BackendManager() {
 			avRoutine.set('user',user);
 			avRoutine.set('uuid',routineJSON.uuid);
 			avRoutine.set('title',routineJSON.title);
-			avRoutine.set('descritpion',routineJSON.mycomment);
+			avRoutine.set('description',routineJSON.mycomment);
 			var point = new AV.GeoPoint({latitude: routineJSON.lat, longitude: routineJSON.lng});
 			avRoutine.set('location',point);
 		}
@@ -918,6 +925,13 @@ function BackendManager() {
 		});
 	};
 	
+	function gcjLocation(avLocation){
+		var lat=avLocation.toJSON().latitude;
+		var lng=avLocation.toJSON().longitude;
+		var gcj=wgs2gcj(lat,lng);
+		return gcj;
+	}
+	
 	this.fetchMarkersByRoutineId=function(routineId,successCallback){
 		var query=new AV.Query(AVMarker);
 		query.equalTo("routineId",routineId);
@@ -930,9 +944,9 @@ function BackendManager() {
 					id: avMarker.get('uuid'),
 					title:avMarker.get('title'),
 					mycomment:avMarker.get('mycomment'),
-					iconUrl:avMarker.get('iconUrl'),
-					lat:avMarker.get('location').toJSON().latitude,
-					lng:avMarker.get('location').toJSON().longitude,
+					iconUrl:iconNameToUrl(avMarker.get('iconUrl')),
+					lat:gcjLocation(avMarker.get('location')).lat,
+					lng:gcjLocation(avMarker.get('location')).lng,
 					slideNum:avMarker.get('slideNum'),
 					imgUrls:JSON.parse(avMarker.get('imgUrls')),
 					category:avMarker.get('category')
@@ -960,6 +974,9 @@ function BackendManager() {
 						var ovMarkers=results[i].avOvMarkers;
 						avObjects.push(routine);
 						
+						var routineLat=gcjLocation(routine.get('location')).lat;
+						var routineLng=gcjLocation(routine.get('location')).lng;
+						
 						var routineJSON={
 								userId:user.id,
 								userName:user.get('username'),
@@ -967,8 +984,8 @@ function BackendManager() {
 								title:routine.get('title'),
 								mycomment:routine.get('description'),
 								category:routine.get('category'),
-								lat:routine.get('location').toJSON().latitude,
-								lng:routine.get('location').toJSON().longitude
+								lat:routineLat,
+								lng:routineLng
 						};
 						
 						var ovMarkersJSON=[];
@@ -978,12 +995,12 @@ function BackendManager() {
 								id:ovMarkers[i].get('uuid'),
 								title: ovMarkers[i].get('title'),
 								mycomment:ovMarkers[i].get('mycomment'),
-								iconUrl:ovMarkers[i].get('iconUrl'),
+								iconUrl:iconNameToUrl(ovMarkers[i].get('iconUrl')),
 								offsetX:ovMarkers[i].get('offsetX'),
 								offsetY:ovMarkers[i].get('offsetY'),
 								category:ovMarkers[i].get('category'),
-								lat:ovMarkers[i].get('location').toJSON().latitude,
-								lng:ovMarkers[i].get('location').toJSON().longitude
+								lat:ovMarkers[i].get('location')==null?routineLat:gcjLocation(ovMarkers[i].get('location')).lat,
+								lng:ovMarkers[i].get('location')==null?routineLng:gcjLocation(ovMarkers[i].get('location')).lng
 							});
 						}
 						returnValue.push({
@@ -1026,14 +1043,17 @@ function BackendManager() {
 					var ovMarkers=results[i].avOvMarkers;
 					avObjects.push(routine);
 					
+					var routineLat=gcjLocation(routine.get('location')).lat;
+					var routineLng=gcjLocation(routine.get('location')).lng;
+					
 					var routineJSON={
 							userId:user.id,
 							userName:user.get('username'),
 							id:routine.get('uuid'),
 							title:routine.get('title'),
 							mycomment:routine.get('description'),
-							lat:routine.get('location').toJSON().latitude,
-							lng:routine.get('location').toJSON().longitude
+							lat:routineLat,
+							lng:routineLng
 					};
 					
 					var ovMarkersJSON=[];
@@ -1043,11 +1063,11 @@ function BackendManager() {
 							id:ovMarkers[i].get('uuid'),
 							title: ovMarkers[i].get('title'),
 							mycomment:ovMarkers[i].get('mycomment'),
-							iconUrl:ovMarkers[i].get('iconUrl'),
+							iconUrl:iconNameToUrl(ovMarkers[i].get('iconUrl')),
 							offsetX:ovMarkers[i].get('offsetX'),
 							offsetY:ovMarkers[i].get('offsetY'),
-							lat:ovMarkers[i].get('location').toJSON().latitude,
-							lng:ovMarkers[i].get('location').toJSON().longitude
+							lat:ovMarkers[i].get('location')==null?routineLat:gcjLocation(ovMarkers[i].get('location')).lat,
+							lng:ovMarkers[i].get('location')==null?routineLng:gcjLocation(ovMarkers[i].get('location')).lng
 						});
 					}
 					returnValue.push({
@@ -1163,7 +1183,7 @@ function BackendManager() {
 			avMarker.set('mycomment',marker.mycomment);
 			avMarker.set('category',marker.category);
 			avMarker.set('imgUrls',JSON.stringify(marker.imgUrls));
-			avMarker.set('iconUrl',marker.ivonUrl);
+			avMarker.set('iconUrl',marker.iconUrl);
 			avMarker.set('slideNum',marker.slideNum);
 			avMarker.set('subMarkerIds',JSON.stringify(marker.subMarkerIds));
 			avMarker.set('offsetX',marker.offsetX);
@@ -1482,9 +1502,9 @@ function MarkerContent(id) {
 
 	var isAvergeOverViewMarker = false;
 
-	var defaultImgIcon = "resource/icons/event/event_2.png";
-	var picNoPositionIconUrl = "resource/icons/event/pic_no_position.png";
-	var iconUrl = "resource/icons/default/default_default.png";
+	var defaultImgIcon = "resource/icons/event_2.png";
+	var picNoPositionIconUrl = "resource/icons/pic_no_position.png";
+	var iconUrl = "resource/icons/default_default.png";
 	
 	this.isAvergeOverViewMarker = function() {
 		return isAvergeOverViewMarker;
@@ -1615,19 +1635,29 @@ function MarkerContent(id) {
 		category = nameFoo;
 	};
 
-	this.getLat = function() {
-		return lat;
-	};
-
 	this.setlatlng = function(latFoo, lngFoo) {
-		lat = latFoo;
-		lng = lngFoo;
+		//var wgs=gcj2wgs(latFoo,lngFoo);
+		
+		//lat = wgs.lat;
+		//lng = wgs.lng;
+		
+		lat=latFoo;
+		lng=lngFoo;
+		
 		$.publish('latlngChanged', [ this ]);
 		$.publish('updateUI', []);
 	};
 
 	this.getLng = function() {
+		//var gcj=wgs2gcj(lat,lng);
+		//return gcj.lng;
 		return lng;
+	};
+	
+	this.getLat = function() {
+		//var gcj=wgs2gcj(lat,lng);
+		//return gcj.lat;
+		return lat;
 	};
 
 	this.getAddress = function() {
@@ -1900,16 +1930,19 @@ function MapMarker(id) {
 			subMarkerIdsArray.push(this.subMarkersArray[i].id);
 		}
 
+		var wgs=gcj2wgs(this.getContent().getLat(),this.getContent().getLng());
+		
+		
 		var object = {
 			uuid : this.id,
-			lat : this.getContent().getLat(),
-			lng : this.getContent().getLng(),
+			lat : wgs.lat,
+			lng : wgs.lng,
 			title : this.getContent().getTitle(),
 			address : this.getContent().getAddress(),
 			mycomment : this.getContent().getMycomment(false),
 			category : this.getContent().getCategory(),
 			imgUrls : this.getContent().getImgUrls(),
-			iconUrl : this.getContent().getIconUrl(),
+			iconUrl : this.extractIconNameFromIconUrl(),
 			slideNum : this.getContent().getSlideNum(),
 			nextMainMarkerId : this.connectedMainMarker == null ? null
 					: this.connectedMainMarker.id,
@@ -1922,6 +1955,16 @@ function MapMarker(id) {
 		};
 
 		return object;
+	};
+	
+	this.extractIconNameFromIconUrl=function(){
+		var trimUrl=this.getContent().getIconUrl().trim();
+		var strArray=trimUrl.split("/");
+		var result=strArray.pop();
+		if(result==null || result.trim()==""){
+			result="default_default.png";
+		}
+		return result;
 	};
 
 	// getters and setters

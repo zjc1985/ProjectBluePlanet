@@ -141,7 +141,7 @@ function GoogleMapView(oneController) {
 				map : map,
 				title : place.name,
 				position : place.geometry.location,
-				icon : 'resource/icons/default/search_default.png'
+				icon : 'resource/icons/search_default.png'
 			});
 			
 			searchMarkers.push(marker);
@@ -836,7 +836,7 @@ function GoogleMapView(oneController) {
 							map : map,
 							title : place.name,
 							position : location,
-							icon : 'resource/icons/default/search_default.png'
+							icon : 'resource/icons/search_default.png'
 						});
 
 						searchMarkers.push(marker);
@@ -906,7 +906,7 @@ function ExploreGoogleMapView(oneController){
 			centerMarker=new google.maps.Marker({
 				position : this.getMap().getCenter(),
 				map : this.getMap(),
-				icon : 'resource/icons/default/center_default.png'
+				icon : 'resource/icons/center_default.png'
 			});
 		}else{
 			centerMarker.setVisible(true);

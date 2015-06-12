@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0510"
+   LastUpgradeVersion = "0640"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "DAE6ED80BAF649A6CBB8BBCD"
+               BlueprintIdentifier = "2FF5EECF5AC4B8531D88D41A"
                BuildableName = "libPods-MyMapBox-FMDB.a"
                BlueprintName = "Pods-MyMapBox-FMDB"
                ReferencedContainer = "container:Pods.xcodeproj">

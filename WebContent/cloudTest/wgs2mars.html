@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Your Routine List</title>
+
+<!-- jquery -->
+<script type="text/javascript" src="../js/lib/transform.js"></script>
+</head>
+<body>
+
+</body>
+</html>
+
+<script type="text/javascript">
+//121.3941145,31.2083571
+	var wgsLat=31.2083571;
+	var wgsLng=121.3941145;
+	var gcjloc = wgs2gcj(wgsLat,wgsLng);
+	console.log(JSON.stringify(gcjloc));
+</script>

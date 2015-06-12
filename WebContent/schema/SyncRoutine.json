@@ -1,0 +1,39 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "additionalProperties": true,
+    "description": "MapMarker cloud",
+    "properties": {
+        "title": {
+            "type": "string"
+        },
+        "description": {
+            "type": "string"
+        },
+        "uuid": {
+            "type": "string"
+        },
+        "lat": {
+            "type": "number"
+        },
+		"lng": {
+            "type": "number"
+        },
+		"isDelete":{
+            "type": "boolean"
+        },
+		"isSynced":{
+            "type": "boolean"
+        },
+		"updateTime":{
+			"type": "integer"
+		}
+    },
+    "required": [
+		"uuid",
+		"isDelete",
+		"isSynced",
+		"updateTime"
+    ],
+    "title": "SyncRoutine",
+    "type": "object"
+}

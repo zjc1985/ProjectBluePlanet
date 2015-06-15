@@ -9,6 +9,11 @@
 			<key>orderHint</key>
 			<integer>8</integer>
 		</dict>
+		<key>Pods-MyMapBox-DACircularProgress.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>11</integer>
+		</dict>
 		<key>Pods-MyMapBox-FMDB.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -24,6 +29,16 @@
 			<key>orderHint</key>
 			<integer>4</integer>
 		</dict>
+		<key>Pods-MyMapBox-MBProgressHUD.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>12</integer>
+		</dict>
+		<key>Pods-MyMapBox-MWPhotoBrowser.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>13</integer>
+		</dict>
 		<key>Pods-MyMapBox-Mapbox-iOS-SDK-Mapbox.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -33,6 +48,16 @@
 		<dict>
 			<key>orderHint</key>
 			<integer>5</integer>
+		</dict>
+		<key>Pods-MyMapBox-PSTCollectionView.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>14</integer>
+		</dict>
+		<key>Pods-MyMapBox-SDWebImage.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>15</integer>
 		</dict>
 		<key>Pods-MyMapBox-SMCalloutView.xcscheme</key>
 		<dict>
@@ -57,12 +82,37 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
+		<key>04B2E07173F224520DC9450D</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>0723B50836DD0E43FE08C6EF</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>0BF0C445A691F89B9A1E7239</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>0DD035666AA283EAB3CE99EE</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
 		<key>123CCEB2C68B524FDF476A97</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>14AFD0AD5CE05F8595A4DE57</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>1AE0C1090C6E8E5D3ED48100</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -77,7 +127,22 @@
 			<key>primary</key>
 			<true/>
 		</dict>
+		<key>2FF5EECF5AC4B8531D88D41A</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>308049B4B321CCC268649F9D</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>48DF74C793F6B00A074924C8</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>50D9C6922F29EB64C1BE3885</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -92,7 +157,22 @@
 			<key>primary</key>
 			<true/>
 		</dict>
+		<key>6FC776D8B73731C71FCBA023</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>7176295A73EA6D9BA8E1CC49</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>8CFE3B2C69CB8FBE70993CD2</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>9B17EB373D3EB99C3543310B</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -128,6 +208,16 @@
 			<true/>
 		</dict>
 		<key>E3EF5943A5091A4F103EAB25</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>E8CA90F4CD2242352AE4E278</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>EACBB0D1A065DFBD1C62E3B4</key>
 		<dict>
 			<key>primary</key>
 			<true/>

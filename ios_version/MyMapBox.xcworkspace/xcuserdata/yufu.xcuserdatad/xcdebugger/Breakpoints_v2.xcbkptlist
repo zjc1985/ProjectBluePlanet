@@ -15,7 +15,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "150"
             endingLineNumber = "150"
-            landmarkName = "-updateMapUINeedPanToCurrentRoutine:"
+            landmarkName = "-adjustLocationByOffsetFrom:to:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -47,7 +47,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "213"
             endingLineNumber = "213"
-            landmarkName = "-slideNextClick:"
+            landmarkName = "-updateUIInNormalMode"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -63,7 +63,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "147"
             endingLineNumber = "147"
-            landmarkName = "-markersSortedBySlideNum"
+            landmarkName = "-updateUIInSlideMode"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

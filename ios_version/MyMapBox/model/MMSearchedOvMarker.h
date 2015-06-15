@@ -21,6 +21,8 @@
 @property (nonatomic, strong) NSNumber * lat;
 @property (nonatomic, strong) NSNumber * lng;
 
+@property(nonatomic,weak) MMSearchedRoutine *belongRoutine;
+
 -(instancetype)initWithUUID:(NSString *)uuid withOffsetX:(NSNumber *)offsetX withOffsetY:(NSNumber *)offsetY;
 
 @end

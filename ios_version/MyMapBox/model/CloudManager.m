@@ -61,8 +61,11 @@
                     MMSearchedOvMarker *searchedOvMarker=[[MMSearchedOvMarker alloc]initWithUUID:[ovMarkerDic objectForKey:@"uuid"]
                                                                                      withOffsetX:[ovMarkerDic objectForKey:@"offsetX"]
                                                                                      withOffsetY:[ovMarkerDic objectForKey:@"offsetY"]];
+                    searchedOvMarker.offsetX=[NSNumber numberWithInteger:0];
+                    searchedOvMarker.offsetY=[NSNumber numberWithInteger:0];
+                    
                     searchedOvMarker.iconUrl=[ovMarkerDic objectForKey:@"iconUrl"];
-                    [searchedRoutine.ovMarkers addObject:searchedOvMarker];
+                    [searchedRoutine addOvMarkersObject:searchedOvMarker];
                 }
                 
                 [routines addObject:searchedRoutine];

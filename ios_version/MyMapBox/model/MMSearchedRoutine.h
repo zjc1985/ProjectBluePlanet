@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class MMSearchedOvMarker,MMSearchdeMarker;
+@class MMSearchedOvMarker;
 
 @interface MMSearchedRoutine : NSObject
 
@@ -22,10 +22,12 @@
 @property(nonatomic,strong)NSString *userName;
 @property(nonatomic,strong)NSString *userId;//leanCloud object id
 
-@property (nonatomic, strong) NSMutableSet *markers;
-@property (nonatomic, strong) NSMutableSet *ovMarkers;
+@property (nonatomic, strong,readonly) NSSet *markers;
+@property (nonatomic, strong,readonly) NSSet *ovMarkers;
 
 
 -(instancetype)initWithUUID:(NSString *)uuid withLat:(NSNumber *)lat withLng:(NSNumber *)lng;
+
+-(void)addOvMarkersObject:(MMSearchedOvMarker *)value;
 
 @end

@@ -7,11 +7,15 @@
 //
 
 #import "MMSearchedRoutine.h"
-#import "MMSearchdeMarker.h"
+#import "MMSearchedOvMarker.h"
+
 
 @interface MMSearchedRoutine()
 
 @property (nonatomic, strong,readwrite) NSString * uuid;
+
+@property (nonatomic, strong) NSMutableSet *routineMarkers;
+@property (nonatomic,strong) NSMutableSet *routineOvMarkers;
 
 @end
 
@@ -31,21 +35,33 @@
     return self;
 }
 
+-(void)addOvMarkersObject:(MMSearchedOvMarker *)value{
+    [self.routineOvMarkers addObject:value];
+    value.belongRoutine=self;
+}
 
 #pragma mark getter and setter
+-(NSMutableSet *)routineOvMarkers{
+    if(!_routineOvMarkers){
+        _routineOvMarkers=[[NSMutableSet alloc]init];
+    }
+    return _routineOvMarkers;
+}
+
+-(NSMutableSet *)routineMarkers{
+    if(!_routineMarkers){
+        _routineMarkers=[[NSMutableSet alloc] init];
+    }
+    return _routineMarkers;
+}
+
 
 -(NSMutableSet *)markers{
-    if(!_markers){
-        _markers=[[NSMutableSet alloc]init];
-    }
-    return _markers;
+    return self.routineMarkers;
 }
 
 -(NSMutableSet *)ovMarkers{
-    if(!_ovMarkers){
-        _ovMarkers=[[NSMutableSet alloc]init];
-    }
-    return _ovMarkers;
+    return self.routineOvMarkers;
 }
 
 

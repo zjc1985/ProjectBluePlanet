@@ -8,6 +8,7 @@
 
 #import "AppDelegate.h"
 #import <AVOSCloud/AVOSCloud.h>
+#import <Mapbox-iOS-SDK/Mapbox.h>
 #import "CloudManager.h"
 
 @interface AppDelegate ()
@@ -21,6 +22,10 @@
     // Override point for customization after application launch.
     [AVOSCloud setApplicationId:@"6pzfpf5wkg4m52owuwixt5vggrpjincr8xon3pd966fhgj3c"
                       clientKey:@"4wrzupru1m4m7gpafo4llinv7iepyapnycvxygup7uiui77x"];
+    
+    [[RMConfiguration sharedInstance] setAccessToken:@"pk.eyJ1IjoibGlvbmhhcnQ1ODYiLCJhIjoiR1JHd2NnYyJ9.iCg5vA7qQaRxf2Z-T_vEjg"];
+    
+
     /*
     [[NSNotificationCenter defaultCenter] addObserver:[CloudManager class]
                                              selector:@selector(contextWillSave:)

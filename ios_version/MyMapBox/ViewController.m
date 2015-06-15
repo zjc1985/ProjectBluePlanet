@@ -42,8 +42,6 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-     [[RMConfiguration sharedInstance] setAccessToken:@"pk.eyJ1IjoibGlvbmhhcnQ1ODYiLCJhIjoiR1JHd2NnYyJ9.iCg5vA7qQaRxf2Z-T_vEjg"];
-    
     RMMapboxSource *tileSource=nil;
     RMMapboxSource *detailTileSource=nil;
     
@@ -252,6 +250,11 @@
 }
 
 #pragma mark - RMMapViewDelegate
+
+-(void)singleTapOnMap:(RMMapView *)map at:(CGPoint)point{
+    BOOL hidden=self.tabBarController.tabBar.hidden;
+    [self.tabBarController.tabBar setHidden:!hidden];
+}
 
 
 //create delegate

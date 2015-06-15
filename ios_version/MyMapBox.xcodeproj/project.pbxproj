@@ -9,6 +9,11 @@
 /* Begin PBXBuildFile section */
 		28307D521B1D7E060050AA58 /* MMMarkerIconInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 28307D511B1D7E060050AA58 /* MMMarkerIconInfo.m */; };
 		28307D551B1D881F0050AA58 /* IconSelectTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 28307D541B1D881F0050AA58 /* IconSelectTableViewCell.m */; };
+		283A21C61B2E6CF200F6DCA1 /* SearchRoutineInfoTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 283A21C51B2E6CF200F6DCA1 /* SearchRoutineInfoTVC.m */; };
+		283A21CA1B2E70FC00F6DCA1 /* SearchRoutineDetailMapVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 283A21C91B2E70FC00F6DCA1 /* SearchRoutineDetailMapVC.m */; };
+		283A21CD1B2E715000F6DCA1 /* SearchMarkerInfoTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 283A21CC1B2E715000F6DCA1 /* SearchMarkerInfoTVC.m */; };
+		283A21D01B2E742C00F6DCA1 /* PinMarkerTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 283A21CF1B2E742C00F6DCA1 /* PinMarkerTVC.m */; };
+		283A21D31B2ED1E100F6DCA1 /* BaseTourMapVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 283A21D21B2ED1E100F6DCA1 /* BaseTourMapVC.m */; };
 		285E431F1AD61E720030A274 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 285E431E1AD61E720030A274 /* main.m */; };
 		285E43221AD61E720030A274 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 285E43211AD61E720030A274 /* AppDelegate.m */; };
 		285E43251AD61E720030A274 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 285E43241AD61E720030A274 /* ViewController.m */; };
@@ -64,6 +69,16 @@
 		28307D511B1D7E060050AA58 /* MMMarkerIconInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMMarkerIconInfo.m; path = model/MMMarkerIconInfo.m; sourceTree = "<group>"; };
 		28307D531B1D881F0050AA58 /* IconSelectTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IconSelectTableViewCell.h; sourceTree = "<group>"; };
 		28307D541B1D881F0050AA58 /* IconSelectTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IconSelectTableViewCell.m; sourceTree = "<group>"; };
+		283A21C41B2E6CF200F6DCA1 /* SearchRoutineInfoTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchRoutineInfoTVC.h; sourceTree = "<group>"; };
+		283A21C51B2E6CF200F6DCA1 /* SearchRoutineInfoTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SearchRoutineInfoTVC.m; sourceTree = "<group>"; };
+		283A21C81B2E70FC00F6DCA1 /* SearchRoutineDetailMapVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchRoutineDetailMapVC.h; sourceTree = "<group>"; };
+		283A21C91B2E70FC00F6DCA1 /* SearchRoutineDetailMapVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SearchRoutineDetailMapVC.m; sourceTree = "<group>"; };
+		283A21CB1B2E715000F6DCA1 /* SearchMarkerInfoTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchMarkerInfoTVC.h; sourceTree = "<group>"; };
+		283A21CC1B2E715000F6DCA1 /* SearchMarkerInfoTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SearchMarkerInfoTVC.m; sourceTree = "<group>"; };
+		283A21CE1B2E742C00F6DCA1 /* PinMarkerTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PinMarkerTVC.h; sourceTree = "<group>"; };
+		283A21CF1B2E742C00F6DCA1 /* PinMarkerTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PinMarkerTVC.m; sourceTree = "<group>"; };
+		283A21D11B2ED1E100F6DCA1 /* BaseTourMapVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseTourMapVC.h; sourceTree = "<group>"; };
+		283A21D21B2ED1E100F6DCA1 /* BaseTourMapVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BaseTourMapVC.m; sourceTree = "<group>"; };
 		285E43191AD61E720030A274 /* MyMapBox.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MyMapBox.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		285E431D1AD61E720030A274 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		285E431E1AD61E720030A274 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -166,6 +181,23 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		283A21C71B2E708000F6DCA1 /* explore */ = {
+			isa = PBXGroup;
+			children = (
+				283A21CB1B2E715000F6DCA1 /* SearchMarkerInfoTVC.h */,
+				283A21CC1B2E715000F6DCA1 /* SearchMarkerInfoTVC.m */,
+				283A21C41B2E6CF200F6DCA1 /* SearchRoutineInfoTVC.h */,
+				283A21C51B2E6CF200F6DCA1 /* SearchRoutineInfoTVC.m */,
+				28C442EB1B2AE70800DDC54C /* ExploreRoutineVC.h */,
+				28C442EC1B2AE70800DDC54C /* ExploreRoutineVC.m */,
+				283A21C81B2E70FC00F6DCA1 /* SearchRoutineDetailMapVC.h */,
+				283A21C91B2E70FC00F6DCA1 /* SearchRoutineDetailMapVC.m */,
+				283A21CE1B2E742C00F6DCA1 /* PinMarkerTVC.h */,
+				283A21CF1B2E742C00F6DCA1 /* PinMarkerTVC.m */,
+			);
+			name = explore;
+			sourceTree = "<group>";
+		};
 		285E43101AD61E720030A274 = {
 			isa = PBXGroup;
 			children = (
@@ -247,6 +279,9 @@
 		28E7A0EC1AE6538200A27B8A /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				283A21D11B2ED1E100F6DCA1 /* BaseTourMapVC.h */,
+				283A21D21B2ED1E100F6DCA1 /* BaseTourMapVC.m */,
+				283A21C71B2E708000F6DCA1 /* explore */,
 				28E475521AEF28C600449DBC /* OfflineRoutineTVC.h */,
 				28E475531AEF28C600449DBC /* OfflineRoutineTVC.m */,
 				8421CB131ADBF8FA002046B9 /* RoutineInfoViewController.h */,
@@ -273,8 +308,6 @@
 				288B09B31B0328D700066C59 /* LoginViewController.m */,
 				84F46A7E1B0396DF008B7F13 /* SettingViewController.h */,
 				84F46A7F1B0396E0008B7F13 /* SettingViewController.m */,
-				28C442EB1B2AE70800DDC54C /* ExploreRoutineVC.h */,
-				28C442EC1B2AE70800DDC54C /* ExploreRoutineVC.m */,
 			);
 			name = Controller;
 			sourceTree = "<group>";
@@ -487,11 +520,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				28E261D61B007E920019611C /* MMRoutine+Dao.m in Sources */,
+				283A21CD1B2E715000F6DCA1 /* SearchMarkerInfoTVC.m in Sources */,
 				286390841AE0D44D00A5B999 /* IconSelectTVC.m in Sources */,
 				28E261F41B0095CE0019611C /* MMRoutine.m in Sources */,
 				28307D551B1D881F0050AA58 /* IconSelectTableViewCell.m in Sources */,
 				845EB1F51AEE7B2500C719CA /* MMRoutineCachHelper.m in Sources */,
+				283A21D31B2ED1E100F6DCA1 /* BaseTourMapVC.m in Sources */,
 				28E4755A1AEF88C500449DBC /* SlideNumSelectTVC.m in Sources */,
+				283A21C61B2E6CF200F6DCA1 /* SearchRoutineInfoTVC.m in Sources */,
 				28E475571AEF2AAB00449DBC /* OfflineRoutineTableViewCell.m in Sources */,
 				2863908D1AE0EA3E00A5B999 /* MarkerEditTVC.m in Sources */,
 				285E43251AD61E720030A274 /* ViewController.m in Sources */,
@@ -504,7 +540,9 @@
 				8421CB181ADC04D0002046B9 /* RoutineDetailMapViewController.m in Sources */,
 				84F46A801B0396E0008B7F13 /* SettingViewController.m in Sources */,
 				28E261CA1B00535A0019611C /* MyMapBox.xcdatamodeld in Sources */,
+				283A21D01B2E742C00F6DCA1 /* PinMarkerTVC.m in Sources */,
 				28C442EA1B2A884600DDC54C /* MMSearchdeMarker.m in Sources */,
+				283A21CA1B2E70FC00F6DCA1 /* SearchRoutineDetailMapVC.m in Sources */,
 				2863908A1AE0E9F100A5B999 /* MarkerInfoTVC.m in Sources */,
 				28E475541AEF28C600449DBC /* OfflineRoutineTVC.m in Sources */,
 				28C442E71B2A85D300DDC54C /* MMSearchedRoutine.m in Sources */,

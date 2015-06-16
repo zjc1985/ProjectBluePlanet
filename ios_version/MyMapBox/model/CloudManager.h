@@ -20,4 +20,6 @@
 
 +(void)searchRoutinesByLat:(NSNumber *)lat lng:(NSNumber *)lng withLimit:(NSNumber *)limit withPage:(NSNumber *)page withBlockWhenDone:(void (^)(NSError *error,NSArray *routines))block;
 
++(void)queryMarkersByRoutineId:(NSString *)routineId withBlockWhenDone:(void (^)(NSError *error,NSArray *markers))block;
+
 @end

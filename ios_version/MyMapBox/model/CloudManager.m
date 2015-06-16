@@ -13,6 +13,7 @@
 #import "MMMarker+Dao.h"
 #import "CommonUtil.h"
 #import "MMSearchedOvMarker.h"
+#import "MMSearchdeMarker.h"
 
 #define KEY_RESPONSE_ROUTINES_UPDATED @"routinesUpdate"
 #define KEY_RESPONSE_ROUTINES_NEW   @"routinesNew"
@@ -30,6 +31,34 @@
 #define KEY_RESPONSE_MARKERS_DELETE @"markersDelete"
 
 @implementation CloudManager
+
++(void)queryMarkersByRoutineId:(NSString *)routineId withBlockWhenDone:(void (^)(NSError *, NSArray *))block{
+    NSMutableDictionary *params=[[NSMutableDictionary alloc]init];
+    [params setObject:routineId forKey:@"routineId"];
+    
+    [AVCloud callFunctionInBackground:@"fetchMarkersByRoutineId" withParameters:params block:^(id object, NSError *error) {
+        NSMutableArray *markers=[[NSMutableArray alloc]init];
+        
+        if(!error){
+            NSDictionary *response=object;
+            NSArray *markersDic=[response objectForKey:@"returnValue"];
+            for (NSDictionary *markerDic in markersDic) {
+                MMSearchdeMarker *searchMarker=[[MMSearchdeMarker alloc]initWithUUID:[markerDic objectForKey:@"id"]withLat:[markerDic objectForKey:@"lat"] withLng:[markerDic objectForKey:@"lng"]];
+                
+                searchMarker.title=[markerDic objectForKey:@"title"];
+                searchMarker.mycomment=[markerDic objectForKey:@"mycomment"];
+                searchMarker.imgUrls=[markerDic objectForKey:@"imgUrls"];
+                searchMarker.iconUrl=[markerDic objectForKey:@"iconUrl"];
+                searchMarker.slideNum=[markerDic objectForKey:@"slideNum"];
+                searchMarker.category=[markerDic objectForKey:@"category"];
+                
+                [markers addObject:searchMarker];
+            }
+        }
+        
+        block(error,markers);
+    }];
+}
 
 +(void)searchRoutinesByLat:(NSNumber *)lat lng:(NSNumber *)lng withLimit:(NSNumber *)limit withPage:(NSNumber *)page withBlockWhenDone:(void (^)(NSError *, NSArray *))block{
     NSMutableDictionary *params=[[NSMutableDictionary alloc]init];

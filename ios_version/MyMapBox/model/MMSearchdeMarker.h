@@ -22,7 +22,7 @@
 @property (nonatomic, strong) NSNumber * offsetY;
 @property (nonatomic, strong) NSNumber * lat;
 @property (nonatomic, strong) NSNumber * lng;
-@property (nonatomic, strong) NSString * imgUrls;
+@property (nonatomic, strong) NSArray  * imgUrls;
 
 @property (nonatomic, weak) MMSearchedRoutine *belongRoutine;
 

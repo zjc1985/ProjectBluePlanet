@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class MMSearchedOvMarker;
+@class MMSearchedOvMarker,MMSearchdeMarker;
 
 @interface MMSearchedRoutine : NSObject
 
@@ -29,5 +29,6 @@
 -(instancetype)initWithUUID:(NSString *)uuid withLat:(NSNumber *)lat withLng:(NSNumber *)lng;
 
 -(void)addOvMarkersObject:(MMSearchedOvMarker *)value;
+-(void)addMarkersObject:(MMSearchdeMarker *)value;
 
 @end

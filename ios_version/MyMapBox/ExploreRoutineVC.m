@@ -12,6 +12,9 @@
 #import "MMSearchedRoutine.h"
 #import "MMSearchedOvMarker.h"
 #import "CloudManager.h"
+#import "SearchRoutineInfoTVC.h"
+
+#define SHOW_SEARCH_ROUTINE_INFO_SEGUE @"showSearchRoutineInfoSegue"
 
 @interface ExploreRoutineVC ()<RMMapViewDelegate,UIActionSheetDelegate>
 
@@ -131,15 +134,18 @@ typedef enum : NSUInteger {
     }
 }
 
-/*
+
 #pragma mark - Navigation
 
 // In a storyboard-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+    if([segue.identifier isEqualToString:SHOW_SEARCH_ROUTINE_INFO_SEGUE]){
+        SearchRoutineInfoTVC *desTVC=(SearchRoutineInfoTVC *)segue.destinationViewController;
+        MMSearchedRoutine  *routine=(MMSearchedRoutine *)sender;
+        desTVC.routine=routine;
+    }
 }
-*/
+
 
 #pragma mark - RMMap delegate
 -(void)singleTapOnMap:(RMMapView *)map at:(CGPoint)point{
@@ -210,6 +216,13 @@ typedef enum : NSUInteger {
 
             [self updateUI];
         }
+    }
+}
+
+-(void)tapOnCalloutAccessoryControl:(UIControl *)control forAnnotation:(RMAnnotation *)annotation onMap:(RMMapView *)map{
+    if([annotation.userInfo isKindOfClass:[MMSearchedOvMarker class]]){
+        MMSearchedOvMarker *ovMarker=annotation.userInfo;
+        [self performSegueWithIdentifier:SHOW_SEARCH_ROUTINE_INFO_SEGUE sender:ovMarker.belongRoutine];
     }
 }
 

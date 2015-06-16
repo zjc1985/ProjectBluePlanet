@@ -8,7 +8,7 @@
 
 #import "MMSearchedRoutine.h"
 #import "MMSearchedOvMarker.h"
-
+#import "MMSearchdeMarker.h"
 
 @interface MMSearchedRoutine()
 
@@ -37,6 +37,11 @@
 
 -(void)addOvMarkersObject:(MMSearchedOvMarker *)value{
     [self.routineOvMarkers addObject:value];
+    value.belongRoutine=self;
+}
+
+-(void)addMarkersObject:(MMSearchdeMarker *)value{
+    [self.routineMarkers addObject:value];
     value.belongRoutine=self;
 }
 

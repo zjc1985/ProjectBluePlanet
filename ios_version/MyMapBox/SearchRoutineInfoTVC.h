@@ -7,7 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "MMSearchedRoutine.h"
 
 @interface SearchRoutineInfoTVC : UITableViewController
+
+@property(nonatomic,strong) MMSearchedRoutine *routine;
 
 @end

@@ -10,12 +10,21 @@
 
 @interface SearchRoutineInfoTVC ()
 
+@property (weak, nonatomic) IBOutlet UILabel *titleLabel;
+@property (weak, nonatomic) IBOutlet UITextView *desTextView;
+
+
 @end
 
 @implementation SearchRoutineInfoTVC
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+}
+
+-(void)viewDidAppear:(BOOL)animated{
+    self.titleLabel.text=self.routine.title;
+    self.desTextView.text=self.routine.mycomment;
 }
 
 #pragma mark - Table view data source

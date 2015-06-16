@@ -24,6 +24,8 @@
 @property (nonatomic, strong) NSNumber * lng;
 @property (nonatomic, strong) NSString * imgUrls;
 
+@property (nonatomic, weak) MMSearchedRoutine *belongRoutine;
+
 -(instancetype)initWithUUID:(NSString *)uuid withLat:(NSNumber *)lat withLng:(NSNumber *)lng;
 
 @end

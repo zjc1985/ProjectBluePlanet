@@ -206,6 +206,17 @@
     return result;
 }
 
+-(NSArray *)allOvMarks{
+    NSArray *ovMarkers=[self.ovMarkers allObjects];
+    NSMutableArray *result=[[NSMutableArray alloc]init];
+    for (MMOvMarker *each in ovMarkers) {
+        if(![each.isDelete boolValue]){
+            [result addObject:each];
+        }
+    }
+    return result;
+}
+
 -(BOOL)isMarkersSyncWithCloud{
     if([[self.markers allObjects] count]==0){
         return NO;

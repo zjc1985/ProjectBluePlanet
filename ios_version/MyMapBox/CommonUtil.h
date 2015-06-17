@@ -31,6 +31,8 @@
 @protocol Routine <NSObject>
 
 @required
+-(NSString *)title;
+-(NSArray *)allOvMarks;
 -(NSArray *)allMarks;
 -(double)minLatInMarkers;
 -(double)minLngInMarkers;

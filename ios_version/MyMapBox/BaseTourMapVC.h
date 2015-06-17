@@ -13,10 +13,21 @@
 
 @property(nonatomic,strong) RMMapView *mapView;
 
+@property(nonatomic,strong) id currentRoutine;
+
 -(RMMapView *)defaultRMMapView;
 
 -(void)addMarkerWithTitle:(NSString *)title withCoordinate:(CLLocationCoordinate2D)coordinate withCustomData:(id)customData;
 
 -(void)addLineFrom:(CLLocation *)from to:(CLLocation *)to;
 
+-(CGPoint)calculateOffsetFrom:(id)from to:(id)to;
+
+-(void)adjustLocationByOffsetFrom:(id )parent to:(id )to;
+
+-(NSArray *)allRoutines;
+
+-(void)updateMapUINeedPanToCurrentRoutine:(BOOL) needPan;
+
+-(void)updateMapUI;
 @end

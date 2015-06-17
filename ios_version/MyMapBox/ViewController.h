@@ -7,8 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "BaseTourMapVC.h"
 
-@interface ViewController : UIViewController
+@interface ViewController : BaseTourMapVC
 
 
 @end

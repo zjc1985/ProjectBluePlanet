@@ -28,6 +28,10 @@
     return [self.markers allObjects];
 }
 
+-(NSArray *)allOvMarks{
+    return [self.ovMarkers allObjects];
+}
+
 -(void)updateLocation{
     
 }

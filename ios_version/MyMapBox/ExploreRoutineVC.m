@@ -46,41 +46,6 @@
     //[self.tabBarController.tabBar setHidden:YES];
 }
 
--(void)updateUI{
-    [self.mapView removeAllAnnotations];
-    for (MMSearchedRoutine *routine in self.searchedRoutines) {
-        [self addMarkerWithTitle:routine.title
-                  withCoordinate:CLLocationCoordinate2DMake([routine.lat doubleValue], [routine.lng doubleValue])
-                  withCustomData:routine];
-        for (MMSearchedOvMarker *ovMarker in routine.ovMarkers) {
-            
-            //need to refine ovMarker lat lng here
-            [self adjustLocationByOffsetFrom:routine to:ovMarker];
-            
-            [self addMarkerWithTitle:routine.title
-                      withCoordinate:CLLocationCoordinate2DMake([ovMarker.lat doubleValue], [ovMarker.lng doubleValue])
-                      withCustomData:ovMarker];
-            
-            [self addLineFrom:[[CLLocation alloc]initWithLatitude:[routine.lat doubleValue]
-                                                        longitude:[routine.lng doubleValue]]
-                           to:[[CLLocation alloc]initWithLatitude:[ovMarker.lat doubleValue]
-                                                        longitude:[ovMarker.lng doubleValue]]];
-        }
-        
-    }
-}
-
--(void)adjustLocationByOffsetFrom:(MMSearchedRoutine *)parent to:(MMSearchedOvMarker *)to{
-    CGPoint parentPoint=[self.mapView coordinateToPixel:CLLocationCoordinate2DMake([parent.lat doubleValue],
-                                                                                   [parent.lng doubleValue])];
-    CGPoint newPoint=parentPoint;
-    newPoint.x=newPoint.x+[to.offsetX doubleValue];
-    newPoint.y=newPoint.y+[to.offsetY doubleValue];
-    CLLocationCoordinate2D coordinate=[self.mapView pixelToCoordinate:newPoint];
-    to.lat=[NSNumber numberWithDouble:coordinate.latitude];
-    to.lng=[NSNumber numberWithDouble:coordinate.longitude];
-}
-
 #pragma mark - getter and setter
 -(NSArray *)searchedRoutines{
     if(!_searchedRoutines){
@@ -121,7 +86,7 @@ typedef enum : NSUInteger {
                             withBlockWhenDone:^(NSError *error, NSArray *routines) {
                                 if(!error){
                                     self.searchedRoutines=routines;
-                                    [self updateUI];
+                                    [self updateMapUI];
                                 }else{
                                     [CommonUtil alert:[error localizedDescription]];
                                 }
@@ -132,6 +97,11 @@ typedef enum : NSUInteger {
         default:
             break;
     }
+}
+
+//override
+-(NSArray *)allRoutines{
+    return [self searchedRoutines];
 }
 
 
@@ -214,7 +184,7 @@ typedef enum : NSUInteger {
             ovMarker.offsetX=[NSNumber numberWithDouble: offset.x];
             ovMarker.offsetY=[NSNumber numberWithDouble: offset.y];
 
-            [self updateUI];
+            [self updateMapUI];
         }
     }
 }
@@ -249,7 +219,7 @@ typedef enum : NSUInteger {
 }
 
 - (void)afterMapZoom:(RMMapView *)map byUser:(BOOL)wasUserAction{
-    [self updateUI];
+    [self updateMapUI];
 }
 
 @end

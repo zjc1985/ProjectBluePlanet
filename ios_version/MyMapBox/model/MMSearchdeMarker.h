@@ -7,10 +7,11 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "CommonUtil.h"
 
 @class MMSearchedRoutine;
 
-@interface MMSearchdeMarker : NSObject
+@interface MMSearchdeMarker : NSObject<Marker>
 
 @property (nonatomic, strong,readonly) NSString * uuid;
 @property (nonatomic, strong) NSString * title;

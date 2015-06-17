@@ -7,10 +7,11 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "CommonUtil.h"
 
 @class MMSearchedOvMarker,MMSearchdeMarker;
 
-@interface MMSearchedRoutine : NSObject
+@interface MMSearchedRoutine  : NSObject <Routine>
 
 @property (nonatomic, strong) NSNumber * lat;
 @property (nonatomic, strong) NSNumber * lng;

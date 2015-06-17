@@ -7,6 +7,7 @@
 //
 
 #import "MMRoutine.h"
+#import "CommonUtil.h"
 
 #define KEY_ROUTINE_DESCRITPION @"description"
 #define KEY_ROUTINE_TITLE @"title"
@@ -17,7 +18,7 @@
 #define KEY_ROUTINE_IS_SYNCED @"isSynced"
 #define KEY_ROUTINE_UUID @"uuid"
 
-@interface MMRoutine (Dao)
+@interface MMRoutine (Dao)<Routine>
 
 +(MMRoutine *)createMMRoutineWithLat:(double)lat withLng:(double)lng;
 

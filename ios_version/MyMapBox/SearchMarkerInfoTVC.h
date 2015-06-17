@@ -7,7 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "MMSearchdeMarker.h"
+#import "BaseMarkerInfoVC.h"
 
-@interface SearchMarkerInfoTVC : UITableViewController
+@interface SearchMarkerInfoTVC :BaseMarkerInfoVC
+
+@property(nonatomic,strong)MMSearchdeMarker *marker;
 
 @end

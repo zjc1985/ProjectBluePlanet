@@ -23,6 +23,62 @@
 
 @implementation MMSearchedRoutine
 
+#pragma mark - Routine protocal
+-(NSArray *)allMarks{
+    return [self.markers allObjects];
+}
+
+-(void)updateLocation{
+    
+}
+
+-(double)minLatInMarkers{
+    MMSearchdeMarker *first=[[self.markers allObjects] firstObject];
+    double minLat=[first.lat doubleValue];
+    
+    for (MMSearchdeMarker *each in self.markers) {
+        if([each.lat doubleValue]<minLat){
+            minLat=[each.lat doubleValue];
+        }
+    }
+    
+    return minLat;
+}
+
+-(double)minLngInMarkers{
+    MMSearchdeMarker *first=[[self.markers allObjects] firstObject];
+    double minLng=[first.lng doubleValue];
+    for (MMSearchdeMarker *each in self.markers) {
+        if([each.lng doubleValue]<minLng){
+            minLng=[each.lng doubleValue];
+        }
+    }
+    return minLng;
+}
+
+-(double)maxLatInMarkers{
+    MMSearchdeMarker *first=[[self.markers allObjects] firstObject];
+    double maxLat=[first.lat doubleValue];
+    for (MMSearchdeMarker *each in self.markers) {
+        if([each.lat doubleValue]>maxLat){
+            maxLat=[each.lat doubleValue];
+        }
+    }
+    return maxLat;
+}
+
+-(double)maxLngInMarkers{
+    MMSearchdeMarker *first=[[self.markers allObjects] firstObject];
+    double maxLng=[first.lng doubleValue];
+    for (MMSearchdeMarker *each in self.markers) {
+        if([each.lng doubleValue]>maxLng){
+            maxLng=[each.lng doubleValue];
+        }
+    }
+    return maxLng;
+}
+
+
 #pragma mark public method
 -(instancetype)initWithUUID:(NSString *)uuid withLat:(NSNumber *)lat withLng:(NSNumber *)lng{
     self =[super init];
@@ -61,11 +117,11 @@
 }
 
 
--(NSMutableSet *)markers{
+-(NSSet *)markers{
     return self.routineMarkers;
 }
 
--(NSMutableSet *)ovMarkers{
+-(NSSet *)ovMarkers{
     return self.routineOvMarkers;
 }
 

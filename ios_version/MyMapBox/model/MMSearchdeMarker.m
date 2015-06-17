@@ -7,6 +7,7 @@
 //
 
 #import "MMSearchdeMarker.h"
+#import "MMMarker+Dao.h"
 
 @interface MMSearchdeMarker()
 
@@ -25,6 +26,14 @@
         self.iconUrl=@"event_default.png";
     }
     return self;
+}
+
+-(NSArray *)imageUrlsArray{
+    return self.imgUrls;
+}
+
+-(NSString *)subDescription{
+     return [NSString stringWithFormat:@"%@ %u",[MMMarker CategoryNameWithMMMarkerCategory:[self.category integerValue]],[self.slideNum integerValue]];
 }
 
 @end

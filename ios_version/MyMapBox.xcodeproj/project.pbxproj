@@ -14,6 +14,8 @@
 		283A21CD1B2E715000F6DCA1 /* SearchMarkerInfoTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 283A21CC1B2E715000F6DCA1 /* SearchMarkerInfoTVC.m */; };
 		283A21D01B2E742C00F6DCA1 /* PinMarkerTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 283A21CF1B2E742C00F6DCA1 /* PinMarkerTVC.m */; };
 		283A21D31B2ED1E100F6DCA1 /* BaseTourMapVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 283A21D21B2ED1E100F6DCA1 /* BaseTourMapVC.m */; };
+		283A21E61B313B3A00F6DCA1 /* BaseDetailMapVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 283A21E51B313B3A00F6DCA1 /* BaseDetailMapVC.m */; };
+		283A21E91B316E9300F6DCA1 /* BaseMarkerInfoVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 283A21E81B316E9300F6DCA1 /* BaseMarkerInfoVC.m */; };
 		285E431F1AD61E720030A274 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 285E431E1AD61E720030A274 /* main.m */; };
 		285E43221AD61E720030A274 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 285E43211AD61E720030A274 /* AppDelegate.m */; };
 		285E43251AD61E720030A274 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 285E43241AD61E720030A274 /* ViewController.m */; };
@@ -79,6 +81,10 @@
 		283A21CF1B2E742C00F6DCA1 /* PinMarkerTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PinMarkerTVC.m; sourceTree = "<group>"; };
 		283A21D11B2ED1E100F6DCA1 /* BaseTourMapVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseTourMapVC.h; sourceTree = "<group>"; };
 		283A21D21B2ED1E100F6DCA1 /* BaseTourMapVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BaseTourMapVC.m; sourceTree = "<group>"; };
+		283A21E41B313B3A00F6DCA1 /* BaseDetailMapVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseDetailMapVC.h; sourceTree = "<group>"; };
+		283A21E51B313B3A00F6DCA1 /* BaseDetailMapVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BaseDetailMapVC.m; sourceTree = "<group>"; };
+		283A21E71B316E9300F6DCA1 /* BaseMarkerInfoVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseMarkerInfoVC.h; sourceTree = "<group>"; };
+		283A21E81B316E9300F6DCA1 /* BaseMarkerInfoVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BaseMarkerInfoVC.m; sourceTree = "<group>"; };
 		285E43191AD61E720030A274 /* MyMapBox.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MyMapBox.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		285E431D1AD61E720030A274 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		285E431E1AD61E720030A274 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -281,6 +287,10 @@
 			children = (
 				283A21D11B2ED1E100F6DCA1 /* BaseTourMapVC.h */,
 				283A21D21B2ED1E100F6DCA1 /* BaseTourMapVC.m */,
+				283A21E41B313B3A00F6DCA1 /* BaseDetailMapVC.h */,
+				283A21E51B313B3A00F6DCA1 /* BaseDetailMapVC.m */,
+				283A21E71B316E9300F6DCA1 /* BaseMarkerInfoVC.h */,
+				283A21E81B316E9300F6DCA1 /* BaseMarkerInfoVC.m */,
 				283A21C71B2E708000F6DCA1 /* explore */,
 				28E475521AEF28C600449DBC /* OfflineRoutineTVC.h */,
 				28E475531AEF28C600449DBC /* OfflineRoutineTVC.m */,
@@ -540,6 +550,7 @@
 				8421CB181ADC04D0002046B9 /* RoutineDetailMapViewController.m in Sources */,
 				84F46A801B0396E0008B7F13 /* SettingViewController.m in Sources */,
 				28E261CA1B00535A0019611C /* MyMapBox.xcdatamodeld in Sources */,
+				283A21E91B316E9300F6DCA1 /* BaseMarkerInfoVC.m in Sources */,
 				283A21D01B2E742C00F6DCA1 /* PinMarkerTVC.m in Sources */,
 				28C442EA1B2A884600DDC54C /* MMSearchdeMarker.m in Sources */,
 				283A21CA1B2E70FC00F6DCA1 /* SearchRoutineDetailMapVC.m in Sources */,
@@ -554,6 +565,7 @@
 				2863907B1ADD136000A5B999 /* CommonUtil.m in Sources */,
 				288B09AD1B0320B200066C59 /* CloudManager.m in Sources */,
 				8421CB151ADBF8FA002046B9 /* RoutineInfoViewController.m in Sources */,
+				283A21E61B313B3A00F6DCA1 /* BaseDetailMapVC.m in Sources */,
 				28C442ED1B2AE70800DDC54C /* ExploreRoutineVC.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

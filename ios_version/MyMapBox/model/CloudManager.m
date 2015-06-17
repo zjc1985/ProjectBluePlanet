@@ -33,6 +33,8 @@
 @implementation CloudManager
 
 +(void)queryMarkersByRoutineId:(NSString *)routineId withBlockWhenDone:(void (^)(NSError *, NSArray *))block{
+    NSLog(@"CloudManager.queryMarkersByRoutineId");
+    
     NSMutableDictionary *params=[[NSMutableDictionary alloc]init];
     [params setObject:routineId forKey:@"routineId"];
     
@@ -47,7 +49,12 @@
                 
                 searchMarker.title=[markerDic objectForKey:@"title"];
                 searchMarker.mycomment=[markerDic objectForKey:@"mycomment"];
-                searchMarker.imgUrls=[markerDic objectForKey:@"imgUrls"];
+                
+                NSMutableArray *imageUrls=[[NSMutableArray alloc]init];
+                for (NSString *url in [markerDic objectForKey:@"imgUrls"]) {
+                    [imageUrls addObject: [url stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]]];
+                }
+                searchMarker.imgUrls=imageUrls;
                 searchMarker.iconUrl=[markerDic objectForKey:@"iconUrl"];
                 searchMarker.slideNum=[markerDic objectForKey:@"slideNum"];
                 searchMarker.category=[markerDic objectForKey:@"category"];

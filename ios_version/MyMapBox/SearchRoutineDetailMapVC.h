@@ -7,7 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "MMSearchedRoutine.h"
+#import "BaseDetailMapVC.h"
 
-@interface SearchRoutineDetailMapVC : UIViewController
+@interface SearchRoutineDetailMapVC : BaseDetailMapVC
 
 @end

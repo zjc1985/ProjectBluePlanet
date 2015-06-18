@@ -11,4 +11,6 @@
 
 @interface ExploreRoutineVC :BaseTourMapVC
 
+@property(nonatomic,strong) NSArray *searchedRoutines;
+
 @end

@@ -147,8 +147,6 @@
 #pragma mark - RMMapViewDelegate
 
 -(void)singleTapOnMap:(RMMapView *)map at:(CGPoint)point{
-    BOOL hidden=self.tabBarController.tabBar.hidden;
-    [self.tabBarController.tabBar setHidden:!hidden];
 }
 
 

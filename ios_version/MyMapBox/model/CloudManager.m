@@ -67,6 +67,47 @@
     }];
 }
 
++(void)searchRoutinesByUserId:(NSString *)userId withBlockWhenDone:(void (^)(NSError *, NSArray *))block{
+    NSMutableDictionary *params=[[NSMutableDictionary alloc]init];
+    [params setObject:userId forKey:@"userId"];
+    
+    
+    [AVCloud callFunctionInBackground:@"searchRoutinesByUserId" withParameters:params block:^(id object, NSError *error) {
+        NSMutableArray *routines=[[NSMutableArray alloc]init];
+        
+        if (!error) {
+            NSDictionary *response=object;
+            for (NSDictionary *eachSearchResult in response) {
+                
+                
+                //handle routine
+                NSDictionary *routineDic=[eachSearchResult objectForKey:@"searchedRoutine"];
+                MMSearchedRoutine *searchedRoutine=[[MMSearchedRoutine alloc]initWithUUID:[routineDic objectForKey:@"uuid"]
+                                                                                  withLat:[routineDic objectForKey:@"lat"]
+                                                                                  withLng:[routineDic objectForKey:@"lng"]];
+                searchedRoutine.title=[routineDic objectForKey:@"title"];
+                searchedRoutine.mycomment=[routineDic objectForKey:@"description"];
+                //handle ovMarkers
+                for (NSDictionary *ovMarkerDic in [eachSearchResult objectForKey:@"searchedOvMarkers"]) {
+                    MMSearchedOvMarker *searchedOvMarker=[[MMSearchedOvMarker alloc]initWithUUID:[ovMarkerDic objectForKey:@"uuid"]
+                                                                                     withOffsetX:[ovMarkerDic objectForKey:@"offsetX"]
+                                                                                     withOffsetY:[ovMarkerDic objectForKey:@"offsetY"]];
+                    searchedOvMarker.offsetX=[NSNumber numberWithInteger:0];
+                    searchedOvMarker.offsetY=[NSNumber numberWithInteger:0];
+                    
+                    searchedOvMarker.iconUrl=[ovMarkerDic objectForKey:@"iconUrl"];
+                    [searchedRoutine addOvMarkersObject:searchedOvMarker];
+                }
+                
+                [routines addObject:searchedRoutine];
+            }
+        }
+        
+        block(error,routines);
+    }];
+
+}
+
 +(void)searchRoutinesByLat:(NSNumber *)lat lng:(NSNumber *)lng withLimit:(NSNumber *)limit withPage:(NSNumber *)page withBlockWhenDone:(void (^)(NSError *, NSArray *))block{
     NSMutableDictionary *params=[[NSMutableDictionary alloc]init];
     [params setObject:lat forKey:@"lat"];

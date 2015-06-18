@@ -9,6 +9,7 @@
 #import "SearchMarkerInfoTVC.h"
 #import <SDWebImage/UIImageView+WebCache.h>
 #import "MWPhotoBrowser.h"
+#import "PinMarkerTVC.h"
 
 @interface SearchMarkerInfoTVC ()
 
@@ -30,6 +31,13 @@
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     // Get the new view controller using [segue destinationViewController].
     // Pass the selected object to the new view controller.
+}
+
+-(IBAction)pinMarkerDone:(UIStoryboardSegue *)segue{
+    if([segue.sourceViewController isKindOfClass:[PinMarkerTVC class]]){
+        PinMarkerTVC *out=segue.sourceViewController;
+        // do the pin logic here
+    }
 }
 
 

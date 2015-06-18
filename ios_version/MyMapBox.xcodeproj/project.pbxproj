@@ -16,6 +16,9 @@
 		283A21D31B2ED1E100F6DCA1 /* BaseTourMapVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 283A21D21B2ED1E100F6DCA1 /* BaseTourMapVC.m */; };
 		283A21E61B313B3A00F6DCA1 /* BaseDetailMapVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 283A21E51B313B3A00F6DCA1 /* BaseDetailMapVC.m */; };
 		283A21E91B316E9300F6DCA1 /* BaseMarkerInfoVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 283A21E81B316E9300F6DCA1 /* BaseMarkerInfoVC.m */; };
+		283A21EC1B328DD900F6DCA1 /* OtherUserWorldVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 283A21EB1B328DD900F6DCA1 /* OtherUserWorldVC.m */; };
+		283A21EF1B328E2400F6DCA1 /* OtherUserRoutineInfoTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 283A21EE1B328E2400F6DCA1 /* OtherUserRoutineInfoTVC.m */; };
+		283A21F21B32CA4D00F6DCA1 /* OptionCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 283A21F11B32CA4D00F6DCA1 /* OptionCell.m */; };
 		285E431F1AD61E720030A274 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 285E431E1AD61E720030A274 /* main.m */; };
 		285E43221AD61E720030A274 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 285E43211AD61E720030A274 /* AppDelegate.m */; };
 		285E43251AD61E720030A274 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 285E43241AD61E720030A274 /* ViewController.m */; };
@@ -85,6 +88,12 @@
 		283A21E51B313B3A00F6DCA1 /* BaseDetailMapVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BaseDetailMapVC.m; sourceTree = "<group>"; };
 		283A21E71B316E9300F6DCA1 /* BaseMarkerInfoVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseMarkerInfoVC.h; sourceTree = "<group>"; };
 		283A21E81B316E9300F6DCA1 /* BaseMarkerInfoVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BaseMarkerInfoVC.m; sourceTree = "<group>"; };
+		283A21EA1B328DD900F6DCA1 /* OtherUserWorldVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OtherUserWorldVC.h; sourceTree = "<group>"; };
+		283A21EB1B328DD900F6DCA1 /* OtherUserWorldVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OtherUserWorldVC.m; sourceTree = "<group>"; };
+		283A21ED1B328E2400F6DCA1 /* OtherUserRoutineInfoTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OtherUserRoutineInfoTVC.h; sourceTree = "<group>"; };
+		283A21EE1B328E2400F6DCA1 /* OtherUserRoutineInfoTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OtherUserRoutineInfoTVC.m; sourceTree = "<group>"; };
+		283A21F01B32CA4D00F6DCA1 /* OptionCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OptionCell.h; sourceTree = "<group>"; };
+		283A21F11B32CA4D00F6DCA1 /* OptionCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OptionCell.m; sourceTree = "<group>"; };
 		285E43191AD61E720030A274 /* MyMapBox.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MyMapBox.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		285E431D1AD61E720030A274 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		285E431E1AD61E720030A274 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -190,6 +199,10 @@
 		283A21C71B2E708000F6DCA1 /* explore */ = {
 			isa = PBXGroup;
 			children = (
+				283A21EA1B328DD900F6DCA1 /* OtherUserWorldVC.h */,
+				283A21EB1B328DD900F6DCA1 /* OtherUserWorldVC.m */,
+				283A21ED1B328E2400F6DCA1 /* OtherUserRoutineInfoTVC.h */,
+				283A21EE1B328E2400F6DCA1 /* OtherUserRoutineInfoTVC.m */,
 				283A21CB1B2E715000F6DCA1 /* SearchMarkerInfoTVC.h */,
 				283A21CC1B2E715000F6DCA1 /* SearchMarkerInfoTVC.m */,
 				283A21C41B2E6CF200F6DCA1 /* SearchRoutineInfoTVC.h */,
@@ -200,6 +213,8 @@
 				283A21C91B2E70FC00F6DCA1 /* SearchRoutineDetailMapVC.m */,
 				283A21CE1B2E742C00F6DCA1 /* PinMarkerTVC.h */,
 				283A21CF1B2E742C00F6DCA1 /* PinMarkerTVC.m */,
+				283A21F01B32CA4D00F6DCA1 /* OptionCell.h */,
+				283A21F11B32CA4D00F6DCA1 /* OptionCell.m */,
 			);
 			name = explore;
 			sourceTree = "<group>";
@@ -558,12 +573,15 @@
 				28E475541AEF28C600449DBC /* OfflineRoutineTVC.m in Sources */,
 				28C442E71B2A85D300DDC54C /* MMSearchedRoutine.m in Sources */,
 				285E43221AD61E720030A274 /* AppDelegate.m in Sources */,
+				283A21EC1B328DD900F6DCA1 /* OtherUserWorldVC.m in Sources */,
+				283A21F21B32CA4D00F6DCA1 /* OptionCell.m in Sources */,
 				28E261F71B0095CE0019611C /* MMOvMarker.m in Sources */,
 				285E431F1AD61E720030A274 /* main.m in Sources */,
 				288B09A51B00BC1500066C59 /* MMMarker+Dao.m in Sources */,
 				28307D521B1D7E060050AA58 /* MMMarkerIconInfo.m in Sources */,
 				2863907B1ADD136000A5B999 /* CommonUtil.m in Sources */,
 				288B09AD1B0320B200066C59 /* CloudManager.m in Sources */,
+				283A21EF1B328E2400F6DCA1 /* OtherUserRoutineInfoTVC.m in Sources */,
 				8421CB151ADBF8FA002046B9 /* RoutineInfoViewController.m in Sources */,
 				283A21E61B313B3A00F6DCA1 /* BaseDetailMapVC.m in Sources */,
 				28C442ED1B2AE70800DDC54C /* ExploreRoutineVC.m in Sources */,

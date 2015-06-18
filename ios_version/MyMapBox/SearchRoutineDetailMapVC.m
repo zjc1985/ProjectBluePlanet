@@ -46,7 +46,9 @@
     if([searchRoutine.isLoad boolValue]){
         [self updateMapUI];
     }else{
+        self.title=@"Loading...";
         [CloudManager queryMarkersByRoutineId:[self.routine uuid] withBlockWhenDone:^(NSError *error, NSArray *markers) {
+            self.title=@"";
             if(!error){
                 
                 for (MMSearchdeMarker *eachMarker in markers) {

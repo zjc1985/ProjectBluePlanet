@@ -7,7 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "MMRoutine+Dao.h"
 
 @interface PinMarkerTVC : UITableViewController
+
+//out
+@property(nonatomic,strong)MMRoutine *selectedRoutine;
+@property(nonatomic)BOOL needImage;
+@property(nonatomic)BOOL needContent;
 
 @end

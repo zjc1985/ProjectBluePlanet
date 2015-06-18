@@ -18,8 +18,6 @@
 
 @interface ExploreRoutineVC ()<RMMapViewDelegate,UIActionSheetDelegate>
 
-@property(nonatomic,strong) NSArray *searchedRoutines;
-
 @end
 
 @implementation ExploreRoutineVC
@@ -43,7 +41,7 @@
 }
 
 -(void)viewWillAppear:(BOOL)animated{
-    //[self.tabBarController.tabBar setHidden:YES];
+    [self.tabBarController.tabBar setHidden:NO];
 }
 
 #pragma mark - getter and setter
@@ -77,6 +75,8 @@ typedef enum : NSUInteger {
         case searchRoutineinCenter:{
             NSLog(@"search routine in center");
             
+            self.title=@"Loading...";
+            
             NSNumber *lat=[NSNumber numberWithDouble:self.mapView.centerCoordinate.latitude];
             NSNumber *lng=[NSNumber numberWithDouble:self.mapView.centerCoordinate.longitude];
             
@@ -84,6 +84,7 @@ typedef enum : NSUInteger {
                                     withLimit:[NSNumber numberWithUnsignedInteger:5]
                                      withPage:[NSNumber numberWithUnsignedInteger:1]
                             withBlockWhenDone:^(NSError *error, NSArray *routines) {
+                                self.title=@"";
                                 if(!error){
                                     self.searchedRoutines=routines;
                                     [self updateMapUI];
@@ -119,8 +120,8 @@ typedef enum : NSUInteger {
 
 #pragma mark - RMMap delegate
 -(void)singleTapOnMap:(RMMapView *)map at:(CGPoint)point{
-    BOOL hidden=self.tabBarController.tabBar.hidden;
-    [self.tabBarController.tabBar setHidden:!hidden];
+    //BOOL hidden=self.tabBarController.tabBar.hidden;
+    //[self.tabBarController.tabBar setHidden:!hidden];
 }
 
 -(RMMapLayer *)mapView:(RMMapView *)mapView layerForAnnotation:(RMAnnotation *)annotation{
@@ -194,20 +195,6 @@ typedef enum : NSUInteger {
         MMSearchedOvMarker *ovMarker=annotation.userInfo;
         [self performSegueWithIdentifier:SHOW_SEARCH_ROUTINE_INFO_SEGUE sender:ovMarker.belongRoutine];
     }
-}
-
--(CGPoint)calculateOffsetFrom:(MMSearchedRoutine *)from to:(MMSearchedOvMarker *)to{
-    CGPoint parentPoint=[self.mapView coordinateToPixel:CLLocationCoordinate2DMake([from.lat doubleValue],
-                                                                                   [from.lng doubleValue])];
-    CGPoint subPoint=[self.mapView coordinateToPixel:CLLocationCoordinate2DMake([to.lat doubleValue],
-                                                                                [to.lng doubleValue])];
-    //NSLog(@"parent: x :%f  y: %f",parentPoint.x,parentPoint.y);
-    //NSLog(@"sub: x :%f  y: %f",subPoint.x,parentPoint.y);
-    CGPoint result;
-    result.x=subPoint.x-parentPoint.x;
-    result.y=subPoint.y-parentPoint.y;
-    NSLog(@"offset: x :%f  y: %f",result.x,result.y);
-    return result;
 }
 
 -(BOOL)mapView:(RMMapView *)mapView shouldDragAnnotation:(RMAnnotation *)annotation{

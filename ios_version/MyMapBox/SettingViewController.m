@@ -23,7 +23,7 @@
 }
 
 - (IBAction)searchRoutineByLatLng:(id)sender {
-    [CloudManager queryMarkersByRoutineId:@"d3cfd7c3-67b8-4f29-b21a-03ceb4a4647c" withBlockWhenDone:^(NSError *error, NSArray *markers) {
+    [CloudManager searchRoutinesByUserId:@"5549e880e4b0679ef60fc654" withBlockWhenDone:^(NSError *error, NSArray *routines) {
         if(!error){
             NSLog(@"query success");
         }else{

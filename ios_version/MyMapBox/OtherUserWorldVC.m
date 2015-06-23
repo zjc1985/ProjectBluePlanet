@@ -16,6 +16,9 @@
 
 @interface OtherUserWorldVC ()
 
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *likeBarItem;
+@property(nonatomic)BOOL isFollowed;
+
 @end
 
 @implementation OtherUserWorldVC
@@ -37,6 +40,48 @@
             [CommonUtil alert:error.localizedDescription];
         }
     }];
+    
+    [self updateFollowStatus];
+}
+
+-(void)updateFollowStatus{
+    [CloudManager existFollowee:self.userId withBlockWhenDone:^(BOOL isFollowed, NSError *error) {
+        if(!error){
+            self.isFollowed=isFollowed;
+        }else{
+            [CommonUtil alert:error.localizedDescription];
+        }
+    }];
+}
+
+- (IBAction)followButtonClick:(id)sender {
+    if ([self.userId isEqualToString:[CloudManager currentUser].objectId]) {
+        [CommonUtil alert:@"You already own this world~"];
+        return;
+    }
+    
+    
+    if (self.isFollowed) {
+        [CloudManager unfollow:self.userId withBlockWhenDone:^(BOOL success, NSError *error) {
+            if(!error){
+                if (success) {
+                    self.isFollowed=NO;
+                }
+            }else{
+                [CommonUtil alert:error.localizedDescription];
+            }
+        }];
+    }else{
+        [CloudManager follow:self.userId withBlockWhenDone:^(BOOL success, NSError *error) {
+            if(!error){
+                if (success) {
+                    self.isFollowed=YES;
+                }
+            }else{
+                [CommonUtil alert:error.localizedDescription];
+            }
+        }];
+    }
 }
 
 -(void)tapOnCalloutAccessoryControl:(UIControl *)control forAnnotation:(RMAnnotation *)annotation onMap:(RMMapView *)map{
@@ -46,11 +91,23 @@
     }
 }
 
+
+
 #pragma mark - Navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([segue.identifier isEqualToString:SHOW_OTHER_USER_ROUTINR_INFO_SEGUE]) {
         OtherUserRoutineInfoTVC *destTVC=segue.destinationViewController;
         destTVC.routine=sender;
+    }
+}
+
+#pragma mark - getter and setter
+-(void)setIsFollowed:(BOOL)isFollowed{
+    _isFollowed=isFollowed;
+    if (isFollowed) {
+        [self.likeBarItem setImage:[UIImage imageNamed:@"icon_like_filled"]];
+    }else{
+        [self.likeBarItem setImage:[UIImage imageNamed:@"icon_like"]];
     }
 }
 @end

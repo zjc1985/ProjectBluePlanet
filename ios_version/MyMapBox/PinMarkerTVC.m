@@ -127,7 +127,11 @@
 #pragma mark - ui action
 
 - (IBAction)doneButtonClick:(id)sender {
-    [self performSegueWithIdentifier:PIN_MARKER_DONE_UNWIND_SEGUE sender:nil];
+    if(self.checkedIndexPath){
+        [self performSegueWithIdentifier:PIN_MARKER_DONE_UNWIND_SEGUE sender:nil];
+    }else{
+        [CommonUtil alert:@"Please select your routine to pin"];
+    }
 }
 
 #pragma mark - Navigation

@@ -14,6 +14,14 @@
 
 +(AVUser *)currentUser;
 
++(void)follow:(NSString *)userId withBlockWhenDone:(void (^)(BOOL success,NSError *error))block;
+
++(void)unfollow:(NSString *)userId withBlockWhenDone:(void (^)(BOOL success,NSError *error))block;
+
++(void)queryFollowees:(void (^)(NSError *error,NSArray *user))block;
+
++(void)existFollowee:(NSString *)userId withBlockWhenDone:(void (^)(BOOL isFollowed,NSError *error))block;
+
 +(void)syncRoutinesAndOvMarkersWithBlockWhenDone:(void (^)(NSError *error))block;
 
 +(void)syncMarkersByRoutineUUID:(NSString *)routineUUID withBlockWhenDone:(void (^)(NSError *error))block;

@@ -10,6 +10,7 @@
 #import <SDWebImage/UIImageView+WebCache.h>
 #import "MWPhotoBrowser.h"
 #import "PinMarkerTVC.h"
+#import "MMMarker+Dao.h"
 
 @interface SearchMarkerInfoTVC ()
 
@@ -36,7 +37,16 @@
 -(IBAction)pinMarkerDone:(UIStoryboardSegue *)segue{
     if([segue.sourceViewController isKindOfClass:[PinMarkerTVC class]]){
         PinMarkerTVC *out=segue.sourceViewController;
-        // do the pin logic here
+        MMMarker *mmmarker=[MMMarker createMMMarkerInRoutine:out.selectedRoutine withSearchMarker:self.marker];
+        if (out.needImage) {
+            for (NSString *imgUrl in self.marker.imgUrls) {
+                [mmmarker addImageUrl:imgUrl];
+            }
+        }
+        if (out.needContent) {
+            mmmarker.mycomment=self.marker.mycomment;
+        }
+        [CommonUtil alert:@"pin complete"];
     }
 }
 

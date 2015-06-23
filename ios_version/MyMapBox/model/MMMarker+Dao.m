@@ -67,6 +67,16 @@
                                 withUUID:[uuid UUIDString]];
 }
 
++(MMMarker *)createMMMarkerInRoutine:(MMRoutine *)routine withSearchMarker:(MMSearchdeMarker *)searchedMarker{
+    MMMarker *marker=[self createMMMarkerInRoutine:routine withLat:[searchedMarker.lat doubleValue] withLng:[searchedMarker.lng doubleValue]];
+    
+    marker.title=searchedMarker.title;
+    marker.iconUrl=searchedMarker.iconUrl;
+    marker.category=searchedMarker.category;
+    
+    return marker;
+}
+
 +(void)removeMMMarker:(MMMarker *)marker{
     [[CommonUtil getContext] deleteObject:marker];
 }

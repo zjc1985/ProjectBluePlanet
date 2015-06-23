@@ -10,6 +10,8 @@
 #import "SearchRoutineDetailMapVC.h"
 #import "OtherUserWorldVC.h"
 
+#import "CloudManager.h"
+
 # define SHOW_SEARCH_ROUTINE_DETAIL_SEGUE @"showSearchRoutineDetailSegue"
 # define SHOW_OTHER_USER_WORLD_SEGUE @"showOtherUserWorldSegue"
 
@@ -19,6 +21,9 @@
 @property (weak, nonatomic) IBOutlet UILabel *subTitleLabel;
 @property (weak, nonatomic) IBOutlet UITextView *desTextView;
 @property (weak, nonatomic) IBOutlet UIButton *exploreButton;
+@property (weak, nonatomic) IBOutlet UIButton *followButton;
+@property (weak, nonatomic) IBOutlet UITableViewCell *followTableCell;
+
 
 
 @end
@@ -37,6 +42,7 @@
     [self.exploreButton setTitle:[NSString stringWithFormat:@"Explore %@'s World",self.routine.userName] forState:UIControlStateNormal];
 }
 
+
 #pragma mark - Navigation
 
 // In a storyboard-based application, you will often want to do a little preparation before navigation
@@ -50,5 +56,8 @@
         destVC.userName=self.routine.userName;
     }
 }
+
+
+
 
 @end

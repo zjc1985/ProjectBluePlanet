@@ -32,6 +32,42 @@
 
 @implementation CloudManager
 
++(void)follow:(NSString *)userId withBlockWhenDone:(void (^)(BOOL success,NSError *))block{
+    [[AVUser currentUser] follow:userId andCallback:^(BOOL succeeded, NSError *error) {
+        
+        block(succeeded,error);
+    }];
+
+}
+
++(void)unfollow:(NSString *)userId withBlockWhenDone:(void (^)(BOOL,NSError *))block{
+    [[AVUser currentUser] unfollow:userId andCallback:^(BOOL succeeded, NSError *error) {
+        block(succeeded,error);
+    }];
+}
+
++(void)queryFollowees:(void (^)(NSError *, NSArray *))block{
+    AVQuery *query= [AVUser followeeQuery:@"USER_OBJECT_ID"];
+    [query whereKey:@"user" equalTo:[self currentUser]];
+    [query includeKey:@"followee"];
+    [query findObjectsInBackgroundWithBlock:^(NSArray *user, NSError *error) {
+        block(error,user);
+    }];
+}
+
++(void)existFollowee:(NSString *)userId withBlockWhenDone:(void (^)(BOOL, NSError *))block{
+    [self queryFollowees:^(NSError *error, NSArray *user) {
+        BOOL result=NO;
+        for (AVUser *eachUser in user) {
+            if ([eachUser.objectId isEqualToString:userId]) {
+                result=YES;
+            }
+        }        
+        block(result,error);
+    }];
+}
+
+
 +(void)queryMarkersByRoutineId:(NSString *)routineId withBlockWhenDone:(void (^)(NSError *, NSArray *))block{
     NSLog(@"CloudManager.queryMarkersByRoutineId");
     

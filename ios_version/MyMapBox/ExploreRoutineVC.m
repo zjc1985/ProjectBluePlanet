@@ -84,7 +84,7 @@ typedef enum : NSUInteger {
                                     withLimit:[NSNumber numberWithUnsignedInteger:5]
                                      withPage:[NSNumber numberWithUnsignedInteger:1]
                             withBlockWhenDone:^(NSError *error, NSArray *routines) {
-                                self.title=@"";
+                                self.title=@"Explore";
                                 if(!error){
                                     self.searchedRoutines=routines;
                                     [self updateMapUI];

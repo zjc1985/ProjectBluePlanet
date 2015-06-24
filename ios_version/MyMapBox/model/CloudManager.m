@@ -32,6 +32,89 @@
 
 @implementation CloudManager
 
+
+#pragma mark - like routine feature
+
++(void)likeRoutine:(NSString *)routineId withBlockWhenDone:(void (^)(NSError *))block{
+    NSMutableDictionary *params=[[NSMutableDictionary alloc]init];
+    [params setObject:routineId forKey:@"routineId"];
+    
+    [AVCloud callFunctionInBackground:@"likeRoutine" withParameters:params block:^(id object, NSError *error) {
+        block(error);
+    }];
+}
+
++(void)unLikedRoutine:(NSString *)routineId withBlockWhenDone:(void (^)(NSError *))block{
+    NSMutableDictionary *params=[[NSMutableDictionary alloc]init];
+    [params setObject:routineId forKey:@"routineId"];
+    
+    [AVCloud callFunctionInBackground:@"unlikeRoutine" withParameters:params block:^(id object, NSError *error) {
+        block(error);
+    }];
+}
+
++(void)existLikedRoutine:(NSString *)routineId withBlockWhenDone:(void (^)(BOOL, NSError *))block{
+    AVQuery *query = [AVQuery queryWithClassName:@"LikedRoutine"];
+    [query whereKey:@"user" equalTo:[self currentUser]];
+    [query whereKey:@"routineId" equalTo:routineId];
+    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        BOOL isLike=NO;
+        if (!error) {
+            if (objects.count>0) {
+                isLike=YES;
+            }else{
+                isLike=NO;
+            }
+        } else {
+            // 输出错误信息
+            NSLog(@"Error: %@ %@", error, [error userInfo]);
+        }
+        block(isLike,error);
+    }];
+}
+
++(void)queryLikedRoutines:(void (^)(NSError *, NSArray *))block{
+    [AVCloud callFunctionInBackground:@"queryLikedRoutines" withParameters:nil block:^(id object, NSError *error) {
+        NSMutableArray *routines=[[NSMutableArray alloc]init];
+        
+        if (!error) {
+            NSDictionary *response=object;
+            for (NSDictionary *eachSearchResult in response) {
+                
+                
+                //handle routine
+                NSDictionary *routineDic=[eachSearchResult objectForKey:@"searchedRoutine"];
+                MMSearchedRoutine *searchedRoutine=[[MMSearchedRoutine alloc]initWithUUID:[routineDic objectForKey:@"uuid"]
+                                                                                  withLat:[routineDic objectForKey:@"lat"]
+                                                                                  withLng:[routineDic objectForKey:@"lng"]];
+                searchedRoutine.title=[routineDic objectForKey:@"title"];
+                searchedRoutine.mycomment=[routineDic objectForKey:@"description"];
+                searchedRoutine.userId=[routineDic objectForKey:@"userId"];
+                searchedRoutine.userName=[routineDic objectForKey:@"userName"];
+                
+                //handle ovMarkers
+                for (NSDictionary *ovMarkerDic in [eachSearchResult objectForKey:@"searchedOvMarkers"]) {
+                    MMSearchedOvMarker *searchedOvMarker=[[MMSearchedOvMarker alloc]initWithUUID:[ovMarkerDic objectForKey:@"uuid"]
+                                                                                     withOffsetX:[ovMarkerDic objectForKey:@"offsetX"]
+                                                                                     withOffsetY:[ovMarkerDic objectForKey:@"offsetY"]];
+                    searchedOvMarker.offsetX=[NSNumber numberWithInteger:0];
+                    searchedOvMarker.offsetY=[NSNumber numberWithInteger:0];
+                    
+                    searchedOvMarker.iconUrl=[ovMarkerDic objectForKey:@"iconUrl"];
+                    [searchedRoutine addOvMarkersObject:searchedOvMarker];
+                }
+                
+                [routines addObject:searchedRoutine];
+            }
+        }else{
+            NSLog(@"%@",error.localizedDescription);
+        }
+        
+        block(error,routines);
+    }];
+}
+
+#pragma mark - follow feature
 +(void)follow:(NSString *)userId withBlockWhenDone:(void (^)(BOOL success,NSError *))block{
     [[AVUser currentUser] follow:userId andCallback:^(BOOL succeeded, NSError *error) {
         

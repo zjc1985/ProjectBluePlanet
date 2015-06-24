@@ -14,6 +14,14 @@
 
 +(AVUser *)currentUser;
 
++(void)likeRoutine:(NSString *)routineId withBlockWhenDone:(void (^)(NSError *error))block;
+
++(void)unLikedRoutine:(NSString *)routineId withBlockWhenDone:(void (^)(NSError *error))block;
+
++(void)queryLikedRoutines:(void (^)(NSError *error,NSArray *searchRoutines))block;
+
++(void)existLikedRoutine:(NSString *)routineId withBlockWhenDone:(void (^)(BOOL isLiked,NSError *error))block;
+
 +(void)follow:(NSString *)userId withBlockWhenDone:(void (^)(BOOL success,NSError *error))block;
 
 +(void)unfollow:(NSString *)userId withBlockWhenDone:(void (^)(BOOL success,NSError *error))block;

@@ -14,7 +14,7 @@
 		</dict>
 		<dict>
 			<key>FooterText</key>
-			<string>&#169; Copyright 2015 LeanCloud, Inc. See https://leancloud.cn/terms.html</string>
+			<string>Copyright 2015 LeanCloud, Inc. See https://leancloud.cn/terms.html</string>
 			<key>Title</key>
 			<string>AVOSCloud</string>
 			<key>Type</key>
@@ -93,6 +93,21 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 </string>
 			<key>Title</key>
 			<string>GRMustache</string>
+			<key>Type</key>
+			<string>PSGroupSpecifier</string>
+		</dict>
+		<dict>
+			<key>FooterText</key>
+			<string>If you use the Google Maps SDK for iOS in your application, you must
+include the attribution text as part of a legal notices section in your
+application. Including legal notices as an independent menu item, or as
+part of an "About" menu item, is recommended.
+
+You can get the attribution text by making a call to
+[GMSServices openSourceLicenseInfo].
+</string>
+			<key>Title</key>
+			<string>GoogleMaps</string>
 			<key>Type</key>
 			<string>PSGroupSpecifier</string>
 		</dict>

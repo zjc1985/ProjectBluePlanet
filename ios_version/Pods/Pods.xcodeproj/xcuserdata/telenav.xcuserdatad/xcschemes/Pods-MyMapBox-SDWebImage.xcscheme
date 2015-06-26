@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "50D9C6922F29EB64C1BE3885"
+               BlueprintIdentifier = "9BC209F9243256C69BF8B8C7"
                BuildableName = "libPods-MyMapBox-SDWebImage.a"
                BlueprintName = "Pods-MyMapBox-SDWebImage"
                ReferencedContainer = "container:Pods.xcodeproj">

@@ -21,10 +21,9 @@
 @property (weak, nonatomic) IBOutlet UILabel *subTitleLabel;
 @property (weak, nonatomic) IBOutlet UITextView *desTextView;
 @property (weak, nonatomic) IBOutlet UIButton *exploreButton;
-@property (weak, nonatomic) IBOutlet UIButton *followButton;
-@property (weak, nonatomic) IBOutlet UITableViewCell *followTableCell;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *likeBarButton;
 
-
+@property(nonatomic)BOOL isLiked;
 
 @end
 
@@ -32,6 +31,8 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.isLiked=NO;
+    [self updateLikedStatus];
 }
 
 -(void)viewDidAppear:(BOOL)animated{
@@ -40,8 +41,45 @@
     self.subTitleLabel.text=[NSString stringWithFormat:@"Owned By %@",self.routine.userName];
     self.desTextView.text=self.routine.mycomment;
     [self.exploreButton setTitle:[NSString stringWithFormat:@"Explore %@'s World",self.routine.userName] forState:UIControlStateNormal];
+    
+    
 }
 
+
+-(void)updateLikedStatus{
+    [CloudManager existLikedRoutine:self.routine.uuid withBlockWhenDone:^(BOOL isLiked, NSError *error) {
+        if(!error){
+            self.isLiked=isLiked;
+        }else{
+            [CommonUtil alert:error.localizedDescription];
+        }
+        
+    }];
+}
+- (IBAction)likeButtonClick:(id)sender {
+    if([self.routine.userId isEqualToString:[CloudManager currentUser].objectId]){
+        [CommonUtil alert:@"You already own this routine."];
+        return;
+    }
+    
+    if(self.isLiked){
+        [CloudManager unLikedRoutine:self.routine.uuid withBlockWhenDone:^(NSError *error) {
+            if(!error){
+                self.isLiked=NO;
+            }else{
+                [CommonUtil alert:error.localizedDescription];
+            }
+        }];
+    }else{
+        [CloudManager likeRoutine:self.routine.uuid withBlockWhenDone:^(NSError *error) {
+            if(!error){
+                self.isLiked=YES;
+            }else{
+                [CommonUtil alert:error.localizedDescription];
+            }
+        }];
+    }
+}
 
 #pragma mark - Navigation
 
@@ -54,6 +92,16 @@
         OtherUserWorldVC *destVC=segue.destinationViewController;
         destVC.userId=self.routine.userId;
         destVC.userName=self.routine.userName;
+    }
+}
+
+#pragma mark - getter and setter
+-(void)setIsLiked:(BOOL)isLiked{
+    _isLiked=isLiked;
+    if (_isLiked) {
+        [self.likeBarButton setImage:[UIImage imageNamed:@"icon_like_filled"]];
+    }else{
+        [self.likeBarButton setImage:[UIImage imageNamed:@"icon_like"]];
     }
 }
 

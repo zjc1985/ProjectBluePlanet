@@ -569,22 +569,25 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
-                    <navigationItem key="navigationItem" id="avF-kB-3Qe">
-                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="cmp-Rw-SRJ">
-                            <connections>
-                                <action selector="addMarker:" destination="alG-Kr-JdT" id="5Fj-Dh-PDA"/>
-                            </connections>
-                        </barButtonItem>
-                    </navigationItem>
+                    <navigationItem key="navigationItem" id="avF-kB-3Qe"/>
                     <connections>
                         <outlet property="SlidePlayButton" destination="XT5-fA-9cH" id="OiO-OQ-Mrb"/>
                         <outlet property="locateButton" destination="FWv-Jk-iRu" id="ymb-GX-flb"/>
                         <outlet property="playRoutineToolBar" destination="YtF-UM-pvP" id="nmj-km-Axz"/>
+                        <outlet property="searchDisplayController" destination="zSw-R0-T9v" id="S6x-Do-iES"/>
                         <outlet property="syncButton" destination="WvB-yU-o3m" id="5jQ-q9-QOj"/>
                         <segue destination="tUP-zc-7Qb" kind="push" identifier="markerDetailSegue" id="Aud-Jo-fKc"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="KKc-hD-maq" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <searchDisplayController id="zSw-R0-T9v">
+                    <connections>
+                        <outlet property="delegate" destination="alG-Kr-JdT" id="Yar-32-fXl"/>
+                        <outlet property="searchContentsController" destination="alG-Kr-JdT" id="cpn-4b-E1y"/>
+                        <outlet property="searchResultsDataSource" destination="alG-Kr-JdT" id="hj5-ct-pR4"/>
+                        <outlet property="searchResultsDelegate" destination="alG-Kr-JdT" id="K9k-or-KyT"/>
+                    </connections>
+                </searchDisplayController>
             </objects>
             <point key="canvasLocation" x="2213" y="406"/>
         </scene>
@@ -1153,28 +1156,8 @@
                                             </subviews>
                                         </tableViewCellContentView>
                                     </tableViewCell>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="Mgd-x7-c9l">
-                                        <rect key="frame" x="0.0" y="413" width="320" height="44"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Mgd-x7-c9l" id="YRF-KO-0Un">
-                                            <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="eMH-BX-9FL">
-                                                    <rect key="frame" x="8" y="6" width="304" height="30"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <state key="normal" title="Follow">
-                                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                                    </state>
-                                                    <connections>
-                                                        <action selector="followButtonClick:" destination="UVA-mh-gwG" eventType="touchUpInside" id="YGd-Cr-kCm"/>
-                                                    </connections>
-                                                </button>
-                                            </subviews>
-                                        </tableViewCellContentView>
-                                    </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="9cs-83-12m">
-                                        <rect key="frame" x="0.0" y="457" width="320" height="44"/>
+                                        <rect key="frame" x="0.0" y="413" width="320" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="9cs-83-12m" id="5BF-fm-oWF">
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
@@ -1201,12 +1184,17 @@
                             <outlet property="delegate" destination="UVA-mh-gwG" id="8zk-nv-3XF"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" id="hkM-79-Pjq"/>
+                    <navigationItem key="navigationItem" id="hkM-79-Pjq">
+                        <barButtonItem key="rightBarButtonItem" image="icon_like" id="2zR-4y-hmh">
+                            <connections>
+                                <action selector="likeButtonClick:" destination="UVA-mh-gwG" id="IsJ-Dh-TrR"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
                         <outlet property="desTextView" destination="f3h-PZ-9fj" id="TYi-LS-6T6"/>
                         <outlet property="exploreButton" destination="KGM-jc-PhM" id="jGJ-BX-ect"/>
-                        <outlet property="followButton" destination="eMH-BX-9FL" id="EFC-vb-AwI"/>
-                        <outlet property="followTableCell" destination="Mgd-x7-c9l" id="ggK-mA-3pf"/>
+                        <outlet property="likeBarButton" destination="2zR-4y-hmh" id="vrr-TL-5eS"/>
                         <outlet property="subTitleLabel" destination="oUi-9g-nMD" id="xsF-y9-9V0"/>
                         <outlet property="titleLabel" destination="pVN-Sc-Tn8" id="qle-EK-jZE"/>
                     </connections>
@@ -1610,6 +1598,9 @@
                                                 </label>
                                             </subviews>
                                         </tableViewCellContentView>
+                                        <connections>
+                                            <segue destination="4VF-8m-CF4" kind="push" id="ev7-fz-dzb"/>
+                                        </connections>
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
@@ -1665,6 +1656,9 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" id="UGF-qk-ozn"/>
+                    <connections>
+                        <outlet property="testFeatureCell" destination="0KS-ZP-TLz" id="Vqu-bG-AQQ"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="WCo-vA-DDb" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -1708,7 +1702,53 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="gde-T4-aGY" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-400" y="3139"/>
+            <point key="canvasLocation" x="-370" y="3851"/>
+        </scene>
+        <!--Liked RoutinesTVC-->
+        <scene sceneID="e3f-HG-xpJ">
+            <objects>
+                <tableViewController id="4VF-8m-CF4" customClass="LikedRoutinesTVC" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="VjZ-Np-FVb">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <prototypes>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="likedRoutineCell" textLabel="l1d-h9-p7W" detailTextLabel="WuH-eM-d9T" style="IBUITableViewCellStyleSubtitle" id="GTR-eU-Ilw">
+                                <rect key="frame" x="0.0" y="86" width="320" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="GTR-eU-Ilw" id="Zq4-MF-dXt">
+                                    <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Title" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="l1d-h9-p7W">
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Subtitle" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="WuH-eM-d9T">
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="11"/>
+                                            <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="4VF-8m-CF4" id="ze3-RJ-DqP"/>
+                            <outlet property="delegate" destination="4VF-8m-CF4" id="UGj-Bk-3oV"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" id="Vx1-vy-j6P"/>
+                    <connections>
+                        <segue destination="UVA-mh-gwG" kind="push" identifier="showLikedRoutineSegue" id="z69-uu-NJT"/>
+                    </connections>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="tGe-f4-GhC" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-370" y="3139"/>
         </scene>
         <!--My Routine-->
         <scene sceneID="ejg-TQ-POs">
@@ -1860,8 +1900,9 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="4tb-IP-zJq"/>
-        <segue reference="9hd-K2-6nC"/>
+        <segue reference="z69-uu-NJT"/>
+        <segue reference="Crq-we-f5i"/>
+        <segue reference="Drd-9N-wVI"/>
         <segue reference="ghm-i1-wt0"/>
     </inferredMetricsTieBreakers>
 </document>

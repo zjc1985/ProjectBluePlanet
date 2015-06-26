@@ -21,6 +21,7 @@
 		283A21F21B32CA4D00F6DCA1 /* OptionCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 283A21F11B32CA4D00F6DCA1 /* OptionCell.m */; };
 		283A21F81B3A482400F6DCA1 /* SettingTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 283A21F71B3A482400F6DCA1 /* SettingTVC.m */; };
 		283A21FB1B3A49D100F6DCA1 /* LikedWorldTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 283A21FA1B3A49D100F6DCA1 /* LikedWorldTVC.m */; };
+		283A21FE1B3B9F0E00F6DCA1 /* LikedRoutinesTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 283A21FD1B3B9F0E00F6DCA1 /* LikedRoutinesTVC.m */; };
 		285E431F1AD61E720030A274 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 285E431E1AD61E720030A274 /* main.m */; };
 		285E43221AD61E720030A274 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 285E43211AD61E720030A274 /* AppDelegate.m */; };
 		285E43251AD61E720030A274 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 285E43241AD61E720030A274 /* ViewController.m */; };
@@ -100,6 +101,8 @@
 		283A21F71B3A482400F6DCA1 /* SettingTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingTVC.m; sourceTree = "<group>"; };
 		283A21F91B3A49D100F6DCA1 /* LikedWorldTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LikedWorldTVC.h; sourceTree = "<group>"; };
 		283A21FA1B3A49D100F6DCA1 /* LikedWorldTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LikedWorldTVC.m; sourceTree = "<group>"; };
+		283A21FC1B3B9F0E00F6DCA1 /* LikedRoutinesTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LikedRoutinesTVC.h; sourceTree = "<group>"; };
+		283A21FD1B3B9F0E00F6DCA1 /* LikedRoutinesTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LikedRoutinesTVC.m; sourceTree = "<group>"; };
 		285E43191AD61E720030A274 /* MyMapBox.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MyMapBox.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		285E431D1AD61E720030A274 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		285E431E1AD61E720030A274 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -343,6 +346,8 @@
 				283A21F71B3A482400F6DCA1 /* SettingTVC.m */,
 				283A21F91B3A49D100F6DCA1 /* LikedWorldTVC.h */,
 				283A21FA1B3A49D100F6DCA1 /* LikedWorldTVC.m */,
+				283A21FC1B3B9F0E00F6DCA1 /* LikedRoutinesTVC.h */,
+				283A21FD1B3B9F0E00F6DCA1 /* LikedRoutinesTVC.m */,
 			);
 			name = Controller;
 			sourceTree = "<group>";
@@ -574,6 +579,7 @@
 				28E261FA1B0095CE0019611C /* MMMarker.m in Sources */,
 				286390811AE0AD7600A5B999 /* RoutineEditTVC.m in Sources */,
 				8421CB181ADC04D0002046B9 /* RoutineDetailMapViewController.m in Sources */,
+				283A21FE1B3B9F0E00F6DCA1 /* LikedRoutinesTVC.m in Sources */,
 				84F46A801B0396E0008B7F13 /* SettingViewController.m in Sources */,
 				28E261CA1B00535A0019611C /* MyMapBox.xcdatamodeld in Sources */,
 				283A21E91B316E9300F6DCA1 /* BaseMarkerInfoVC.m in Sources */,

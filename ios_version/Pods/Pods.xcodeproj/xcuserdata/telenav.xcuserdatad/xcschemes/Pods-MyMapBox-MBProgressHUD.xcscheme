@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "04B2E07173F224520DC9450D"
+               BlueprintIdentifier = "EE0811B84AEFDBE9EB579A83"
                BuildableName = "libPods-MyMapBox-MBProgressHUD.a"
                BlueprintName = "Pods-MyMapBox-MBProgressHUD"
                ReferencedContainer = "container:Pods.xcodeproj">

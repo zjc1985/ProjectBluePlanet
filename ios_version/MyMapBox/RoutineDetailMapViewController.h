@@ -17,6 +17,12 @@ typedef enum : NSUInteger {
     addMarkerInCurrentLocation = 2,
 } ActionSheetIndexForAddMarker;
 
+
+typedef enum : NSUInteger {
+    addSearchResult2Routine = 0,
+    clearSearchResult = 1,
+} ActionSheetIndexForSearchResult;
+
 @interface RoutineDetailMapViewController:BaseDetailMapVC
 
 

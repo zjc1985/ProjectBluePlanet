@@ -11,17 +11,21 @@
 #import "MarkerInfoTVC.h"
 #import "MarkerEditTVC.h"
 #import "CloudManager.h"
+#import "GoogleSearchTVC.h"
 
 #import "MMRoutine+Dao.h"
 
-@interface RoutineDetailMapViewController ()<RMMapViewDelegate,UIActionSheetDelegate,UITableViewDataSource,UITableViewDelegate,UISearchBarDelegate,UISearchDisplayDelegate>
+#define SHOW_SEARCH_MODAL_SEGUE @"showSearchModalSegue"
+
+@interface RoutineDetailMapViewController ()<RMMapViewDelegate,UIActionSheetDelegate>
 
 @property (weak, nonatomic) IBOutlet UIButton *locateButton;
 @property (weak, nonatomic) IBOutlet UIButton *syncButton;
 @property (weak, nonatomic) IBOutlet UIToolbar *playRoutineToolBar;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *SlidePlayButton;
 
-@property (strong,nonatomic)NSArray *searchResults; //of GMSAutocompletePrediction
+@property(nonatomic,strong) GooglePlace *searchResult;
+@property(nonatomic,strong) UIActionSheet *searchRMMarkerActionSheet;
 
 @end
 
@@ -29,11 +33,6 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    //init search bar
-    self.searchDisplayController.searchBar.delegate=self;
-    [self.searchDisplayController setSearchResultsDataSource:self];
-    [self.searchDisplayController setSearchResultsDelegate:self];
-    [self.searchDisplayController.searchResultsTableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"searchCell"];
     
     //init ui
     self.slideIndicator=-1;
@@ -89,7 +88,15 @@
     [self updateMapUI];
 }
 
-
+-(void)updateMapUI{
+    [super updateMapUI];
+    
+    if(self.searchResult && [self.searchResult isLoaded]){
+        CLLocationCoordinate2D coord=CLLocationCoordinate2DMake([self.searchResult.lat doubleValue], [self.searchResult.lng doubleValue]);
+        [self addMarkerWithTitle:self.searchResult.title withCoordinate:coord withCustomData:self.searchResult];
+        [self.mapView setCenterCoordinate:coord animated:YES];
+    }
+}
 
 -(void)updateUIInSlideMode{
     [self.SlidePlayButton setImage:[UIImage imageNamed:@"icon_stop"]];
@@ -107,13 +114,17 @@
 }
 
 #pragma mark - getter and setter
--(NSArray *)searchResults{
-    if(!_searchResults){
-        _searchResults=[[NSArray alloc]init];
-    }
-    return _searchResults;
-}
 
+-(UIActionSheet *)searchRMMarkerActionSheet{
+    if(!_searchRMMarkerActionSheet){
+        _searchRMMarkerActionSheet=[[UIActionSheet alloc] initWithTitle:nil
+                                                               delegate:self
+                                                      cancelButtonTitle:@"Cancel"
+                                                 destructiveButtonTitle:nil
+                                                      otherButtonTitles:@"Add to Routine",@"Clear Search Result", nil];
+    }
+    return _searchRMMarkerActionSheet;
+}
 
 #pragma mark - UI action
 
@@ -157,7 +168,7 @@
 }
 
 -(IBAction)searchButtonClick:(id)sender{
-    NSLog(@"Search Button Click");
+    [self performSegueWithIdentifier:SHOW_SEARCH_MODAL_SEGUE sender:nil];
 }
 
 #pragma mark - Navigation
@@ -168,7 +179,19 @@
         MarkerInfoTVC *markerInfoTVC=segue.destinationViewController;
         markerInfoTVC.marker=((RMAnnotation *)sender).userInfo;
         markerInfoTVC.markerCount=[[self.routine allMarks] count];
+    }else if ([segue.identifier isEqualToString:SHOW_SEARCH_MODAL_SEGUE]){
+        UINavigationController *navController=(UINavigationController *)segue.destinationViewController;
+        GoogleSearchTVC *desTVC=navController.viewControllers[0];
+        desTVC.minLocation=CLLocationCoordinate2DMake([self.routine minLatInMarkers], [self.routine minLngInMarkers]);
+        desTVC.maxLocation=CLLocationCoordinate2DMake([self.routine maxLatInMarkers], [self.routine maxLngInMarkers]);
     }
+}
+
+-(IBAction)searchDone:(UIStoryboardSegue *)segue{
+    GoogleSearchTVC *sourceTVC=segue.sourceViewController;
+    GooglePlace *searchPlace=sourceTVC.selectedPlace;
+    
+    self.searchResult=searchPlace;
 }
 
 -(IBAction)DeleteMarkerDone:(UIStoryboardSegue *)segue{
@@ -185,8 +208,6 @@
             [MMMarker removeMMMarker:marker];
         }
     }
-    
-    
 }
 
 
@@ -194,33 +215,57 @@
 
 
 -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex{
-    MMMarker *newMarker=nil;
-    switch (buttonIndex) {
-        case addMarkerInCenter:{
-            NSLog(@"add marker in center");
-            newMarker=[MMMarker createMMMarkerInRoutine:self.routine
-                                                withLat:self.mapView.centerCoordinate.latitude
-                                                withLng:self.mapView.centerCoordinate.longitude];
-            break;
+    if(actionSheet==self.searchRMMarkerActionSheet){
+        switch (buttonIndex) {
+            case addSearchResult2Routine:{
+                MMMarker *newMarker=[MMMarker createMMMarkerInRoutine:self.routine
+                                                              withLat:[self.searchResult.lat doubleValue]
+                                                              withLng:[self.searchResult.lng doubleValue]];
+                newMarker.title=self.searchResult.title;
+                newMarker.category=[NSNumber numberWithUnsignedInteger:CategorySight];
+                newMarker.iconUrl=@"sight_default";
+                break;
+            }
+            case clearSearchResult:{
+                
+                break;
+            }
+            default:
+                break;
         }
-        case addMarkerWithImage :{
-            NSLog(@"add marker with image");
-            break;
+        
+        self.searchResult=nil;
+        [self updateMapUI];
+    }else{
+        MMMarker *newMarker=nil;
+        switch (buttonIndex) {
+            case addMarkerInCenter:{
+                NSLog(@"add marker in center");
+                newMarker=[MMMarker createMMMarkerInRoutine:self.routine
+                                                    withLat:self.mapView.centerCoordinate.latitude
+                                                    withLng:self.mapView.centerCoordinate.longitude];
+                break;
+            }
+            case addMarkerWithImage :{
+                NSLog(@"add marker with image");
+                break;
+            }
+            case addMarkerInCurrentLocation:{
+                NSLog(@"add marker in current location");
+                newMarker=[MMMarker createMMMarkerInRoutine:self.routine
+                                                    withLat:self.mapView.userLocation.coordinate.latitude
+                                                    withLng:self.mapView.userLocation.coordinate.longitude];
+                break;
+            }
+            default:
+                break;
         }
-        case addMarkerInCurrentLocation:{
-            NSLog(@"add marker in current location");
-            newMarker=[MMMarker createMMMarkerInRoutine:self.routine
-                                                withLat:self.mapView.userLocation.coordinate.latitude
-                                                withLng:self.mapView.userLocation.coordinate.longitude];
-            break;
+        if(newMarker){
+            [self addMarkerWithTitle:newMarker.title withCoordinate:CLLocationCoordinate2DMake([newMarker.lat doubleValue], [newMarker.lng doubleValue])
+                      withCustomData:newMarker];
         }
-        default:
-            break;
     }
-    if(newMarker){
-        [self addMarkerWithTitle:newMarker.title withCoordinate:CLLocationCoordinate2DMake([newMarker.lat doubleValue], [newMarker.lng doubleValue])
-                  withCustomData:newMarker];
-    }
+    
 }
 
 #pragma mark - RMMapViewDelegate
@@ -248,6 +293,20 @@
         //RMMarker *marker = [[RMMarker alloc] initWithUIImage:[UIImage imageNamed:@"default_default"]anchorPoint:anchorPoint];
         
         
+        
+        marker.canShowCallout=YES;
+        
+        marker.rightCalloutAccessoryView=[UIButton buttonWithType:UIButtonTypeDetailDisclosure];
+        
+        return marker;
+    }else if ([annotation.userInfo isKindOfClass:[GooglePlace class]]){
+        CGPoint anchorPoint;
+        anchorPoint.x=0.5;
+        anchorPoint.y=1;
+        
+        UIImage *iconImage=[UIImage imageNamed:@"search_default"];
+        
+        RMMarker *marker = [[RMMarker alloc] initWithUIImage:iconImage anchorPoint:anchorPoint];
         
         marker.canShowCallout=YES;
         
@@ -285,8 +344,12 @@
 
 
 -(void)tapOnCalloutAccessoryControl:(UIControl *)control forAnnotation:(RMAnnotation *)annotation onMap:(RMMapView *)map{
-    self.currentMarker=annotation.userInfo;
-    [self performSegueWithIdentifier:@"markerDetailSegue" sender:annotation];
+    if ([annotation.userInfo isKindOfClass:[GooglePlace class]]) {
+        [self.searchRMMarkerActionSheet showInView:self.view];
+    }else if ([annotation.userInfo isKindOfClass:[MMMarker class]]){
+        self.currentMarker=annotation.userInfo;
+        [self performSegueWithIdentifier:@"markerDetailSegue" sender:annotation];
+    }
 }
 
 -(void)tapOnLabelForAnnotation:(RMAnnotation *)annotation onMap:(RMMapView *)map{
@@ -295,60 +358,10 @@
 
 
 -(BOOL)mapView:(RMMapView *)mapView shouldDragAnnotation:(RMAnnotation *)annotation{
-    return YES;
+    if ([annotation.userInfo isKindOfClass:[GooglePlace class]]) {
+        return NO;
+    }else{
+        return YES;
+    }
 }
-
-#pragma mark - search bar delegate
-- (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar{
-    [self googlePlaceSearch:searchBar.text];
-}
-
--(void)googlePlaceSearch:(NSString *)searchString{
-    CLLocationCoordinate2D minLocation=CLLocationCoordinate2DMake([self.routine minLatInMarkers], [self.routine minLngInMarkers]);
-    CLLocationCoordinate2D maxLocation=CLLocationCoordinate2DMake([self.routine maxLatInMarkers], [self.routine maxLngInMarkers]);
-    
-    GMSCoordinateBounds *bounds = [[GMSCoordinateBounds alloc] initWithCoordinate:minLocation
-                                                                       coordinate:maxLocation];
-    
-    [[GMSPlacesClient sharedClient] autocompleteQuery:searchString
-                                               bounds:bounds
-                                               filter:nil
-                                             callback:^(NSArray *results, NSError *error) {
-                                                 if (error != nil) {
-                                                     NSLog(@"Autocomplete error %@", [error localizedDescription]);
-                                                     return;
-                                                 }
-                                                 
-                                                 for (GMSAutocompletePrediction* result in results) {
-                                                     NSLog(@"Result '%@' with placeID %@", result.attributedFullText.string, result.placeID);
-                                                 }
-                                                 
-                                                 self.searchResults=results;
-                                                 [self.searchDisplayController.searchResultsTableView reloadData];
-                                             }];
-    
-}
-
-# pragma mark - table view data source
-
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-    return self.searchResults.count;
-}
-
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"searchCell" forIndexPath:indexPath];
-    
-    GMSAutocompletePrediction* result=[self.searchResults objectAtIndex:indexPath.row];
-    cell.textLabel.text=result.attributedFullText.string;
-    
-    return cell;
-}
-
--(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
-    // Uncheck the previous checked row
-    //NSString *content=[self.searchResults objectAtIndex:indexPath.row];
-    //self.labelText.text=content;
-    //[self.searchDisplayController setActive:NO animated:YES];
-}
-
 @end

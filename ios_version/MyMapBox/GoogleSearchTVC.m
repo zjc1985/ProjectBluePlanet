@@ -8,6 +8,7 @@
 
 #import "GoogleSearchTVC.h"
 #import "CommonUtil.h"
+#import <MapKit/MapKit.h>
 
 #define  SEARCH_COMPLETE_UNWIND_SEGUE @"searchCompleteUnwindSegue"
 
@@ -66,12 +67,19 @@
     UITableViewCell *cell;
     if(tableView==self.searchDisplayController.searchResultsTableView){
         cell=[tableView dequeueReusableCellWithIdentifier:@"searchCell" forIndexPath:indexPath];
+        MKMapItem *mapItem=[self.searchResults objectAtIndex:indexPath.row];
+        
+        cell.textLabel.text=mapItem.name;
+        cell.detailTextLabel.text=mapItem.placemark.title;
+        /*
         GMSAutocompletePrediction* result=[self.searchResults objectAtIndex:indexPath.row];
         cell.textLabel.text=result.attributedFullText.string;
+         */
     }else{
         cell= [tableView dequeueReusableCellWithIdentifier:@"searchHistoryCell" forIndexPath:indexPath];
         GooglePlace *place=[self.historyResults objectAtIndex:indexPath.row];
         cell.textLabel.text=place.title;
+        
     }
     return cell;
 }
@@ -110,7 +118,31 @@
 
 #pragma mark - search bar delegate
 - (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar{
-    [self googlePlaceSearch:searchBar.text];
+    //[self googlePlaceSearch:searchBar.text];
+    [self appleLocationSearch:searchBar.text];
+}
+
+-(void)appleLocationSearch:(NSString *)searchString{
+    // Create a search request with a string
+    MKLocalSearchRequest *searchRequest = [[MKLocalSearchRequest alloc] init];
+    [searchRequest setNaturalLanguageQuery:searchString];
+    MKCoordinateRegion region = MKCoordinateRegionMakeWithDistance(self.minLocation, 1000, 1000);
+    [searchRequest setRegion:region];
+    
+    // Create the local search to perform the search
+    MKLocalSearch *localSearch = [[MKLocalSearch alloc] initWithRequest:searchRequest];
+    [localSearch startWithCompletionHandler:^(MKLocalSearchResponse *response, NSError *error) {
+        if (!error) {
+            for (MKMapItem *mapItem in [response mapItems]) {
+                NSLog(@"Name: %@, Placemark title: %@", [mapItem name], [[mapItem placemark] title]);
+                self.searchResults=[response mapItems];
+                [self.searchDisplayController.searchResultsTableView reloadData];
+            }
+        } else {
+            NSLog(@"Search Request Error: %@", [error localizedDescription]);
+            [CommonUtil alert:[error localizedDescription]];
+        }
+    }];
 }
 
 -(void)googlePlaceSearch:(NSString *)searchString{

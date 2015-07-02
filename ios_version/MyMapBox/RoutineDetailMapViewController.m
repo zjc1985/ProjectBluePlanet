@@ -11,7 +11,7 @@
 #import "MarkerInfoTVC.h"
 #import "MarkerEditTVC.h"
 #import "CloudManager.h"
-#import "GoogleSearchTVC.h"
+#import "ApplePlaceSearchTVC.h"
 
 #import "MMRoutine+Dao.h"
 
@@ -24,7 +24,7 @@
 @property (weak, nonatomic) IBOutlet UIToolbar *playRoutineToolBar;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *SlidePlayButton;
 
-@property(nonatomic,strong) GooglePlace *searchResult;
+@property(nonatomic,strong) MKMapItem *searchResult;
 @property(nonatomic,strong) UIActionSheet *searchRMMarkerActionSheet;
 
 @end
@@ -91,9 +91,9 @@
 -(void)updateMapUI{
     [super updateMapUI];
     
-    if(self.searchResult && [self.searchResult isLoaded]){
-        CLLocationCoordinate2D coord=CLLocationCoordinate2DMake([self.searchResult.lat doubleValue], [self.searchResult.lng doubleValue]);
-        [self addMarkerWithTitle:self.searchResult.title withCoordinate:coord withCustomData:self.searchResult];
+    if(self.searchResult){
+        CLLocationCoordinate2D coord=self.searchResult.placemark.coordinate;
+        [self addMarkerWithTitle:self.searchResult.name withCoordinate:coord withCustomData:self.searchResult];
         [self.mapView setCenterCoordinate:coord animated:YES];
     }
 }
@@ -181,17 +181,15 @@
         markerInfoTVC.markerCount=[[self.routine allMarks] count];
     }else if ([segue.identifier isEqualToString:SHOW_SEARCH_MODAL_SEGUE]){
         UINavigationController *navController=(UINavigationController *)segue.destinationViewController;
-        GoogleSearchTVC *desTVC=navController.viewControllers[0];
+        ApplePlaceSearchTVC *desTVC=navController.viewControllers[0];
         desTVC.minLocation=CLLocationCoordinate2DMake([self.routine minLatInMarkers], [self.routine minLngInMarkers]);
         desTVC.maxLocation=CLLocationCoordinate2DMake([self.routine maxLatInMarkers], [self.routine maxLngInMarkers]);
     }
 }
 
 -(IBAction)searchDone:(UIStoryboardSegue *)segue{
-    GoogleSearchTVC *sourceTVC=segue.sourceViewController;
-    GooglePlace *searchPlace=sourceTVC.selectedPlace;
-    
-    self.searchResult=searchPlace;
+    ApplePlaceSearchTVC *sourceTVC=segue.sourceViewController;
+    self.searchResult=sourceTVC.selectedPlace;
 }
 
 -(IBAction)DeleteMarkerDone:(UIStoryboardSegue *)segue{
@@ -219,9 +217,9 @@
         switch (buttonIndex) {
             case addSearchResult2Routine:{
                 MMMarker *newMarker=[MMMarker createMMMarkerInRoutine:self.routine
-                                                              withLat:[self.searchResult.lat doubleValue]
-                                                              withLng:[self.searchResult.lng doubleValue]];
-                newMarker.title=self.searchResult.title;
+                                                              withLat:self.searchResult.placemark.coordinate.latitude
+                                                              withLng:self.searchResult.placemark.coordinate.longitude];
+                newMarker.title=self.searchResult.name;
                 newMarker.category=[NSNumber numberWithUnsignedInteger:CategorySight];
                 newMarker.iconUrl=@"sight_default";
                 break;
@@ -299,7 +297,7 @@
         marker.rightCalloutAccessoryView=[UIButton buttonWithType:UIButtonTypeDetailDisclosure];
         
         return marker;
-    }else if ([annotation.userInfo isKindOfClass:[GooglePlace class]]){
+    }else if ([annotation.userInfo isKindOfClass:[MKMapItem class]]){
         CGPoint anchorPoint;
         anchorPoint.x=0.5;
         anchorPoint.y=1;
@@ -344,7 +342,7 @@
 
 
 -(void)tapOnCalloutAccessoryControl:(UIControl *)control forAnnotation:(RMAnnotation *)annotation onMap:(RMMapView *)map{
-    if ([annotation.userInfo isKindOfClass:[GooglePlace class]]) {
+    if ([annotation.userInfo isKindOfClass:[MKMapItem class]]) {
         [self.searchRMMarkerActionSheet showInView:self.view];
     }else if ([annotation.userInfo isKindOfClass:[MMMarker class]]){
         self.currentMarker=annotation.userInfo;
@@ -358,7 +356,7 @@
 
 
 -(BOOL)mapView:(RMMapView *)mapView shouldDragAnnotation:(RMAnnotation *)annotation{
-    if ([annotation.userInfo isKindOfClass:[GooglePlace class]]) {
+    if ([annotation.userInfo isKindOfClass:[MKMapItem class]]) {
         return NO;
     }else{
         return YES;

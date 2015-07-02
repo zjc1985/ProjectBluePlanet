@@ -6,30 +6,25 @@
 //  Copyright (c) 2015 yufu. All rights reserved.
 //
 
-#import "GoogleSearchTVC.h"
+#import "ApplePlaceSearchTVC.h"
 #import "CommonUtil.h"
-#import <MapKit/MapKit.h>
 
 #define  SEARCH_COMPLETE_UNWIND_SEGUE @"searchCompleteUnwindSegue"
 
-@interface GoogleSearchTVC ()<UISearchBarDelegate>
+@interface ApplePlaceSearchTVC ()<UISearchBarDelegate>
 
-@property(nonatomic,strong)NSArray *historyResults; //of GooglePlace+Dao
-@property(nonatomic,strong)NSArray *searchResults; //GMSAutocompletePrediction
+@property(nonatomic,strong)NSArray *historyResults; //will do later
+@property(nonatomic,strong)NSArray *searchResults; //of MKMapItem
 
 @end
 
-@implementation GoogleSearchTVC
+@implementation ApplePlaceSearchTVC
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     
     //init search Bar
     self.searchDisplayController.searchBar.delegate=self;
-    [self.searchDisplayController setSearchResultsDataSource:self];
-    [self.searchDisplayController setSearchResultsDelegate:self];
-    [self.searchDisplayController.searchResultsTableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"searchCell"];
-
 }
 #pragma mark - getter and setter
 -(NSArray *)searchResults{
@@ -41,7 +36,7 @@
 
 -(NSArray *)historyResults{
     if(!_historyResults){
-        _historyResults=[GooglePlace fetchAll];
+        _historyResults=[[NSArray alloc]init];
     }
     return _historyResults;
 }
@@ -64,9 +59,12 @@
 
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell;
+    static NSString *kCellID = @"searchCell";
+    
+    // Dequeue a cell from self's table view.
+    UITableViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:kCellID];
+    
     if(tableView==self.searchDisplayController.searchResultsTableView){
-        cell=[tableView dequeueReusableCellWithIdentifier:@"searchCell" forIndexPath:indexPath];
         MKMapItem *mapItem=[self.searchResults objectAtIndex:indexPath.row];
         
         cell.textLabel.text=mapItem.name;
@@ -76,9 +74,8 @@
         cell.textLabel.text=result.attributedFullText.string;
          */
     }else{
-        cell= [tableView dequeueReusableCellWithIdentifier:@"searchHistoryCell" forIndexPath:indexPath];
-        GooglePlace *place=[self.historyResults objectAtIndex:indexPath.row];
-        cell.textLabel.text=place.title;
+        //GooglePlace *place=[self.historyResults objectAtIndex:indexPath.row];
+        //cell.textLabel.text=place.title;
         
     }
     return cell;
@@ -86,6 +83,11 @@
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     if (tableView==self.searchDisplayController.searchResultsTableView) {
+        MKMapItem *mapItem=[self.searchResults objectAtIndex:indexPath.row];
+        self.selectedPlace=mapItem;
+        [self performSegueWithIdentifier:SEARCH_COMPLETE_UNWIND_SEGUE sender:nil];
+        
+        /*
         GMSAutocompletePrediction *selectResult=[self.searchResults objectAtIndex:indexPath.row];
         [[GMSPlacesClient sharedClient] lookUpPlaceID:selectResult.placeID callback:^(GMSPlace *place, NSError *error) {
             if (error != nil) {
@@ -108,10 +110,10 @@
                 [CommonUtil alert:@"no place detail found at google"];
             }
         }];
+         */
     }else{
-        GooglePlace *selectResult=[self.historyResults objectAtIndex:indexPath.row];
-        self.selectedPlace=selectResult;
-        [self performSegueWithIdentifier:SEARCH_COMPLETE_UNWIND_SEGUE sender:nil];
+        
+        //[self performSegueWithIdentifier:SEARCH_COMPLETE_UNWIND_SEGUE sender:nil];
     }
 }
 
@@ -126,12 +128,14 @@
     // Create a search request with a string
     MKLocalSearchRequest *searchRequest = [[MKLocalSearchRequest alloc] init];
     [searchRequest setNaturalLanguageQuery:searchString];
-    MKCoordinateRegion region = MKCoordinateRegionMakeWithDistance(self.minLocation, 1000, 1000);
-    [searchRequest setRegion:region];
+    //MKCoordinateRegion region = MKCoordinateRegionMakeWithDistance(self.minLocation, 1000, 1000);
+    //[searchRequest setRegion:region];
     
     // Create the local search to perform the search
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
     MKLocalSearch *localSearch = [[MKLocalSearch alloc] initWithRequest:searchRequest];
     [localSearch startWithCompletionHandler:^(MKLocalSearchResponse *response, NSError *error) {
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
         if (!error) {
             for (MKMapItem *mapItem in [response mapItems]) {
                 NSLog(@"Name: %@, Placemark title: %@", [mapItem name], [[mapItem placemark] title]);
@@ -140,7 +144,7 @@
             }
         } else {
             NSLog(@"Search Request Error: %@", [error localizedDescription]);
-            [CommonUtil alert:[error localizedDescription]];
+            [CommonUtil alert:@"No Results Found"];
         }
     }];
 }

@@ -6,19 +6,19 @@
 //  Copyright (c) 2015 yufu. All rights reserved.
 //
 
-#import "GooglePlace+Dao.h"
+#import "PlaceSearchResult+Dao.h"
 #import "CommonUtil.h"
 
-@implementation GooglePlace (Dao)
+@implementation PlaceSearchResult (Dao)
 
-+(GooglePlace *)createGooglePlaceWithPlaceId:(NSString *)placeId withTitle:(NSString *)title{
-    GooglePlace *result=[self queryGooglePlaceWithPlaceId:placeId];
++(PlaceSearchResult *)createGooglePlaceWithTitle:(NSString *)title withSubInfo:(NSString *)subInfo{
+    PlaceSearchResult *result=[self queryPlaceWithTitle:title withSubInfo:subInfo];
     if (result) {
         return result;
     }else{
-        result=[NSEntityDescription insertNewObjectForEntityForName:@"GooglePlace" inManagedObjectContext:[CommonUtil getContext]];
+        result=[NSEntityDescription insertNewObjectForEntityForName:@"PlaceSearchResult" inManagedObjectContext:[CommonUtil getContext]];
         result.title=title;
-        result.placeId=placeId;
+        result.subInfo=subInfo;
         result.lat=[NSNumber numberWithDouble:0];
         result.lng=[NSNumber numberWithDouble:0];
         return result;
@@ -27,7 +27,7 @@
 
 +(NSArray *)fetchAll{
     NSFetchRequest *request=[[NSFetchRequest alloc]init];
-    NSEntityDescription *e=[NSEntityDescription entityForName:@"GooglePlace"
+    NSEntityDescription *e=[NSEntityDescription entityForName:@"PlaceSearchResult"
                                        inManagedObjectContext:[CommonUtil getContext]];
     request.entity=e;
     NSSortDescriptor *sd=[NSSortDescriptor sortDescriptorWithKey:@"title" ascending:YES];
@@ -42,14 +42,14 @@
     return result;
 }
 
-+(GooglePlace *)queryGooglePlaceWithPlaceId:(NSString *)placeId{
++(PlaceSearchResult *)queryPlaceWithTitle:(NSString *)title withSubInfo:(NSString *)subInfo{
     NSFetchRequest *request=[[NSFetchRequest alloc]init];
-    NSEntityDescription *e=[NSEntityDescription entityForName:@"GooglePlace"
+    NSEntityDescription *e=[NSEntityDescription entityForName:@"PlaceSearchResult"
                                        inManagedObjectContext:[CommonUtil getContext]];
     request.entity=e;
     NSSortDescriptor *sd=[NSSortDescriptor sortDescriptorWithKey:@"title" ascending:YES];
     request.sortDescriptors=@[sd];
-    request.predicate= [NSPredicate predicateWithFormat:@"placeId == %@",placeId];
+    request.predicate= [NSPredicate predicateWithFormat:@"(title == %@) AND (subInfo == %@)",title,subInfo];
     NSError *error;
     NSArray *result=[[CommonUtil getContext] executeFetchRequest:request error:&error];
     if(!result){

@@ -6,11 +6,11 @@
 //  Copyright (c) 2015 yufu. All rights reserved.
 //
 
-#import "GooglePlace.h"
+#import "PlaceSearchResult.h"
 
-@interface GooglePlace (Dao)
+@interface PlaceSearchResult (Dao)
 
-+(GooglePlace *)createGooglePlaceWithPlaceId:(NSString *)placeId withTitle:(NSString *)title;
++(PlaceSearchResult *)createGooglePlaceWithTitle:(NSString *)title withSubInfo:(NSString *)subInfo;
 
 +(NSArray *)fetchAll;
 

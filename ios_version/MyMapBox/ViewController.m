@@ -25,6 +25,7 @@
 #define SHOW_ROUTINE_INFO_SEGUE @"showRoutineInfoSegue"
 #define ADD_ROUTINE_SEGUE @"AddRoutineInfoSegue"
 #define LOGIN_SEGUE @"LoginSegue"
+#define VIEW_TITLE_NAME @"My World"
 
 @interface ViewController ()<RMMapViewDelegate>
 
@@ -55,6 +56,21 @@
     NSLog(@"view did load");
 }
 
+- (void)syncRoutines {
+    self.title=@"Syncing";
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+    [CloudManager syncRoutinesAndOvMarkersWithBlockWhenDone:^(NSError *error) {
+        
+        self.title=VIEW_TITLE_NAME;
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+        
+        if(error){
+            NSLog(@"error happend: %@",error.localizedDescription);
+        }
+        [self updateMapUI];
+    }];
+}
+
 -(void)viewWillAppear:(BOOL)animated{
     NSLog(@"view will appear");
     [self.tabBarController.tabBar setHidden:NO];
@@ -65,15 +81,12 @@
         [self updateMapUI];
         
         if([CommonUtil isFastNetWork]){
-            [CloudManager syncRoutinesAndOvMarkersWithBlockWhenDone:^(NSError *error) {
-                if(error){
-                    NSLog(@"error happend: %@",error.localizedDescription);
-                }
-                [self updateMapUI];
-            }];
+            [self syncRoutines];
         }
     }
 }
+
+
 
 //overide
 -(NSArray *)allRoutines{

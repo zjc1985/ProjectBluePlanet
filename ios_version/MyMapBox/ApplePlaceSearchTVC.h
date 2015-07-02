@@ -8,9 +8,9 @@
 
 #import <UIKit/UIKit.h>
 #import <GoogleMaps/GoogleMaps.h>
-#import "GooglePlace+Dao.h"
+#import <MapKit/MapKit.h>
 
-@interface GoogleSearchTVC : UITableViewController
+@interface ApplePlaceSearchTVC : UITableViewController
 
 //in
 @property(nonatomic)CLLocationCoordinate2D minLocation;
@@ -18,6 +18,6 @@
 
 
 //out
-@property(nonatomic,strong)GooglePlace *selectedPlace;
+@property(nonatomic,strong)MKMapItem *selectedPlace;
 
 @end

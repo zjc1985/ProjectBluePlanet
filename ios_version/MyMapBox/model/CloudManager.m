@@ -534,7 +534,11 @@
     for (NSDictionary *routineDic in array) {
         MMRoutine *routine=[MMRoutine queryMMRoutineWithUUID:[routineDic objectForKey:KEY_ROUTINE_UUID]];
         if(routine){
-            [MMRoutine removeRoutine:routine];
+            [self doSyncMarker:routine block:^(NSError *error){
+                if(!error){
+                    [MMRoutine removeRoutine:routine];
+                }
+            }];
         }
     }
 }

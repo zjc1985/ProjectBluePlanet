@@ -19,10 +19,15 @@
 
 @interface RoutineDetailMapViewController ()<RMMapViewDelegate,UIActionSheetDelegate>
 
-@property (weak, nonatomic) IBOutlet UIButton *locateButton;
-@property (weak, nonatomic) IBOutlet UIButton *syncButton;
 @property (weak, nonatomic) IBOutlet UIToolbar *playRoutineToolBar;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *SlidePlayButton;
+
+
+@property (strong, nonatomic) IBOutlet UIBarButtonItem *refreshBarButton;
+@property (strong, nonatomic) IBOutlet UIBarButtonItem *activityBarButton;
+@property (strong, nonatomic) IBOutlet UIToolbar *toolbar;
+@property (strong, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
+
 
 @property(nonatomic,strong) MKMapItem *searchResult;
 @property(nonatomic,strong) UIActionSheet *searchRMMarkerActionSheet;
@@ -36,11 +41,6 @@
     
     //init ui
     self.slideIndicator=-1;
-    
-    self.locateButton.layer.borderWidth=0.5f;
-    self.locateButton.layer.cornerRadius = 4.5;
-    self.syncButton.layer.borderWidth=0.5f;
-    self.syncButton.layer.cornerRadius=4.5;
     
     UIBarButtonItem *searchButton=[[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemSearch target:self action:@selector(searchButtonClick:)];
     UIBarButtonItem *addButton=[[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addMarker:)];
@@ -69,16 +69,9 @@
     [self updateMapUI];
     
     if([CommonUtil isFastNetWork]){
-        [CloudManager syncMarkersByRoutineUUID:[self.routine uuid] withBlockWhenDone:^(NSError *error) {
-            if(error){
-                NSLog(@"error happened :%@",error.localizedDescription);
-            }
-            
-            [self updateMapUI];
-        }];
+        [self refreshButtonClick:nil];
     }
     
-
 }
 
 -(void)viewWillAppear:(BOOL)animated{
@@ -127,7 +120,29 @@
 }
 
 #pragma mark - UI action
-
+-(void)updateToolBarButtonNeedRefreshing:(BOOL)needRefresh{
+    if(self.activityBarButton==nil){
+        self.activityBarButton=[[UIBarButtonItem alloc]initWithCustomView:self.activityIndicator];
+    }
+    
+    NSMutableArray *toolbarItems = [[NSMutableArray alloc] initWithArray:self.toolbar.items];
+    
+    if (needRefresh){
+        //Replace refresh button with loading spinner
+        [toolbarItems replaceObjectAtIndex:[toolbarItems indexOfObject:self.refreshBarButton] withObject:self.activityBarButton];
+        
+        //Animate the loading spinner
+        [self.activityIndicator startAnimating];
+    }
+    else{
+        //Replace loading spinner with refresh button
+        [toolbarItems replaceObjectAtIndex:[toolbarItems indexOfObject:self.activityBarButton] withObject:self.refreshBarButton];
+        [self.activityIndicator stopAnimating];
+    }
+    
+    //Set the toolbar items
+    [self.toolbar setItems:toolbarItems];
+}
 
 - (IBAction)PlayButtonClick:(id)sender {
     [self slidePlayClick];
@@ -142,8 +157,12 @@
 }
 
 - (IBAction)refreshButtonClick:(id)sender {
+    [self updateToolBarButtonNeedRefreshing:YES];
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
     NSString *currentRoutineUUID=[self.routine uuid];
     [CloudManager syncMarkersByRoutineUUID:[self.routine uuid] withBlockWhenDone:^(NSError *error) {
+        [self updateToolBarButtonNeedRefreshing:NO];
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
         if(!error){
             self.routine=[MMRoutine queryMMRoutineWithUUID:currentRoutineUUID];
             if(self.routine){

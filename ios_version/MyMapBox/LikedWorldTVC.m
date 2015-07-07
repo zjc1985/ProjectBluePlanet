@@ -39,7 +39,9 @@
 }
 
 -(void)reloadData{
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
     [CloudManager queryFollowees:^(NSError *error, NSArray *user) {
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
         [self.refreshControl endRefreshing];
         if (!error) {
             self.avusers=user;

@@ -78,8 +78,7 @@
             
             
             if([self.routine isMarkersSyncWithCloud]){
-                [CloudManager syncMarkersByRoutineUUID:self.routine.uuid withBlockWhenDone:nil];
-                
+                //[CloudManager syncMarkersByRoutineUUID:self.routine.uuid withBlockWhenDone:nil];
                 [self prepareCach:segue];
             }else{
                 [CloudManager syncMarkersByRoutineUUID:self.routine.uuid withBlockWhenDone:^(NSError *error) {

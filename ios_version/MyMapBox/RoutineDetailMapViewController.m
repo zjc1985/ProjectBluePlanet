@@ -69,7 +69,7 @@
     [self updateMapUI];
     
     if([CommonUtil isFastNetWork]){
-        [self refreshButtonClick:nil];
+        [self syncMarkers];
     }
     
 }
@@ -107,6 +107,13 @@
 }
 
 #pragma mark - getter and setter
+-(UIBarButtonItem *)activityBarButton{
+    if(!_activityBarButton){
+        _activityBarButton=[[UIBarButtonItem alloc]initWithCustomView:self.activityIndicator];
+    }
+    return _activityBarButton;
+}
+
 
 -(UIActionSheet *)searchRMMarkerActionSheet{
     if(!_searchRMMarkerActionSheet){
@@ -121,10 +128,6 @@
 
 #pragma mark - UI action
 -(void)updateToolBarButtonNeedRefreshing:(BOOL)needRefresh{
-    if(self.activityBarButton==nil){
-        self.activityBarButton=[[UIBarButtonItem alloc]initWithCustomView:self.activityIndicator];
-    }
-    
     NSMutableArray *toolbarItems = [[NSMutableArray alloc] initWithArray:self.toolbar.items];
     
     if (needRefresh){
@@ -157,6 +160,10 @@
 }
 
 - (IBAction)refreshButtonClick:(id)sender {
+    [self syncMarkers];
+}
+
+-(void)syncMarkers{
     [self updateToolBarButtonNeedRefreshing:YES];
     [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
     NSString *currentRoutineUUID=[self.routine uuid];

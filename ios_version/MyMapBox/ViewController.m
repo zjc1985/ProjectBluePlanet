@@ -31,6 +31,10 @@
 
 @property(nonatomic,strong) MMRoutineCachHelper *routineCachHelper;
 
+@property (strong, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
+@property (strong, nonatomic) IBOutlet UIBarButtonItem *activityBarButton;
+@property (strong, nonatomic) IBOutlet UIBarButtonItem *refreshBarButton;
+
 @end
 
 @implementation ViewController
@@ -38,6 +42,11 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    //init view ui
+    
+    
+    
+    //map view init
     self.mapView.minZoom=3;
     self.mapView.maxZoom=17;
     
@@ -53,14 +62,18 @@
     [self.view addSubview:self.mapView];
     [self.view sendSubviewToBack:self.mapView];
     
-    NSLog(@"view did load");
+    //sync routines
+    if([CommonUtil isFastNetWork]){
+        [self syncRoutines];
+    }
 }
 
 - (void)syncRoutines {
     self.title=@"Syncing";
+    [self updateRightNavBarItenNeedRefreshing:YES];
     [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
     [CloudManager syncRoutinesAndOvMarkersWithBlockWhenDone:^(NSError *error) {
-        
+        [self updateRightNavBarItenNeedRefreshing:NO];
         self.title=VIEW_TITLE_NAME;
         [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
         
@@ -79,10 +92,6 @@
         [self performSegueWithIdentifier:LOGIN_SEGUE sender:self];
     }else{
         [self updateMapUI];
-        
-        if([CommonUtil isFastNetWork]){
-            [self syncRoutines];
-        }
     }
 }
 
@@ -95,11 +104,36 @@
 
 #pragma mark - getters and setters
 
+-(UIBarButtonItem *)activityBarButton{
+    if(!_activityBarButton){
+        _activityBarButton=[[UIBarButtonItem alloc]initWithCustomView:self.activityIndicator];
+    }
+    return _activityBarButton;
+}
+
 -(MMRoutineCachHelper *)routineCachHelper{
     if(!_routineCachHelper){
         _routineCachHelper=[[MMRoutineCachHelper alloc]init];
     }
     return _routineCachHelper;
+}
+
+#pragma mark - ui action
+-(void)updateRightNavBarItenNeedRefreshing:(BOOL)needRefresh{
+    if (needRefresh){
+        //Replace refresh button with loading spinner
+        [self.navigationItem setRightBarButtonItem:self.activityBarButton];
+        [self.activityIndicator startAnimating];
+    }
+    else{
+        //Replace loading spinner with refresh button
+        [self.navigationItem setRightBarButtonItem:self.refreshBarButton];
+        [self.activityIndicator stopAnimating];
+    }
+}
+
+- (IBAction)refreshButtonClick:(id)sender {
+    [self syncRoutines];
 }
 
 #pragma mark -segue
@@ -149,7 +183,19 @@
     if (routine) {
         if([routine.isSync boolValue]){
             NSLog(@"prepare to mark delete routine id: %@",routine.uuid);
-            [routine markDelete];
+            if (routine.isMarkersSyncWithCloud) {
+                [routine markDelete];
+            }else{
+                [CloudManager syncMarkersByRoutineUUID:routine.uuid withBlockWhenDone:^(NSError *error) {
+                    if(error){
+                        [CommonUtil alert:error.localizedDescription];
+                    }else{
+                        [routine markDelete];
+                        [self updateMapUI];
+                    }
+                }];
+            }
+            
         }else{
             NSLog(@"prepare to mark remove routine id: %@",routine.uuid);
             [MMRoutine removeRoutine:routine];

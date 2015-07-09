@@ -121,7 +121,7 @@ typedef enum : NSUInteger {
 #pragma mark - RMMap delegate
 -(void)singleTapOnMap:(RMMapView *)map at:(CGPoint)point{
     //BOOL hidden=self.tabBarController.tabBar.hidden;
-    //[self.tabBarController.tabBar setHidden:!hidden];
+    [self.tabBarController.tabBar setHidden:NO];
 }
 
 -(RMMapLayer *)mapView:(RMMapView *)mapView layerForAnnotation:(RMAnnotation *)annotation{
@@ -208,5 +208,13 @@ typedef enum : NSUInteger {
 - (void)afterMapZoom:(RMMapView *)map byUser:(BOOL)wasUserAction{
     [self updateMapUI];
 }
+
+-(void)beforeMapMove:(RMMapView *)map byUser:(BOOL)wasUserAction{
+    if (wasUserAction) {
+        [self.tabBarController.tabBar setHidden:YES];
+
+    }
+}
+
 
 @end

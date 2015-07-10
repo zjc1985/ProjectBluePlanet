@@ -16,7 +16,17 @@
 
 #define SHOW_SEARCH_ROUTINE_INFO_SEGUE @"showSearchRoutineInfoSegue"
 
+#define SEARCH_RESULTS_LIMIT 15
+#define SEARCH_RESULTS_EACH_PAGE_NUM 5
+
 @interface ExploreRoutineVC ()<RMMapViewDelegate,UIActionSheetDelegate>
+
+@property(nonatomic,readonly) NSUInteger searchResultsTotalPage;
+
+@property(nonatomic)NSUInteger currentPageNum;
+@property(nonatomic,strong)NSNumber *currentSearchLat;
+@property(nonatomic,strong)NSNumber *currentSearchLng;
+@property(nonatomic,strong)NSMutableDictionary *searchCach;  //key:pageNum value: searchResults
 
 @end
 
@@ -24,6 +34,8 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    self.currentPageNum=0;
     
     self.mapView.minZoom=2;
     self.mapView.maxZoom=17;
@@ -52,6 +64,33 @@
     return _searchedRoutines;
 }
 
+-(NSUInteger)searchResultsTotalPage{
+    return SEARCH_RESULTS_LIMIT/SEARCH_RESULTS_EACH_PAGE_NUM;
+}
+
+-(NSNumber *)currentSearchLat{
+    if(!_currentSearchLat){
+        _currentSearchLat=[NSNumber numberWithDouble:0];
+    }
+    return _currentSearchLat;
+}
+
+-(NSNumber *)currentSearchLng{
+    if(!_currentSearchLng){
+        _currentSearchLng=[NSNumber numberWithDouble:0];
+    }
+    return _currentSearchLng;
+}
+
+-(void)initNewCachResults{
+    self.searchCach=[NSMutableDictionary new];
+    NSUInteger count=SEARCH_RESULTS_LIMIT/SEARCH_RESULTS_EACH_PAGE_NUM;
+    for (NSUInteger i=0; i<count; i++) {
+        NSObject *nullObject=[[NSObject alloc]init];
+        [self.searchCach setObject:nullObject forKey:[NSNumber numberWithUnsignedInteger:i+1]];
+    }
+}
+
 #pragma mark - UI action
 
 typedef enum : NSUInteger {
@@ -68,6 +107,48 @@ typedef enum : NSUInteger {
     [sheet showInView:self.view];
 }
 
+- (IBAction)prevSearchResultsBarButtonClick:(id)sender {
+    if(self.currentPageNum>1){
+        self.currentPageNum--;
+        self.title=[NSString stringWithFormat:@"Page %u",self.currentPageNum];
+        NSArray *cachResults=[self.searchCach objectForKey:[NSNumber numberWithUnsignedInteger:self.currentPageNum]];
+        self.searchedRoutines=cachResults;
+        [self updateMapUI];
+    }
+}
+
+- (IBAction)nextSearchResultsBarButtonClick:(id)sender {
+    
+    if (self.currentPageNum<self.searchResultsTotalPage && self.currentPageNum>0) {
+        self.title=@"Loading...";
+        NSArray *cachResults=[self.searchCach objectForKey:[NSNumber numberWithUnsignedInteger:self.currentPageNum+1]];
+        if([cachResults isKindOfClass:[NSArray class]]){
+            self.currentPageNum++;
+            self.title=[NSString stringWithFormat:@"Page %u",self.currentPageNum];
+            self.searchedRoutines=cachResults;
+            [self updateMapUI];
+        }else{
+            [CloudManager searchRoutinesByLat:self.currentSearchLat lng:self.currentSearchLng
+                                    withLimit:[NSNumber numberWithUnsignedInteger:SEARCH_RESULTS_EACH_PAGE_NUM]
+                                     withPage:[NSNumber numberWithUnsignedInteger:self.currentPageNum+1]
+                            withBlockWhenDone:^(NSError *error, NSArray *routines) {
+                                self.currentPageNum++;
+                                self.title=[NSString stringWithFormat:@"Page %u",self.currentPageNum];
+                                if(!error){
+                                    self.title=[NSString stringWithFormat:@"Page %u",self.currentPageNum];
+                                    [self.searchCach setObject:routines forKey:[NSNumber numberWithUnsignedInteger:self.currentPageNum]];
+                                    self.searchedRoutines=routines;
+                                    [self updateMapUI];
+                                }else{
+                                    self.title=@"Explore";
+                                    [CommonUtil alert:[error localizedDescription]];
+                                }
+                            }];
+        }
+    }
+}
+
+
 #pragma mark - ui action delegate
 
 -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex{
@@ -80,15 +161,22 @@ typedef enum : NSUInteger {
             NSNumber *lat=[NSNumber numberWithDouble:self.mapView.centerCoordinate.latitude];
             NSNumber *lng=[NSNumber numberWithDouble:self.mapView.centerCoordinate.longitude];
             
+            self.currentSearchLat=lat;
+            self.currentSearchLng=lng;
+            
             [CloudManager searchRoutinesByLat:lat lng:lng
-                                    withLimit:[NSNumber numberWithUnsignedInteger:5]
+                                    withLimit:[NSNumber numberWithUnsignedInteger:SEARCH_RESULTS_EACH_PAGE_NUM]
                                      withPage:[NSNumber numberWithUnsignedInteger:1]
                             withBlockWhenDone:^(NSError *error, NSArray *routines) {
-                                self.title=@"Explore";
+                                [self initNewCachResults];
+                                self.currentPageNum=1;
                                 if(!error){
+                                    self.title=[NSString stringWithFormat:@"Page %u",self.currentPageNum];
+                                    [self.searchCach setObject:routines forKey:[NSNumber numberWithUnsignedInteger:1]];
                                     self.searchedRoutines=routines;
                                     [self updateMapUI];
                                 }else{
+                                    self.title=@"Explore";
                                     [CommonUtil alert:[error localizedDescription]];
                                 }
             }];

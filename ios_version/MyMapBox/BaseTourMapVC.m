@@ -31,6 +31,7 @@
 -(void)addLineFrom:(CLLocation *)from to:(CLLocation *)to{
     NSArray *pointArray=[[NSArray alloc]initWithObjects:from,to,nil];
     RMPolylineAnnotation *line=[[RMPolylineAnnotation alloc]initWithMapView:self.mapView points:pointArray];
+    [line setLineWidth:0.8];
     [self.mapView addAnnotation:line];
 }
 

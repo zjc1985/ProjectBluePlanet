@@ -32,8 +32,9 @@
 - (IBAction)LoginClicked:(id)sender {
     NSString *userName=self.userNameTextField.text;
     NSString *pwd=self.pwdTextField.text;
-    
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
     [AVUser logInWithUsernameInBackground:userName password:pwd block:^(AVUser *user, NSError *error) {
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
         if (user != nil) {
             NSLog(@"Login success");
             [self.presentingViewController dismissViewControllerAnimated:YES completion:nil];

@@ -27,6 +27,7 @@
 @property(nonatomic,strong)NSNumber *currentSearchLat;
 @property(nonatomic,strong)NSNumber *currentSearchLng;
 @property(nonatomic,strong)NSMutableDictionary *searchCach;  //key:pageNum value: searchResults
+@property (strong, nonatomic) IBOutlet UIBarButtonItem *centerToolBarItem;
 
 @end
 
@@ -110,7 +111,7 @@ typedef enum : NSUInteger {
 - (IBAction)prevSearchResultsBarButtonClick:(id)sender {
     if(self.currentPageNum>1){
         self.currentPageNum--;
-        self.title=[NSString stringWithFormat:@"Page %u",self.currentPageNum];
+        self.centerToolBarItem.title=[NSString stringWithFormat:@"Page %u",self.currentPageNum];
         NSArray *cachResults=[self.searchCach objectForKey:[NSNumber numberWithUnsignedInteger:self.currentPageNum]];
         self.searchedRoutines=cachResults;
         [self updateMapUI];
@@ -120,11 +121,10 @@ typedef enum : NSUInteger {
 - (IBAction)nextSearchResultsBarButtonClick:(id)sender {
     
     if (self.currentPageNum<self.searchResultsTotalPage && self.currentPageNum>0) {
-        self.title=@"Loading...";
         NSArray *cachResults=[self.searchCach objectForKey:[NSNumber numberWithUnsignedInteger:self.currentPageNum+1]];
         if([cachResults isKindOfClass:[NSArray class]]){
             self.currentPageNum++;
-            self.title=[NSString stringWithFormat:@"Page %u",self.currentPageNum];
+            self.centerToolBarItem.title=[NSString stringWithFormat:@"Page %u",self.currentPageNum];
             self.searchedRoutines=cachResults;
             [self updateMapUI];
         }else{
@@ -133,9 +133,8 @@ typedef enum : NSUInteger {
                                      withPage:[NSNumber numberWithUnsignedInteger:self.currentPageNum+1]
                             withBlockWhenDone:^(NSError *error, NSArray *routines) {
                                 self.currentPageNum++;
-                                self.title=[NSString stringWithFormat:@"Page %u",self.currentPageNum];
+                                self.centerToolBarItem.title=[NSString stringWithFormat:@"Page %u",self.currentPageNum];
                                 if(!error){
-                                    self.title=[NSString stringWithFormat:@"Page %u",self.currentPageNum];
                                     [self.searchCach setObject:routines forKey:[NSNumber numberWithUnsignedInteger:self.currentPageNum]];
                                     self.searchedRoutines=routines;
                                     [self updateMapUI];
@@ -169,14 +168,14 @@ typedef enum : NSUInteger {
                                      withPage:[NSNumber numberWithUnsignedInteger:1]
                             withBlockWhenDone:^(NSError *error, NSArray *routines) {
                                 [self initNewCachResults];
+                                self.title=@"Explore";
                                 self.currentPageNum=1;
                                 if(!error){
-                                    self.title=[NSString stringWithFormat:@"Page %u",self.currentPageNum];
+                                    self.centerToolBarItem.title=[NSString stringWithFormat:@"Page %u",self.currentPageNum];
                                     [self.searchCach setObject:routines forKey:[NSNumber numberWithUnsignedInteger:1]];
                                     self.searchedRoutines=routines;
                                     [self updateMapUI];
                                 }else{
-                                    self.title=@"Explore";
                                     [CommonUtil alert:[error localizedDescription]];
                                 }
             }];

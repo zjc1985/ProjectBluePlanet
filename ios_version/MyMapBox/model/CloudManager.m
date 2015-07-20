@@ -38,8 +38,9 @@
 +(void)likeRoutine:(NSString *)routineId withBlockWhenDone:(void (^)(NSError *))block{
     NSMutableDictionary *params=[[NSMutableDictionary alloc]init];
     [params setObject:routineId forKey:@"routineId"];
-    
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
     [AVCloud callFunctionInBackground:@"likeRoutine" withParameters:params block:^(id object, NSError *error) {
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
         block(error);
     }];
 }
@@ -47,17 +48,20 @@
 +(void)unLikedRoutine:(NSString *)routineId withBlockWhenDone:(void (^)(NSError *))block{
     NSMutableDictionary *params=[[NSMutableDictionary alloc]init];
     [params setObject:routineId forKey:@"routineId"];
-    
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
     [AVCloud callFunctionInBackground:@"unlikeRoutine" withParameters:params block:^(id object, NSError *error) {
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
         block(error);
     }];
 }
 
 +(void)existLikedRoutine:(NSString *)routineId withBlockWhenDone:(void (^)(BOOL, NSError *))block{
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
     AVQuery *query = [AVQuery queryWithClassName:@"LikedRoutine"];
     [query whereKey:@"user" equalTo:[self currentUser]];
     [query whereKey:@"routineId" equalTo:routineId];
     [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
         BOOL isLike=NO;
         if (!error) {
             if (objects.count>0) {
@@ -74,7 +78,9 @@
 }
 
 +(void)queryLikedRoutines:(void (^)(NSError *, NSArray *))block{
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
     [AVCloud callFunctionInBackground:@"queryLikedRoutines" withParameters:nil block:^(id object, NSError *error) {
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
         NSMutableArray *routines=[[NSMutableArray alloc]init];
         
         if (!error) {
@@ -116,30 +122,37 @@
 
 #pragma mark - follow feature
 +(void)follow:(NSString *)userId withBlockWhenDone:(void (^)(BOOL success,NSError *))block{
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
     [[AVUser currentUser] follow:userId andCallback:^(BOOL succeeded, NSError *error) {
-        
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
         block(succeeded,error);
     }];
 
 }
 
 +(void)unfollow:(NSString *)userId withBlockWhenDone:(void (^)(BOOL,NSError *))block{
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
     [[AVUser currentUser] unfollow:userId andCallback:^(BOOL succeeded, NSError *error) {
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
         block(succeeded,error);
     }];
 }
 
 +(void)queryFollowees:(void (^)(NSError *, NSArray *))block{
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
     AVQuery *query= [AVUser followeeQuery:@"USER_OBJECT_ID"];
     [query whereKey:@"user" equalTo:[self currentUser]];
     [query includeKey:@"followee"];
     [query findObjectsInBackgroundWithBlock:^(NSArray *user, NSError *error) {
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
         block(error,user);
     }];
 }
 
 +(void)existFollowee:(NSString *)userId withBlockWhenDone:(void (^)(BOOL, NSError *))block{
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
     [self queryFollowees:^(NSError *error, NSArray *user) {
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
         BOOL result=NO;
         for (AVUser *eachUser in user) {
             if ([eachUser.objectId isEqualToString:userId]) {
@@ -153,11 +166,13 @@
 
 +(void)queryMarkersByRoutineId:(NSString *)routineId withBlockWhenDone:(void (^)(NSError *, NSArray *))block{
     NSLog(@"CloudManager.queryMarkersByRoutineId");
-    
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
     NSMutableDictionary *params=[[NSMutableDictionary alloc]init];
     [params setObject:routineId forKey:@"routineId"];
     
     [AVCloud callFunctionInBackground:@"fetchMarkersByRoutineId" withParameters:params block:^(id object, NSError *error) {
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+        
         NSMutableArray *markers=[[NSMutableArray alloc]init];
         
         if(!error){
@@ -190,8 +205,9 @@
     NSMutableDictionary *params=[[NSMutableDictionary alloc]init];
     [params setObject:userId forKey:@"userId"];
     
-    
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
     [AVCloud callFunctionInBackground:@"searchRoutinesByUserId" withParameters:params block:^(id object, NSError *error) {
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
         NSMutableArray *routines=[[NSMutableArray alloc]init];
         
         if (!error) {
@@ -234,9 +250,10 @@
     [params setObject:limit forKey:@"limit"];
     [params setObject:page forKey:@"page"];
     
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
     [AVCloud callFunctionInBackground:@"searchRoutinesByLatlng" withParameters:params block:^(id object, NSError *error) {
         NSMutableArray *routines=[[NSMutableArray alloc]init];
-        
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
         if (!error) {
             NSDictionary *response=object;
             for (NSDictionary *eachSearchResult in response) {
@@ -306,9 +323,10 @@
     NSMutableDictionary *params=[[NSMutableDictionary alloc]init];
     [params setValue:[self allMarkerDictionaryWith:belongRoutine] forKey:KEY_REQUEST_SYNC_MARKERS];
     [params setValue:belongRoutine.uuid forKey:KEY_REQUEST_ROUTINE_ID];
-    
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
     //call cloud
     [AVCloud callFunctionInBackground:@"syncMarkersByRoutineId" withParameters:params block:^(id object, NSError *error) {
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
         if(!error){
             NSDictionary *response=object;
             
@@ -403,7 +421,9 @@
     [params setValue:[self allOvMarkersDictionary] forKey:@"syncOvMarkers"];
     
     //call cloud
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
     [AVCloud callFunctionInBackground:@"syncRoutines" withParameters:params block:^(id object, NSError *error) {
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
         if(!error){
             NSDictionary *response=object;
             

@@ -47,7 +47,7 @@
     
     
     //map view init
-    self.mapView.minZoom=3;
+    self.mapView.minZoom=2;
     self.mapView.maxZoom=17;
     
     self.mapView.zoom=3;
@@ -71,11 +71,9 @@
 - (void)syncRoutines {
     self.title=@"Syncing";
     [self updateRightNavBarItenNeedRefreshing:YES];
-    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
     [CloudManager syncRoutinesAndOvMarkersWithBlockWhenDone:^(NSError *error) {
         [self updateRightNavBarItenNeedRefreshing:NO];
         self.title=VIEW_TITLE_NAME;
-        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
         
         if(error){
             NSLog(@"error happend: %@",error.localizedDescription);
@@ -231,16 +229,16 @@
     }else if ([annotation.userInfo isKindOfClass:[MMOvMarker class]]){
         MMOvMarker *ovMarker=annotation.userInfo;
         
-        CGPoint anchorPoint;
-        anchorPoint.x=0.5;
-        anchorPoint.y=1;
+        //CGPoint anchorPoint;
+        //anchorPoint.x=0.5;
+        //anchorPoint.y=1;
         
         UIImage *iconImage=[UIImage imageNamed:ovMarker.iconUrl];
         if(!iconImage){
             iconImage=[UIImage imageNamed:@"default_default.png"];
         }
         
-        RMMarker *marker = [[RMMarker alloc] initWithUIImage: iconImage anchorPoint:anchorPoint];
+        RMMarker *marker = [[RMMarker alloc] initWithUIImage:iconImage];
         //RMMarker *marker = [[RMMarker alloc] initWithUIImage:[UIImage imageNamed:@"default_default"]anchorPoint:anchorPoint];
         
         

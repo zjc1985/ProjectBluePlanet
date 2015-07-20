@@ -128,8 +128,8 @@
     // Create a search request with a string
     MKLocalSearchRequest *searchRequest = [[MKLocalSearchRequest alloc] init];
     [searchRequest setNaturalLanguageQuery:searchString];
-    //MKCoordinateRegion region = MKCoordinateRegionMakeWithDistance(self.minLocation, 1000, 1000);
-    //[searchRequest setRegion:region];
+    MKCoordinateRegion region = MKCoordinateRegionMakeWithDistance(self.minLocation, 500000, 500000);
+    [searchRequest setRegion:region];
     
     // Create the local search to perform the search
     [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;

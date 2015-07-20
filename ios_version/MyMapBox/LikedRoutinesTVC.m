@@ -31,9 +31,7 @@
 }
 
 -(void)reloadData{
-    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
     [CloudManager queryLikedRoutines:^(NSError *error, NSArray *searchRoutines) {
-        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
         [self.refreshControl endRefreshing];
         if(!error){
             self.routines=searchRoutines;

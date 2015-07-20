@@ -165,11 +165,9 @@
 
 -(void)syncMarkers{
     [self updateToolBarButtonNeedRefreshing:YES];
-    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
     NSString *currentRoutineUUID=[self.routine uuid];
     [CloudManager syncMarkersByRoutineUUID:[self.routine uuid] withBlockWhenDone:^(NSError *error) {
         [self updateToolBarButtonNeedRefreshing:NO];
-        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
         if(!error){
             self.routine=[MMRoutine queryMMRoutineWithUUID:currentRoutineUUID];
             if(self.routine){

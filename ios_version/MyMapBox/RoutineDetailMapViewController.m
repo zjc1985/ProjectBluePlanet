@@ -29,7 +29,7 @@
 @property (strong, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
 
 
-@property(nonatomic,strong) MKMapItem *searchResult;
+@property(nonatomic,strong) GooglePlaceDetail *searchResult;
 @property(nonatomic,strong) UIActionSheet *searchRMMarkerActionSheet;
 
 @end
@@ -85,7 +85,7 @@
     [super updateMapUI];
     
     if(self.searchResult){
-        CLLocationCoordinate2D coord=self.searchResult.placemark.coordinate;
+        CLLocationCoordinate2D coord=CLLocationCoordinate2DMake([self.searchResult.lat doubleValue], [self.searchResult.lng doubleValue]);
         [self addMarkerWithTitle:self.searchResult.name withCoordinate:coord withCustomData:self.searchResult];
         [self.mapView setCenterCoordinate:coord animated:YES];
     }
@@ -241,8 +241,8 @@
         switch (buttonIndex) {
             case addSearchResult2Routine:{
                 MMMarker *newMarker=[MMMarker createMMMarkerInRoutine:self.routine
-                                                              withLat:self.searchResult.placemark.coordinate.latitude
-                                                              withLng:self.searchResult.placemark.coordinate.longitude];
+                                                              withLat:[self.searchResult.lat doubleValue]
+                                                              withLng:[self.searchResult.lng doubleValue]];
                 newMarker.title=self.searchResult.name;
                 newMarker.category=[NSNumber numberWithUnsignedInteger:CategorySight];
                 newMarker.iconUrl=@"sight_default";
@@ -321,7 +321,7 @@
         marker.rightCalloutAccessoryView=[UIButton buttonWithType:UIButtonTypeDetailDisclosure];
         
         return marker;
-    }else if ([annotation.userInfo isKindOfClass:[MKMapItem class]]){
+    }else if ([annotation.userInfo isKindOfClass:[GooglePlaceDetail class]]){
         CGPoint anchorPoint;
         anchorPoint.x=0.5;
         anchorPoint.y=1;
@@ -366,7 +366,7 @@
 
 
 -(void)tapOnCalloutAccessoryControl:(UIControl *)control forAnnotation:(RMAnnotation *)annotation onMap:(RMMapView *)map{
-    if ([annotation.userInfo isKindOfClass:[MKMapItem class]]) {
+    if ([annotation.userInfo isKindOfClass:[GooglePlaceDetail class]]) {
         [self.searchRMMarkerActionSheet showInView:self.view];
     }else if ([annotation.userInfo isKindOfClass:[MMMarker class]]){
         self.currentMarker=annotation.userInfo;

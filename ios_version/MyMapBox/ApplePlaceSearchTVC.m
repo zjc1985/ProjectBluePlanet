@@ -8,13 +8,15 @@
 
 #import "ApplePlaceSearchTVC.h"
 #import "CommonUtil.h"
+#import "GooglePlaceManager.h"
+#import "GooglePredictionResult.h"
 
 #define  SEARCH_COMPLETE_UNWIND_SEGUE @"searchCompleteUnwindSegue"
 
 @interface ApplePlaceSearchTVC ()<UISearchBarDelegate>
 
 @property(nonatomic,strong)NSArray *historyResults; //will do later
-@property(nonatomic,strong)NSArray *searchResults; //of MKMapItem
+@property(nonatomic,strong)NSArray *searchResults; //of GooglePredictionResult
 
 @end
 
@@ -65,63 +67,40 @@
     UITableViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:kCellID];
     
     if(tableView==self.searchDisplayController.searchResultsTableView){
-        MKMapItem *mapItem=[self.searchResults objectAtIndex:indexPath.row];
+        GooglePredictionResult *googlePredict=[self.searchResults objectAtIndex:indexPath.row];
         
-        cell.textLabel.text=mapItem.name;
-        cell.detailTextLabel.text=mapItem.placemark.title;
-        /*
-        GMSAutocompletePrediction* result=[self.searchResults objectAtIndex:indexPath.row];
-        cell.textLabel.text=result.attributedFullText.string;
-         */
+        cell.textLabel.text=googlePredict.description;
+        cell.detailTextLabel.text=googlePredict.description;
     }else{
-        //GooglePlace *place=[self.historyResults objectAtIndex:indexPath.row];
-        //cell.textLabel.text=place.title;
         
     }
+    
     return cell;
 }
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     if (tableView==self.searchDisplayController.searchResultsTableView) {
-        MKMapItem *mapItem=[self.searchResults objectAtIndex:indexPath.row];
-        self.selectedPlace=mapItem;
-        [self performSegueWithIdentifier:SEARCH_COMPLETE_UNWIND_SEGUE sender:nil];
+        GooglePredictionResult *predictResult=[self.searchResults objectAtIndex:indexPath.row];
         
-        /*
-        GMSAutocompletePrediction *selectResult=[self.searchResults objectAtIndex:indexPath.row];
-        [[GMSPlacesClient sharedClient] lookUpPlaceID:selectResult.placeID callback:^(GMSPlace *place, NSError *error) {
-            if (error != nil) {
-                NSLog(@"Place Details error %@", [error localizedDescription]);
-                return;
-            }
-            
-            if (place != nil) {
-                NSLog(@"Place name %@", place.name);
-                NSLog(@"Place address %@", place.formattedAddress);
-                NSLog(@"Place placeID %@", place.placeID);
-                NSLog(@"Place attributions %@", place.attributions);
-                GooglePlace *newPlace=[GooglePlace createGooglePlaceWithPlaceId:place.placeID withTitle:place.name];
-                newPlace.lat=[NSNumber numberWithDouble:place.coordinate.latitude];
-                newPlace.lng=[NSNumber numberWithDouble:place.coordinate.longitude];
-                self.selectedPlace=newPlace;
+        [GooglePlaceManager details:predictResult.placeId withBlock:^(NSError *error, GooglePlaceDetail *placeDetail) {
+            if(error){
+                NSLog(@"Search Request Error: %@", [error localizedDescription]);
+                [CommonUtil alert:@"No Results Found"];
+            }else{
+                self.selectedPlace=placeDetail;
                 [self performSegueWithIdentifier:SEARCH_COMPLETE_UNWIND_SEGUE sender:nil];
-            } else {
-                //NSLog(@"No place details for %@", placeID);
-                [CommonUtil alert:@"no place detail found at google"];
             }
         }];
-         */
     }else{
         
-        //[self performSegueWithIdentifier:SEARCH_COMPLETE_UNWIND_SEGUE sender:nil];
     }
 }
 
 
 #pragma mark - search bar delegate
 - (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar{
-    //[self googlePlaceSearch:searchBar.text];
-    [self appleLocationSearch:searchBar.text];
+    [self googlePlaceSearch:searchBar.text];
+    //[self appleLocationSearch:searchBar.text];
 }
 
 -(void)appleLocationSearch:(NSString *)searchString{
@@ -150,27 +129,21 @@
 }
 
 -(void)googlePlaceSearch:(NSString *)searchString{
-    
-    GMSCoordinateBounds *bounds = [[GMSCoordinateBounds alloc] initWithCoordinate:self.minLocation
-                                                                       coordinate:self.maxLocation];
-    
-    [[GMSPlacesClient sharedClient] autocompleteQuery:searchString
-                                               bounds:bounds
-                                               filter:nil
-                                             callback:^(NSArray *results, NSError *error) {
-                                                 if (error != nil) {
-                                                     NSLog(@"Autocomplete error %@", [error localizedDescription]);
-                                                     return;
-                                                 }
-                                                 
-                                                 for (GMSAutocompletePrediction* result in results) {
-                                                     NSLog(@"Result '%@' with placeID %@", result.attributedFullText.string, result.placeID);
-                                                 }
-                                                 
-                                                 self.searchResults=results;
-                                                 [self.searchDisplayController.searchResultsTableView reloadData];
-                                             }];
-    
+    [GooglePlaceManager autoQueryComplete:searchString withBlock:^(NSError *error, NSArray *autoQueryResultArray) {
+        if(error){
+            NSLog(@"Search Request Error: %@", [error localizedDescription]);
+            [CommonUtil alert:@"No Results Found"];
+        }else{
+            self.searchResults=autoQueryResultArray;
+            
+        }
+        NSLog(@"reload data");
+        [self performSelectorOnMainThread:@selector(reloadSearchTableData) withObject:nil waitUntilDone:NO];
+    }];
+}
+
+-(void)reloadSearchTableData{
+    [self.searchDisplayController.searchResultsTableView reloadData];
 }
 
 /*

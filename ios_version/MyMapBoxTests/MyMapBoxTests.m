@@ -10,6 +10,8 @@
 #import <XCTest/XCTest.h>
 #import "AppDelegate.h"
 #import "CommonUtil.h"
+#import "GooglePlaceManager.h"
+#import "GooglePredictionResult.h"
 
 @interface MyMapBoxTests : XCTestCase
 
@@ -69,6 +71,33 @@
     
     NSLog(@"%u",array.count);
      XCTAssert(YES, @"Pass");
+}
+
+-(void)testGoogleAutoQueryComplete{
+   [GooglePlaceManager autoQueryComplete:@"上海 东方明珠" withBlock:^(NSError *error, NSArray *autoQueryResultArray) {
+       if(!error){
+           for (GooglePredictionResult *result in autoQueryResultArray) {
+               NSLog(@"found search Result: description %@ place_id : %@",result.description,result.placeId);
+           }
+           
+       }else{
+           NSLog(@"%@",error.localizedDescription);
+       }
+   }];
+    
+    [NSThread sleepForTimeInterval:3];
+    
+    XCTAssert(YES, @"Pass");
+}
+
+-(void)testGooglePlaceDetail{
+    [GooglePlaceManager details:@"ChIJWTtcjAHyloARzI6dKE-U_l0" withBlock:^(NSError *error, GooglePlaceDetail *placeDetail) {
+        NSLog(@"%f %f",[placeDetail.lat doubleValue],[placeDetail.lng doubleValue]);
+    }];
+    
+    [NSThread sleepForTimeInterval:3];
+    
+    XCTAssert(YES, @"Pass");
 }
 
 -(NSString *)iconUrlToName:(NSString *)url{

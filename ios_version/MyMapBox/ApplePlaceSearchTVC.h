@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import <GoogleMaps/GoogleMaps.h>
 #import <MapKit/MapKit.h>
+#import "GooglePlaceDetail.h"
 
 @interface ApplePlaceSearchTVC : UITableViewController
 
@@ -18,6 +19,6 @@
 
 
 //out
-@property(nonatomic,strong)MKMapItem *selectedPlace;
+@property(nonatomic,strong)GooglePlaceDetail *selectedPlace;
 
 @end

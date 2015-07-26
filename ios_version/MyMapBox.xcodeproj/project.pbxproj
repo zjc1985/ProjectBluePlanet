@@ -63,6 +63,7 @@
 		8421CB151ADBF8FA002046B9 /* RoutineInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8421CB141ADBF8FA002046B9 /* RoutineInfoViewController.m */; };
 		8421CB181ADC04D0002046B9 /* RoutineDetailMapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8421CB171ADC04D0002046B9 /* RoutineDetailMapViewController.m */; };
 		845EB1F51AEE7B2500C719CA /* MMRoutineCachHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 845EB1F41AEE7B2500C719CA /* MMRoutineCachHelper.m */; };
+		847F845A1B6518D10052521D /* OvIconSelectTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 847F84591B6518D10052521D /* OvIconSelectTVC.m */; };
 		84F46A801B0396E0008B7F13 /* SettingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 84F46A7F1B0396E0008B7F13 /* SettingViewController.m */; };
 		BA7BA3C12724DAF844EAA856 /* libPods-MyMapBoxTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F108452F403E51AC8A0E001F /* libPods-MyMapBoxTests.a */; };
 /* End PBXBuildFile section */
@@ -186,6 +187,8 @@
 		8421CB171ADC04D0002046B9 /* RoutineDetailMapViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RoutineDetailMapViewController.m; sourceTree = "<group>"; };
 		845EB1F31AEE7B2500C719CA /* MMRoutineCachHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMRoutineCachHelper.h; sourceTree = "<group>"; };
 		845EB1F41AEE7B2500C719CA /* MMRoutineCachHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMRoutineCachHelper.m; sourceTree = "<group>"; };
+		847F84581B6518D10052521D /* OvIconSelectTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OvIconSelectTVC.h; sourceTree = "<group>"; };
+		847F84591B6518D10052521D /* OvIconSelectTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OvIconSelectTVC.m; sourceTree = "<group>"; };
 		84F46A7E1B0396DF008B7F13 /* SettingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingViewController.h; sourceTree = "<group>"; };
 		84F46A7F1B0396E0008B7F13 /* SettingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingViewController.m; sourceTree = "<group>"; };
 		DDCD2D0DA0362384E0FDE0D7 /* libPods-MyMapBox.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MyMapBox.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -368,6 +371,8 @@
 				283A21FD1B3B9F0E00F6DCA1 /* LikedRoutinesTVC.m */,
 				28252EAD1B40E5000057C51D /* ApplePlaceSearchTVC.h */,
 				28252EAE1B40E5000057C51D /* ApplePlaceSearchTVC.m */,
+				847F84581B6518D10052521D /* OvIconSelectTVC.h */,
+				847F84591B6518D10052521D /* OvIconSelectTVC.m */,
 			);
 			name = Controller;
 			sourceTree = "<group>";
@@ -622,6 +627,7 @@
 				2863908A1AE0E9F100A5B999 /* MarkerInfoTVC.m in Sources */,
 				28E475541AEF28C600449DBC /* OfflineRoutineTVC.m in Sources */,
 				28B4C1F51B5E54B400C1C9BF /* GooglePredictionResult.m in Sources */,
+				847F845A1B6518D10052521D /* OvIconSelectTVC.m in Sources */,
 				28C442E71B2A85D300DDC54C /* MMSearchedRoutine.m in Sources */,
 				285E43221AD61E720030A274 /* AppDelegate.m in Sources */,
 				283A21EC1B328DD900F6DCA1 /* OtherUserWorldVC.m in Sources */,

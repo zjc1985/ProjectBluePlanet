@@ -143,7 +143,7 @@
         RoutineInfoViewController *routineInfoVC=(RoutineInfoViewController *)segue.destinationViewController;
         RMAnnotation *annotation=(RMAnnotation *)sender;
         MMOvMarker *ovMarker=(MMOvMarker *)annotation.userInfo;
-        routineInfoVC.routine=ovMarker.belongRoutine;
+        routineInfoVC.ovMarker=ovMarker;
         routineInfoVC.mapView=self.mapView;
         routineInfoVC.routineCachHelper=self.routineCachHelper;
     }else if ([segue.identifier isEqualToString:ADD_ROUTINE_SEGUE]){
@@ -172,7 +172,7 @@
 
 -(IBAction)deleteRoutineDone:(UIStoryboardSegue *)segue{
     RoutineEditTVC *routineEditTVC=segue.sourceViewController;
-    MMRoutine *routine=routineEditTVC.routine;
+    MMRoutine *routine=routineEditTVC.ovMarker.belongRoutine;
     
     if([[self.currentRoutine uuid] isEqualToString:routine.uuid]){
         self.currentRoutine=nil;

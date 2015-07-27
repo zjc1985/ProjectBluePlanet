@@ -36,6 +36,8 @@
 		286390871AE0DE5200A5B999 /* RoutineAddTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 286390861AE0DE5200A5B999 /* RoutineAddTVC.m */; };
 		2863908A1AE0E9F100A5B999 /* MarkerInfoTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 286390891AE0E9F100A5B999 /* MarkerInfoTVC.m */; };
 		2863908D1AE0EA3E00A5B999 /* MarkerEditTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 2863908C1AE0EA3E00A5B999 /* MarkerEditTVC.m */; };
+		287D6D611B65D175009CFB56 /* BaseOvIconSelectTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 287D6D601B65D175009CFB56 /* BaseOvIconSelectTVC.m */; };
+		287D6D641B65D395009CFB56 /* AddRoutineOvIconSelectTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 287D6D631B65D395009CFB56 /* AddRoutineOvIconSelectTVC.m */; };
 		287F47D71AE4D7AE00CAF79B /* MMRoutineTester.m in Sources */ = {isa = PBXBuildFile; fileRef = 287F47D61AE4D7AE00CAF79B /* MMRoutineTester.m */; };
 		288B09A51B00BC1500066C59 /* MMMarker+Dao.m in Sources */ = {isa = PBXBuildFile; fileRef = 288B09A41B00BC1500066C59 /* MMMarker+Dao.m */; };
 		288B09A81B01A12D00066C59 /* MMOvMarker+Dao.m in Sources */ = {isa = PBXBuildFile; fileRef = 288B09A71B01A12C00066C59 /* MMOvMarker+Dao.m */; };
@@ -138,6 +140,10 @@
 		286390891AE0E9F100A5B999 /* MarkerInfoTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MarkerInfoTVC.m; sourceTree = "<group>"; };
 		2863908B1AE0EA3E00A5B999 /* MarkerEditTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MarkerEditTVC.h; sourceTree = "<group>"; };
 		2863908C1AE0EA3E00A5B999 /* MarkerEditTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MarkerEditTVC.m; sourceTree = "<group>"; };
+		287D6D5F1B65D175009CFB56 /* BaseOvIconSelectTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseOvIconSelectTVC.h; sourceTree = "<group>"; };
+		287D6D601B65D175009CFB56 /* BaseOvIconSelectTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BaseOvIconSelectTVC.m; sourceTree = "<group>"; };
+		287D6D621B65D395009CFB56 /* AddRoutineOvIconSelectTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddRoutineOvIconSelectTVC.h; sourceTree = "<group>"; };
+		287D6D631B65D395009CFB56 /* AddRoutineOvIconSelectTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddRoutineOvIconSelectTVC.m; sourceTree = "<group>"; };
 		287F47D61AE4D7AE00CAF79B /* MMRoutineTester.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMRoutineTester.m; sourceTree = "<group>"; };
 		288B09A31B00BC1500066C59 /* MMMarker+Dao.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "MMMarker+Dao.h"; path = "model/MMMarker+Dao.h"; sourceTree = "<group>"; };
 		288B09A41B00BC1500066C59 /* MMMarker+Dao.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "MMMarker+Dao.m"; path = "model/MMMarker+Dao.m"; sourceTree = "<group>"; };
@@ -371,8 +377,12 @@
 				283A21FD1B3B9F0E00F6DCA1 /* LikedRoutinesTVC.m */,
 				28252EAD1B40E5000057C51D /* ApplePlaceSearchTVC.h */,
 				28252EAE1B40E5000057C51D /* ApplePlaceSearchTVC.m */,
+				287D6D5F1B65D175009CFB56 /* BaseOvIconSelectTVC.h */,
+				287D6D601B65D175009CFB56 /* BaseOvIconSelectTVC.m */,
 				847F84581B6518D10052521D /* OvIconSelectTVC.h */,
 				847F84591B6518D10052521D /* OvIconSelectTVC.m */,
+				287D6D621B65D395009CFB56 /* AddRoutineOvIconSelectTVC.h */,
+				287D6D631B65D395009CFB56 /* AddRoutineOvIconSelectTVC.m */,
 			);
 			name = Controller;
 			sourceTree = "<group>";
@@ -596,6 +606,7 @@
 			files = (
 				28E261D61B007E920019611C /* MMRoutine+Dao.m in Sources */,
 				283A21CD1B2E715000F6DCA1 /* SearchMarkerInfoTVC.m in Sources */,
+				287D6D611B65D175009CFB56 /* BaseOvIconSelectTVC.m in Sources */,
 				286390841AE0D44D00A5B999 /* IconSelectTVC.m in Sources */,
 				28E261F41B0095CE0019611C /* MMRoutine.m in Sources */,
 				28307D551B1D881F0050AA58 /* IconSelectTableViewCell.m in Sources */,
@@ -611,6 +622,7 @@
 				286390871AE0DE5200A5B999 /* RoutineAddTVC.m in Sources */,
 				28C442E41B2A859200DDC54C /* MMSearchedOvMarker.m in Sources */,
 				288B09A81B01A12D00066C59 /* MMOvMarker+Dao.m in Sources */,
+				287D6D641B65D395009CFB56 /* AddRoutineOvIconSelectTVC.m in Sources */,
 				28E261FA1B0095CE0019611C /* MMMarker.m in Sources */,
 				286390811AE0AD7600A5B999 /* RoutineEditTVC.m in Sources */,
 				8421CB181ADC04D0002046B9 /* RoutineDetailMapViewController.m in Sources */,

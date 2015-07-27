@@ -56,6 +56,10 @@
         self.routine.mycomment=self.descriptionTextView.text;
         self.routine.updateTimestamp=[NSNumber numberWithLongLong: [CommonUtil currentUTCTimeStamp]];
         self.ovMarker.iconUrl=self.selectedIconUrl;
+    }else if ([segue.identifier isEqualToString:@"editOvIconSelectSegue"]){
+        UINavigationController *navController=(UINavigationController *)segue.destinationViewController;
+        OvIconSelectTVC *selectTVC=navController.viewControllers[0];
+        selectTVC.selectedUrl=self.ovMarker.iconUrl;
     }
 }
 

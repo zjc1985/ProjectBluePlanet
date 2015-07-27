@@ -7,9 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "BaseOvIconSelectTVC.h"
 
-@interface OvIconSelectTVC : UITableViewController
+@interface OvIconSelectTVC :BaseOvIconSelectTVC
 
-@property(nonatomic,strong)NSString *selectedUrl;
+
 
 @end

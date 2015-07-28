@@ -54,8 +54,9 @@
     if([segue.identifier isEqualToString:@"EditRoutineDoneSegue"]){
         self.routine.title=self.titleTextField.text;
         self.routine.mycomment=self.descriptionTextView.text;
-        self.routine.updateTimestamp=[NSNumber numberWithLongLong: [CommonUtil currentUTCTimeStamp]];
         self.ovMarker.iconUrl=self.selectedIconUrl;
+        self.routine.updateTimestamp=[NSNumber numberWithLongLong: [CommonUtil currentUTCTimeStamp]];
+        self.ovMarker.updateTimestamp=[NSNumber numberWithLongLong: [CommonUtil currentUTCTimeStamp]];
     }else if ([segue.identifier isEqualToString:@"editOvIconSelectSegue"]){
         UINavigationController *navController=(UINavigationController *)segue.destinationViewController;
         OvIconSelectTVC *selectTVC=navController.viewControllers[0];

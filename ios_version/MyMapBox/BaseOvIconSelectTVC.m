@@ -22,8 +22,8 @@
 -(NSArray *)allOvIconUrls{
     if(!_allOvIconUrls){
         NSMutableArray *urlArray=[[NSMutableArray alloc]init];
-        for (NSInteger i=0; i<12; i++) {
-            NSString *url=[NSString stringWithFormat:@"ov_%i",i];
+        for (NSUInteger i=0; i<12; i++) {
+            NSString *url=[NSString stringWithFormat:@"ov_%lu.png",(unsigned long)i];
             [urlArray addObject:url];
         }
         _allOvIconUrls=urlArray;
@@ -34,6 +34,10 @@
 
 #pragma mark - Table view data source
 
+-(NSString *)reUseCellName{
+    NSAssert(NO, @"need implment this method in subclass");
+    return nil;
+}
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return 1;

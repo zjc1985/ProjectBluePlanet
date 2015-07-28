@@ -63,23 +63,9 @@
     [self.view sendSubviewToBack:self.mapView];
     
     //sync routines
-    if([CommonUtil isFastNetWork]){
+    if([CommonUtil isFastNetWork] && [CloudManager currentUser]){
         [self syncRoutines];
     }
-}
-
-- (void)syncRoutines {
-    self.title=@"Syncing";
-    [self updateRightNavBarItenNeedRefreshing:YES];
-    [CloudManager syncRoutinesAndOvMarkersWithBlockWhenDone:^(NSError *error) {
-        [self updateRightNavBarItenNeedRefreshing:NO];
-        self.title=VIEW_TITLE_NAME;
-        
-        if(error){
-            NSLog(@"error happend: %@",error.localizedDescription);
-        }
-        [self updateMapUI];
-    }];
 }
 
 -(void)viewWillAppear:(BOOL)animated{
@@ -91,6 +77,19 @@
     }else{
         [self updateMapUI];
     }
+}
+
+- (void)syncRoutines {
+    self.title=@"Syncing";
+    NSLog(@"Syncing routine and ovMarkers");
+    [CloudManager syncRoutinesAndOvMarkersWithBlockWhenDone:^(NSError *error) {
+        NSLog(@"syncing routine and ovMarkers complete");
+        self.title=VIEW_TITLE_NAME;
+        if(error){
+            NSLog(@"error happend: %@",error.localizedDescription);
+        }
+        [self updateMapUI];
+    }];
 }
 
 
@@ -157,6 +156,12 @@
     }
     
     
+}
+
+-(IBAction)loginDone:(UIStoryboardSegue *)segue{
+    if([segue.sourceViewController isKindOfClass:[LoginViewController class]]){
+        [self syncRoutines];
+    }
 }
 
 -(IBAction)AddRoutineDone:(UIStoryboardSegue *)segue{

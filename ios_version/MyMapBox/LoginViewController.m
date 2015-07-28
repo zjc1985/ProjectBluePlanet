@@ -37,7 +37,7 @@
         [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
         if (user != nil) {
             NSLog(@"Login success");
-            [self.presentingViewController dismissViewControllerAnimated:YES completion:nil];
+            [self performSegueWithIdentifier:@"loginDoneSegue" sender:nil];
         } else {
             NSLog(@"Login failed");
             if(error){

@@ -29,6 +29,11 @@
     return YES;
 }
 
+-(IBAction)registerDone:(UIStoryboardSegue *)segue{
+
+}
+
+
 - (IBAction)LoginClicked:(id)sender {
     NSString *userName=self.userNameTextField.text;
     NSString *pwd=self.pwdTextField.text;

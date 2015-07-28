@@ -38,6 +38,7 @@
 		2863908D1AE0EA3E00A5B999 /* MarkerEditTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 2863908C1AE0EA3E00A5B999 /* MarkerEditTVC.m */; };
 		287D6D611B65D175009CFB56 /* BaseOvIconSelectTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 287D6D601B65D175009CFB56 /* BaseOvIconSelectTVC.m */; };
 		287D6D641B65D395009CFB56 /* AddRoutineOvIconSelectTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 287D6D631B65D395009CFB56 /* AddRoutineOvIconSelectTVC.m */; };
+		287D6D671B678D25009CFB56 /* RegisterVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 287D6D661B678D25009CFB56 /* RegisterVC.m */; };
 		287F47D71AE4D7AE00CAF79B /* MMRoutineTester.m in Sources */ = {isa = PBXBuildFile; fileRef = 287F47D61AE4D7AE00CAF79B /* MMRoutineTester.m */; };
 		288B09A51B00BC1500066C59 /* MMMarker+Dao.m in Sources */ = {isa = PBXBuildFile; fileRef = 288B09A41B00BC1500066C59 /* MMMarker+Dao.m */; };
 		288B09A81B01A12D00066C59 /* MMOvMarker+Dao.m in Sources */ = {isa = PBXBuildFile; fileRef = 288B09A71B01A12C00066C59 /* MMOvMarker+Dao.m */; };
@@ -144,6 +145,8 @@
 		287D6D601B65D175009CFB56 /* BaseOvIconSelectTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BaseOvIconSelectTVC.m; sourceTree = "<group>"; };
 		287D6D621B65D395009CFB56 /* AddRoutineOvIconSelectTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddRoutineOvIconSelectTVC.h; sourceTree = "<group>"; };
 		287D6D631B65D395009CFB56 /* AddRoutineOvIconSelectTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddRoutineOvIconSelectTVC.m; sourceTree = "<group>"; };
+		287D6D651B678D25009CFB56 /* RegisterVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegisterVC.h; sourceTree = "<group>"; };
+		287D6D661B678D25009CFB56 /* RegisterVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RegisterVC.m; sourceTree = "<group>"; };
 		287F47D61AE4D7AE00CAF79B /* MMRoutineTester.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMRoutineTester.m; sourceTree = "<group>"; };
 		288B09A31B00BC1500066C59 /* MMMarker+Dao.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "MMMarker+Dao.h"; path = "model/MMMarker+Dao.h"; sourceTree = "<group>"; };
 		288B09A41B00BC1500066C59 /* MMMarker+Dao.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "MMMarker+Dao.m"; path = "model/MMMarker+Dao.m"; sourceTree = "<group>"; };
@@ -383,6 +386,8 @@
 				847F84591B6518D10052521D /* OvIconSelectTVC.m */,
 				287D6D621B65D395009CFB56 /* AddRoutineOvIconSelectTVC.h */,
 				287D6D631B65D395009CFB56 /* AddRoutineOvIconSelectTVC.m */,
+				287D6D651B678D25009CFB56 /* RegisterVC.h */,
+				287D6D661B678D25009CFB56 /* RegisterVC.m */,
 			);
 			name = Controller;
 			sourceTree = "<group>";
@@ -619,6 +624,7 @@
 				2863908D1AE0EA3E00A5B999 /* MarkerEditTVC.m in Sources */,
 				285E43251AD61E720030A274 /* ViewController.m in Sources */,
 				288B09B41B0328D700066C59 /* LoginViewController.m in Sources */,
+				287D6D671B678D25009CFB56 /* RegisterVC.m in Sources */,
 				286390871AE0DE5200A5B999 /* RoutineAddTVC.m in Sources */,
 				28C442E41B2A859200DDC54C /* MMSearchedOvMarker.m in Sources */,
 				288B09A81B01A12D00066C59 /* MMOvMarker+Dao.m in Sources */,

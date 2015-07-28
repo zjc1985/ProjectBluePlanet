@@ -45,7 +45,6 @@ function wgs2gcj(wgsLat, wgsLng) {
 	var d = delta(wgsLat, wgsLng);
 	return {"lat": wgsLat + d.lat, "lng": wgsLng + d.lng};
 }
-module.exports.wgs2gcj = wgs2gcj;
 
 function gcj2wgs(gcjLat, gcjLng) {
 	if (outOfChina(gcjLat, gcjLng)) {
@@ -54,7 +53,6 @@ function gcj2wgs(gcjLat, gcjLng) {
 	var d = delta(gcjLat, gcjLng);
 	return {"lat": gcjLat - d.lat, "lng": gcjLng - d.lng};
 }
-module.exports.gcj2wgs = gcj2wgs;
 
 function gcj2wgs_exact(gcjLat, gcjLng) {
 	var initDelta = 0.01;
@@ -85,7 +83,6 @@ function gcj2wgs_exact(gcjLat, gcjLng) {
 	}
 	return {"lat": wgsLat, "lng": wgsLng};
 }
-module.exports.gcj2wgs_exact = gcj2wgs_exact;
 
 function distance(latA, lngA, latB, lngB) {
 	var earthR = 6371000;
@@ -102,4 +99,3 @@ function distance(latA, lngA, latB, lngB) {
 	var distance = alpha * earthR;
 	return distance;
 }
-module.exports.distance = distance;

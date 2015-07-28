@@ -176,7 +176,7 @@ function MapMarkerModel() {
 		modelRoutines.push(marker);
 		
 		var ovMarkerId=self.genUUID();
-		content.iconUrl='resource/icons/default_default.png';
+		content.iconUrl='resource/icons/ov_0.png';
 		var ovMarker=self.createOverviewMarker(ovMarkerId, content, modelRoutineId);
 		marker.ovMarkers.push(ovMarker);
 		return modelRoutineId;

@@ -55,7 +55,10 @@
 -(BOOL)isInputValid{
     BOOL returnValue=YES;
     
-    if([self isBlankString:self.emailTextField.text]||[self isBlankString:self.passwordTextField.text]||[self isBlankString:self.repeatTextField.text]||[self isBlankString:self.userNameTextField.text]){
+    if([CommonUtil isBlankString:self.emailTextField.text]||
+       [CommonUtil isBlankString:self.passwordTextField.text]||
+       [CommonUtil isBlankString:self.repeatTextField.text]||
+       [CommonUtil isBlankString:self.userNameTextField.text]){
         [CommonUtil alert:@"exist blank input"];
         returnValue=NO;
     }
@@ -69,19 +72,6 @@
     }
     
     return returnValue;
-}
-
-- (BOOL) isBlankString:(NSString *)string {
-    if (string == nil || string == NULL) {
-        return YES;
-    }
-    if ([string isKindOfClass:[NSNull class]]) {
-        return YES;
-    }
-    if ([[string stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] length]==0) {
-        return YES;
-    }
-    return NO;
 }
 
 @end

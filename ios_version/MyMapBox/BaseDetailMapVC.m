@@ -86,13 +86,14 @@
                   withCustomData:marker];
     }
     
-    
-    
-    [self.mapView zoomWithLatitudeLongitudeBoundsSouthWest:[CommonUtil minLocationInMMMarkers:markersNeedInView]
-                                                 northEast:[CommonUtil maxLocationInMMMarkers:markersNeedInView]
-                                                  animated:YES];
-    
-    
+    if(self.currentMarker){
+        NSLog(@"center to currentMarker");
+        [self.mapView setCenterCoordinate:CLLocationCoordinate2DMake([[self.currentMarker lat] doubleValue], [[self.currentMarker lng] doubleValue]) animated:YES];
+    }else{
+        [self.mapView zoomWithLatitudeLongitudeBoundsSouthWest:[CommonUtil minLocationInMMMarkers:markersNeedInView]
+                                                     northEast:[CommonUtil maxLocationInMMMarkers:markersNeedInView]
+                                                      animated:YES];
+    }
     
     [self.mapView setZoom:self.mapView.zoom-0.5 animated:YES];
     
@@ -184,6 +185,7 @@
 }
 
 -(void)slidePlayClick{
+    self.currentMarker=nil;
     if(self.slideIndicator<0){
         self.slideIndicator=0;
     }else{
@@ -194,6 +196,7 @@
 }
 
 -(void)slideNextClick{
+    self.currentMarker=nil;
     if(self.slideIndicator>=0 && self.slideIndicator<[self markersSortedBySlideNum].count-1){
         self.slideIndicator++;
         [self updateMapUI];
@@ -201,6 +204,7 @@
 }
 
 -(void)slidePrevClick{
+    self.currentMarker=nil;
     if(self.slideIndicator>0){
         self.slideIndicator--;
         [self updateMapUI];

@@ -6,6 +6,8 @@
 //  Copyright (c) 2015年 yufu. All rights reserved.
 //
 #import <GoogleMaps/GoogleMaps.h>
+#import <AssetsLibrary/AssetsLibrary.h>
+#import <ImageIO/ImageIO.h>
 #import "RoutineDetailMapViewController.h"
 #import "CommonUtil.h"
 #import "MarkerInfoTVC.h"
@@ -13,11 +15,12 @@
 #import "CloudManager.h"
 #import "ApplePlaceSearchTVC.h"
 
+
 #import "MMRoutine+Dao.h"
 
 #define SHOW_SEARCH_MODAL_SEGUE @"showSearchModalSegue"
 
-@interface RoutineDetailMapViewController ()<RMMapViewDelegate,UIActionSheetDelegate>
+@interface RoutineDetailMapViewController ()<RMMapViewDelegate,UIActionSheetDelegate,UIImagePickerControllerDelegate>
 
 @property (weak, nonatomic) IBOutlet UIToolbar *playRoutineToolBar;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *SlidePlayButton;
@@ -245,7 +248,7 @@
                                                               withLng:[self.searchResult.lng doubleValue]];
                 newMarker.title=self.searchResult.name;
                 newMarker.category=[NSNumber numberWithUnsignedInteger:CategorySight];
-                newMarker.iconUrl=@"sight_default";
+                newMarker.iconUrl=@"sight_default.png";
                 break;
             }
             case clearSearchResult:{
@@ -270,6 +273,7 @@
             }
             case addMarkerWithImage :{
                 NSLog(@"add marker with image");
+                [self showUIImagePicker];
                 break;
             }
             case addMarkerInCurrentLocation:{
@@ -289,6 +293,73 @@
     }
     
 }
+
+-(void)showUIImagePicker{
+    if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary]){
+        UIImagePickerController *picker=[[UIImagePickerController alloc] init];
+        picker.delegate=self;
+        picker.sourceType=UIImagePickerControllerSourceTypePhotoLibrary;
+        
+        picker.allowsEditing=YES;
+        
+        [self presentViewController:picker animated:YES completion:nil];
+    }else{
+        [CommonUtil alert:@"Not support photo library"];
+    }
+}
+
+#pragma mark - image Picker delagate
+-(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info{
+    [picker dismissViewControllerAnimated:YES completion:^{
+        NSLog(@"Image Select");
+    }];
+    
+    NSURL *url = [info objectForKey:UIImagePickerControllerReferenceURL];
+    
+    ALAssetsLibrary *library = [[ALAssetsLibrary alloc]init];
+    
+    [library assetForURL:url resultBlock:^(ALAsset *asset){
+        CLLocation *location = [asset valueForProperty:ALAssetPropertyLocation];
+        if(location){
+            MMMarker *newMarker=[MMMarker createMMMarkerInRoutine:self.routine
+                                                          withLat:location.coordinate.latitude
+                                                          withLng:location.coordinate.longitude];
+            newMarker.category=[NSNumber numberWithUnsignedInteger:CategoryInfo];
+            newMarker.iconUrl=@"event_2.png";
+            
+            [self addMarkerWithTitle:@"new Image"
+                      withCoordinate:CLLocationCoordinate2DMake([newMarker.lat doubleValue], [newMarker.lng doubleValue])
+                      withCustomData:newMarker];
+            self.currentMarker=newMarker;
+        }else{
+            [CommonUtil alert:@"No location with image"];
+        }
+        
+        /*
+        NSDictionary *imageData = [[NSMutableDictionary alloc]initWithDictionary:asset.defaultRepresentation.metadata];
+        NSDictionary *gpsData = [imageData objectForKey:(NSString *)kCGImagePropertyGPSDictionary];
+        NSString *lat=[gpsData objectForKey:@"Latitude"];
+        NSString *lng=[gpsData objectForKey:@"Longitude"];
+        [CommonUtil alert:[NSString stringWithFormat:@"%@ %@",lat,lng]];
+        if(lat && lng){
+            MMMarker *newMarker=[MMMarker createMMMarkerInRoutine:self.routine
+                                                          withLat:[lat doubleValue]
+                                                          withLng:[lng doubleValue]];
+            newMarker.category=[NSNumber numberWithUnsignedInteger:CategoryInfo];
+            newMarker.iconUrl=@"event_2.png";
+            
+            [self addMarkerWithTitle:@"new Image"
+                      withCoordinate:CLLocationCoordinate2DMake([newMarker.lat doubleValue], [newMarker.lng doubleValue])
+                      withCustomData:newMarker];
+
+        }
+         */
+    }failureBlock:^(NSError *error){
+        NSLog(@"error:%@",error);
+    }];
+    
+}
+
 
 #pragma mark - RMMapViewDelegate
 

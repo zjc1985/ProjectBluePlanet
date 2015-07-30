@@ -67,4 +67,6 @@
 
 +(UIImage *)compressForUpload:(UIImage *)original scale:(CGFloat)scale;
 
++(BOOL)isBlankString:(NSString *)string;
+
 @end

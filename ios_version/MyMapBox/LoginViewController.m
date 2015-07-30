@@ -33,6 +33,26 @@
 
 }
 
+#pragma mark - ui action
+
+- (IBAction)forgotPasswordClick:(id)sender {
+    if ([CommonUtil isBlankString:self.userNameTextField.text]) {
+        [CommonUtil alert:@"Please input your email account to reset your password"];
+        return;
+    }else{
+        [AVUser requestPasswordResetForEmailInBackground:self.userNameTextField.text block:^(BOOL succeeded, NSError *error) {
+            if (succeeded) {
+                [CommonUtil alert:@"reset succeed"];
+            } else {
+                if(error){
+                    [CommonUtil alert:error.localizedDescription];
+                }else{
+                    [CommonUtil alert:@"reset failed"];
+                }
+            }
+        }];
+    }
+}
 
 - (IBAction)LoginClicked:(id)sender {
     NSString *userName=self.userNameTextField.text;

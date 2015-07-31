@@ -36,6 +36,7 @@
     [self.refreshControl addTarget:self action:@selector(reloadData) forControlEvents:UIControlEventValueChanged];
     
     [self reloadData];
+    [self.tabBarController.tabBar setHidden:YES];
 }
 
 -(void)reloadData{

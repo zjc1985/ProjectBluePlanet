@@ -171,7 +171,7 @@ typedef enum : NSUInteger {
                                 self.title=@"Explore";
                                 self.currentPageNum=1;
                                 if(!error){
-                                    self.centerToolBarItem.title=[NSString stringWithFormat:@"Page %u",self.currentPageNum];
+                                    self.centerToolBarItem.title=[NSString stringWithFormat:@"Page %lu",(unsigned long)self.currentPageNum];
                                     [self.searchCach setObject:routines forKey:[NSNumber numberWithUnsignedInteger:1]];
                                     self.searchedRoutines=routines;
                                     [self updateMapUI];

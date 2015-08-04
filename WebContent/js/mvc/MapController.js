@@ -38,6 +38,7 @@ function MapController(){
 	
 	//slide sequence
 	var currentSlideNum=1;
+	var prevSlideNum=0;
 	
 	var isInCustomZoom=false;
 	
@@ -246,7 +247,7 @@ function MapController(){
 					self.disableEditFunction();
 				}
 				view.clearMarkerCluster();
-				view.AddMarkers2Cluster(ids);
+				//view.AddMarkers2Cluster(ids);
 			});
 			routine.isLoadMarkers=true;
 		}
@@ -327,20 +328,25 @@ function MapController(){
 		
 		isSlideMode=true;
 		currentSlideNum=1;
+		prevSlideNum=0;
 		
 		view.removeAllLines();
 		
-		this.disableEditFunction();
+		//this.disableEditFunction();
 		
 		view.clearMarkerCluster();
 		
-		var routine=model.getRoutineById(model.currentRoutineId);
+		hideAllMarkersBelongByRoutineId(model.currentRoutineId);
+	};
+	
+	function hideAllMarkersBelongByRoutineId(routineId){
+		var routine=model.getRoutineById(routineId);
 		var markers=routine.getMarkers();
 		for(var i in markers){
 			var viewMarker=view.getViewOverlaysById(markers[i].id);
 			viewMarker.hide();
 		}
-	};
+	}
 	
 	this.exitSlideMode=function(){	
 		if(isUserOwnThisRoutine){
@@ -416,12 +422,13 @@ function MapController(){
 		
 		if(markerIdsNeed2Cluster.length>0){
 			view.clearMarkerCluster();
-			view.AddMarkers2Cluster(markerIdsNeed2Cluster);
+			//view.AddMarkers2Cluster(markerIdsNeed2Cluster);
 		}
 	}
 	
 	this.mapClickEventHandler=function(){
 		if(isSlideMode && !isInCustomZoom){
+			
 			var markers=model.getRoutineById(model.currentRoutineId).getMarkers();
 			
 			if(currentSlideNum>markers.length){
@@ -429,20 +436,33 @@ function MapController(){
 			}
 			
 			var markerIdsNeed2Show=[];
+			var markerIdsNeed2Hide=[];
 			
 			for(var i in markers){
 				var modelMarker=markers[i];
-				if(modelMarker.content.getSlideNum()==currentSlideNum && (!modelMarker.isSubMarker())){
+				if(modelMarker.content.getSlideNum()==currentSlideNum && 
+						(!modelMarker.isSubMarker())){
 					markerIdsNeed2Show.push(modelMarker.id);
+				}else if (modelMarker.content.getSlideNum()==prevSlideNum){
+					
+				}else{
+					markerIdsNeed2Hide.push(modelMarker.id);
 				}
 			}
 			
-			currentSlideNum++;
+			
 			
 			if(markerIdsNeed2Show.length>0){
+				prevSlideNum=currentSlideNum;
+				currentSlideNum++;
+				for(var i in markerIdsNeed2Hide){
+					var viewMarker=view.getViewOverlaysById(markerIdsNeed2Hide[i]);
+					viewMarker.hide();
+				}
+				
 				view.panByIds(markerIdsNeed2Show);
 				
-				refreshClusterAccording2SlideNum(currentSlideNum-1);
+				//refreshClusterAccording2SlideNum(currentSlideNum-1);
 				
 				var startMillionSeconds=700;
 				
@@ -472,6 +492,7 @@ function MapController(){
 				
 				
 			}else{
+				currentSlideNum++;
 				this.mapClickEventHandler();
 			}
 			
@@ -920,7 +941,7 @@ function MapController(){
 		}
 		
 		view.clearMarkerCluster();
-		view.AddMarkers2Cluster(ids);
+		//view.AddMarkers2Cluster(ids);
 		
 	}
 	

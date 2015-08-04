@@ -52,7 +52,7 @@
     }else{
         [self updateUIInSlideMode];
         //strange that some marker will not animated until call updateUISlidemode twice...
-        [self updateUIInSlideMode];
+        //[self updateUIInSlideMode];
     }
 }
 
@@ -69,7 +69,11 @@
     
     
     for (NSInteger i=0; i<self.slideIndicator+1; i++) {
-        [markersNeedToShow addObjectsFromArray:[markersSortedBySlideNum objectAtIndex:i]];
+        
+        
+        if (i==self.slideIndicator||i==self.slideIndicator-1) {
+            [markersNeedToShow addObjectsFromArray:[markersSortedBySlideNum objectAtIndex:i]];
+        }
         
         if (i==self.slideIndicator) {
             [currentSlideIndicatorMarkers addObjectsFromArray:[markersSortedBySlideNum objectAtIndex:i]];
@@ -86,18 +90,21 @@
                   withCustomData:marker];
     }
     
+    
     if(self.currentMarker){
         NSLog(@"center to currentMarker");
         [self.mapView setCenterCoordinate:CLLocationCoordinate2DMake([[self.currentMarker lat] doubleValue], [[self.currentMarker lng] doubleValue]) animated:YES];
     }else{
+        
         [self.mapView zoomWithLatitudeLongitudeBoundsSouthWest:[CommonUtil minLocationInMMMarkers:markersNeedInView]
                                                      northEast:[CommonUtil maxLocationInMMMarkers:markersNeedInView]
-                                                      animated:YES];
+                                                      animated:NO];
+        [self.mapView setZoom:self.mapView.zoom-0.8 animated:YES];
+         
     }
     
-    [self.mapView setZoom:self.mapView.zoom-0.5 animated:YES];
-    
     [self animateMMMarkers:currentSlideIndicatorMarkers];
+    
 }
 
 -(void)animateMMMarkers:(NSArray *)markers{

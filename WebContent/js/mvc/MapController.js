@@ -896,6 +896,9 @@ function MapController(){
 			return;
 		}
 		
+		var routine=model.getRoutineById(routineId);
+		content.slideNum=routine.getMaxSlideNum()+1;
+		
 		var id=model.createOneMarker(uuid,content,routineId).id;
 		console.log('creating markder id:'+ id);
 		return id;

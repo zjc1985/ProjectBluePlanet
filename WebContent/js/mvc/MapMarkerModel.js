@@ -1812,6 +1812,17 @@ function ModelRoutine(id){
 		}
 		return results;
 	};
+	
+	this.getMaxSlideNum=function(){
+		var markers=this.getMarkers();
+		var maxSlideNum=0;
+		for(var i in markers){
+			if(markers[i].content.getSlideNum()>maxSlideNum){
+				maxSlideNum=markers[i].content.getSlideNum();
+			}
+		}
+		return maxSlideNum;
+	};
 }
 
 function MapMarker(id) {

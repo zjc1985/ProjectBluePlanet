@@ -42,6 +42,7 @@
 -(NSNumber *)lng;
 -(NSString *)uuid;
 -(void)updateLocation;
+-(NSUInteger)maxSlideNum;
 
 @end
 

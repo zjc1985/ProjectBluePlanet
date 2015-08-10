@@ -269,6 +269,7 @@
                 newMarker=[MMMarker createMMMarkerInRoutine:self.routine
                                                     withLat:self.mapView.centerCoordinate.latitude
                                                     withLng:self.mapView.centerCoordinate.longitude];
+                newMarker.slideNum=[NSNumber numberWithUnsignedInteger:[self.routine maxSlideNum]+1];
                 break;
             }
             case addMarkerWithImage :{
@@ -281,6 +282,7 @@
                 newMarker=[MMMarker createMMMarkerInRoutine:self.routine
                                                     withLat:self.mapView.userLocation.coordinate.latitude
                                                     withLng:self.mapView.userLocation.coordinate.longitude];
+                newMarker.slideNum=[NSNumber numberWithUnsignedInteger:[self.routine maxSlideNum]+1];
                 break;
             }
             default:
@@ -326,6 +328,7 @@
                                                           withLng:location.coordinate.longitude];
             newMarker.category=[NSNumber numberWithUnsignedInteger:CategoryInfo];
             newMarker.iconUrl=@"event_2.png";
+            newMarker.slideNum=[NSNumber numberWithUnsignedInteger:[self.routine maxSlideNum]+1];
             
             [self addMarkerWithTitle:@"new Image"
                       withCoordinate:CLLocationCoordinate2DMake([newMarker.lat doubleValue], [newMarker.lng doubleValue])

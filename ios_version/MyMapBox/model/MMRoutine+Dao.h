@@ -41,6 +41,8 @@
 //return all markers whose isDelete is NO
 -(NSArray *)allMarks;
 
+-(NSUInteger)maxSlideNum;
+
 -(BOOL)isMarkersSyncWithCloud;
 
 -(void)markDelete;

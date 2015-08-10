@@ -207,6 +207,17 @@
     return result;
 }
 
+-(NSUInteger)maxSlideNum{
+    NSArray *markers=[self allMarks];
+    NSUInteger maxSlideNum=0;
+    for (MMMarker *marker in markers) {
+        if([marker.slideNum unsignedIntegerValue]>maxSlideNum){
+            maxSlideNum=[marker.slideNum unsignedIntegerValue];
+        }
+    }
+    return maxSlideNum;
+}
+
 -(NSArray *)allOvMarks{
     NSArray *ovMarkers=[self.ovMarkers allObjects];
     NSMutableArray *result=[[NSMutableArray alloc]init];

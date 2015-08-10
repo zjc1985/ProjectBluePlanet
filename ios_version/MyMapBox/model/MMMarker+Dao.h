@@ -7,6 +7,8 @@
 //
 
 #import "MMMarker.h"
+#import "CommonUtil.h"
+#import "MMSearchdeMarker.h"
 
 #define KEY_MARKER_ICON_URL @"iconUrl"
 #define KEY_MARKER_UUID @"uuid"
@@ -34,11 +36,13 @@ typedef enum : NSUInteger {
     CategoryOverview=6
 } MMMarkerCategory;
 
-@interface MMMarker (Dao)
+@interface MMMarker (Dao)<Marker>
 
 +(MMMarker *)createMMMarkerInRoutine:(MMRoutine *)routine withLat:(double)lat withLng:(double)lng;
 
 +(MMMarker *)createMMMarkerInRoutine:(MMRoutine *)routine withLat:(double)lat withLng:(double)lng withUUID:(NSString *)uuid;
+
++(MMMarker *)createMMMarkerInRoutine:(MMRoutine *)routine withSearchMarker:(MMSearchdeMarker *)searchedMarker;
 
 +(MMMarker *)queryMMMarkerWithUUID:(NSString *)uuid;
 

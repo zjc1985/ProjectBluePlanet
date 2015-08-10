@@ -7,10 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "MMRoutine+Dao.h"
+#import "MMOvMarker+Dao.h"
 
 @interface RoutineEditTVC : UITableViewController
 
-@property(nonatomic,strong)MMRoutine *routine;
+@property(nonatomic,strong)MMOvMarker *ovMarker;
 
 @end

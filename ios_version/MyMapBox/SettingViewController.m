@@ -22,6 +22,15 @@
     [super viewDidLoad];
 }
 
+- (IBAction)searchRoutineByLatLng:(id)sender {
+    [CloudManager searchRoutinesByUserId:@"5549e880e4b0679ef60fc654" withBlockWhenDone:^(NSError *error, NSArray *routines) {
+        if(!error){
+            NSLog(@"query success");
+        }else{
+            NSLog(@"%@",error.localizedDescription);
+        }
+    }];
+}
 
 - (IBAction)showNetworkTypeClick:(id)sender {
     NSNumber *type=[CommonUtil dataNetworkTypeFromStatusBar];

@@ -5,6 +5,7 @@ target 'MyMapBox' do
 pod "Mapbox-iOS-SDK",'1.6.0'
 pod "AVOSCloud"
 pod "MWPhotoBrowser"
+pod "GoogleMaps"
 end
 
 target 'MyMapBoxTests' do

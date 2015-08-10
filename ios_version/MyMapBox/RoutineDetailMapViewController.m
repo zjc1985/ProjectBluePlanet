@@ -5,59 +5,52 @@
 //  Created by yufu on 15/4/13.
 //  Copyright (c) 2015年 yufu. All rights reserved.
 //
-
+#import <GoogleMaps/GoogleMaps.h>
+#import <AssetsLibrary/AssetsLibrary.h>
+#import <ImageIO/ImageIO.h>
 #import "RoutineDetailMapViewController.h"
 #import "CommonUtil.h"
 #import "MarkerInfoTVC.h"
 #import "MarkerEditTVC.h"
 #import "CloudManager.h"
+#import "ApplePlaceSearchTVC.h"
 
-@interface RoutineDetailMapViewController ()<RMMapViewDelegate,UIActionSheetDelegate>
 
-@property(nonatomic,strong) MMMarker *currentMarker;
+#import "MMRoutine+Dao.h"
 
-@property (weak, nonatomic) IBOutlet UIButton *locateButton;
-@property (weak, nonatomic) IBOutlet UIButton *syncButton;
+#define SHOW_SEARCH_MODAL_SEGUE @"showSearchModalSegue"
+
+@interface RoutineDetailMapViewController ()<RMMapViewDelegate,UIActionSheetDelegate,UIImagePickerControllerDelegate>
+
 @property (weak, nonatomic) IBOutlet UIToolbar *playRoutineToolBar;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *SlidePlayButton;
 
-@property(nonatomic,strong) RMMapView *mapView;
 
-//slide show related
-@property (nonatomic, assign) NSInteger slideIndicator;
+@property (strong, nonatomic) IBOutlet UIBarButtonItem *refreshBarButton;
+@property (strong, nonatomic) IBOutlet UIBarButtonItem *activityBarButton;
+@property (strong, nonatomic) IBOutlet UIToolbar *toolbar;
+@property (strong, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
 
+
+@property(nonatomic,strong) GooglePlaceDetail *searchResult;
+@property(nonatomic,strong) UIActionSheet *searchRMMarkerActionSheet;
 
 @end
 
 @implementation RoutineDetailMapViewController
 
-#define tourMapId  @"lionhart586.gkihab1d"
-#define streetMapId @"lionhart586.lnmjhd7b"
-
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    //init ui
     self.slideIndicator=-1;
     
-    self.locateButton.layer.borderWidth=0.5f;
-    self.locateButton.layer.cornerRadius = 4.5;
-    self.syncButton.layer.borderWidth=0.5f;
-    self.syncButton.layer.cornerRadius=4.5;
+    UIBarButtonItem *searchButton=[[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemSearch target:self action:@selector(searchButtonClick:)];
+    UIBarButtonItem *addButton=[[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addMarker:)];
     
-    RMMapboxSource *tileSource=nil;
-    NSString *filePath=[CommonUtil dataFilePath];
+    self.navigationItem.rightBarButtonItems = [NSArray arrayWithObjects:addButton,searchButton, nil];
     
-    if([[NSFileManager defaultManager] fileExistsAtPath:filePath]){
-        NSMutableDictionary *dictionary= [[NSMutableDictionary alloc] initWithContentsOfFile:filePath];
-        NSString *tileJSON=[dictionary objectForKey:tileJsonDetailMap];
-        NSLog(@"found tileJSON in file");
-        tileSource= [[RMMapboxSource alloc] initWithTileJSON:tileJSON];
-    }else{
-        tileSource =[[RMMapboxSource alloc] initWithMapID:streetMapId];
-    }
-    
-    self.mapView=[[RMMapView alloc] initWithFrame:self.view.bounds
-                                    andTilesource:tileSource];
+    //init map
     self.mapView.maxZoom=17;
     
     self.mapView.zoom=15;
@@ -79,14 +72,9 @@
     [self updateMapUI];
     
     if([CommonUtil isFastNetWork]){
-        [CloudManager syncMarkersByRoutineUUID:self.routine.uuid withBlockWhenDone:^(NSError *error) {
-            if(error){
-                NSLog(@"error happened :%@",error.localizedDescription);
-            }
-            
-            [self updateMapUI];
-        }];
+        [self syncMarkers];
     }
+    
 }
 
 -(void)viewWillAppear:(BOOL)animated{
@@ -97,186 +85,92 @@
 }
 
 -(void)updateMapUI{
+    [super updateMapUI];
     
-    if(self.slideIndicator<0){
-        [self updateUIInNormalMode];
-    }else{
-        [self updateUIInSlideMode];
-        //strange that some marker will not animated until call updateUISlidemode twice...
-        [self updateUIInSlideMode];
+    if(self.searchResult){
+        CLLocationCoordinate2D coord=CLLocationCoordinate2DMake([self.searchResult.lat doubleValue], [self.searchResult.lng doubleValue]);
+        [self addMarkerWithTitle:self.searchResult.name withCoordinate:coord withCustomData:self.searchResult];
+        [self.mapView setCenterCoordinate:coord animated:YES];
     }
 }
 
 -(void)updateUIInSlideMode{
-    NSLog(@"update ui in slide mode");
-    
     [self.SlidePlayButton setImage:[UIImage imageNamed:@"icon_stop"]];
     
-    [self.mapView removeAllAnnotations];
-    
-    NSArray *markersSortedBySlideNum=[self markersSortedBySlideNum];
-    
-    NSMutableArray *markersNeedToShow=[[NSMutableArray alloc]init];
-    NSMutableArray *markersNeedInView=[[NSMutableArray alloc]init];
-    NSMutableArray *currentSlideIndicatorMarkers=[[NSMutableArray alloc]init];
-   
-    
-    for (NSInteger i=0; i<self.slideIndicator+1; i++) {
-        [markersNeedToShow addObjectsFromArray:[markersSortedBySlideNum objectAtIndex:i]];
-        
-        if (i==self.slideIndicator) {
-            [currentSlideIndicatorMarkers addObjectsFromArray:[markersSortedBySlideNum objectAtIndex:i]];
-            [markersNeedInView addObjectsFromArray:[markersSortedBySlideNum objectAtIndex:i]];
-            if((i-1)>=0){
-                [markersNeedInView addObjectsFromArray:[markersSortedBySlideNum objectAtIndex:i-1]];
-            }
-        }
-    }
-    
-    for (MMMarker *marker in markersNeedToShow) {
-        [self addMarkerWithTitle:marker.title
-                  withCoordinate:CLLocationCoordinate2DMake([marker.lat doubleValue], [marker.lng doubleValue])
-                  withCustomData:marker];
-    }
-    
-    
-    
-    [self.mapView zoomWithLatitudeLongitudeBoundsSouthWest:[CommonUtil minLocationInMMMarkers:markersNeedInView]
-                                                 northEast:[CommonUtil maxLocationInMMMarkers:markersNeedInView]
-                                                  animated:YES];
-    
-    
-    
-    [self.mapView setZoom:self.mapView.zoom-0.5 animated:YES];
-    
-    [self animateMMMarkers:currentSlideIndicatorMarkers];
+    [super updateUIInSlideMode];
 }
 
--(void)animateMMMarkers:(NSArray *)markers{
-    // move marker up and down:
-    CABasicAnimation *hover = [CABasicAnimation animationWithKeyPath:@"position"];
-    // fromValue and toValue will be relative instead of absolute values
-    hover.additive = YES;
-    hover.fromValue = [NSValue valueWithCGPoint:CGPointZero];
-    // y increases downwards on iOS
-    hover.toValue = [NSValue valueWithCGPoint:CGPointMake(0.0, -15.0)];
-    // Animate back to normal afterwards
-    hover.autoreverses = YES;
-    // The duration for one part of the animation (1 up and 1 down)
-    hover.duration = 1;
-    // The number of times the animation should repeat
-    hover.repeatCount = INFINITY;
-    // adding easing to our animation
-    //hover.timingFunction = [CAMediaTimingFunction functionWithName:
-    //                        kCAMediaTimingFunctionEaseInEaseOut];
-    
-    for (MMMarker *eachMMMarker in markers) {
-        for (RMAnnotation *eachAnnotation in [self.mapView annotations]) {
-            if([eachAnnotation.userInfo isKindOfClass:[MMMarker class]]){
-                MMMarker *marker=eachAnnotation.userInfo;
-                if([marker.uuid isEqualToString:eachMMMarker.uuid]){
-                    NSLog(@"Add animated to marker:%@",eachMMMarker.title);
-                    [eachAnnotation.layer addAnimation:hover forKey:@"hover"];
-                }
-            }
-        }
-    }
-}
 
--(NSArray *)markersSortedBySlideNum{
-    NSMutableArray *result=[[NSMutableArray alloc]init];
-    NSArray *allMarkers=[self.routine allMarks];
-    for (NSUInteger i=1; i<allMarkers.count+1; i++) {
-        NSMutableArray *markersWithSameSlideNum=[[NSMutableArray alloc]init];
-        for (MMMarker *marker in allMarkers) {
-            if ([marker.slideNum unsignedIntegerValue] ==i) {
-                [markersWithSameSlideNum addObject:marker];
-            }
-        }
-        
-        if(markersWithSameSlideNum.count>0){
-            [result addObject:markersWithSameSlideNum];
-        }
-    }
-    return result;
-}
 
 -(void)updateUIInNormalMode{
-    NSLog(@"update ui in normal mode");
     
     [self.SlidePlayButton setImage:[UIImage imageNamed:@"icon_play"]];
-    
-    [self.mapView removeAllAnnotations];
-    
-    for (MMMarker *marker in [self.routine allMarks]) {
-        [self addMarkerWithTitle:marker.title
-                  withCoordinate:CLLocationCoordinate2DMake([marker.lat doubleValue], [marker.lng doubleValue])
-                  withCustomData:marker];
-    }
-    
-    if ([[self.routine allMarks] count]>0) {
-        if(self.currentMarker){
-            NSLog(@"center to currentMarker");
-            [self.mapView setCenterCoordinate:CLLocationCoordinate2DMake([self.currentMarker.lat doubleValue], [self.currentMarker.lng doubleValue]) animated:YES];
-        }else{
-            NSLog(@"zoom to fit all markers");
-            
-            CLLocationCoordinate2D minLocation=CLLocationCoordinate2DMake([self.routine minLatInMarkers], [self.routine minLngInMarkers]);
-            CLLocationCoordinate2D maxLocation=CLLocationCoordinate2DMake([self.routine maxLatInMarkers], [self.routine maxLngInMarkers]);
-            
-            //[self addMarkerWithTitle:@"southweat" withCoordinate:minLocation withCustomData:nil];
-            //[self addMarkerWithTitle:@"northEast" withCoordinate:maxLocation withCustomData:nil];
-            
-            [self.mapView zoomWithLatitudeLongitudeBoundsSouthWest:minLocation
-                                                         northEast:maxLocation
-                                                          animated:YES];
-            
-            
-            [self.mapView setZoom:self.mapView.zoom-0.5 animated:YES];
-        }
-    }else{
-        [self.mapView setCenterCoordinate:CLLocationCoordinate2DMake([self.routine.lat doubleValue], [self.routine.lng doubleValue]) animated:YES];
-    }
+
+    [super updateUIInNormalMode];
 }
 
--(void)addMarkerWithTitle:(NSString *)title withCoordinate:(CLLocationCoordinate2D)coordinate withCustomData:(id)customData{
-    RMAnnotation *annotation=[[RMAnnotation alloc] initWithMapView:self.mapView
-                                                        coordinate:coordinate
-                                                          andTitle:title];
-    annotation.userInfo=customData;
-    [self.mapView addAnnotation:annotation];
+#pragma mark - getter and setter
+-(UIBarButtonItem *)activityBarButton{
+    if(!_activityBarButton){
+        _activityBarButton=[[UIBarButtonItem alloc]initWithCustomView:self.activityIndicator];
+    }
+    return _activityBarButton;
 }
 
+
+-(UIActionSheet *)searchRMMarkerActionSheet{
+    if(!_searchRMMarkerActionSheet){
+        _searchRMMarkerActionSheet=[[UIActionSheet alloc] initWithTitle:nil
+                                                               delegate:self
+                                                      cancelButtonTitle:@"Cancel"
+                                                 destructiveButtonTitle:nil
+                                                      otherButtonTitles:@"Add to Routine",@"Clear Search Result", nil];
+    }
+    return _searchRMMarkerActionSheet;
+}
 
 #pragma mark - UI action
+-(void)updateToolBarButtonNeedRefreshing:(BOOL)needRefresh{
+    NSMutableArray *toolbarItems = [[NSMutableArray alloc] initWithArray:self.toolbar.items];
+    
+    if (needRefresh){
+        //Replace refresh button with loading spinner
+        [toolbarItems replaceObjectAtIndex:[toolbarItems indexOfObject:self.refreshBarButton] withObject:self.activityBarButton];
+        
+        //Animate the loading spinner
+        [self.activityIndicator startAnimating];
+    }
+    else{
+        //Replace loading spinner with refresh button
+        [toolbarItems replaceObjectAtIndex:[toolbarItems indexOfObject:self.activityBarButton] withObject:self.refreshBarButton];
+        [self.activityIndicator stopAnimating];
+    }
+    
+    //Set the toolbar items
+    [self.toolbar setItems:toolbarItems];
+}
+
 - (IBAction)PlayButtonClick:(id)sender {
-    if(self.slideIndicator<0){
-        self.slideIndicator=0;
-    }else{
-        self.currentMarker=nil;
-        self.slideIndicator=-1;
-    }
-    [self updateMapUI];
+    [self slidePlayClick];
 }
 
-- (IBAction)slidePrevClick:(id)sender {
-    if(self.slideIndicator>0){
-        self.slideIndicator--;
-        [self updateMapUI];
-    }
+- (IBAction)PrevButtonClick:(id)sender {
+    [self slidePrevClick];
 }
 
-- (IBAction)slideNextClick:(id)sender {
-    if(self.slideIndicator>=0 && self.slideIndicator<[self markersSortedBySlideNum].count-1){
-        self.slideIndicator++;
-        [self updateMapUI];
-    }
-
+- (IBAction)NextButtonClick:(id)sender {
+    [self slideNextClick];
 }
 
 - (IBAction)refreshButtonClick:(id)sender {
-    NSString *currentRoutineUUID=self.routine.uuid;
-    [CloudManager syncMarkersByRoutineUUID:self.routine.uuid withBlockWhenDone:^(NSError *error) {
+    [self syncMarkers];
+}
+
+-(void)syncMarkers{
+    [self updateToolBarButtonNeedRefreshing:YES];
+    NSString *currentRoutineUUID=[self.routine uuid];
+    [CloudManager syncMarkersByRoutineUUID:[self.routine uuid] withBlockWhenDone:^(NSError *error) {
+        [self updateToolBarButtonNeedRefreshing:NO];
         if(!error){
             self.routine=[MMRoutine queryMMRoutineWithUUID:currentRoutineUUID];
             if(self.routine){
@@ -300,6 +194,10 @@
     [sheet showInView:self.view];
 }
 
+-(IBAction)searchButtonClick:(id)sender{
+    [self performSegueWithIdentifier:SHOW_SEARCH_MODAL_SEGUE sender:nil];
+}
+
 #pragma mark - Navigation
 
 // In a storyboard-based application, you will often want to do a little preparation before navigation
@@ -308,7 +206,17 @@
         MarkerInfoTVC *markerInfoTVC=segue.destinationViewController;
         markerInfoTVC.marker=((RMAnnotation *)sender).userInfo;
         markerInfoTVC.markerCount=[[self.routine allMarks] count];
+    }else if ([segue.identifier isEqualToString:SHOW_SEARCH_MODAL_SEGUE]){
+        UINavigationController *navController=(UINavigationController *)segue.destinationViewController;
+        ApplePlaceSearchTVC *desTVC=navController.viewControllers[0];
+        desTVC.minLocation=CLLocationCoordinate2DMake([self.routine minLatInMarkers], [self.routine minLngInMarkers]);
+        desTVC.maxLocation=CLLocationCoordinate2DMake([self.routine maxLatInMarkers], [self.routine maxLngInMarkers]);
     }
+}
+
+-(IBAction)searchDone:(UIStoryboardSegue *)segue{
+    ApplePlaceSearchTVC *sourceTVC=segue.sourceViewController;
+    self.searchResult=sourceTVC.selectedPlace;
 }
 
 -(IBAction)DeleteMarkerDone:(UIStoryboardSegue *)segue{
@@ -325,8 +233,6 @@
             [MMMarker removeMMMarker:marker];
         }
     }
-    
-    
 }
 
 
@@ -334,34 +240,129 @@
 
 
 -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex{
-    MMMarker *newMarker=nil;
-    switch (buttonIndex) {
-        case addMarkerInCenter:{
-            NSLog(@"add marker in center");
-            newMarker=[MMMarker createMMMarkerInRoutine:self.routine
-                                                withLat:self.mapView.centerCoordinate.latitude
-                                                withLng:self.mapView.centerCoordinate.longitude];
-            break;
+    if(actionSheet==self.searchRMMarkerActionSheet){
+        switch (buttonIndex) {
+            case addSearchResult2Routine:{
+                MMMarker *newMarker=[MMMarker createMMMarkerInRoutine:self.routine
+                                                              withLat:[self.searchResult.lat doubleValue]
+                                                              withLng:[self.searchResult.lng doubleValue]];
+                newMarker.title=self.searchResult.name;
+                newMarker.category=[NSNumber numberWithUnsignedInteger:CategorySight];
+                newMarker.iconUrl=@"sight_default.png";
+                break;
+            }
+            case clearSearchResult:{
+                
+                break;
+            }
+            default:
+                break;
         }
-        case addMarkerWithImage :{
-            NSLog(@"add marker with image");
-            break;
+        
+        self.searchResult=nil;
+        [self updateMapUI];
+    }else{
+        MMMarker *newMarker=nil;
+        switch (buttonIndex) {
+            case addMarkerInCenter:{
+                NSLog(@"add marker in center");
+                newMarker=[MMMarker createMMMarkerInRoutine:self.routine
+                                                    withLat:self.mapView.centerCoordinate.latitude
+                                                    withLng:self.mapView.centerCoordinate.longitude];
+                newMarker.slideNum=[NSNumber numberWithUnsignedInteger:[self.routine maxSlideNum]+1];
+                break;
+            }
+            case addMarkerWithImage :{
+                NSLog(@"add marker with image");
+                [self showUIImagePicker];
+                break;
+            }
+            case addMarkerInCurrentLocation:{
+                NSLog(@"add marker in current location");
+                newMarker=[MMMarker createMMMarkerInRoutine:self.routine
+                                                    withLat:self.mapView.userLocation.coordinate.latitude
+                                                    withLng:self.mapView.userLocation.coordinate.longitude];
+                newMarker.slideNum=[NSNumber numberWithUnsignedInteger:[self.routine maxSlideNum]+1];
+                break;
+            }
+            default:
+                break;
         }
-        case addMarkerInCurrentLocation:{
-            NSLog(@"add marker in current location");
-            newMarker=[MMMarker createMMMarkerInRoutine:self.routine
-                                                withLat:self.mapView.userLocation.coordinate.latitude
-                                                withLng:self.mapView.userLocation.coordinate.longitude];
-            break;
+        if(newMarker){
+            [self addMarkerWithTitle:newMarker.title withCoordinate:CLLocationCoordinate2DMake([newMarker.lat doubleValue], [newMarker.lng doubleValue])
+                      withCustomData:newMarker];
         }
-        default:
-            break;
     }
-    if(newMarker){
-        [self addMarkerWithTitle:newMarker.title withCoordinate:CLLocationCoordinate2DMake([newMarker.lat doubleValue], [newMarker.lng doubleValue])
-                  withCustomData:newMarker];
+    
+}
+
+-(void)showUIImagePicker{
+    if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary]){
+        UIImagePickerController *picker=[[UIImagePickerController alloc] init];
+        picker.delegate=self;
+        picker.sourceType=UIImagePickerControllerSourceTypePhotoLibrary;
+        
+        picker.allowsEditing=YES;
+        
+        [self presentViewController:picker animated:YES completion:nil];
+    }else{
+        [CommonUtil alert:@"Not support photo library"];
     }
 }
+
+#pragma mark - image Picker delagate
+-(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info{
+    [picker dismissViewControllerAnimated:YES completion:^{
+        NSLog(@"Image Select");
+    }];
+    
+    NSURL *url = [info objectForKey:UIImagePickerControllerReferenceURL];
+    
+    ALAssetsLibrary *library = [[ALAssetsLibrary alloc]init];
+    
+    [library assetForURL:url resultBlock:^(ALAsset *asset){
+        CLLocation *location = [asset valueForProperty:ALAssetPropertyLocation];
+        if(location){
+            MMMarker *newMarker=[MMMarker createMMMarkerInRoutine:self.routine
+                                                          withLat:location.coordinate.latitude
+                                                          withLng:location.coordinate.longitude];
+            newMarker.category=[NSNumber numberWithUnsignedInteger:CategoryInfo];
+            newMarker.iconUrl=@"event_2.png";
+            newMarker.slideNum=[NSNumber numberWithUnsignedInteger:[self.routine maxSlideNum]+1];
+            
+            [self addMarkerWithTitle:@"new Image"
+                      withCoordinate:CLLocationCoordinate2DMake([newMarker.lat doubleValue], [newMarker.lng doubleValue])
+                      withCustomData:newMarker];
+            self.currentMarker=newMarker;
+        }else{
+            [CommonUtil alert:@"No location with image"];
+        }
+        
+        /*
+        NSDictionary *imageData = [[NSMutableDictionary alloc]initWithDictionary:asset.defaultRepresentation.metadata];
+        NSDictionary *gpsData = [imageData objectForKey:(NSString *)kCGImagePropertyGPSDictionary];
+        NSString *lat=[gpsData objectForKey:@"Latitude"];
+        NSString *lng=[gpsData objectForKey:@"Longitude"];
+        [CommonUtil alert:[NSString stringWithFormat:@"%@ %@",lat,lng]];
+        if(lat && lng){
+            MMMarker *newMarker=[MMMarker createMMMarkerInRoutine:self.routine
+                                                          withLat:[lat doubleValue]
+                                                          withLng:[lng doubleValue]];
+            newMarker.category=[NSNumber numberWithUnsignedInteger:CategoryInfo];
+            newMarker.iconUrl=@"event_2.png";
+            
+            [self addMarkerWithTitle:@"new Image"
+                      withCoordinate:CLLocationCoordinate2DMake([newMarker.lat doubleValue], [newMarker.lng doubleValue])
+                      withCustomData:newMarker];
+
+        }
+         */
+    }failureBlock:^(NSError *error){
+        NSLog(@"error:%@",error);
+    }];
+    
+}
+
 
 #pragma mark - RMMapViewDelegate
 
@@ -388,6 +389,20 @@
         //RMMarker *marker = [[RMMarker alloc] initWithUIImage:[UIImage imageNamed:@"default_default"]anchorPoint:anchorPoint];
         
         
+        
+        marker.canShowCallout=YES;
+        
+        marker.rightCalloutAccessoryView=[UIButton buttonWithType:UIButtonTypeDetailDisclosure];
+        
+        return marker;
+    }else if ([annotation.userInfo isKindOfClass:[GooglePlaceDetail class]]){
+        CGPoint anchorPoint;
+        anchorPoint.x=0.5;
+        anchorPoint.y=1;
+        
+        UIImage *iconImage=[UIImage imageNamed:@"search_default"];
+        
+        RMMarker *marker = [[RMMarker alloc] initWithUIImage:iconImage anchorPoint:anchorPoint];
         
         marker.canShowCallout=YES;
         
@@ -425,8 +440,12 @@
 
 
 -(void)tapOnCalloutAccessoryControl:(UIControl *)control forAnnotation:(RMAnnotation *)annotation onMap:(RMMapView *)map{
-    self.currentMarker=annotation.userInfo;
-    [self performSegueWithIdentifier:@"markerDetailSegue" sender:annotation];
+    if ([annotation.userInfo isKindOfClass:[GooglePlaceDetail class]]) {
+        [self.searchRMMarkerActionSheet showInView:self.view];
+    }else if ([annotation.userInfo isKindOfClass:[MMMarker class]]){
+        self.currentMarker=annotation.userInfo;
+        [self performSegueWithIdentifier:@"markerDetailSegue" sender:annotation];
+    }
 }
 
 -(void)tapOnLabelForAnnotation:(RMAnnotation *)annotation onMap:(RMMapView *)map{
@@ -435,7 +454,10 @@
 
 
 -(BOOL)mapView:(RMMapView *)mapView shouldDragAnnotation:(RMAnnotation *)annotation{
-    return YES;
+    if ([annotation.userInfo isKindOfClass:[MKMapItem class]]) {
+        return NO;
+    }else{
+        return YES;
+    }
 }
-
 @end

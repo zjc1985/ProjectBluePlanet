@@ -9,8 +9,7 @@
 #import "ViewController.h"
 #import <Mapbox-iOS-SDK/Mapbox.h>
 
-#import "MMRoutine+Dao.h"
-#import "MMMarker+Dao.h"
+#import "BaseDetailMapVC.h"
 
 typedef enum : NSUInteger {
     addMarkerInCenter = 0,
@@ -18,10 +17,13 @@ typedef enum : NSUInteger {
     addMarkerInCurrentLocation = 2,
 } ActionSheetIndexForAddMarker;
 
-@interface RoutineDetailMapViewController:UIViewController
 
-@property(nonatomic,strong)MMRoutine *routine;
+typedef enum : NSUInteger {
+    addSearchResult2Routine = 0,
+    clearSearchResult = 1,
+} ActionSheetIndexForSearchResult;
 
+@interface RoutineDetailMapViewController:BaseDetailMapVC
 
 
 @end

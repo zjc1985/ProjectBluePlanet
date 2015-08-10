@@ -11,7 +11,7 @@
 // This library does not follow semantic-versioning,
 // so we were not able to define version macros.
 // Please contact the author.
-// Version: 3.1.1.1.
+// Version: 3.1.2.5.
 
 // DACircularProgress
 #define COCOAPODS_POD_AVAILABLE_DACircularProgress
@@ -42,6 +42,12 @@
 #define COCOAPODS_VERSION_MAJOR_GRMustache 7
 #define COCOAPODS_VERSION_MINOR_GRMustache 3
 #define COCOAPODS_VERSION_PATCH_GRMustache 0
+
+// GoogleMaps
+#define COCOAPODS_POD_AVAILABLE_GoogleMaps
+#define COCOAPODS_VERSION_MAJOR_GoogleMaps 1
+#define COCOAPODS_VERSION_MINOR_GoogleMaps 10
+#define COCOAPODS_VERSION_PATCH_GoogleMaps 1
 
 // JRSwizzle
 #define COCOAPODS_POD_AVAILABLE_JRSwizzle

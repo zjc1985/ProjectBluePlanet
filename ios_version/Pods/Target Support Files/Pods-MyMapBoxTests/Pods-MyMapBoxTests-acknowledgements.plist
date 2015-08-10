@@ -14,7 +14,7 @@
 		</dict>
 		<dict>
 			<key>FooterText</key>
-			<string>&#169; Copyright 2015 LeanCloud, Inc. See https://leancloud.cn/terms.html</string>
+			<string>Copyright 2015 LeanCloud, Inc. See https://leancloud.cn/terms.html</string>
 			<key>Title</key>
 			<string>AVOSCloud</string>
 			<key>Type</key>

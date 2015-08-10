@@ -17,10 +17,12 @@
 @interface RoutineInfoViewController ()
 @property (weak, nonatomic) IBOutlet UILabel *titleLabel;
 @property (weak, nonatomic) IBOutlet UITextView *descriptionTextField;
+@property (weak,nonatomic) MMRoutine *routine;
 
 @end
 
 @implementation RoutineInfoViewController
+
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -41,6 +43,11 @@
 
 - (IBAction)PinRoutineClick:(id)sender {
     NSLog(@"Pin Routine Detail click");
+}
+
+#pragma mark - getter and setter
+-(MMRoutine *)routine{
+    return self.ovMarker.belongRoutine;
 }
 
 
@@ -65,7 +72,7 @@
     if ([segue.identifier isEqualToString:EDIT_ROUTINE_INFO_SEGUE]) {
         UINavigationController *navController=(UINavigationController *)segue.destinationViewController;
         RoutineEditTVC *routineEditTVC=navController.viewControllers[0];
-        routineEditTVC.routine=self.routine;
+        routineEditTVC.ovMarker=self.ovMarker;
     }
     
     if([segue.destinationViewController isKindOfClass:[RoutineDetailMapViewController class]]){
@@ -75,7 +82,10 @@
     
     if([segue.destinationViewController isKindOfClass:[OfflineRoutineTVC class]]){
         if([CommonUtil isFastNetWork]){
+            
+            
             if([self.routine isMarkersSyncWithCloud]){
+                //[CloudManager syncMarkersByRoutineUUID:self.routine.uuid withBlockWhenDone:nil];
                 [self prepareCach:segue];
             }else{
                 [CloudManager syncMarkersByRoutineUUID:self.routine.uuid withBlockWhenDone:^(NSError *error) {

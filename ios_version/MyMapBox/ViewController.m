@@ -25,59 +25,29 @@
 #define SHOW_ROUTINE_INFO_SEGUE @"showRoutineInfoSegue"
 #define ADD_ROUTINE_SEGUE @"AddRoutineInfoSegue"
 #define LOGIN_SEGUE @"LoginSegue"
+#define VIEW_TITLE_NAME @"My World"
 
 @interface ViewController ()<RMMapViewDelegate>
 
-@property (weak, nonatomic) IBOutlet UIButton *locateButton;
-
-@property(nonatomic,strong) RMMapView *mapView;
-@property(nonatomic,strong) MMRoutine *currentRoutine;
-
 @property(nonatomic,strong) MMRoutineCachHelper *routineCachHelper;
+
+@property (strong, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
+@property (strong, nonatomic) IBOutlet UIBarButtonItem *activityBarButton;
+@property (strong, nonatomic) IBOutlet UIBarButtonItem *refreshBarButton;
 
 @end
 
 @implementation ViewController
 
-
-
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    self.locateButton.layer.borderWidth=0.5f;
-    self.locateButton.layer.cornerRadius = 4.5;
+    //init view ui
     
     
-     [[RMConfiguration sharedInstance] setAccessToken:@"pk.eyJ1IjoibGlvbmhhcnQ1ODYiLCJhIjoiR1JHd2NnYyJ9.iCg5vA7qQaRxf2Z-T_vEjg"];
     
-    RMMapboxSource *tileSource=nil;
-    RMMapboxSource *detailTileSource=nil;
-    
-    NSString *filePath=[CommonUtil dataFilePath];
-    
-    if([[NSFileManager defaultManager] fileExistsAtPath:filePath]){
-        NSMutableDictionary *dictionary= [[NSMutableDictionary alloc] initWithContentsOfFile:filePath];
-        NSString *tileJSON=[dictionary objectForKey:tileJsonTourMap];
-        NSString *detailTileJSON=[dictionary objectForKey:tileJsonDetailMap];
-        NSLog(@"found tileJSON in file");
-        tileSource= [[RMMapboxSource alloc] initWithTileJSON:tileJSON];
-        detailTileSource=[[RMMapboxSource alloc]initWithTileJSON:detailTileJSON];
-        
-    }else{
-        tileSource =[[RMMapboxSource alloc] initWithMapID:tourMapId];
-        detailTileSource=[[RMMapboxSource alloc] initWithMapID:streetMapId];
-        NSMutableDictionary *dictionary= [NSMutableDictionary dictionaryWithCapacity:10];
-        [dictionary setObject:tileSource.tileJSON forKey:tileJsonTourMap];
-        [dictionary setObject:detailTileSource.tileJSON forKey:tileJsonDetailMap];
-        [dictionary writeToFile:filePath atomically:YES];
-    }
-    
-    self.mapView=[[RMMapView alloc] initWithFrame:self.view.bounds
-                                    andTilesource:tileSource];
-    
-    [self.mapView addTileSource:detailTileSource];
-    
-    self.mapView.minZoom=3;
+    //map view init
+    self.mapView.minZoom=2;
     self.mapView.maxZoom=17;
     
     self.mapView.zoom=3;
@@ -92,14 +62,10 @@
     [self.view addSubview:self.mapView];
     [self.view sendSubviewToBack:self.mapView];
     
-    [self ShowTourMapSource];
-    
-    NSLog(@"view did load");
-}
-
--(void)ShowTourMapSource{
-    [self.mapView setHidden:NO forTileSourceAtIndex:0];
-    [self.mapView setHidden:YES forTileSourceAtIndex:1];
+    //sync routines
+    if([CommonUtil isFastNetWork] && [CloudManager currentUser]){
+        [self syncRoutines];
+    }
 }
 
 -(void)viewWillAppear:(BOOL)animated{
@@ -110,85 +76,61 @@
         [self performSegueWithIdentifier:LOGIN_SEGUE sender:self];
     }else{
         [self updateMapUI];
-        
-        if([CommonUtil isFastNetWork]){
-            [CloudManager syncRoutinesAndOvMarkersWithBlockWhenDone:^(NSError *error) {
-                if(error){
-                    NSLog(@"error happend: %@",error.localizedDescription);
-                }
-                [self updateMapUI];
-            }];
+    }
+}
+
+- (void)syncRoutines {
+    self.title=@"Syncing";
+    NSLog(@"Syncing routine and ovMarkers");
+    [CloudManager syncRoutinesAndOvMarkersWithBlockWhenDone:^(NSError *error) {
+        NSLog(@"syncing routine and ovMarkers complete");
+        self.title=VIEW_TITLE_NAME;
+        if(error){
+            NSLog(@"error happend: %@",error.localizedDescription);
         }
-    }
-}
-
--(void)updateMapUI{
-    [self updateMapUINeedPanToCurrentRoutine:YES];
-}
-
--(void)updateMapUINeedPanToCurrentRoutine:(BOOL) needPan{
-    [self.mapView removeAllAnnotations];
-    for (MMRoutine *eachRoutine in [MMRoutine fetchAllModelRoutines]) {
-        [self addMarkerWithTitle:eachRoutine.title
-                  withCoordinate:CLLocationCoordinate2DMake([eachRoutine.lat doubleValue], [eachRoutine.lng doubleValue])
-                  withCustomData:eachRoutine];
-        
-        for (MMOvMarker *ovMarker in eachRoutine.ovMarkers) {
-            [self adjustLocationByOffsetFrom:eachRoutine to:ovMarker];
-            
-            [self addMarkerWithTitle:eachRoutine.title
-                      withCoordinate:CLLocationCoordinate2DMake([ovMarker.lat doubleValue], [ovMarker.lng doubleValue])
-                      withCustomData:ovMarker];
-            
-            [self addLineFrom:[[CLLocation alloc]initWithLatitude:[eachRoutine.lat doubleValue]
-                                                        longitude:[eachRoutine.lng doubleValue]]
-                           to:[[CLLocation alloc]initWithLatitude:[ovMarker.lat doubleValue]
-                                                        longitude:[ovMarker.lng doubleValue]]];
-        }
-    }
-    
-    if(self.currentRoutine && needPan){
-        [self.mapView setCenterCoordinate:CLLocationCoordinate2DMake([self.currentRoutine.lat doubleValue],
-                                                                     [self.currentRoutine.lng doubleValue])
-                                 animated:YES];
-    }
+        [self updateMapUI];
+    }];
 }
 
 
 
--(void)adjustLocationByOffsetFrom:(MMRoutine *)parent to:(MMOvMarker *)to{
-    CGPoint parentPoint=[self.mapView coordinateToPixel:CLLocationCoordinate2DMake([parent.lat doubleValue],
-                                                                                   [parent.lng doubleValue])];
-    CGPoint newPoint=parentPoint;
-    newPoint.x=newPoint.x+[to.offsetX doubleValue];
-    newPoint.y=newPoint.y+[to.offsetY doubleValue];
-    CLLocationCoordinate2D coordinate=[self.mapView pixelToCoordinate:newPoint];
-    to.lat=[NSNumber numberWithDouble:coordinate.latitude];
-    to.lng=[NSNumber numberWithDouble:coordinate.longitude];
+//overide
+-(NSArray *)allRoutines{
+    return [MMRoutine fetchAllModelRoutines];
 }
-
--(void)addMarkerWithTitle:(NSString *)title withCoordinate:(CLLocationCoordinate2D)coordinate withCustomData:(id)customData{
-    RMAnnotation *annotation=[[RMAnnotation alloc] initWithMapView:self.mapView
-                                                        coordinate:coordinate
-                                                          andTitle:title];
-    annotation.userInfo=customData;
-    [self.mapView addAnnotation:annotation];
-}
-
--(void)addLineFrom:(CLLocation *)from to:(CLLocation *)to{
-    NSArray *pointArray=[[NSArray alloc]initWithObjects:from,to,nil];
-    RMPolylineAnnotation *line=[[RMPolylineAnnotation alloc]initWithMapView:self.mapView points:pointArray];
-    [self.mapView addAnnotation:line];
-}
-
 
 #pragma mark - getters and setters
+
+-(UIBarButtonItem *)activityBarButton{
+    if(!_activityBarButton){
+        _activityBarButton=[[UIBarButtonItem alloc]initWithCustomView:self.activityIndicator];
+    }
+    return _activityBarButton;
+}
 
 -(MMRoutineCachHelper *)routineCachHelper{
     if(!_routineCachHelper){
         _routineCachHelper=[[MMRoutineCachHelper alloc]init];
     }
     return _routineCachHelper;
+}
+
+#pragma mark - ui action
+-(void)updateRightNavBarItenNeedRefreshing:(BOOL)needRefresh{
+    if (needRefresh){
+        //Replace refresh button with loading spinner
+        [self.navigationItem setRightBarButtonItem:self.activityBarButton];
+        [self.activityIndicator startAnimating];
+    }
+    else{
+        //Replace loading spinner with refresh button
+        [self.navigationItem setRightBarButtonItem:self.refreshBarButton];
+        [self.activityIndicator stopAnimating];
+    }
+}
+
+- (IBAction)refreshButtonClick:(id)sender {
+    [self syncRoutines];
 }
 
 #pragma mark -segue
@@ -200,7 +142,7 @@
         RoutineInfoViewController *routineInfoVC=(RoutineInfoViewController *)segue.destinationViewController;
         RMAnnotation *annotation=(RMAnnotation *)sender;
         MMOvMarker *ovMarker=(MMOvMarker *)annotation.userInfo;
-        routineInfoVC.routine=ovMarker.belongRoutine;
+        routineInfoVC.ovMarker=ovMarker;
         routineInfoVC.mapView=self.mapView;
         routineInfoVC.routineCachHelper=self.routineCachHelper;
     }else if ([segue.identifier isEqualToString:ADD_ROUTINE_SEGUE]){
@@ -216,6 +158,12 @@
     
 }
 
+-(IBAction)loginDone:(UIStoryboardSegue *)segue{
+    if([segue.sourceViewController isKindOfClass:[LoginViewController class]]){
+        [self syncRoutines];
+    }
+}
+
 -(IBAction)AddRoutineDone:(UIStoryboardSegue *)segue{
     // get something from addRoutineTVC
     if([segue.sourceViewController isKindOfClass:[RoutineAddTVC class]]){
@@ -229,16 +177,28 @@
 
 -(IBAction)deleteRoutineDone:(UIStoryboardSegue *)segue{
     RoutineEditTVC *routineEditTVC=segue.sourceViewController;
-    MMRoutine *routine=routineEditTVC.routine;
+    MMRoutine *routine=routineEditTVC.ovMarker.belongRoutine;
     
-    if([self.currentRoutine.uuid isEqualToString:routine.uuid]){
+    if([[self.currentRoutine uuid] isEqualToString:routine.uuid]){
         self.currentRoutine=nil;
     }
     
     if (routine) {
         if([routine.isSync boolValue]){
             NSLog(@"prepare to mark delete routine id: %@",routine.uuid);
-            [routine markDelete];
+            if (routine.isMarkersSyncWithCloud) {
+                [routine markDelete];
+            }else{
+                [CloudManager syncMarkersByRoutineUUID:routine.uuid withBlockWhenDone:^(NSError *error) {
+                    if(error){
+                        [CommonUtil alert:error.localizedDescription];
+                    }else{
+                        [routine markDelete];
+                        [self updateMapUI];
+                    }
+                }];
+            }
+            
         }else{
             NSLog(@"prepare to mark remove routine id: %@",routine.uuid);
             [MMRoutine removeRoutine:routine];
@@ -246,18 +206,10 @@
     }
 }
 
-#pragma mark - cach related
-
-- (IBAction)downloadCach:(id)sender {
-    /*
-    MMRoutine *tempRoutine=[[MMRoutine fetchAllModelRoutines] firstObject];
-    if(tempRoutine){
-        [self.routineCachHelper startCachForRoutine:tempRoutine withTileCach:self.mapView.tileCache withTileSource:self.mapView.tileSources[1]];
-    }
-     */
-}
-
 #pragma mark - RMMapViewDelegate
+
+-(void)singleTapOnMap:(RMMapView *)map at:(CGPoint)point{
+}
 
 
 //create delegate
@@ -282,16 +234,16 @@
     }else if ([annotation.userInfo isKindOfClass:[MMOvMarker class]]){
         MMOvMarker *ovMarker=annotation.userInfo;
         
-        CGPoint anchorPoint;
-        anchorPoint.x=0.5;
-        anchorPoint.y=1;
+        //CGPoint anchorPoint;
+        //anchorPoint.x=0.5;
+        //anchorPoint.y=1;
         
         UIImage *iconImage=[UIImage imageNamed:ovMarker.iconUrl];
         if(!iconImage){
             iconImage=[UIImage imageNamed:@"default_default.png"];
         }
         
-        RMMarker *marker = [[RMMarker alloc] initWithUIImage: iconImage anchorPoint:anchorPoint];
+        RMMarker *marker = [[RMMarker alloc] initWithUIImage:iconImage];
         //RMMarker *marker = [[RMMarker alloc] initWithUIImage:[UIImage imageNamed:@"default_default"]anchorPoint:anchorPoint];
         
         
@@ -353,19 +305,6 @@
     }
 }
 
--(CGPoint)calculateOffsetFrom:(MMRoutine *)from to:(MMOvMarker *)to{
-    CGPoint parentPoint=[self.mapView coordinateToPixel:CLLocationCoordinate2DMake([from.lat doubleValue],
-                                                                                   [from.lng doubleValue])];
-    CGPoint subPoint=[self.mapView coordinateToPixel:CLLocationCoordinate2DMake([to.lat doubleValue],
-                                                                                [to.lng doubleValue])];
-    //NSLog(@"parent: x :%f  y: %f",parentPoint.x,parentPoint.y);
-    //NSLog(@"sub: x :%f  y: %f",subPoint.x,parentPoint.y);
-    CGPoint result;
-    result.x=subPoint.x-parentPoint.x;
-    result.y=subPoint.y-parentPoint.y;
-    NSLog(@"offset: x :%f  y: %f",result.x,result.y);
-    return result;
-}
 
 - (void)afterMapZoom:(RMMapView *)map byUser:(BOOL)wasUserAction{
     NSLog(@"MapZoom End");

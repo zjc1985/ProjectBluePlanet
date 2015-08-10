@@ -58,12 +58,14 @@ install_resource()
   esac
 }
 if [[ "$CONFIGURATION" == "Debug" ]]; then
-  install_resource "AVOSCloud/iOS/release-v3.1.1.1/AVOSCloud.framework/AVOSCloud.bundle"
+  install_resource "AVOSCloud/iOS/release-v3.1.2.5/AVOSCloud.framework/AVOSCloud.bundle"
+  install_resource "GoogleMaps/Frameworks/GoogleMaps.framework/Versions/A/Resources/GoogleMaps.bundle"
   install_resource "MWPhotoBrowser/MWPhotoBrowser/MWPhotoBrowser.bundle"
   install_resource "${BUILT_PRODUCTS_DIR}/Mapbox.bundle"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
-  install_resource "AVOSCloud/iOS/release-v3.1.1.1/AVOSCloud.framework/AVOSCloud.bundle"
+  install_resource "AVOSCloud/iOS/release-v3.1.2.5/AVOSCloud.framework/AVOSCloud.bundle"
+  install_resource "GoogleMaps/Frameworks/GoogleMaps.framework/Versions/A/Resources/GoogleMaps.bundle"
   install_resource "MWPhotoBrowser/MWPhotoBrowser/MWPhotoBrowser.bundle"
   install_resource "${BUILT_PRODUCTS_DIR}/Mapbox.bundle"
 fi

@@ -44,9 +44,16 @@
         <relationship name="markers" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="MMMarker" inverseName="belongRoutine" inverseEntity="MMMarker" syncable="YES"/>
         <relationship name="ovMarkers" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MMOvMarker" inverseName="belongRoutine" inverseEntity="MMOvMarker" syncable="YES"/>
     </entity>
+    <entity name="PlaceSearchResult" representedClassName="PlaceSearchResult" syncable="YES">
+        <attribute name="lat" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="lng" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="subInfo" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="title" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
     <elements>
         <element name="MMMarker" positionX="-63" positionY="-207" width="128" height="268"/>
         <element name="MMOvMarker" positionX="-65" positionY="333" width="128" height="223"/>
         <element name="MMRoutine" positionX="-378" positionY="-18" width="128" height="208"/>
+        <element name="PlaceSearchResult" positionX="-216" positionY="-54" width="128" height="105"/>
     </elements>
 </model>

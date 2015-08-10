@@ -8,12 +8,12 @@
 
 #import <UIKit/UIKit.h>
 #import <Mapbox-iOS-SDK/Mapbox.h>
-#import "MMRoutine.h"
+#import "MMOvMarker+Dao.h"
 #import "MMRoutineCachHelper.h"
 
 @interface RoutineInfoViewController : UITableViewController
 
-@property(nonatomic,strong)MMRoutine *routine;
+@property(nonatomic,strong)MMOvMarker *ovMarker;
 @property(nonatomic,strong)RMMapView *mapView;
 @property(nonatomic,strong)MMRoutineCachHelper *routineCachHelper;
 

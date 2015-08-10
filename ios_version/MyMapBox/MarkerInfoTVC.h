@@ -8,11 +8,10 @@
 
 #import <UIKit/UIKit.h>
 #import "MMMarker+Dao.h"
+#import "BaseMarkerInfoVC.h"
 
-@interface MarkerInfoTVC : UITableViewController
-
+@interface MarkerInfoTVC : BaseMarkerInfoVC
 
 @property(nonatomic)NSUInteger markerCount;
-@property(nonatomic,strong)MMMarker *marker;
 
 @end

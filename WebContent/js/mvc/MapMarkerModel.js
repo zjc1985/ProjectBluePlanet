@@ -176,7 +176,7 @@ function MapMarkerModel() {
 		modelRoutines.push(marker);
 		
 		var ovMarkerId=self.genUUID();
-		content.iconUrl='resource/icons/default_default.png';
+		content.iconUrl='resource/icons/ov_0.png';
 		var ovMarker=self.createOverviewMarker(ovMarkerId, content, modelRoutineId);
 		marker.ovMarkers.push(ovMarker);
 		return modelRoutineId;
@@ -1811,6 +1811,17 @@ function ModelRoutine(id){
 			}
 		}
 		return results;
+	};
+	
+	this.getMaxSlideNum=function(){
+		var markers=this.getMarkers();
+		var maxSlideNum=0;
+		for(var i in markers){
+			if(markers[i].content.getSlideNum()>maxSlideNum){
+				maxSlideNum=markers[i].content.getSlideNum();
+			}
+		}
+		return maxSlideNum;
 	};
 }
 

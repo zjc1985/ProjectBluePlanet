@@ -17,6 +17,35 @@
 #define tileJsonTourMap @"tileJSONTourMap"
 #define tileJsonDetailMap @"tileJSONDetailMap"
 
+@protocol Marker <NSObject>
+
+@required
+-(NSArray *)imageUrlsArray;
+-(NSString *)iconUrl;
+-(NSString *)title;
+-(NSString *)subDescription;
+-(NSString *)mycomment;
+
+@end
+
+@protocol Routine <NSObject>
+
+@required
+-(NSString *)title;
+-(NSArray *)allOvMarks;
+-(NSArray *)allMarks;
+-(double)minLatInMarkers;
+-(double)minLngInMarkers;
+-(double)maxLatInMarkers;
+-(double)maxLngInMarkers;
+-(NSNumber *)lat;
+-(NSNumber *)lng;
+-(NSString *)uuid;
+-(void)updateLocation;
+-(NSUInteger)maxSlideNum;
+
+@end
+
 @interface CommonUtil : NSObject
 
 +(NSString *)dataFilePath;
@@ -38,5 +67,7 @@
 +(CLLocationCoordinate2D) maxLocationInMMMarkers:(NSArray *) markers; //of MMMarker
 
 +(UIImage *)compressForUpload:(UIImage *)original scale:(CGFloat)scale;
+
++(BOOL)isBlankString:(NSString *)string;
 
 @end

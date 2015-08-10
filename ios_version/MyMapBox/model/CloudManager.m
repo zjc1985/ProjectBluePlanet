@@ -12,6 +12,8 @@
 #import "MMOvMarker+Dao.h"
 #import "MMMarker+Dao.h"
 #import "CommonUtil.h"
+#import "MMSearchedOvMarker.h"
+#import "MMSearchdeMarker.h"
 
 #define KEY_RESPONSE_ROUTINES_UPDATED @"routinesUpdate"
 #define KEY_RESPONSE_ROUTINES_NEW   @"routinesNew"
@@ -29,6 +31,264 @@
 #define KEY_RESPONSE_MARKERS_DELETE @"markersDelete"
 
 @implementation CloudManager
+
+
+#pragma mark - like routine feature
+
++(void)likeRoutine:(NSString *)routineId withBlockWhenDone:(void (^)(NSError *))block{
+    NSMutableDictionary *params=[[NSMutableDictionary alloc]init];
+    [params setObject:routineId forKey:@"routineId"];
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+    [AVCloud callFunctionInBackground:@"likeRoutine" withParameters:params block:^(id object, NSError *error) {
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+        block(error);
+    }];
+}
+
++(void)unLikedRoutine:(NSString *)routineId withBlockWhenDone:(void (^)(NSError *))block{
+    NSMutableDictionary *params=[[NSMutableDictionary alloc]init];
+    [params setObject:routineId forKey:@"routineId"];
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+    [AVCloud callFunctionInBackground:@"unlikeRoutine" withParameters:params block:^(id object, NSError *error) {
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+        block(error);
+    }];
+}
+
++(void)existLikedRoutine:(NSString *)routineId withBlockWhenDone:(void (^)(BOOL, NSError *))block{
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+    AVQuery *query = [AVQuery queryWithClassName:@"LikedRoutine"];
+    [query whereKey:@"user" equalTo:[self currentUser]];
+    [query whereKey:@"routineId" equalTo:routineId];
+    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+        BOOL isLike=NO;
+        if (!error) {
+            if (objects.count>0) {
+                isLike=YES;
+            }else{
+                isLike=NO;
+            }
+        } else {
+            // 输出错误信息
+            NSLog(@"Error: %@ %@", error, [error userInfo]);
+        }
+        block(isLike,error);
+    }];
+}
+
++(void)queryLikedRoutines:(void (^)(NSError *, NSArray *))block{
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+    [AVCloud callFunctionInBackground:@"queryLikedRoutines" withParameters:nil block:^(id object, NSError *error) {
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+        NSMutableArray *routines=[[NSMutableArray alloc]init];
+        
+        if (!error) {
+            NSDictionary *response=object;
+            for (NSDictionary *eachSearchResult in response) {
+                
+                
+                //handle routine
+                NSDictionary *routineDic=[eachSearchResult objectForKey:@"searchedRoutine"];
+                MMSearchedRoutine *searchedRoutine=[[MMSearchedRoutine alloc]initWithUUID:[routineDic objectForKey:@"uuid"]
+                                                                                  withLat:[routineDic objectForKey:@"lat"]
+                                                                                  withLng:[routineDic objectForKey:@"lng"]];
+                searchedRoutine.title=[routineDic objectForKey:@"title"];
+                searchedRoutine.mycomment=[routineDic objectForKey:@"description"];
+                searchedRoutine.userId=[routineDic objectForKey:@"userId"];
+                searchedRoutine.userName=[routineDic objectForKey:@"userName"];
+                
+                //handle ovMarkers
+                for (NSDictionary *ovMarkerDic in [eachSearchResult objectForKey:@"searchedOvMarkers"]) {
+                    MMSearchedOvMarker *searchedOvMarker=[[MMSearchedOvMarker alloc]initWithUUID:[ovMarkerDic objectForKey:@"uuid"]
+                                                                                     withOffsetX:[ovMarkerDic objectForKey:@"offsetX"]
+                                                                                     withOffsetY:[ovMarkerDic objectForKey:@"offsetY"]];
+                    searchedOvMarker.offsetX=[NSNumber numberWithInteger:0];
+                    searchedOvMarker.offsetY=[NSNumber numberWithInteger:0];
+                    
+                    searchedOvMarker.iconUrl=[ovMarkerDic objectForKey:@"iconUrl"];
+                    [searchedRoutine addOvMarkersObject:searchedOvMarker];
+                }
+                
+                [routines addObject:searchedRoutine];
+            }
+        }else{
+            NSLog(@"%@",error.localizedDescription);
+        }
+        
+        block(error,routines);
+    }];
+}
+
+#pragma mark - follow feature
++(void)follow:(NSString *)userId withBlockWhenDone:(void (^)(BOOL success,NSError *))block{
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+    [[AVUser currentUser] follow:userId andCallback:^(BOOL succeeded, NSError *error) {
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+        block(succeeded,error);
+    }];
+
+}
+
++(void)unfollow:(NSString *)userId withBlockWhenDone:(void (^)(BOOL,NSError *))block{
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+    [[AVUser currentUser] unfollow:userId andCallback:^(BOOL succeeded, NSError *error) {
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+        block(succeeded,error);
+    }];
+}
+
++(void)queryFollowees:(void (^)(NSError *, NSArray *))block{
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+    AVQuery *query= [AVUser followeeQuery:@"USER_OBJECT_ID"];
+    [query whereKey:@"user" equalTo:[self currentUser]];
+    [query includeKey:@"followee"];
+    [query findObjectsInBackgroundWithBlock:^(NSArray *user, NSError *error) {
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+        block(error,user);
+    }];
+}
+
++(void)existFollowee:(NSString *)userId withBlockWhenDone:(void (^)(BOOL, NSError *))block{
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+    [self queryFollowees:^(NSError *error, NSArray *user) {
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+        BOOL result=NO;
+        for (AVUser *eachUser in user) {
+            if ([eachUser.objectId isEqualToString:userId]) {
+                result=YES;
+            }
+        }        
+        block(result,error);
+    }];
+}
+
+
++(void)queryMarkersByRoutineId:(NSString *)routineId withBlockWhenDone:(void (^)(NSError *, NSArray *))block{
+    NSLog(@"CloudManager.queryMarkersByRoutineId");
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+    NSMutableDictionary *params=[[NSMutableDictionary alloc]init];
+    [params setObject:routineId forKey:@"routineId"];
+    
+    [AVCloud callFunctionInBackground:@"fetchMarkersByRoutineId" withParameters:params block:^(id object, NSError *error) {
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+        
+        NSMutableArray *markers=[[NSMutableArray alloc]init];
+        
+        if(!error){
+            NSDictionary *response=object;
+            NSArray *markersDic=[response objectForKey:@"returnValue"];
+            for (NSDictionary *markerDic in markersDic) {
+                MMSearchdeMarker *searchMarker=[[MMSearchdeMarker alloc]initWithUUID:[markerDic objectForKey:@"id"]withLat:[markerDic objectForKey:@"lat"] withLng:[markerDic objectForKey:@"lng"]];
+                
+                searchMarker.title=[markerDic objectForKey:@"title"];
+                searchMarker.mycomment=[markerDic objectForKey:@"mycomment"];
+                
+                NSMutableArray *imageUrls=[[NSMutableArray alloc]init];
+                for (NSString *url in [markerDic objectForKey:@"imgUrls"]) {
+                    [imageUrls addObject: [url stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]]];
+                }
+                searchMarker.imgUrls=imageUrls;
+                searchMarker.iconUrl=[markerDic objectForKey:@"iconUrl"];
+                searchMarker.slideNum=[markerDic objectForKey:@"slideNum"];
+                searchMarker.category=[markerDic objectForKey:@"category"];
+                
+                [markers addObject:searchMarker];
+            }
+        }
+        
+        block(error,markers);
+    }];
+}
+
++(void)searchRoutinesByUserId:(NSString *)userId withBlockWhenDone:(void (^)(NSError *, NSArray *))block{
+    NSMutableDictionary *params=[[NSMutableDictionary alloc]init];
+    [params setObject:userId forKey:@"userId"];
+    
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+    [AVCloud callFunctionInBackground:@"searchRoutinesByUserId" withParameters:params block:^(id object, NSError *error) {
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+        NSMutableArray *routines=[[NSMutableArray alloc]init];
+        
+        if (!error) {
+            NSDictionary *response=object;
+            for (NSDictionary *eachSearchResult in response) {
+                
+                
+                //handle routine
+                NSDictionary *routineDic=[eachSearchResult objectForKey:@"searchedRoutine"];
+                MMSearchedRoutine *searchedRoutine=[[MMSearchedRoutine alloc]initWithUUID:[routineDic objectForKey:@"uuid"]
+                                                                                  withLat:[routineDic objectForKey:@"lat"]
+                                                                                  withLng:[routineDic objectForKey:@"lng"]];
+                searchedRoutine.title=[routineDic objectForKey:@"title"];
+                searchedRoutine.mycomment=[routineDic objectForKey:@"description"];
+                //handle ovMarkers
+                for (NSDictionary *ovMarkerDic in [eachSearchResult objectForKey:@"searchedOvMarkers"]) {
+                    MMSearchedOvMarker *searchedOvMarker=[[MMSearchedOvMarker alloc]initWithUUID:[ovMarkerDic objectForKey:@"uuid"]
+                                                                                     withOffsetX:[ovMarkerDic objectForKey:@"offsetX"]
+                                                                                     withOffsetY:[ovMarkerDic objectForKey:@"offsetY"]];
+                    searchedOvMarker.offsetX=[NSNumber numberWithInteger:0];
+                    searchedOvMarker.offsetY=[NSNumber numberWithInteger:0];
+                    
+                    searchedOvMarker.iconUrl=[ovMarkerDic objectForKey:@"iconUrl"];
+                    [searchedRoutine addOvMarkersObject:searchedOvMarker];
+                }
+                
+                [routines addObject:searchedRoutine];
+            }
+        }
+        
+        block(error,routines);
+    }];
+
+}
+
++(void)searchRoutinesByLat:(NSNumber *)lat lng:(NSNumber *)lng withLimit:(NSNumber *)limit withPage:(NSNumber *)page withBlockWhenDone:(void (^)(NSError *, NSArray *))block{
+    NSMutableDictionary *params=[[NSMutableDictionary alloc]init];
+    [params setObject:lat forKey:@"lat"];
+    [params setObject:lng forKey:@"lng"];
+    [params setObject:limit forKey:@"limit"];
+    [params setObject:page forKey:@"page"];
+    
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+    [AVCloud callFunctionInBackground:@"searchRoutinesByLatlng" withParameters:params block:^(id object, NSError *error) {
+        NSMutableArray *routines=[[NSMutableArray alloc]init];
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+        if (!error) {
+            NSDictionary *response=object;
+            for (NSDictionary *eachSearchResult in response) {
+                
+                
+                //handle routine
+                NSDictionary *routineDic=[eachSearchResult objectForKey:@"searchedRoutine"];
+                MMSearchedRoutine *searchedRoutine=[[MMSearchedRoutine alloc]initWithUUID:[routineDic objectForKey:@"uuid"]
+                                                                                  withLat:[routineDic objectForKey:@"lat"]
+                                                                                  withLng:[routineDic objectForKey:@"lng"]];
+                searchedRoutine.title=[routineDic objectForKey:@"title"];
+                searchedRoutine.mycomment=[routineDic objectForKey:@"description"];
+                searchedRoutine.userId=[routineDic objectForKey:@"userId"];
+                searchedRoutine.userName=[routineDic objectForKey:@"userName"];
+                
+                //handle ovMarkers
+                for (NSDictionary *ovMarkerDic in [eachSearchResult objectForKey:@"searchedOvMarkers"]) {
+                    MMSearchedOvMarker *searchedOvMarker=[[MMSearchedOvMarker alloc]initWithUUID:[ovMarkerDic objectForKey:@"uuid"]
+                                                                                     withOffsetX:[ovMarkerDic objectForKey:@"offsetX"]
+                                                                                     withOffsetY:[ovMarkerDic objectForKey:@"offsetY"]];
+                    searchedOvMarker.offsetX=[NSNumber numberWithInteger:0];
+                    searchedOvMarker.offsetY=[NSNumber numberWithInteger:0];
+                    
+                    searchedOvMarker.iconUrl=[ovMarkerDic objectForKey:@"iconUrl"];
+                    [searchedRoutine addOvMarkersObject:searchedOvMarker];
+                }
+                
+                [routines addObject:searchedRoutine];
+            }
+        }
+        
+        block(error,routines);
+    }];
+
+}
 
 +(AVUser *)currentUser{
     return [AVUser currentUser];
@@ -63,9 +323,10 @@
     NSMutableDictionary *params=[[NSMutableDictionary alloc]init];
     [params setValue:[self allMarkerDictionaryWith:belongRoutine] forKey:KEY_REQUEST_SYNC_MARKERS];
     [params setValue:belongRoutine.uuid forKey:KEY_REQUEST_ROUTINE_ID];
-    
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
     //call cloud
     [AVCloud callFunctionInBackground:@"syncMarkersByRoutineId" withParameters:params block:^(id object, NSError *error) {
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
         if(!error){
             NSDictionary *response=object;
             
@@ -160,7 +421,9 @@
     [params setValue:[self allOvMarkersDictionary] forKey:@"syncOvMarkers"];
     
     //call cloud
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
     [AVCloud callFunctionInBackground:@"syncRoutines" withParameters:params block:^(id object, NSError *error) {
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
         if(!error){
             NSDictionary *response=object;
             
@@ -291,7 +554,11 @@
     for (NSDictionary *routineDic in array) {
         MMRoutine *routine=[MMRoutine queryMMRoutineWithUUID:[routineDic objectForKey:KEY_ROUTINE_UUID]];
         if(routine){
-            [MMRoutine removeRoutine:routine];
+            [self doSyncMarker:routine block:^(NSError *error){
+                if(!error){
+                    [MMRoutine removeRoutine:routine];
+                }
+            }];
         }
     }
 }

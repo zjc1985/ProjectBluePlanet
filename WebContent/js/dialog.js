@@ -371,6 +371,7 @@ function MarkerEditor(id){
 	
 	function genOvIconItems(){
 		var items=[];
+		/*
 		items.push({url:"resource/icons/default_default.png",name:""});
 		items.push({url:"resource/icons/overview_bear.png",name:""});
 		items.push({url:"resource/icons/overview_photo.png",name:""});
@@ -380,6 +381,12 @@ function MarkerEditor(id){
 		items.push({url:"resource/icons/overview_bag.png",name:""});
 		items.push({url:"resource/icons/overview_car.png",name:""});
 		items.push({url:"resource/icons/overview_star.png",name:""});
+		*/
+		for(var i=0;i<12;i++){
+			items.push({url:"resource/icons/ov_"+i+".png",name:""});
+		}
+		
+		
 		return items;
 	}
 	

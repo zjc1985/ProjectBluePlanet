@@ -68,6 +68,11 @@
     self.markerInfoView.layer.shadowRadius=5.0;
     self.markerInfoView.layer.shadowOffset=CGSizeMake(0, 1);
     self.markerInfoView.clipsToBounds=NO;
+    [self.markerInfoView setHidden:YES];
+    
+    UITapGestureRecognizer *tapGesture=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(markerInfoViewClick)];
+    tapGesture.numberOfTapsRequired=1;
+    [self.markerInfoView addGestureRecognizer:tapGesture];
     
     //init map
     self.mapView.maxZoom=17;
@@ -217,13 +222,20 @@
     [self performSegueWithIdentifier:SHOW_SEARCH_MODAL_SEGUE sender:nil];
 }
 
+-(void)markerInfoViewClick{
+    //self.currentMarker=annotation.userInfo;
+    if(self.currentMarker){
+        [self performSegueWithIdentifier:@"markerDetailSegue" sender:self.currentMarker];
+    }
+}
+
 #pragma mark - Navigation
 
 // In a storyboard-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([segue.identifier isEqualToString:@"markerDetailSegue"]) {
         MarkerInfoTVC *markerInfoTVC=segue.destinationViewController;
-        markerInfoTVC.marker=((RMAnnotation *)sender).userInfo;
+        markerInfoTVC.marker=sender;
         markerInfoTVC.markerCount=[[self.routine allMarks] count];
     }else if ([segue.identifier isEqualToString:SHOW_SEARCH_MODAL_SEGUE]){
         UINavigationController *navController=(UINavigationController *)segue.destinationViewController;
@@ -463,7 +475,7 @@
         [self.searchRMMarkerActionSheet showInView:self.view];
     }else if ([annotation.userInfo isKindOfClass:[MMMarker class]]){
         self.currentMarker=annotation.userInfo;
-        [self performSegueWithIdentifier:@"markerDetailSegue" sender:annotation];
+        [self performSegueWithIdentifier:@"markerDetailSegue" sender:annotation.userInfo];
     }
 }
 
@@ -477,12 +489,21 @@
     
     if ([annotation.userInfo isKindOfClass:[MMMarker class]]){
         MMMarker *modelMarker=annotation.userInfo;
-        
-        self.markerInfoTitleLabel.text=modelMarker.title;
-        self.markerInfoSubLabel.text=[NSString stringWithFormat:@"%@ %@",modelMarker.categoryName,modelMarker.slideNum];
-        self.markerInfoContentLabel.text=modelMarker.mycomment;
+        [self showMarkInfoViewByMMMarker:modelMarker];
+        self.currentMarker=modelMarker;
     }
     
+}
+
+-(void)showMarkInfoViewByMMMarker:(MMMarker *)marker{
+    self.markerInfoTitleLabel.text=marker.title;
+    self.markerInfoSubLabel.text=[NSString stringWithFormat:@"%@ %@",marker.categoryName,marker.slideNum];
+    self.markerInfoContentLabel.text=marker.mycomment;
+    [self.markerInfoView setHidden:NO];
+}
+
+-(void)singleTapOnMap:(RMMapView *)map at:(CGPoint)point{
+    [self.markerInfoView setHidden:YES];
 }
 
 

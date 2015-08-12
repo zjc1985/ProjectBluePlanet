@@ -17,10 +17,18 @@
 
 
 #import "MMRoutine+Dao.h"
+#import "MarkerInfoView.h"
 
 #define SHOW_SEARCH_MODAL_SEGUE @"showSearchModalSegue"
 
 @interface RoutineDetailMapViewController ()<RMMapViewDelegate,UIActionSheetDelegate,UIImagePickerControllerDelegate>
+
+
+@property (weak, nonatomic) IBOutlet MarkerInfoView *markerInfoView;
+@property (weak, nonatomic) IBOutlet UILabel *markerInfoTitleLabel;
+@property (weak, nonatomic) IBOutlet UILabel *markerInfoSubLabel;
+@property (weak, nonatomic) IBOutlet UILabel *markerInfoContentLabel;
+
 
 @property (weak, nonatomic) IBOutlet UIToolbar *playRoutineToolBar;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *SlidePlayButton;
@@ -49,6 +57,17 @@
     UIBarButtonItem *addButton=[[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addMarker:)];
     
     self.navigationItem.rightBarButtonItems = [NSArray arrayWithObjects:addButton,searchButton, nil];
+    
+    self.markerInfoView.layer.cornerRadius=6;
+    self.markerInfoView.layer.borderColor=[UIColor lightGrayColor].CGColor;
+    self.markerInfoView.layer.borderWidth=0.7;
+    self.markerInfoView.layer.masksToBounds=YES;
+    
+    self.markerInfoView.layer.shadowColor=[UIColor blackColor].CGColor;
+    self.markerInfoView.layer.shadowOpacity=0.3;
+    self.markerInfoView.layer.shadowRadius=5.0;
+    self.markerInfoView.layer.shadowOffset=CGSizeMake(0, 1);
+    self.markerInfoView.clipsToBounds=NO;
     
     //init map
     self.mapView.maxZoom=17;
@@ -450,6 +469,20 @@
 
 -(void)tapOnLabelForAnnotation:(RMAnnotation *)annotation onMap:(RMMapView *)map{
     NSLog(@"tap on label");
+}
+
+-(void)tapOnAnnotation:(RMAnnotation *)annotation onMap:(RMMapView *)map{
+    if(annotation.isUserLocationAnnotation)
+        return;
+    
+    if ([annotation.userInfo isKindOfClass:[MMMarker class]]){
+        MMMarker *modelMarker=annotation.userInfo;
+        
+        self.markerInfoTitleLabel.text=modelMarker.title;
+        self.markerInfoSubLabel.text=[NSString stringWithFormat:@"%@ %@",modelMarker.categoryName,modelMarker.slideNum];
+        self.markerInfoContentLabel.text=modelMarker.mycomment;
+    }
+    
 }
 
 

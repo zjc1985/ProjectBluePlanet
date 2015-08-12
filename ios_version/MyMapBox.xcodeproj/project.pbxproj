@@ -39,6 +39,7 @@
 		287D6D611B65D175009CFB56 /* BaseOvIconSelectTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 287D6D601B65D175009CFB56 /* BaseOvIconSelectTVC.m */; };
 		287D6D641B65D395009CFB56 /* AddRoutineOvIconSelectTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 287D6D631B65D395009CFB56 /* AddRoutineOvIconSelectTVC.m */; };
 		287D6D671B678D25009CFB56 /* RegisterVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 287D6D661B678D25009CFB56 /* RegisterVC.m */; };
+		287D6D9C1B7B4E0A009CFB56 /* MarkerInfoView.m in Sources */ = {isa = PBXBuildFile; fileRef = 287D6D9B1B7B4E0A009CFB56 /* MarkerInfoView.m */; };
 		287F47D71AE4D7AE00CAF79B /* MMRoutineTester.m in Sources */ = {isa = PBXBuildFile; fileRef = 287F47D61AE4D7AE00CAF79B /* MMRoutineTester.m */; };
 		288B09A51B00BC1500066C59 /* MMMarker+Dao.m in Sources */ = {isa = PBXBuildFile; fileRef = 288B09A41B00BC1500066C59 /* MMMarker+Dao.m */; };
 		288B09A81B01A12D00066C59 /* MMOvMarker+Dao.m in Sources */ = {isa = PBXBuildFile; fileRef = 288B09A71B01A12C00066C59 /* MMOvMarker+Dao.m */; };
@@ -147,6 +148,8 @@
 		287D6D631B65D395009CFB56 /* AddRoutineOvIconSelectTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddRoutineOvIconSelectTVC.m; sourceTree = "<group>"; };
 		287D6D651B678D25009CFB56 /* RegisterVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegisterVC.h; sourceTree = "<group>"; };
 		287D6D661B678D25009CFB56 /* RegisterVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RegisterVC.m; sourceTree = "<group>"; };
+		287D6D9A1B7B4E0A009CFB56 /* MarkerInfoView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MarkerInfoView.h; sourceTree = "<group>"; };
+		287D6D9B1B7B4E0A009CFB56 /* MarkerInfoView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MarkerInfoView.m; sourceTree = "<group>"; };
 		287F47D61AE4D7AE00CAF79B /* MMRoutineTester.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMRoutineTester.m; sourceTree = "<group>"; };
 		288B09A31B00BC1500066C59 /* MMMarker+Dao.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "MMMarker+Dao.h"; path = "model/MMMarker+Dao.h"; sourceTree = "<group>"; };
 		288B09A41B00BC1500066C59 /* MMMarker+Dao.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "MMMarker+Dao.m"; path = "model/MMMarker+Dao.m"; sourceTree = "<group>"; };
@@ -287,6 +290,8 @@
 				28E475561AEF2AAB00449DBC /* OfflineRoutineTableViewCell.m */,
 				845EB1F31AEE7B2500C719CA /* MMRoutineCachHelper.h */,
 				845EB1F41AEE7B2500C719CA /* MMRoutineCachHelper.m */,
+				287D6D9A1B7B4E0A009CFB56 /* MarkerInfoView.h */,
+				287D6D9B1B7B4E0A009CFB56 /* MarkerInfoView.m */,
 				28E7A0EC1AE6538200A27B8A /* Controller */,
 				28E261C71B0052F90019611C /* resource */,
 				84DA51631AE3D3F40077202E /* Model */,
@@ -635,6 +640,7 @@
 				283A21FE1B3B9F0E00F6DCA1 /* LikedRoutinesTVC.m in Sources */,
 				28A1E92E1B5E5F9200DD0339 /* GooglePlaceDetail.m in Sources */,
 				84F46A801B0396E0008B7F13 /* SettingViewController.m in Sources */,
+				287D6D9C1B7B4E0A009CFB56 /* MarkerInfoView.m in Sources */,
 				28E261CA1B00535A0019611C /* MyMapBox.xcdatamodeld in Sources */,
 				283A21E91B316E9300F6DCA1 /* BaseMarkerInfoVC.m in Sources */,
 				28252EA91B40DB2F0057C51D /* PlaceSearchResult+Dao.m in Sources */,

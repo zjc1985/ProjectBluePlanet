@@ -10,12 +10,15 @@
 #import "SearchMarkerInfoTVC.h"
 #import "MMSearchdeMarker.h"
 #import "CloudManager.h"
+#import "MarkerInfoView.h"
+#import "MMMarker+Dao.h"
 
 #define SHOW_SEARCH_MARKER_DETAIL_SEGUE @"showSearchMarkerDetailSegue"
 
 @interface SearchRoutineDetailMapVC ()<RMMapViewDelegate>
 
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *slidePlayButton;
+@property (weak, nonatomic) IBOutlet MarkerInfoView *markerInfoView;
 
 @end
 
@@ -23,6 +26,13 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    //init markerInfoView
+    [self.markerInfoView setHidden:YES];
+    UITapGestureRecognizer *tapGesture=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(markerInfoViewClick)];
+    tapGesture.numberOfTapsRequired=1;
+    [self.markerInfoView addGestureRecognizer:tapGesture];
+    
     
     self.slideIndicator=-1;
     
@@ -82,6 +92,10 @@
 #pragma mark - UI action
 - (IBAction)PlayButtonClick:(id)sender {
     [self slidePlayClick];
+    
+    if(!self.currentMarker){
+        [self.markerInfoView setHidden:YES];
+    }
 }
 
 - (IBAction)PrevButtonClick:(id)sender {
@@ -90,6 +104,18 @@
 
 - (IBAction)NextButtonClick:(id)sender {
     [self slideNextClick];
+}
+
+-(void)markerInfoViewClick{
+    if(self.currentMarker){
+        [self performSegueWithIdentifier:SHOW_SEARCH_MARKER_DETAIL_SEGUE sender:self.currentMarker];
+    }
+}
+
+#pragma mark - override
+#pragma mark - override
+-(void)handleCurrentSlideMarkers:(NSArray *)currentSlideMarkers{
+    [self.markerInfoView setHidden:YES];
 }
 
 #pragma mark - RMMapViewDelegate
@@ -142,6 +168,28 @@
 
 -(BOOL)mapView:(RMMapView *)mapView shouldDragAnnotation:(RMAnnotation *)annotation{
     return NO;
+}
+
+-(void)tapOnAnnotation:(RMAnnotation *)annotation onMap:(RMMapView *)map{
+    if(annotation.isUserLocationAnnotation)
+        return;
+    
+    if ([annotation.userInfo isKindOfClass:[MMSearchdeMarker class]]){
+        MMSearchdeMarker *modelMarker=annotation.userInfo;
+        [self showMarkInfoViewByMMMarker:modelMarker];
+        self.currentMarker=modelMarker;
+    }
+}
+
+-(void)showMarkInfoViewByMMMarker:(MMSearchdeMarker *)marker{
+    self.markerInfoView.markerInfoTitleLabel.text=marker.title;
+    self.markerInfoView.markerInfoSubLabel.text=[NSString stringWithFormat:@"%@ %@",[MMMarker CategoryNameWithMMMarkerCategory:[marker.category unsignedIntegerValue]],marker.slideNum];
+    self.markerInfoView.markerInfoContentLabel.text=marker.mycomment;
+    [self.markerInfoView setHidden:NO];
+}
+
+-(void)singleTapOnMap:(RMMapView *)map at:(CGPoint)point{
+    [self.markerInfoView setHidden:YES];
 }
 
 #pragma mark - Navigation

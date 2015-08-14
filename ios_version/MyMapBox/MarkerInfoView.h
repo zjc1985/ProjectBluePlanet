@@ -10,4 +10,8 @@
 
 @interface MarkerInfoView : UIView
 
+@property (weak, nonatomic) IBOutlet UILabel *markerInfoTitleLabel;
+@property (weak, nonatomic) IBOutlet UILabel *markerInfoSubLabel;
+@property (weak, nonatomic) IBOutlet UILabel *markerInfoContentLabel;
+
 @end

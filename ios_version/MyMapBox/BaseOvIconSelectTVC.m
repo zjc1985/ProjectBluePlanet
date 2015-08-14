@@ -56,6 +56,8 @@
     
     if ([cell.textLabel.text isEqualToString:self.selectedUrl]) {
         cell.accessoryType = UITableViewCellAccessoryCheckmark;
+    }else{
+        cell.accessoryType = UITableViewCellAccessoryNone;
     }
     return cell;
 }

@@ -68,6 +68,8 @@
     if ([self.iconNameLabel.text isEqualToString:iconInfo.iconName]) {
         cell.accessoryType = UITableViewCellAccessoryCheckmark;
         self.checkedIndexPath=indexPath;
+    }else{
+        cell.accessoryType = UITableViewCellAccessoryNone;
     }
     
     return cell;

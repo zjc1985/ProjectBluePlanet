@@ -72,7 +72,7 @@
     
     cell.routineTitleLabel.text=eachRoutine.title;
     NSLog(@"%f",[eachRoutine.cachProgress floatValue]);
-    cell.routineProgressLabel.text=[NSString stringWithFormat:@"%u%%", (NSUInteger)([eachRoutine.cachProgress floatValue]*100)];
+    cell.routineProgressLabel.text=[NSString stringWithFormat:@"%lu%%", (unsigned long)([eachRoutine.cachProgress floatValue]*100)];
     cell.routineProgressBar.progress=[eachRoutine.cachProgress floatValue];
     return cell;
 }

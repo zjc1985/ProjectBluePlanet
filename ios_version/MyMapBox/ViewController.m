@@ -47,20 +47,19 @@
     
     
     //map view init
-    self.mapView.minZoom=2;
-    self.mapView.maxZoom=17;
+    [self.view addSubview:self.mapView];
+    [self.view sendSubviewToBack:self.mapView];
     
-    self.mapView.zoom=3;
+    self.mapView.minZoom=1;
+    self.mapView.maxZoom=17;
     
     self.mapView.bouncingEnabled=YES;
     
     self.mapView.delegate=self;
     
-    CLLocationCoordinate2D center=CLLocationCoordinate2DMake(31.239689, 121.499755);
-    self.mapView.centerCoordinate=center;
-    
-    [self.view addSubview:self.mapView];
-    [self.view sendSubviewToBack:self.mapView];
+    [self.mapView setZoom:2 animated:YES];
+    [self.mapView setCenterCoordinate:CLLocationCoordinate2DMake(31.23, 121.46)];
+
     
     //sync routines
     if([CommonUtil isFastNetWork] && [CloudManager currentUser]){

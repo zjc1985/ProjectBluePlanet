@@ -25,10 +25,6 @@
 
 
 @property (weak, nonatomic) IBOutlet MarkerInfoView *markerInfoView;
-@property (weak, nonatomic) IBOutlet UILabel *markerInfoTitleLabel;
-@property (weak, nonatomic) IBOutlet UILabel *markerInfoSubLabel;
-@property (weak, nonatomic) IBOutlet UILabel *markerInfoContentLabel;
-
 
 @property (weak, nonatomic) IBOutlet UIToolbar *playRoutineToolBar;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *SlidePlayButton;
@@ -58,18 +54,7 @@
     
     self.navigationItem.rightBarButtonItems = [NSArray arrayWithObjects:addButton,searchButton, nil];
     
-    self.markerInfoView.layer.cornerRadius=6;
-    self.markerInfoView.layer.borderColor=[UIColor lightGrayColor].CGColor;
-    self.markerInfoView.layer.borderWidth=0.7;
-    self.markerInfoView.layer.masksToBounds=YES;
-    
-    self.markerInfoView.layer.shadowColor=[UIColor blackColor].CGColor;
-    self.markerInfoView.layer.shadowOpacity=0.3;
-    self.markerInfoView.layer.shadowRadius=5.0;
-    self.markerInfoView.layer.shadowOffset=CGSizeMake(0, 1);
-    self.markerInfoView.clipsToBounds=NO;
     [self.markerInfoView setHidden:YES];
-    
     UITapGestureRecognizer *tapGesture=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(markerInfoViewClick)];
     tapGesture.numberOfTapsRequired=1;
     [self.markerInfoView addGestureRecognizer:tapGesture];
@@ -87,6 +72,14 @@
     
     self.mapView.displayHeadingCalibration=YES;
     
+    for (id cache in self.mapView.tileCache.tileCaches)
+    {
+        if ([cache isKindOfClass:[RMDatabaseCache class]])
+        {
+            RMDatabaseCache *dbCache = (RMDatabaseCache *)cache;
+            NSLog(@"db cache capacity %ld",(unsigned long)dbCache.capacity);
+        }
+    }
     
     [self.view addSubview:self.mapView];
     [self.view sendSubviewToBack:self.mapView];
@@ -141,7 +134,6 @@
     return _activityBarButton;
 }
 
-
 -(UIActionSheet *)searchRMMarkerActionSheet{
     if(!_searchRMMarkerActionSheet){
         _searchRMMarkerActionSheet=[[UIActionSheet alloc] initWithTitle:nil
@@ -151,6 +143,13 @@
                                                       otherButtonTitles:@"Add to Routine",@"Clear Search Result", nil];
     }
     return _searchRMMarkerActionSheet;
+}
+
+#pragma mark - override
+-(void)handleCurrentSlideMarkers:(NSArray *)currentSlideMarkers{
+   
+    [self.markerInfoView setHidden:YES];
+    
 }
 
 #pragma mark - UI action
@@ -176,6 +175,10 @@
 
 - (IBAction)PlayButtonClick:(id)sender {
     [self slidePlayClick];
+    
+    if(!self.currentMarker){
+        [self.markerInfoView setHidden:YES];
+    }
 }
 
 - (IBAction)PrevButtonClick:(id)sender {
@@ -223,7 +226,6 @@
 }
 
 -(void)markerInfoViewClick{
-    //self.currentMarker=annotation.userInfo;
     if(self.currentMarker){
         [self performSegueWithIdentifier:@"markerDetailSegue" sender:self.currentMarker];
     }
@@ -496,9 +498,9 @@
 }
 
 -(void)showMarkInfoViewByMMMarker:(MMMarker *)marker{
-    self.markerInfoTitleLabel.text=marker.title;
-    self.markerInfoSubLabel.text=[NSString stringWithFormat:@"%@ %@",marker.categoryName,marker.slideNum];
-    self.markerInfoContentLabel.text=marker.mycomment;
+    self.markerInfoView.markerInfoTitleLabel.text=marker.title;
+    self.markerInfoView.markerInfoSubLabel.text=[NSString stringWithFormat:@"%@ %@",marker.categoryName,marker.slideNum];
+    self.markerInfoView.markerInfoContentLabel.text=marker.mycomment;
     [self.markerInfoView setHidden:NO];
 }
 

@@ -36,6 +36,8 @@
         tileSource =[[RMMapboxSource alloc] initWithMapID:streetMapId];
     }
     
+    [tileSource setCacheable:YES];
+    
     RMMapView *view=[[RMMapView alloc] initWithFrame:self.view.bounds
                                        andTilesource:tileSource];
     for (id cache in view.tileCache.tileCaches)
@@ -44,6 +46,7 @@
         {
             RMDatabaseCache *dbCache = (RMDatabaseCache *)cache;
             [dbCache setCapacity:50000];
+            [dbCache setExpiryPeriod:0];
             break;
         }
     }

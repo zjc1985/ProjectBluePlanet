@@ -46,7 +46,6 @@
 		288B09AD1B0320B200066C59 /* CloudManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 288B09AC1B0320B200066C59 /* CloudManager.m */; };
 		288B09B11B03222A00066C59 /* AVOSCloudTester.m in Sources */ = {isa = PBXBuildFile; fileRef = 288B09B01B03222A00066C59 /* AVOSCloudTester.m */; };
 		288B09B41B0328D700066C59 /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 288B09B31B0328D700066C59 /* LoginViewController.m */; };
-		2894ABAA1AEE27D500A943D1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2894ABA91AEE27D500A943D1 /* Main.storyboard */; };
 		28A1E92E1B5E5F9200DD0339 /* GooglePlaceDetail.m in Sources */ = {isa = PBXBuildFile; fileRef = 28A1E92D1B5E5F9200DD0339 /* GooglePlaceDetail.m */; };
 		28B4C1F51B5E54B400C1C9BF /* GooglePredictionResult.m in Sources */ = {isa = PBXBuildFile; fileRef = 28B4C1F41B5E54B400C1C9BF /* GooglePredictionResult.m */; };
 		28C442E41B2A859200DDC54C /* MMSearchedOvMarker.m in Sources */ = {isa = PBXBuildFile; fileRef = 28C442E31B2A859200DDC54C /* MMSearchedOvMarker.m */; };
@@ -64,6 +63,7 @@
 		28F56C821B450B6B00CFC4AC /* PlaceSearchResult.m in Sources */ = {isa = PBXBuildFile; fileRef = 28F56C811B450B6B00CFC4AC /* PlaceSearchResult.m */; };
 		28F56CB71B5CFB9F00CFC4AC /* GooglePlaceManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 28F56CB61B5CFB9F00CFC4AC /* GooglePlaceManager.m */; };
 		53ED110BC35C2D004D4FC1C8 /* libPods-MyMapBox.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DDCD2D0DA0362384E0FDE0D7 /* libPods-MyMapBox.a */; };
+		84107B4B1B85D16D007BFFB2 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 84107B4D1B85D16D007BFFB2 /* Main.storyboard */; };
 		8421CB151ADBF8FA002046B9 /* RoutineInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8421CB141ADBF8FA002046B9 /* RoutineInfoViewController.m */; };
 		8421CB181ADC04D0002046B9 /* RoutineDetailMapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8421CB171ADC04D0002046B9 /* RoutineDetailMapViewController.m */; };
 		845EB1F51AEE7B2500C719CA /* MMRoutineCachHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 845EB1F41AEE7B2500C719CA /* MMRoutineCachHelper.m */; };
@@ -160,7 +160,6 @@
 		288B09B01B03222A00066C59 /* AVOSCloudTester.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVOSCloudTester.m; sourceTree = "<group>"; };
 		288B09B21B0328D700066C59 /* LoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoginViewController.h; sourceTree = "<group>"; };
 		288B09B31B0328D700066C59 /* LoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoginViewController.m; sourceTree = "<group>"; };
-		2894ABA91AEE27D500A943D1 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		28A1E92C1B5E5F9200DD0339 /* GooglePlaceDetail.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GooglePlaceDetail.h; sourceTree = "<group>"; };
 		28A1E92D1B5E5F9200DD0339 /* GooglePlaceDetail.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GooglePlaceDetail.m; sourceTree = "<group>"; };
 		28B4C1F31B5E54B400C1C9BF /* GooglePredictionResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GooglePredictionResult.h; sourceTree = "<group>"; };
@@ -193,6 +192,9 @@
 		28F56CB51B5CFB9F00CFC4AC /* GooglePlaceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GooglePlaceManager.h; sourceTree = "<group>"; };
 		28F56CB61B5CFB9F00CFC4AC /* GooglePlaceManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GooglePlaceManager.m; sourceTree = "<group>"; };
 		75CCC0929762C871D62FA854 /* Pods-MyMapBoxTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MyMapBoxTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-MyMapBoxTests/Pods-MyMapBoxTests.debug.xcconfig"; sourceTree = "<group>"; };
+		84107B4C1B85D16D007BFFB2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		84107B4E1B85D19F007BFFB2 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Main.strings"; sourceTree = "<group>"; };
+		84107B4F1B85D19F007BFFB2 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/LaunchScreen.strings"; sourceTree = "<group>"; };
 		8421CB131ADBF8FA002046B9 /* RoutineInfoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RoutineInfoViewController.h; sourceTree = "<group>"; };
 		8421CB141ADBF8FA002046B9 /* RoutineInfoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RoutineInfoViewController.m; sourceTree = "<group>"; };
 		8421CB161ADC04D0002046B9 /* RoutineDetailMapViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RoutineDetailMapViewController.h; sourceTree = "<group>"; };
@@ -334,7 +336,7 @@
 			isa = PBXGroup;
 			children = (
 				285E43291AD61E720030A274 /* Images.xcassets */,
-				2894ABA91AEE27D500A943D1 /* Main.storyboard */,
+				84107B4D1B85D16D007BFFB2 /* Main.storyboard */,
 				285E432B1AD61E720030A274 /* LaunchScreen.xib */,
 				28E261C81B00535A0019611C /* MyMapBox.xcdatamodeld */,
 			);
@@ -533,7 +535,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2894ABAA1AEE27D500A943D1 /* Main.storyboard in Resources */,
+				84107B4B1B85D16D007BFFB2 /* Main.storyboard in Resources */,
 				285E432D1AD61E720030A274 /* LaunchScreen.xib in Resources */,
 				285E432A1AD61E720030A274 /* Images.xcassets in Resources */,
 			);
@@ -699,8 +701,18 @@
 			isa = PBXVariantGroup;
 			children = (
 				285E432C1AD61E720030A274 /* Base */,
+				84107B4F1B85D19F007BFFB2 /* zh-Hans */,
 			);
 			name = LaunchScreen.xib;
+			sourceTree = "<group>";
+		};
+		84107B4D1B85D16D007BFFB2 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				84107B4C1B85D16D007BFFB2 /* Base */,
+				84107B4E1B85D19F007BFFB2 /* zh-Hans */,
+			);
+			name = Main.storyboard;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

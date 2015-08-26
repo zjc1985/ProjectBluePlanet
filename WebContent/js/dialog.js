@@ -382,7 +382,7 @@ function MarkerEditor(id){
 		items.push({url:"resource/icons/overview_car.png",name:""});
 		items.push({url:"resource/icons/overview_star.png",name:""});
 		*/
-		for(var i=0;i<12;i++){
+		for(var i=0;i<20;i++){
 			items.push({url:"resource/icons/ov_"+i+".png",name:""});
 		}
 		

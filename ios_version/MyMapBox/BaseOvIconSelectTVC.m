@@ -22,7 +22,7 @@
 -(NSArray *)allOvIconUrls{
     if(!_allOvIconUrls){
         NSMutableArray *urlArray=[[NSMutableArray alloc]init];
-        for (NSUInteger i=0; i<12; i++) {
+        for (NSUInteger i=0; i<20; i++) {
             NSString *url=[NSString stringWithFormat:@"ov_%lu.png",(unsigned long)i];
             [urlArray addObject:url];
         }

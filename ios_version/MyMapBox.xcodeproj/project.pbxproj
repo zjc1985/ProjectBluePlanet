@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		280FBA9F1B8DC6B700B2CBFC /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 280FBAA11B8DC6B700B2CBFC /* Localizable.strings */; };
 		28252EA91B40DB2F0057C51D /* PlaceSearchResult+Dao.m in Sources */ = {isa = PBXBuildFile; fileRef = 28252EA81B40DB2F0057C51D /* PlaceSearchResult+Dao.m */; };
 		28252EAF1B40E5000057C51D /* ApplePlaceSearchTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 28252EAE1B40E5000057C51D /* ApplePlaceSearchTVC.m */; };
 		28307D521B1D7E060050AA58 /* MMMarkerIconInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 28307D511B1D7E060050AA58 /* MMMarkerIconInfo.m */; };
@@ -84,6 +85,8 @@
 
 /* Begin PBXFileReference section */
 		21A0A51ABFCCA5850AF318AF /* Pods-MyMapBoxTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MyMapBoxTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-MyMapBoxTests/Pods-MyMapBoxTests.release.xcconfig"; sourceTree = "<group>"; };
+		280FBAA01B8DC6B700B2CBFC /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
+		280FBAA21B8DC6BB00B2CBFC /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Localizable.strings; sourceTree = "<group>"; };
 		28252EA71B40DB2F0057C51D /* PlaceSearchResult+Dao.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PlaceSearchResult+Dao.h"; sourceTree = "<group>"; };
 		28252EA81B40DB2F0057C51D /* PlaceSearchResult+Dao.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "PlaceSearchResult+Dao.m"; sourceTree = "<group>"; };
 		28252EAD1B40E5000057C51D /* ApplePlaceSearchTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApplePlaceSearchTVC.h; sourceTree = "<group>"; };
@@ -339,6 +342,7 @@
 				84107B4D1B85D16D007BFFB2 /* Main.storyboard */,
 				285E432B1AD61E720030A274 /* LaunchScreen.xib */,
 				28E261C81B00535A0019611C /* MyMapBox.xcdatamodeld */,
+				280FBAA11B8DC6B700B2CBFC /* Localizable.strings */,
 			);
 			name = resource;
 			sourceTree = "<group>";
@@ -536,6 +540,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				84107B4B1B85D16D007BFFB2 /* Main.storyboard in Resources */,
+				280FBA9F1B8DC6B700B2CBFC /* Localizable.strings in Resources */,
 				285E432D1AD61E720030A274 /* LaunchScreen.xib in Resources */,
 				285E432A1AD61E720030A274 /* Images.xcassets in Resources */,
 			);
@@ -697,6 +702,15 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		280FBAA11B8DC6B700B2CBFC /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				280FBAA01B8DC6B700B2CBFC /* zh-Hans */,
+				280FBAA21B8DC6BB00B2CBFC /* Base */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
 		285E432B1AD61E720030A274 /* LaunchScreen.xib */ = {
 			isa = PBXVariantGroup;
 			children = (

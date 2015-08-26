@@ -1,0 +1,16 @@
+/* 
+  Localizable.strings
+  MyMapBox
+
+  Created by bizappman on 8/26/15.
+  Copyright (c) 2015 yufu. All rights reserved.
+*/
+"My World" = "我的世界";
+"Cancel"="取消";
+"Add Marker in Center"="在屏幕中心添加";
+"Add Marker with Image"="使用照片提供位置";
+"Add Marker in Current Location"="在目前的位置添加";
+"Search with center location"="在屏幕中心位置搜索";
+"Explore"="探索";
+"Explore %@'s World"="探索%@的世界";
+"Owned By %@"="由%@创建";

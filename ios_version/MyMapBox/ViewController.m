@@ -25,7 +25,6 @@
 #define SHOW_ROUTINE_INFO_SEGUE @"showRoutineInfoSegue"
 #define ADD_ROUTINE_SEGUE @"AddRoutineInfoSegue"
 #define LOGIN_SEGUE @"LoginSegue"
-#define VIEW_TITLE_NAME @"My World"
 
 @interface ViewController ()<RMMapViewDelegate>
 
@@ -83,7 +82,7 @@
     NSLog(@"Syncing routine and ovMarkers");
     [CloudManager syncRoutinesAndOvMarkersWithBlockWhenDone:^(NSError *error) {
         NSLog(@"syncing routine and ovMarkers complete");
-        self.title=VIEW_TITLE_NAME;
+        self.title=NSLocalizedString(@"My World", nil);
         if(error){
             NSLog(@"error happend: %@",error.localizedDescription);
         }
@@ -239,7 +238,7 @@
         
         UIImage *iconImage=[UIImage imageNamed:ovMarker.iconUrl];
         if(!iconImage){
-            iconImage=[UIImage imageNamed:@"default_default.png"];
+            iconImage=[UIImage imageNamed:@"ov_0.png"];
         }
         
         RMMarker *marker = [[RMMarker alloc] initWithUIImage:iconImage];

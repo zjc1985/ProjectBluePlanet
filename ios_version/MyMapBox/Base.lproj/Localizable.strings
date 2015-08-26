@@ -1,0 +1,17 @@
+/* 
+  Localizable.strings
+  MyMapBox
+
+  Created by bizappman on 8/26/15.
+  Copyright (c) 2015 yufu. All rights reserved.
+*/
+"My World"="My World";
+"Cancel"="Cancel";
+"Add Marker in Center"="Add Marker in Center";
+"Add Marker with Image"="Add Marker with Image";
+"Add Marker in Current Location"="Add Marker in Current Location";
+"Search with center location"="Search with center location";
+"Explore"="Explore";
+"Explore %@'s World"="Explore %@'s World";
+"Owned By %@"="Owned By %@";
+

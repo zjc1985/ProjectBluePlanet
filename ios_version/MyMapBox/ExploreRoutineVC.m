@@ -102,9 +102,9 @@ typedef enum : NSUInteger {
 - (IBAction)searchButtonClick:(id)sender {
     UIActionSheet *sheet=[[UIActionSheet alloc] initWithTitle:nil
                                                      delegate:self
-                                            cancelButtonTitle:@"Cancel"
+                                            cancelButtonTitle:NSLocalizedString(@"Cancel",nil)
                                        destructiveButtonTitle:nil
-                                            otherButtonTitles:@"Search with center location", nil];
+                                            otherButtonTitles:NSLocalizedString(@"Search with center location",nil), nil];
     [sheet showInView:self.view];
 }
 
@@ -139,7 +139,7 @@ typedef enum : NSUInteger {
                                     self.searchedRoutines=routines;
                                     [self updateMapUI];
                                 }else{
-                                    self.title=@"Explore";
+                                    self.title=NSLocalizedString(@"Explore", nil);
                                     [CommonUtil alert:[error localizedDescription]];
                                 }
                             }];
@@ -168,7 +168,7 @@ typedef enum : NSUInteger {
                                      withPage:[NSNumber numberWithUnsignedInteger:1]
                             withBlockWhenDone:^(NSError *error, NSArray *routines) {
                                 [self initNewCachResults];
-                                self.title=@"Explore";
+                                self.title=NSLocalizedString(@"Explore", nil);
                                 self.currentPageNum=1;
                                 if(!error){
                                     self.centerToolBarItem.title=[NSString stringWithFormat:@"Page %lu",(unsigned long)self.currentPageNum];
@@ -238,7 +238,7 @@ typedef enum : NSUInteger {
         
         UIImage *iconImage=[UIImage imageNamed:ovMarker.iconUrl];
         if(!iconImage){
-            iconImage=[UIImage imageNamed:@"default_default.png"];
+            iconImage=[UIImage imageNamed:@"ov_0.png"];
         }
         
         RMMarker *marker = [[RMMarker alloc] initWithUIImage: iconImage anchorPoint:anchorPoint];

@@ -215,9 +215,12 @@
 - (IBAction)addMarker:(id)sender {
     UIActionSheet *sheet=[[UIActionSheet alloc] initWithTitle:nil
                                                      delegate:self
-                                            cancelButtonTitle:@"Cancel"
+                                            cancelButtonTitle:NSLocalizedString(@"Cancel", nil)
                                        destructiveButtonTitle:nil
-                                            otherButtonTitles:@"Add Marker in Center",@"Add Marker with Image",@"Add Marker in Current Location", nil];
+                                            otherButtonTitles:NSLocalizedString(@"Add Marker in Center",nil),
+                          NSLocalizedString(@"Add Marker with Image",nil),
+                          NSLocalizedString(@"Add Marker in Current Location",nil),
+                          nil];
     [sheet showInView:self.view];
 }
 

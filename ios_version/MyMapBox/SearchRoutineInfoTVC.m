@@ -38,11 +38,9 @@
 -(void)viewDidAppear:(BOOL)animated{
     [self.tabBarController.tabBar setHidden:YES];
     self.titleLabel.text=self.routine.title;
-    self.subTitleLabel.text=[NSString stringWithFormat:@"Owned By %@",self.routine.userName];
+    self.subTitleLabel.text=[NSString stringWithFormat:NSLocalizedString(@"Owned By %@", nil) ,self.routine.userName];
     self.desTextView.text=self.routine.mycomment;
-    [self.exploreButton setTitle:[NSString stringWithFormat:@"Explore %@'s World",self.routine.userName] forState:UIControlStateNormal];
-    
-    
+    [self.exploreButton setTitle:[NSString stringWithFormat:NSLocalizedString(@"Explore %@'s World", nil) ,self.routine.userName] forState:UIControlStateNormal];
 }
 
 

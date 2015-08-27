@@ -138,9 +138,12 @@
     if(!_searchRMMarkerActionSheet){
         _searchRMMarkerActionSheet=[[UIActionSheet alloc] initWithTitle:nil
                                                                delegate:self
-                                                      cancelButtonTitle:@"Cancel"
+                                                      cancelButtonTitle:NSLocalizedString(@"Cancel", nil)
                                                  destructiveButtonTitle:nil
-                                                      otherButtonTitles:@"Add to Routine",@"Clear Search Result", nil];
+                                                      otherButtonTitles:
+                                    NSLocalizedString(@"Add to Routine",nil),
+                                    NSLocalizedString(@"Clear Search Result",nil),
+                                    nil];
     }
     return _searchRMMarkerActionSheet;
 }

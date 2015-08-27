@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		280FBA9F1B8DC6B700B2CBFC /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 280FBAA11B8DC6B700B2CBFC /* Localizable.strings */; };
+		280FBAA61B8EE71100B2CBFC /* PrivacyVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 280FBAA51B8EE71100B2CBFC /* PrivacyVC.m */; };
+		280FBAAE1B8EEDE900B2CBFC /* PrivacyPolicy.strings in Resources */ = {isa = PBXBuildFile; fileRef = 280FBAB01B8EEDE900B2CBFC /* PrivacyPolicy.strings */; };
 		28252EA91B40DB2F0057C51D /* PlaceSearchResult+Dao.m in Sources */ = {isa = PBXBuildFile; fileRef = 28252EA81B40DB2F0057C51D /* PlaceSearchResult+Dao.m */; };
 		28252EAF1B40E5000057C51D /* ApplePlaceSearchTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 28252EAE1B40E5000057C51D /* ApplePlaceSearchTVC.m */; };
 		28307D521B1D7E060050AA58 /* MMMarkerIconInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 28307D511B1D7E060050AA58 /* MMMarkerIconInfo.m */; };
@@ -87,6 +89,11 @@
 		21A0A51ABFCCA5850AF318AF /* Pods-MyMapBoxTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MyMapBoxTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-MyMapBoxTests/Pods-MyMapBoxTests.release.xcconfig"; sourceTree = "<group>"; };
 		280FBAA01B8DC6B700B2CBFC /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		280FBAA21B8DC6BB00B2CBFC /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Localizable.strings; sourceTree = "<group>"; };
+		280FBAA41B8EE71100B2CBFC /* PrivacyVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrivacyVC.h; sourceTree = "<group>"; };
+		280FBAA51B8EE71100B2CBFC /* PrivacyVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrivacyVC.m; sourceTree = "<group>"; };
+		280FBAAB1B8EED1F00B2CBFC /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Main.strings"; sourceTree = "<group>"; };
+		280FBAAF1B8EEDE900B2CBFC /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/PrivacyPolicy.strings"; sourceTree = "<group>"; };
+		280FBAB11B8EEDED00B2CBFC /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/PrivacyPolicy.strings; sourceTree = "<group>"; };
 		28252EA71B40DB2F0057C51D /* PlaceSearchResult+Dao.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PlaceSearchResult+Dao.h"; sourceTree = "<group>"; };
 		28252EA81B40DB2F0057C51D /* PlaceSearchResult+Dao.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "PlaceSearchResult+Dao.m"; sourceTree = "<group>"; };
 		28252EAD1B40E5000057C51D /* ApplePlaceSearchTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApplePlaceSearchTVC.h; sourceTree = "<group>"; };
@@ -196,7 +203,6 @@
 		28F56CB61B5CFB9F00CFC4AC /* GooglePlaceManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GooglePlaceManager.m; sourceTree = "<group>"; };
 		75CCC0929762C871D62FA854 /* Pods-MyMapBoxTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MyMapBoxTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-MyMapBoxTests/Pods-MyMapBoxTests.debug.xcconfig"; sourceTree = "<group>"; };
 		84107B4C1B85D16D007BFFB2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		84107B4E1B85D19F007BFFB2 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Main.strings"; sourceTree = "<group>"; };
 		84107B4F1B85D19F007BFFB2 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/LaunchScreen.strings"; sourceTree = "<group>"; };
 		8421CB131ADBF8FA002046B9 /* RoutineInfoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RoutineInfoViewController.h; sourceTree = "<group>"; };
 		8421CB141ADBF8FA002046B9 /* RoutineInfoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RoutineInfoViewController.m; sourceTree = "<group>"; };
@@ -343,6 +349,7 @@
 				285E432B1AD61E720030A274 /* LaunchScreen.xib */,
 				28E261C81B00535A0019611C /* MyMapBox.xcdatamodeld */,
 				280FBAA11B8DC6B700B2CBFC /* Localizable.strings */,
+				280FBAB01B8EEDE900B2CBFC /* PrivacyPolicy.strings */,
 			);
 			name = resource;
 			sourceTree = "<group>";
@@ -399,6 +406,8 @@
 				287D6D631B65D395009CFB56 /* AddRoutineOvIconSelectTVC.m */,
 				287D6D651B678D25009CFB56 /* RegisterVC.h */,
 				287D6D661B678D25009CFB56 /* RegisterVC.m */,
+				280FBAA41B8EE71100B2CBFC /* PrivacyVC.h */,
+				280FBAA51B8EE71100B2CBFC /* PrivacyVC.m */,
 			);
 			name = Controller;
 			sourceTree = "<group>";
@@ -541,6 +550,7 @@
 			files = (
 				84107B4B1B85D16D007BFFB2 /* Main.storyboard in Resources */,
 				280FBA9F1B8DC6B700B2CBFC /* Localizable.strings in Resources */,
+				280FBAAE1B8EEDE900B2CBFC /* PrivacyPolicy.strings in Resources */,
 				285E432D1AD61E720030A274 /* LaunchScreen.xib in Resources */,
 				285E432A1AD61E720030A274 /* Images.xcassets in Resources */,
 			);
@@ -644,6 +654,7 @@
 				288B09A81B01A12D00066C59 /* MMOvMarker+Dao.m in Sources */,
 				287D6D641B65D395009CFB56 /* AddRoutineOvIconSelectTVC.m in Sources */,
 				28E261FA1B0095CE0019611C /* MMMarker.m in Sources */,
+				280FBAA61B8EE71100B2CBFC /* PrivacyVC.m in Sources */,
 				286390811AE0AD7600A5B999 /* RoutineEditTVC.m in Sources */,
 				8421CB181ADC04D0002046B9 /* RoutineDetailMapViewController.m in Sources */,
 				283A21FE1B3B9F0E00F6DCA1 /* LikedRoutinesTVC.m in Sources */,
@@ -711,6 +722,15 @@
 			name = Localizable.strings;
 			sourceTree = "<group>";
 		};
+		280FBAB01B8EEDE900B2CBFC /* PrivacyPolicy.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				280FBAAF1B8EEDE900B2CBFC /* zh-Hans */,
+				280FBAB11B8EEDED00B2CBFC /* Base */,
+			);
+			name = PrivacyPolicy.strings;
+			sourceTree = "<group>";
+		};
 		285E432B1AD61E720030A274 /* LaunchScreen.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -724,7 +744,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				84107B4C1B85D16D007BFFB2 /* Base */,
-				84107B4E1B85D19F007BFFB2 /* zh-Hans */,
+				280FBAAB1B8EED1F00B2CBFC /* zh-Hans */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";

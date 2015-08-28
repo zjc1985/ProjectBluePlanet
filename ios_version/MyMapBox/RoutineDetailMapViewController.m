@@ -288,6 +288,7 @@
                 newMarker.title=self.searchResult.name;
                 newMarker.category=[NSNumber numberWithUnsignedInteger:CategorySight];
                 newMarker.iconUrl=@"sight_default.png";
+                newMarker.mycomment=self.searchResult.address;
                 break;
             }
             case clearSearchResult:{

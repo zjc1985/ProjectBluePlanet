@@ -8,8 +8,8 @@
 
 #import "ApplePlaceSearchTVC.h"
 #import "CommonUtil.h"
-#import "GooglePlaceManager.h"
 #import "GooglePredictionResult.h"
+#import "CloudManager.h"
 
 #define  SEARCH_COMPLETE_UNWIND_SEGUE @"searchCompleteUnwindSegue"
 
@@ -17,6 +17,8 @@
 
 @property(nonatomic,strong)NSArray *historyResults; //will do later
 @property(nonatomic,strong)NSArray *searchResults; //of GooglePredictionResult
+
+@property(nonatomic,strong)NSString *inputLanguage;
 
 @end
 
@@ -29,6 +31,13 @@
     self.searchDisplayController.searchBar.delegate=self;
 }
 #pragma mark - getter and setter
+-(NSString *)inputLanguage{
+    if(!_inputLanguage){
+        _inputLanguage=@"en";
+    }
+    return _inputLanguage;
+}
+
 -(NSArray *)searchResults{
     if(!_searchResults){
         _searchResults=[[NSArray alloc]init];
@@ -82,7 +91,7 @@
     if (tableView==self.searchDisplayController.searchResultsTableView) {
         GooglePredictionResult *predictResult=[self.searchResults objectAtIndex:indexPath.row];
         
-        [GooglePlaceManager details:predictResult.placeId withBlock:^(NSError *error, GooglePlaceDetail *placeDetail) {
+        [CloudManager details:predictResult.placeId withLanguage:self.inputLanguage withBlock:^(NSError *error, GooglePlaceDetail *placeDetail) {
             if(error){
                 NSLog(@"Search Request Error: %@", [error localizedDescription]);
                 [CommonUtil alert:@"No Results Found"];
@@ -99,6 +108,10 @@
 
 #pragma mark - search bar delegate
 - (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar{
+    UITextInputMode *inputMode = [searchBar textInputMode];
+    NSString *lang = inputMode.primaryLanguage;
+    NSLog(@"current input search language: %@",lang);
+    self.inputLanguage=lang;
     [self googlePlaceSearch:searchBar.text];
     //[self appleLocationSearch:searchBar.text];
 }
@@ -129,7 +142,7 @@
 }
 
 -(void)googlePlaceSearch:(NSString *)searchString{
-    [GooglePlaceManager autoQueryComplete:searchString withBlock:^(NSError *error, NSArray *autoQueryResultArray) {
+    [CloudManager autoQueryComplete:searchString withBlock:^(NSError *error, NSArray *autoQueryResultArray) {
         if(error){
             NSLog(@"Search Request Error: %@", [error localizedDescription]);
             [CommonUtil alert:@"No Results Found"];

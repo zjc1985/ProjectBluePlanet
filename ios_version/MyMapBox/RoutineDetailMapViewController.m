@@ -416,8 +416,8 @@
         MMMarker *modelMarker=annotation.userInfo;
         
         CGPoint anchorPoint;
-        anchorPoint.x=0.5;
-        anchorPoint.y=1;
+        anchorPoint.x=0.32;
+        anchorPoint.y=0.8;
         
         UIImage *iconImage=[UIImage imageNamed:modelMarker.iconUrl];
         

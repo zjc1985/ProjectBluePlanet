@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7531" systemVersion="14E46" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="NEI-FB-Adz">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7706" systemVersion="14D136" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="NEI-FB-Adz">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7520"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
@@ -1805,27 +1805,6 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="yxd-xt-tT5">
-                                        <rect key="frame" x="0.0" y="349" width="320" height="44"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="yxd-xt-tT5" id="mY0-eU-OMV">
-                                            <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="OIL-8V-AAt">
-                                                    <rect key="frame" x="0.0" y="7" width="320" height="30"/>
-                                                    <state key="normal" title="Follow">
-                                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                                    </state>
-                                                </button>
-                                            </subviews>
-                                            <constraints>
-                                                <constraint firstItem="OIL-8V-AAt" firstAttribute="leading" secondItem="mY0-eU-OMV" secondAttribute="leading" id="2Ek-Qv-rg8"/>
-                                                <constraint firstAttribute="trailing" secondItem="OIL-8V-AAt" secondAttribute="trailing" id="Qhh-Kk-J43"/>
-                                                <constraint firstItem="OIL-8V-AAt" firstAttribute="top" secondItem="mY0-eU-OMV" secondAttribute="topMargin" constant="-1" id="Z8i-oI-jpa"/>
-                                            </constraints>
-                                        </tableViewCellContentView>
-                                    </tableViewCell>
                                 </cells>
                             </tableViewSection>
                         </sections>
@@ -1834,9 +1813,16 @@
                             <outlet property="delegate" destination="Hgk-4s-Ix6" id="yh3-L0-Rzr"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" id="E1g-Jt-0GT"/>
+                    <navigationItem key="navigationItem" id="E1g-Jt-0GT">
+                        <barButtonItem key="rightBarButtonItem" image="icon_like" id="o7w-6o-2gJ">
+                            <connections>
+                                <action selector="likeButtonClick:" destination="Hgk-4s-Ix6" id="F8u-D5-BNX"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
                         <outlet property="descriptionLabel" destination="tud-pH-euO" id="hf3-H2-dqe"/>
+                        <outlet property="likeBarButton" destination="o7w-6o-2gJ" id="ZOJ-T9-hCU"/>
                         <outlet property="titleLabel" destination="WN6-KY-tfb" id="p9E-aM-WXg"/>
                     </connections>
                 </tableViewController>
@@ -2546,7 +2532,7 @@
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
         <segue reference="jqu-P0-wuD"/>
-        <segue reference="Crq-we-f5i"/>
         <segue reference="Drd-9N-wVI"/>
+        <segue reference="9hd-K2-6nC"/>
     </inferredMetricsTieBreakers>
 </document>

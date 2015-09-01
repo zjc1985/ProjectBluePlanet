@@ -15,7 +15,7 @@
 
 @interface ApplePlaceSearchTVC ()<UISearchBarDelegate>
 
-@property(nonatomic,strong)NSArray *historyResults; //will do later
+
 @property(nonatomic,strong)NSArray *searchResults; //of GooglePredictionResult
 
 @property(nonatomic,strong)NSString *inputLanguage;
@@ -54,7 +54,8 @@
 
 #pragma mark - UI Action
 - (IBAction)CancelButtonClick:(id)sender {
-    [self.presentingViewController dismissViewControllerAnimated:YES completion:nil];
+    //[self.presentingViewController dismissViewControllerAnimated:YES completion:nil];
+    [self performSegueWithIdentifier:SEARCH_COMPLETE_UNWIND_SEGUE sender:nil];
 }
 
 
@@ -74,35 +75,36 @@
     
     // Dequeue a cell from self's table view.
     UITableViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:kCellID];
-    
+    GooglePredictionResult *googlePredict;
     if(tableView==self.searchDisplayController.searchResultsTableView){
-        GooglePredictionResult *googlePredict=[self.searchResults objectAtIndex:indexPath.row];
-        
-        cell.textLabel.text=googlePredict.description;
-        cell.detailTextLabel.text=googlePredict.description;
+        googlePredict=[self.searchResults objectAtIndex:indexPath.row];
     }else{
-        
+        googlePredict=[self.historyResults objectAtIndex:indexPath.row];
     }
+    
+    cell.textLabel.text=googlePredict.description;
+    cell.detailTextLabel.text=googlePredict.description;
     
     return cell;
 }
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    GooglePredictionResult *predictResult;
     if (tableView==self.searchDisplayController.searchResultsTableView) {
-        GooglePredictionResult *predictResult=[self.searchResults objectAtIndex:indexPath.row];
-        
-        [CloudManager details:predictResult.placeId withLanguage:self.inputLanguage withBlock:^(NSError *error, GooglePlaceDetail *placeDetail) {
-            if(error){
-                NSLog(@"Search Request Error: %@", [error localizedDescription]);
-                [CommonUtil alert:@"No Results Found"];
-            }else{
-                self.selectedPlace=placeDetail;
-                [self performSegueWithIdentifier:SEARCH_COMPLETE_UNWIND_SEGUE sender:nil];
-            }
-        }];
+        predictResult=[self.searchResults objectAtIndex:indexPath.row];
     }else{
-        
+        predictResult=[self.historyResults objectAtIndex:indexPath.row];
     }
+    
+    [CloudManager details:predictResult.placeId withLanguage:self.inputLanguage withBlock:^(NSError *error, GooglePlaceDetail *placeDetail) {
+        if(error){
+            NSLog(@"Search Request Error: %@", [error localizedDescription]);
+            [CommonUtil alert:@"No Results Found"];
+        }else{
+            self.selectedPlace=placeDetail;
+            [self performSegueWithIdentifier:SEARCH_COMPLETE_UNWIND_SEGUE sender:nil];
+        }
+    }];
 }
 
 
@@ -148,7 +150,7 @@
             [CommonUtil alert:@"No Results Found"];
         }else{
             self.searchResults=autoQueryResultArray;
-            
+            self.historyResults=autoQueryResultArray;
         }
         NSLog(@"reload data");
         [self performSelectorOnMainThread:@selector(reloadSearchTableData) withObject:nil waitUntilDone:NO];

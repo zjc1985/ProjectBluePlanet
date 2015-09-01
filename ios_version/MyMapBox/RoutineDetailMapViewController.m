@@ -37,6 +37,8 @@
 
 
 @property(nonatomic,strong) GooglePlaceDetail *searchResult;
+@property(nonatomic,strong) NSMutableSet *lastSearchPredicts;
+
 @property(nonatomic,strong) UIActionSheet *searchRMMarkerActionSheet;
 
 @end
@@ -107,7 +109,7 @@
     if(self.searchResult){
         CLLocationCoordinate2D coord=CLLocationCoordinate2DMake([self.searchResult.lat doubleValue], [self.searchResult.lng doubleValue]);
         [self addMarkerWithTitle:self.searchResult.name withCoordinate:coord withCustomData:self.searchResult];
-        [self.mapView setCenterCoordinate:coord animated:YES];
+        [self.mapView setZoom:14 atCoordinate:coord animated:YES];
     }
 }
 
@@ -127,6 +129,13 @@
 }
 
 #pragma mark - getter and setter
+-(NSMutableSet *)lastSearchPredicts{
+    if(!_lastSearchPredicts){
+        _lastSearchPredicts=[[NSMutableSet alloc]init];
+    }
+    return _lastSearchPredicts;
+}
+
 -(UIBarButtonItem *)activityBarButton{
     if(!_activityBarButton){
         _activityBarButton=[[UIBarButtonItem alloc]initWithCustomView:self.activityIndicator];
@@ -250,16 +259,26 @@
         ApplePlaceSearchTVC *desTVC=navController.viewControllers[0];
         desTVC.minLocation=CLLocationCoordinate2DMake([self.routine minLatInMarkers], [self.routine minLngInMarkers]);
         desTVC.maxLocation=CLLocationCoordinate2DMake([self.routine maxLatInMarkers], [self.routine maxLngInMarkers]);
+        if(self.lastSearchPredicts){
+            desTVC.historyResults=[self.lastSearchPredicts allObjects];
+        }
     }
 }
 
 -(IBAction)searchDone:(UIStoryboardSegue *)segue{
     ApplePlaceSearchTVC *sourceTVC=segue.sourceViewController;
-    self.searchResult=sourceTVC.selectedPlace;
+    if(sourceTVC.selectedPlace){
+        self.searchResult=sourceTVC.selectedPlace;
+    }
+    if(sourceTVC.historyResults){
+        [self.lastSearchPredicts addObjectsFromArray:sourceTVC.historyResults];
+    }
 }
 
 -(IBAction)DeleteMarkerDone:(UIStoryboardSegue *)segue{
     self.currentMarker=nil;
+    //stop slide mode
+    self.slideIndicator=-1;
     
     NSLog(@"prepare delete marker");
     MarkerEditTVC *markerEditTVC=segue.sourceViewController;
@@ -432,13 +451,13 @@
         
         marker.canShowCallout=YES;
         
-        marker.rightCalloutAccessoryView=[UIButton buttonWithType:UIButtonTypeDetailDisclosure];
+        //marker.rightCalloutAccessoryView=[UIButton buttonWithType:UIButtonTypeDetailDisclosure];
         
         return marker;
     }else if ([annotation.userInfo isKindOfClass:[GooglePlaceDetail class]]){
         CGPoint anchorPoint;
-        anchorPoint.x=0.5;
-        anchorPoint.y=1;
+        anchorPoint.x=0.32;
+        anchorPoint.y=0.8;
         
         UIImage *iconImage=[UIImage imageNamed:@"search_default"];
         
@@ -500,6 +519,7 @@
         MMMarker *modelMarker=annotation.userInfo;
         [self showMarkInfoViewByMMMarker:modelMarker];
         self.currentMarker=modelMarker;
+        [self.mapView setCenterCoordinate:CLLocationCoordinate2DMake([modelMarker.lat doubleValue], [modelMarker.lng doubleValue]) animated:YES];
     }
     
 }

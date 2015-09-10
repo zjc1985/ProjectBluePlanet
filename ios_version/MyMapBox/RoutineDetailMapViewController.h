@@ -24,9 +24,8 @@ typedef enum : NSUInteger {
 } ActionSheetIndexForSearchResult;
 
 typedef enum : NSUInteger {
-    navigation_car = 0,
-    navigation_bus = 1,
-    navigation_walk = 2,
+    navigation_google = 1,
+    navigation_default = 0,
 } ActionSheetIndexForNavigation;
 
 

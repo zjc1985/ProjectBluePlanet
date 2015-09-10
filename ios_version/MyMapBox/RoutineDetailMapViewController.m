@@ -160,15 +160,26 @@
 
 -(UIActionSheet *)navigationActionSheet{
     if(!_navigationActionSheet){
-        _navigationActionSheet=[[UIActionSheet alloc] initWithTitle:nil
-                                                           delegate:self
-                                                  cancelButtonTitle:NSLocalizedString(@"Cancel", nil)
-                                             destructiveButtonTitle:nil
-                                                  otherButtonTitles:
-                                NSLocalizedString(@"Car",nil),
-                                NSLocalizedString(@"Bus",nil),
-                                NSLocalizedString(@"Walk",nil),
-                                nil];
+        if([[UIApplication sharedApplication] canOpenURL:
+            [NSURL URLWithString:@"comgooglemaps://"]]){
+            _navigationActionSheet=[[UIActionSheet alloc] initWithTitle:nil
+                                                               delegate:self
+                                                      cancelButtonTitle:NSLocalizedString(@"Cancel", nil)
+                                                 destructiveButtonTitle:nil
+                                                      otherButtonTitles:
+                                    NSLocalizedString(@"Map",nil),
+                                    NSLocalizedString(@"Google Map",nil),
+                                    nil];
+        }else{
+            _navigationActionSheet=[[UIActionSheet alloc] initWithTitle:nil
+                                                               delegate:self
+                                                      cancelButtonTitle:NSLocalizedString(@"Cancel", nil)
+                                                 destructiveButtonTitle:nil
+                                                      otherButtonTitles:
+                                    NSLocalizedString(@"Map",nil),
+                                    nil];
+        }
+        
     }
     return _navigationActionSheet;
 }
@@ -387,35 +398,14 @@
     MMMarker *currentMarker=self.currentMarker;
     NSString *urlString=nil;
     
-    if ([[UIApplication sharedApplication] canOpenURL:
-         [NSURL URLWithString:@"comgooglemaps://"]]) {
+    if (navType==navigation_google){
         
-        NSString *navTypeString;
-        switch (navType) {
-            case navigation_car:
-                navTypeString=@"driving";
-                break;
-            case navigation_bus:
-                navTypeString=@"transit";
-                break;
-            case navigation_walk:
-                navTypeString=@"walking";
-                break;
-            default:
-                navTypeString=@"driving";
-                break;
-        }
-        
-        
-        urlString=[NSString stringWithFormat:@"comgooglemaps://?saddr=%@,%@&daddr=%@,%@&directionsmode=%@", @(self.mapView.userLocation.coordinate.latitude),
+        urlString=[NSString stringWithFormat:@"comgooglemaps://?saddr=%@,%@&daddr=%@,%@", @(self.mapView.userLocation.coordinate.latitude),
                                    @(self.mapView.userLocation.coordinate.longitude),
                                    [currentMarker.lat stringValue],
-                                   [currentMarker.lng stringValue],
-                                    navTypeString];
-        
-       
+                                   [currentMarker.lng stringValue]];
     }else{
-        //if no google map found, use apple map instead
+        //else, use local map instead
         urlString=[NSString stringWithFormat:@"http://maps.apple.com/?saddr=%@,%@&daddr=%@,%@",
                    @(self.mapView.userLocation.coordinate.latitude),
                    @(self.mapView.userLocation.coordinate.longitude),

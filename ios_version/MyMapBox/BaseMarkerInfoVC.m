@@ -54,7 +54,7 @@
     if(imageUrlString){
         NSURL *url=[NSURL URLWithString:imageUrlString];
         [self.markerImage sd_setImageWithURL:url
-                            placeholderImage:[UIImage imageNamed:@"login_image"]
+                            placeholderImage:[UIImage imageNamed:@"defaultMarkerImage"]
                                    completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
                                        if(!error){
                                            self.markerImage.contentMode=UIViewContentModeScaleAspectFill;

@@ -334,6 +334,9 @@ function MarkerEditor(id){
 	function genALIconItems(){
 		return [
 			{url:"resource/icons/al_default.png",name:""},
+			{url:"resource/icons/al_4.png",name:""},
+			{url:"resource/icons/al_3.png",name:""},
+			{url:"resource/icons/al_2.png",name:""},
 			{url:"resource/icons/al_1.png",name:""}
 		];
 	}
@@ -342,6 +345,7 @@ function MarkerEditor(id){
 		return [
 			{url:"resource/icons/sight_default.png",name:""},
 			{url:"resource/icons/sight_1.png",name:""},
+			{url:"resource/icons/sight_3.png",name:""},
 			{url:"resource/icons/sight_2.png",name:""}
 		];
 	}
@@ -364,8 +368,7 @@ function MarkerEditor(id){
 		return [
 			{url:"resource/icons/event_default.png",name:""},
 			{url:"resource/icons/event_1.png",name:""},
-			{url:"resource/icons/event_2.png",name:""},
-			{url:"resource/icons/event_3.png",name:""},
+			{url:"resource/icons/event_2.png",name:""}
 		];			
 	}
 	
@@ -382,7 +385,7 @@ function MarkerEditor(id){
 		items.push({url:"resource/icons/overview_car.png",name:""});
 		items.push({url:"resource/icons/overview_star.png",name:""});
 		*/
-		for(var i=0;i<12;i++){
+		for(var i=0;i<20;i++){
 			items.push({url:"resource/icons/ov_"+i+".png",name:""});
 		}
 		

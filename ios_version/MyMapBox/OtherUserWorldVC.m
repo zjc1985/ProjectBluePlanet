@@ -84,6 +84,14 @@
     }
 }
 
+
+
+//override
+-(void)singleTapOnMap:(RMMapView *)map at:(CGPoint)point{
+    //do nothing
+}
+
+//override
 -(void)tapOnCalloutAccessoryControl:(UIControl *)control forAnnotation:(RMAnnotation *)annotation onMap:(RMMapView *)map{
     if([annotation.userInfo isKindOfClass:[MMSearchedOvMarker class]]){
         MMSearchedOvMarker *ovMarker=annotation.userInfo;

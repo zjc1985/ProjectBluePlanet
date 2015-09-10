@@ -35,4 +35,6 @@
 
 -(void)slidePrevClick;
 
+-(void)handleCurrentSlideMarkers:(NSArray *)currentSlideMarkers;
+
 @end

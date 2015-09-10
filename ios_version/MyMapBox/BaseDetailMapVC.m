@@ -18,6 +18,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    //turn off auto gesture to goback
+    self.navigationController.interactivePopGestureRecognizer.enabled = NO;
 }
 
 -(RMMapView *)defaultRMMapView{
@@ -34,8 +36,23 @@
         tileSource =[[RMMapboxSource alloc] initWithMapID:streetMapId];
     }
     
-    return [[RMMapView alloc] initWithFrame:self.view.bounds
-                                    andTilesource:tileSource];
+    [tileSource setCacheable:YES];
+    
+    RMMapView *view=[[RMMapView alloc] initWithFrame:self.view.bounds
+                                       andTilesource:tileSource];
+    for (id cache in view.tileCache.tileCaches)
+    {
+        if ([cache isKindOfClass:[RMDatabaseCache class]])
+        {
+            RMDatabaseCache *dbCache = (RMDatabaseCache *)cache;
+            [dbCache setCapacity:50000];
+            [dbCache setExpiryPeriod:0];
+            break;
+        }
+    }
+    
+    
+    return view;
 }
 
 -(void)addMarkerWithTitle:(NSString *)title withCoordinate:(CLLocationCoordinate2D)coordinate withCustomData:(id)customData{
@@ -51,8 +68,6 @@
         [self updateUIInNormalMode];
     }else{
         [self updateUIInSlideMode];
-        //strange that some marker will not animated until call updateUISlidemode twice...
-        //[self updateUIInSlideMode];
     }
 }
 
@@ -105,6 +120,11 @@
     
     [self animateMMMarkers:currentSlideIndicatorMarkers];
     
+    [self handleCurrentSlideMarkers:currentSlideIndicatorMarkers];
+}
+
+-(void)handleCurrentSlideMarkers:(NSArray *)currentSlideMarkers{
+    //NSAssert(NO, @"abstract method , implment it in its sub class");
 }
 
 -(void)animateMMMarkers:(NSArray *)markers{

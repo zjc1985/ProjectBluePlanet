@@ -60,16 +60,31 @@
 
  }
  
- - (void)tileCache:(RMTileCache *)tileCache didBackgroundCacheTile:(RMTile)tile withIndex:(NSUInteger)tileIndex ofTotalTileCount:(NSUInteger)totalTileCount{
-     NSLog(@"MMRoutineCachHelper caching currrent num: %u with total count %u",tileIndex,totalTileCount);
+ -(void)tileCache:(RMTileCache *)tileCache didBackgroundCacheTile:(RMTile)tile withIndex:(NSUInteger)tileIndex ofTotalTileCount:(NSUInteger)totalTileCount{
+     NSLog(@"MMRoutineCachHelper caching currrent num: %lu with total count %lu",(unsigned long)tileIndex,(unsigned long)totalTileCount);
      float progress=(float)tileIndex/(float)totalTileCount;
  
      self.currentCachRoutine.cachProgress=[NSNumber numberWithFloat: progress];
  
-     if(tileIndex==totalTileCount){
-         NSLog(@"%@ Cach Complete",self.currentCachRoutine.title);         
-         self.currentCachRoutine=nil;
-     }
+     
  }
+
+-(void)tileCache:(RMTileCache *)tileCache didReceiveError:(NSError *)error whenCachingTile:(RMTile)tile{
+    NSLog(@"Cach error:%@",error.localizedDescription);
+    self.currentCachRoutine.cachProgress=[NSNumber numberWithUnsignedInteger:0];
+    self.currentCachRoutine=nil;
+}
+
+-(void)tileCacheDidCancelBackgroundCache:(RMTileCache *)tileCache{
+    NSLog(@"Cach cancel");
+    self.currentCachRoutine.cachProgress=[NSNumber numberWithUnsignedInteger:0];
+    self.currentCachRoutine=nil;
+}
+
+-(void)tileCacheDidFinishBackgroundCache:(RMTileCache *)tileCache{
+    NSLog(@"Cach did finish");
+    self.currentCachRoutine.cachProgress=[NSNumber numberWithUnsignedInteger:1];
+    self.currentCachRoutine=nil;
+}
 
 @end

@@ -38,7 +38,7 @@
 
 +(BOOL)isFastNetWork{
     NSNumber *networkType=[self dataNetworkTypeFromStatusBar];
-    NSLog(@"net work type: %i",[networkType integerValue]);
+    NSLog(@"net work type: %@",@([networkType integerValue]));
     if([networkType integerValue]>1){
         return YES;
     }else{

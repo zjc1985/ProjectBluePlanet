@@ -35,12 +35,16 @@
     //arrive leave
     [result addObject:[MMMarkerIconInfo initWithIconName:@"al_default.png" withCategory:CategoryArrivalLeave]];
     [result addObject:[MMMarkerIconInfo initWithIconName:@"al_1.png" withCategory:CategoryArrivalLeave]];
+    [result addObject:[MMMarkerIconInfo initWithIconName:@"al_2.png" withCategory:CategoryArrivalLeave]];
+    [result addObject:[MMMarkerIconInfo initWithIconName:@"al_3.png" withCategory:CategoryArrivalLeave]];
+    [result addObject:[MMMarkerIconInfo initWithIconName:@"al_4.png" withCategory:CategoryArrivalLeave]];
     
     //sight
-    [result addObject:[MMMarkerIconInfo initWithIconName:@"default_default.png" withCategory:CategorySight]];
+    //[result addObject:[MMMarkerIconInfo initWithIconName:@"default_default.png" withCategory:CategorySight]];
     [result addObject:[MMMarkerIconInfo initWithIconName:@"sight_default.png" withCategory:CategorySight]];
     [result addObject:[MMMarkerIconInfo initWithIconName:@"sight_1.png" withCategory:CategorySight]];
     [result addObject:[MMMarkerIconInfo initWithIconName:@"sight_2.png" withCategory:CategorySight]];
+    [result addObject:[MMMarkerIconInfo initWithIconName:@"sight_3.png" withCategory:CategorySight]];
     
     //info event
     [result addObject:[MMMarkerIconInfo initWithIconName:@"event_default.png" withCategory:CategoryInfo]];

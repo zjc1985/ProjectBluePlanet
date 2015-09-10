@@ -21,4 +21,7 @@
 //out
 @property(nonatomic,strong)GooglePlaceDetail *selectedPlace;
 
+//in & out
+@property(nonatomic,strong)NSArray *historyResults; //will do later
+
 @end

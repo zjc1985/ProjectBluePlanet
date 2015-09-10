@@ -14,6 +14,7 @@
 #import "CommonUtil.h"
 #import "MMSearchedOvMarker.h"
 #import "MMSearchdeMarker.h"
+#import "GooglePredictionResult.h"
 
 #define KEY_RESPONSE_ROUTINES_UPDATED @"routinesUpdate"
 #define KEY_RESPONSE_ROUTINES_NEW   @"routinesNew"
@@ -31,7 +32,48 @@
 #define KEY_RESPONSE_MARKERS_DELETE @"markersDelete"
 
 @implementation CloudManager
+#pragma mark - place query feature
++(void)autoQueryComplete:(NSString *)input withBlock:(void (^)(NSError *, NSArray *))block{
+    NSMutableDictionary *params=[[NSMutableDictionary alloc]init];
+    NSString *inputString=[input stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    [params setObject:inputString forKey:@"input"];
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+    [AVCloud callFunctionInBackground:@"autocomplete" withParameters:params block:^(id object, NSError *error) {
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+        if(!error){
+            NSDictionary *dictionary=object;
+            NSArray *predictionsArray=[dictionary objectForKey:@"predictions"];
+            NSMutableArray *results=[[NSMutableArray alloc]init];
+            for (NSDictionary *predictionDictionary in predictionsArray) {
+                GooglePredictionResult *predictionResult=[[GooglePredictionResult alloc]initWithDictionary:predictionDictionary];
+                [results addObject:predictionResult];
+            }
+            block(nil,results);
+        }else{
+            NSLog(@"%@",error.localizedDescription);
+            block(error,nil);
+        }
+    }];
+}
 
++(void)details:(NSString *)placeId withLanguage:(NSString *)language withBlock:(void (^)(NSError *, GooglePlaceDetail *))block{
+    NSMutableDictionary *params=[[NSMutableDictionary alloc]init];
+    [params setObject:placeId forKey:@"placeid"];
+    [params setObject:language forKey:@"language"];
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+    [AVCloud callFunctionInBackground:@"details" withParameters:params block:^(id object, NSError *error) {
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+        if(!error){
+            NSDictionary *dictionary=object;
+            NSDictionary *resultDic=[dictionary objectForKey:@"result"];
+            GooglePlaceDetail *detail=[[GooglePlaceDetail alloc]initWithDictionary:resultDic];
+            block(error,detail);
+        }else{
+            NSLog(@"%@",error.localizedDescription);
+            block(error,nil);
+        }
+    }];
+}
 
 #pragma mark - like routine feature
 

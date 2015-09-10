@@ -9,10 +9,15 @@
 #import <Foundation/Foundation.h>
 #import <AVOSCloud/AVOSCloud.h>
 #import "MMSearchedRoutine.h"
+#import "GooglePlaceDetail.h"
 
 @interface CloudManager : NSObject
 
 +(AVUser *)currentUser;
+
++(void)autoQueryComplete:(NSString *)input withBlock:(void(^)(NSError *error,NSArray *autoQueryResultArray))block;
+
++(void)details:(NSString *)placeId withLanguage:(NSString *)language withBlock:(void(^)(NSError *error,GooglePlaceDetail *placeDetail))block;
 
 +(void)likeRoutine:(NSString *)routineId withBlockWhenDone:(void (^)(NSError *error))block;
 

@@ -32,7 +32,7 @@
     UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
     cell.accessoryType = UITableViewCellAccessoryCheckmark;
     self.checkedIndexPath = indexPath;
-    self.slideNumLabel.text=[NSString stringWithFormat:@"%d",indexPath.row+1];
+    self.slideNumLabel.text=[NSString stringWithFormat:@"%ld",indexPath.row+1];
     
     [self.navigationController popViewControllerAnimated:YES];
 }
@@ -47,11 +47,13 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"slideNumTableViewCell" forIndexPath:indexPath];
     
-    cell.textLabel.text=[NSString stringWithFormat:@"%d",indexPath.row+1];
+    cell.textLabel.text=[NSString stringWithFormat:@"%ld",indexPath.row+1];
     
     if([self.slideNumLabel.text integerValue]==(indexPath.row+1)){
         cell.accessoryType = UITableViewCellAccessoryCheckmark;
         self.checkedIndexPath=indexPath;
+    }else{
+        cell.accessoryType= UITableViewCellAccessoryNone;
     }
     
     return cell;

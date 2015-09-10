@@ -32,4 +32,16 @@
     return [self.dictionary objectForKey:@"place_id"];
 }
 
+- (BOOL)isEqual:(id)other {
+    if (other == self)
+        return YES;
+    if (!other || ![other isKindOfClass:[self class]])
+        return NO;
+    return [self.placeId isEqualToString:((GooglePredictionResult*)other).placeId];
+}
+
+- (NSUInteger)hash {
+    return [self.placeId hash];
+}
+
 @end

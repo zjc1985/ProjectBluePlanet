@@ -40,6 +40,7 @@
 @property(nonatomic,strong) NSMutableSet *lastSearchPredicts;
 
 @property(nonatomic,strong) UIActionSheet *searchRMMarkerActionSheet;
+@property(nonatomic,strong) UIActionSheet *navigationActionSheet;
 
 @end
 
@@ -157,6 +158,21 @@
     return _searchRMMarkerActionSheet;
 }
 
+-(UIActionSheet *)navigationActionSheet{
+    if(!_navigationActionSheet){
+        _navigationActionSheet=[[UIActionSheet alloc] initWithTitle:nil
+                                                           delegate:self
+                                                  cancelButtonTitle:NSLocalizedString(@"Cancel", nil)
+                                             destructiveButtonTitle:nil
+                                                  otherButtonTitles:
+                                NSLocalizedString(@"Car",nil),
+                                NSLocalizedString(@"Bus",nil),
+                                NSLocalizedString(@"Walk",nil),
+                                nil];
+    }
+    return _navigationActionSheet;
+}
+
 #pragma mark - override
 -(void)handleCurrentSlideMarkers:(NSArray *)currentSlideMarkers{
    
@@ -218,6 +234,11 @@
         }
     }];
 }
+
+- (IBAction)navigateButtonClick:(id)sender {
+    [self.navigationActionSheet showInView:self.view];
+}
+
 
 - (IBAction)locateButtonClick:(id)sender {
     NSLog(@"Locate Button CLick");
@@ -320,6 +341,9 @@
         
         self.searchResult=nil;
         [self updateMapUI];
+    }else if (actionSheet==self.navigationActionSheet){
+        
+        [self openUrlForNavigationBy:buttonIndex];
     }else{
         MMMarker *newMarker=nil;
         switch (buttonIndex) {
@@ -353,6 +377,56 @@
         }
     }
     
+}
+
+-(void)openUrlForNavigationBy:(ActionSheetIndexForNavigation)navType{
+    if(!self.currentMarker){
+        return;
+    }
+    
+    MMMarker *currentMarker=self.currentMarker;
+    NSString *urlString=nil;
+    
+    if ([[UIApplication sharedApplication] canOpenURL:
+         [NSURL URLWithString:@"comgooglemaps://"]]) {
+        
+        NSString *navTypeString;
+        switch (navType) {
+            case navigation_car:
+                navTypeString=@"driving";
+                break;
+            case navigation_bus:
+                navTypeString=@"transit";
+                break;
+            case navigation_walk:
+                navTypeString=@"walking";
+                break;
+            default:
+                navTypeString=@"driving";
+                break;
+        }
+        
+        
+        urlString=[NSString stringWithFormat:@"comgooglemaps://?saddr=%@,%@&daddr=%@,%@&directionsmode=%@", @(self.mapView.userLocation.coordinate.latitude),
+                                   @(self.mapView.userLocation.coordinate.longitude),
+                                   [currentMarker.lat stringValue],
+                                   [currentMarker.lng stringValue],
+                                    navTypeString];
+        
+       
+    }else{
+        //if no google map found, use apple map instead
+        urlString=[NSString stringWithFormat:@"http://maps.apple.com/?saddr=%@,%@&daddr=%@,%@",
+                   @(self.mapView.userLocation.coordinate.latitude),
+                   @(self.mapView.userLocation.coordinate.longitude),
+                   [currentMarker.lat stringValue],
+                   [currentMarker.lng stringValue]];
+    }
+    
+    NSLog(@"forward url: %@",urlString);
+    
+    [[UIApplication sharedApplication] openURL:
+     [NSURL URLWithString:urlString]];
 }
 
 -(void)showUIImagePicker{

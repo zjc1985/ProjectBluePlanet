@@ -16,3 +16,6 @@
 "Owned By %@"="由%@创建";
 "Add to Routine"="添加至地图";
 "Clear Search Result"="清除搜索结果";
+"Car"="自驾";
+"Bus"="公共交通";
+"Walk"="步行";

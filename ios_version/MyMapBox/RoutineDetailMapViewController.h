@@ -23,6 +23,13 @@ typedef enum : NSUInteger {
     clearSearchResult = 1,
 } ActionSheetIndexForSearchResult;
 
+typedef enum : NSUInteger {
+    navigation_car = 0,
+    navigation_bus = 1,
+    navigation_walk = 2,
+} ActionSheetIndexForNavigation;
+
+
 @interface RoutineDetailMapViewController:BaseDetailMapVC
 
 

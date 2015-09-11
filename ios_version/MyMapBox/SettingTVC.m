@@ -13,7 +13,6 @@
 #import <GoogleMaps/GoogleMaps.h>
 #import "CloudManager.h"
 
-
 @interface SettingTVC ()
 
 @property (weak, nonatomic) IBOutlet UITableViewCell *testFeatureCell;
@@ -42,6 +41,7 @@
 }
 
 - (IBAction)testFeature:(id)sender {
+
 }
 
 @end

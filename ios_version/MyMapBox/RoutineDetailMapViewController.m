@@ -19,6 +19,8 @@
 #import "MMRoutine+Dao.h"
 #import "MarkerInfoView.h"
 
+#import "MyMapBox-Swift.h"
+
 #define SHOW_SEARCH_MODAL_SEGUE @"showSearchModalSegue"
 
 @interface RoutineDetailMapViewController ()<RMMapViewDelegate,UIActionSheetDelegate,UIImagePickerControllerDelegate>
@@ -398,19 +400,31 @@
     MMMarker *currentMarker=self.currentMarker;
     NSString *urlString=nil;
     
+    NSDictionary *saddrDic=[LocationTransform wgs2gcj:self.mapView.userLocation.coordinate.latitude
+                                               wgsLon:self.mapView.userLocation.coordinate.longitude];
+    NSNumber *sLat=[saddrDic objectForKey:@"lat"];
+    NSNumber *sLng=[saddrDic objectForKey:@"lon"];
+    
+    NSDictionary *daddrDic=[LocationTransform wgs2gcj:[currentMarker.lat doubleValue]
+                                               wgsLon:[currentMarker.lng doubleValue]];
+    
+    NSNumber *dLat=[daddrDic objectForKey:@"lat"];
+    NSNumber *dLng=[daddrDic objectForKey:@"lon"];
+    
     if (navType==navigation_google){
         
-        urlString=[NSString stringWithFormat:@"comgooglemaps://?saddr=%@,%@&daddr=%@,%@", @(self.mapView.userLocation.coordinate.latitude),
-                                   @(self.mapView.userLocation.coordinate.longitude),
-                                   [currentMarker.lat stringValue],
-                                   [currentMarker.lng stringValue]];
+        urlString=[NSString stringWithFormat:@"comgooglemaps://?saddr=%@,%@&daddr=%@,%@",
+                                   [sLat stringValue],
+                                   [sLng stringValue],
+                                   [dLat stringValue],
+                                   [dLng stringValue]];
     }else{
         //else, use local map instead
         urlString=[NSString stringWithFormat:@"http://maps.apple.com/?saddr=%@,%@&daddr=%@,%@",
-                   @(self.mapView.userLocation.coordinate.latitude),
-                   @(self.mapView.userLocation.coordinate.longitude),
-                   [currentMarker.lat stringValue],
-                   [currentMarker.lng stringValue]];
+                   [sLat stringValue],
+                   [sLng stringValue],
+                   [dLat stringValue],
+                   [dLng stringValue]];
     }
     
     NSLog(@"forward url: %@",urlString);

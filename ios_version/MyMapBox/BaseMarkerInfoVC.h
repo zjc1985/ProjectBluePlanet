@@ -9,7 +9,10 @@
 #import <UIKit/UIKit.h>
 #import "CommonUtil.h"
 
-@interface BaseMarkerInfoVC : UITableViewController
+#import <SDWebImage/UIImageView+WebCache.h>
+#import "MWPhotoBrowser.h"
+
+@interface BaseMarkerInfoVC : UITableViewController<MWPhotoBrowserDelegate>
 
 @property (weak, nonatomic) IBOutlet UILabel *markerTitleLabel;
 @property (weak, nonatomic) IBOutlet UILabel *markerSubInfoLabel;
@@ -22,5 +25,7 @@
 @property(nonatomic,strong)id<Marker> marker;
 
 -(void)updateUI;
+
+-(void)markerImageClicked;
 
 @end

@@ -50,6 +50,10 @@
 
 +(NSString *)dataFilePath;
 
++(NSString *)saveImage:(UIImage *)image;
+
++(UIImage *)loadImage:(NSString *)filePath;
+
 +(void)alert:(NSString *)content;
 
 +(NSManagedObjectContext *)getContext;

@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="7549" systemVersion="14D136" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="7549" systemVersion="14E46" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
+    <entity name="LocalImageUrl" representedClassName="LocalImageUrl" syncable="YES">
+        <attribute name="url" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="belongMarker" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MMMarker" inverseName="localImages" inverseEntity="MMMarker" syncable="YES"/>
+    </entity>
     <entity name="MMMarker" representedClassName="MMMarker" syncable="YES">
         <attribute name="category" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
         <attribute name="iconUrl" optional="YES" attributeType="String" syncable="YES"/>
@@ -16,6 +20,7 @@
         <attribute name="updateTimestamp" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
         <attribute name="uuid" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="belongRoutine" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MMRoutine" inverseName="markers" inverseEntity="MMRoutine" syncable="YES"/>
+        <relationship name="localImages" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="LocalImageUrl" inverseName="belongMarker" inverseEntity="LocalImageUrl" syncable="YES"/>
     </entity>
     <entity name="MMOvMarker" representedClassName="MMOvMarker" syncable="YES">
         <attribute name="category" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
@@ -51,9 +56,10 @@
         <attribute name="title" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <elements>
-        <element name="MMMarker" positionX="-63" positionY="-207" width="128" height="268"/>
+        <element name="MMMarker" positionX="-63" positionY="-207" width="128" height="283"/>
         <element name="MMOvMarker" positionX="-65" positionY="333" width="128" height="223"/>
         <element name="MMRoutine" positionX="-378" positionY="-18" width="128" height="208"/>
-        <element name="PlaceSearchResult" positionX="-216" positionY="-54" width="128" height="105"/>
+        <element name="PlaceSearchResult" positionX="-380" positionY="-195" width="128" height="105"/>
+        <element name="LocalImageUrl" positionX="189" positionY="-207" width="128" height="73"/>
     </elements>
 </model>

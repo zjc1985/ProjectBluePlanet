@@ -17,6 +17,24 @@
     return [documentDirectory stringByAppendingPathComponent:@"data.plist"];
 }
 
++(NSString *)saveImage:(UIImage *)image{
+    NSData *pngData = UIImagePNGRepresentation(image);
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsPath = [paths objectAtIndex:0]; //Get the docs directory
+    
+    NSUUID *uuid=[[NSUUID alloc]init];
+    
+    NSString *filePath = [documentsPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.png",[uuid UUIDString]]];
+    [pngData writeToFile:filePath atomically:YES];
+    return filePath;
+}
+
++(UIImage *)loadImage:(NSString *)filePath{
+    NSData *pngData = [NSData dataWithContentsOfFile:filePath];
+    UIImage *image = [UIImage imageWithData:pngData];
+    return image;
+}
+
 +(void)alert:(NSString *)content{
     UIAlertView *theAlert=[[UIAlertView alloc] initWithTitle:@"alert" message:content delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
     [theAlert show];

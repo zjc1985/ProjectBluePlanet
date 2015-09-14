@@ -8,10 +8,9 @@
 
 #import "BaseMarkerInfoVC.h"
 
-#import <SDWebImage/UIImageView+WebCache.h>
-#import "MWPhotoBrowser.h"
 
-@interface BaseMarkerInfoVC ()<MWPhotoBrowserDelegate>
+
+@interface BaseMarkerInfoVC ()
 
 @end
 

@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		280F49211BA26F7600665B31 /* LocationTransform.swift in Sources */ = {isa = PBXBuildFile; fileRef = 280F49201BA26F7600665B31 /* LocationTransform.swift */; };
+		280F492A1BA6654B00665B31 /* LocalImageUrl.m in Sources */ = {isa = PBXBuildFile; fileRef = 280F49291BA6654B00665B31 /* LocalImageUrl.m */; };
+		280F492D1BA6654C00665B31 /* MMMarker.m in Sources */ = {isa = PBXBuildFile; fileRef = 280F492C1BA6654C00665B31 /* MMMarker.m */; };
+		280F49301BA66B7700665B31 /* LocalImageUrl+Dao.m in Sources */ = {isa = PBXBuildFile; fileRef = 280F492F1BA66B7700665B31 /* LocalImageUrl+Dao.m */; };
 		280FBA9F1B8DC6B700B2CBFC /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 280FBAA11B8DC6B700B2CBFC /* Localizable.strings */; };
 		280FBAA61B8EE71100B2CBFC /* PrivacyVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 280FBAA51B8EE71100B2CBFC /* PrivacyVC.m */; };
 		280FBAAE1B8EEDE900B2CBFC /* PrivacyPolicy.strings in Resources */ = {isa = PBXBuildFile; fileRef = 280FBAB01B8EEDE900B2CBFC /* PrivacyPolicy.strings */; };
@@ -60,7 +63,6 @@
 		28E261D61B007E920019611C /* MMRoutine+Dao.m in Sources */ = {isa = PBXBuildFile; fileRef = 28E261D51B007E920019611C /* MMRoutine+Dao.m */; };
 		28E261F41B0095CE0019611C /* MMRoutine.m in Sources */ = {isa = PBXBuildFile; fileRef = 28E261F31B0095CE0019611C /* MMRoutine.m */; };
 		28E261F71B0095CE0019611C /* MMOvMarker.m in Sources */ = {isa = PBXBuildFile; fileRef = 28E261F61B0095CE0019611C /* MMOvMarker.m */; };
-		28E261FA1B0095CE0019611C /* MMMarker.m in Sources */ = {isa = PBXBuildFile; fileRef = 28E261F91B0095CE0019611C /* MMMarker.m */; };
 		28E475541AEF28C600449DBC /* OfflineRoutineTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 28E475531AEF28C600449DBC /* OfflineRoutineTVC.m */; };
 		28E475571AEF2AAB00449DBC /* OfflineRoutineTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 28E475561AEF2AAB00449DBC /* OfflineRoutineTableViewCell.m */; };
 		28E4755A1AEF88C500449DBC /* SlideNumSelectTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 28E475591AEF88C500449DBC /* SlideNumSelectTVC.m */; };
@@ -90,6 +92,12 @@
 		21A0A51ABFCCA5850AF318AF /* Pods-MyMapBoxTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MyMapBoxTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-MyMapBoxTests/Pods-MyMapBoxTests.release.xcconfig"; sourceTree = "<group>"; };
 		280F491F1BA26F7500665B31 /* MyMapBox-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MyMapBox-Bridging-Header.h"; sourceTree = "<group>"; };
 		280F49201BA26F7600665B31 /* LocationTransform.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationTransform.swift; sourceTree = "<group>"; };
+		280F49281BA6654B00665B31 /* LocalImageUrl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalImageUrl.h; sourceTree = "<group>"; };
+		280F49291BA6654B00665B31 /* LocalImageUrl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocalImageUrl.m; sourceTree = "<group>"; };
+		280F492B1BA6654C00665B31 /* MMMarker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMMarker.h; sourceTree = "<group>"; };
+		280F492C1BA6654C00665B31 /* MMMarker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMMarker.m; sourceTree = "<group>"; };
+		280F492E1BA66B7700665B31 /* LocalImageUrl+Dao.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "LocalImageUrl+Dao.h"; sourceTree = "<group>"; };
+		280F492F1BA66B7700665B31 /* LocalImageUrl+Dao.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "LocalImageUrl+Dao.m"; sourceTree = "<group>"; };
 		280FBAA01B8DC6B700B2CBFC /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		280FBAA21B8DC6BB00B2CBFC /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Localizable.strings; sourceTree = "<group>"; };
 		280FBAA41B8EE71100B2CBFC /* PrivacyVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrivacyVC.h; sourceTree = "<group>"; };
@@ -192,8 +200,6 @@
 		28E261F31B0095CE0019611C /* MMRoutine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMRoutine.m; path = model/MMRoutine.m; sourceTree = "<group>"; };
 		28E261F51B0095CE0019611C /* MMOvMarker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMOvMarker.h; path = model/MMOvMarker.h; sourceTree = "<group>"; };
 		28E261F61B0095CE0019611C /* MMOvMarker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMOvMarker.m; path = model/MMOvMarker.m; sourceTree = "<group>"; };
-		28E261F81B0095CE0019611C /* MMMarker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMMarker.h; path = model/MMMarker.h; sourceTree = "<group>"; };
-		28E261F91B0095CE0019611C /* MMMarker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMMarker.m; path = model/MMMarker.m; sourceTree = "<group>"; };
 		28E475521AEF28C600449DBC /* OfflineRoutineTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OfflineRoutineTVC.h; sourceTree = "<group>"; };
 		28E475531AEF28C600449DBC /* OfflineRoutineTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OfflineRoutineTVC.m; sourceTree = "<group>"; };
 		28E475551AEF2AAB00449DBC /* OfflineRoutineTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OfflineRoutineTableViewCell.h; sourceTree = "<group>"; };
@@ -433,8 +439,12 @@
 				280F49201BA26F7600665B31 /* LocationTransform.swift */,
 				28F56C801B450B6B00CFC4AC /* PlaceSearchResult.h */,
 				28F56C811B450B6B00CFC4AC /* PlaceSearchResult.m */,
-				28E261F81B0095CE0019611C /* MMMarker.h */,
-				28E261F91B0095CE0019611C /* MMMarker.m */,
+				280F492B1BA6654C00665B31 /* MMMarker.h */,
+				280F492C1BA6654C00665B31 /* MMMarker.m */,
+				280F49281BA6654B00665B31 /* LocalImageUrl.h */,
+				280F49291BA6654B00665B31 /* LocalImageUrl.m */,
+				280F492E1BA66B7700665B31 /* LocalImageUrl+Dao.h */,
+				280F492F1BA66B7700665B31 /* LocalImageUrl+Dao.m */,
 				28E261F51B0095CE0019611C /* MMOvMarker.h */,
 				28E261F61B0095CE0019611C /* MMOvMarker.m */,
 				28E261F21B0095CE0019611C /* MMRoutine.h */,
@@ -648,10 +658,12 @@
 				283A21D31B2ED1E100F6DCA1 /* BaseTourMapVC.m in Sources */,
 				28E4755A1AEF88C500449DBC /* SlideNumSelectTVC.m in Sources */,
 				283A21F81B3A482400F6DCA1 /* SettingTVC.m in Sources */,
+				280F492A1BA6654B00665B31 /* LocalImageUrl.m in Sources */,
 				283A21C61B2E6CF200F6DCA1 /* SearchRoutineInfoTVC.m in Sources */,
 				280F49211BA26F7600665B31 /* LocationTransform.swift in Sources */,
 				28E475571AEF2AAB00449DBC /* OfflineRoutineTableViewCell.m in Sources */,
 				2863908D1AE0EA3E00A5B999 /* MarkerEditTVC.m in Sources */,
+				280F49301BA66B7700665B31 /* LocalImageUrl+Dao.m in Sources */,
 				285E43251AD61E720030A274 /* ViewController.m in Sources */,
 				288B09B41B0328D700066C59 /* LoginViewController.m in Sources */,
 				287D6D671B678D25009CFB56 /* RegisterVC.m in Sources */,
@@ -659,7 +671,6 @@
 				28C442E41B2A859200DDC54C /* MMSearchedOvMarker.m in Sources */,
 				288B09A81B01A12D00066C59 /* MMOvMarker+Dao.m in Sources */,
 				287D6D641B65D395009CFB56 /* AddRoutineOvIconSelectTVC.m in Sources */,
-				28E261FA1B0095CE0019611C /* MMMarker.m in Sources */,
 				280FBAA61B8EE71100B2CBFC /* PrivacyVC.m in Sources */,
 				286390811AE0AD7600A5B999 /* RoutineEditTVC.m in Sources */,
 				8421CB181ADC04D0002046B9 /* RoutineDetailMapViewController.m in Sources */,
@@ -681,6 +692,7 @@
 				28C442E71B2A85D300DDC54C /* MMSearchedRoutine.m in Sources */,
 				285E43221AD61E720030A274 /* AppDelegate.m in Sources */,
 				283A21EC1B328DD900F6DCA1 /* OtherUserWorldVC.m in Sources */,
+				280F492D1BA6654C00665B31 /* MMMarker.m in Sources */,
 				283A21F21B32CA4D00F6DCA1 /* OptionCell.m in Sources */,
 				28E261F71B0095CE0019611C /* MMOvMarker.m in Sources */,
 				285E431F1AD61E720030A274 /* main.m in Sources */,
@@ -846,7 +858,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = MyMapBox/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
@@ -866,7 +878,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = MyMapBox/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";

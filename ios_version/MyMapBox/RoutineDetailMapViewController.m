@@ -17,6 +17,7 @@
 
 
 #import "MMRoutine+Dao.h"
+#import "LocalImageUrl+Dao.h"
 #import "MarkerInfoView.h"
 
 #import "MyMapBox-Swift.h"
@@ -449,6 +450,8 @@
 
 #pragma mark - image Picker delagate
 -(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info{
+    
+    //dismiss picker
     [picker dismissViewControllerAnimated:YES completion:^{
         NSLog(@"Image Select");
     }];
@@ -458,6 +461,10 @@
     ALAssetsLibrary *library = [[ALAssetsLibrary alloc]init];
     
     [library assetForURL:url resultBlock:^(ALAsset *asset){
+        UIImage *image=[UIImage imageWithCGImage:[[asset defaultRepresentation]fullScreenImage]];
+        
+        NSString *localImageUrl=[CommonUtil saveImage:image];
+        
         CLLocation *location = [asset valueForProperty:ALAssetPropertyLocation];
         if(location){
             MMMarker *newMarker=[MMMarker createMMMarkerInRoutine:self.routine
@@ -471,29 +478,13 @@
                       withCoordinate:CLLocationCoordinate2DMake([newMarker.lat doubleValue], [newMarker.lng doubleValue])
                       withCustomData:newMarker];
             self.currentMarker=newMarker;
+            
+            //attach local Image
+            [LocalImageUrl createLocalImageUrl:localImageUrl inMarker:newMarker];
         }else{
             [CommonUtil alert:@"No location with image"];
         }
         
-        /*
-        NSDictionary *imageData = [[NSMutableDictionary alloc]initWithDictionary:asset.defaultRepresentation.metadata];
-        NSDictionary *gpsData = [imageData objectForKey:(NSString *)kCGImagePropertyGPSDictionary];
-        NSString *lat=[gpsData objectForKey:@"Latitude"];
-        NSString *lng=[gpsData objectForKey:@"Longitude"];
-        [CommonUtil alert:[NSString stringWithFormat:@"%@ %@",lat,lng]];
-        if(lat && lng){
-            MMMarker *newMarker=[MMMarker createMMMarkerInRoutine:self.routine
-                                                          withLat:[lat doubleValue]
-                                                          withLng:[lng doubleValue]];
-            newMarker.category=[NSNumber numberWithUnsignedInteger:CategoryInfo];
-            newMarker.iconUrl=@"event_2.png";
-            
-            [self addMarkerWithTitle:@"new Image"
-                      withCoordinate:CLLocationCoordinate2DMake([newMarker.lat doubleValue], [newMarker.lng doubleValue])
-                      withCustomData:newMarker];
-
-        }
-         */
     }failureBlock:^(NSError *error){
         NSLog(@"error:%@",error);
     }];

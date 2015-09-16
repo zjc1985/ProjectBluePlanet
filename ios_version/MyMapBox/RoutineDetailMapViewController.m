@@ -345,6 +345,10 @@
         NSArray *assets=selectImageTVC.selectedAssetsOut;
         for (PHAsset *imageAsset in assets) {
             //do things
+            
+            //[self.imageManager request]
+            
+            
             [self.imageManager requestImageForAsset:imageAsset targetSize:PHImageManagerMaximumSize contentMode:PHImageContentModeDefault options:nil resultHandler:^(UIImage *result, NSDictionary *info) {
                 //handle image
                 CLLocation *location=imageAsset.location;
@@ -359,7 +363,7 @@
                     [self addMarkerWithTitle:@"new Image"
                               withCoordinate:CLLocationCoordinate2DMake([newMarker.lat doubleValue], [newMarker.lng doubleValue])
                               withCustomData:newMarker];
-                    
+                    NSLog(@"orientation %@",@(result.imageOrientation));
                     NSString *imageUrl=[CommonUtil saveImage:result];
                     //attachImage
                     [LocalImageUrl createLocalImageUrl:imageUrl inMarker:newMarker];
@@ -416,7 +420,7 @@
                 
                 //[self showUIImagePicker];
                 [self performSegueWithIdentifier:SHOW_USER_ALBUMS_SEGUE sender:self];
-                
+                self.currentMarker=nil;
                 break;
             }
             case addMarkerInCurrentLocation:{

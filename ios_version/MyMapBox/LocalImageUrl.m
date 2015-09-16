@@ -2,7 +2,7 @@
 //  LocalImageUrl.m
 //  MyMapBox
 //
-//  Created by bizappman on 9/14/15.
+//  Created by bizappman on 9/16/15.
 //  Copyright (c) 2015 yufu. All rights reserved.
 //
 
@@ -12,7 +12,7 @@
 
 @implementation LocalImageUrl
 
-@dynamic url;
+@dynamic fileName;
 @dynamic belongMarker;
 
 @end

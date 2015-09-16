@@ -10,26 +10,28 @@
 #import "AppDelegate.h"
 
 @implementation CommonUtil
-
-+(NSString *)dataFilePath{
++(NSString *)appDocumentDirectoryPath{
     NSArray *path=NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *documentDirectory=[path objectAtIndex:0];
-    return [documentDirectory stringByAppendingPathComponent:@"data.plist"];
+    return documentDirectory;
+}
+
+
++(NSString *)dataFilePath{
+    return [[self appDocumentDirectoryPath] stringByAppendingPathComponent:@"data.plist"];
 }
 
 +(NSString *)saveImage:(UIImage *)image{
     NSData *pngData = UIImagePNGRepresentation(image);
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *documentsPath = [paths objectAtIndex:0]; //Get the docs directory
-    
     NSUUID *uuid=[[NSUUID alloc]init];
-    
-    NSString *filePath = [documentsPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.png",[uuid UUIDString]]];
+    NSString *fileName=[NSString stringWithFormat:@"%@.png",[uuid UUIDString]];
+    NSString *filePath = [[self appDocumentDirectoryPath] stringByAppendingPathComponent:fileName];
     [pngData writeToFile:filePath atomically:YES];
-    return filePath;
+    return fileName;
 }
 
-+(UIImage *)loadImage:(NSString *)filePath{
++(UIImage *)loadImage:(NSString *)fileName{
+    NSString *filePath = [[self appDocumentDirectoryPath] stringByAppendingPathComponent:fileName];
     NSData *pngData = [NSData dataWithContentsOfFile:filePath];
     UIImage *image = [UIImage imageWithData:pngData];
     return image;

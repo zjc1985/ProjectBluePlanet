@@ -51,8 +51,8 @@
     if([self.marker isKindOfClass:[MMMarker class]]&& [self.marker imageUrlsArray].count==0){
         MMMarker *marker=self.marker;
         LocalImageUrl *localImageUrl=[[marker.localImages allObjects]firstObject];
-        NSLog(@"load image from local url:%@",localImageUrl.url);
-        UIImage *image=[CommonUtil loadImage:localImageUrl.url];
+        NSLog(@"load image from local url:%@",localImageUrl.fileName);
+        UIImage *image=[CommonUtil loadImage:localImageUrl.fileName];
         if(image){
             [self.markerImage setImage:image];
             self.markerImage.contentMode=UIViewContentModeScaleAspectFill;
@@ -77,7 +77,7 @@
             
             //local image
             for (LocalImageUrl *localImageUrl in marker.localImages) {
-                UIImage *image=[CommonUtil loadImage:localImageUrl.url];
+                UIImage *image=[CommonUtil loadImage:localImageUrl.fileName];
                 if(image){
                     [self.photos addObject:[MWPhoto photoWithImage:image]];
                 }

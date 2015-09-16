@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7531" systemVersion="14E46" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="NEI-FB-Adz">
     <dependencies>
-        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7520"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
@@ -2438,40 +2437,34 @@
                                         <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="06a-A2-7lV">
                                             <rect key="frame" x="8" y="8" width="73" height="73"/>
                                             <constraints>
-                                                <constraint firstAttribute="width" constant="73" id="4zx-Kq-a87"/>
+                                                <constraint firstAttribute="width" constant="73" id="8No-mj-GoH"/>
                                             </constraints>
                                         </imageView>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="createTimeLabel" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Tfx-0F-5Au">
                                             <rect key="frame" x="89" y="34" width="223" height="21"/>
-                                            <constraints>
-                                                <constraint firstAttribute="width" constant="223" id="C64-JB-RhF"/>
-                                            </constraints>
                                             <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="locationInfoLabel" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eKu-2E-VDV">
                                             <rect key="frame" x="89" y="60" width="223" height="21"/>
-                                            <constraints>
-                                                <constraint firstAttribute="width" constant="223" id="GG7-x5-H5K"/>
-                                            </constraints>
                                             <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                     </subviews>
                                     <constraints>
-                                        <constraint firstAttribute="trailingMargin" secondItem="Tfx-0F-5Au" secondAttribute="trailing" id="7h8-pM-HhG"/>
-                                        <constraint firstItem="eKu-2E-VDV" firstAttribute="trailing" secondItem="Tfx-0F-5Au" secondAttribute="trailing" id="DkD-sy-4Xz"/>
-                                        <constraint firstItem="eKu-2E-VDV" firstAttribute="leading" secondItem="06a-A2-7lV" secondAttribute="trailing" constant="8" symbolic="YES" id="FlR-Vo-cqN"/>
-                                        <constraint firstItem="eKu-2E-VDV" firstAttribute="top" secondItem="Tfx-0F-5Au" secondAttribute="bottom" constant="5" id="Gxe-3s-4hr"/>
-                                        <constraint firstItem="Tfx-0F-5Au" firstAttribute="top" secondItem="h2N-Ij-fMW" secondAttribute="topMargin" constant="26" id="Hib-Q3-9a0"/>
-                                        <constraint firstItem="06a-A2-7lV" firstAttribute="leading" secondItem="h2N-Ij-fMW" secondAttribute="leadingMargin" id="X7s-Bd-Xw8"/>
-                                        <constraint firstItem="06a-A2-7lV" firstAttribute="top" secondItem="h2N-Ij-fMW" secondAttribute="topMargin" id="a3g-ez-9vp"/>
-                                        <constraint firstItem="eKu-2E-VDV" firstAttribute="leading" secondItem="Tfx-0F-5Au" secondAttribute="leading" id="flK-bb-m4e"/>
-                                        <constraint firstItem="Tfx-0F-5Au" firstAttribute="centerY" secondItem="06a-A2-7lV" secondAttribute="centerY" id="idf-FT-ssv"/>
-                                        <constraint firstItem="06a-A2-7lV" firstAttribute="bottom" secondItem="h2N-Ij-fMW" secondAttribute="bottomMargin" id="ii3-Mc-mrj"/>
-                                        <constraint firstItem="eKu-2E-VDV" firstAttribute="bottom" secondItem="06a-A2-7lV" secondAttribute="bottom" id="pwN-6O-rH6"/>
+                                        <constraint firstItem="eKu-2E-VDV" firstAttribute="top" secondItem="Tfx-0F-5Au" secondAttribute="bottom" constant="5" id="61h-Qg-X9Z"/>
+                                        <constraint firstItem="eKu-2E-VDV" firstAttribute="leading" secondItem="06a-A2-7lV" secondAttribute="trailing" constant="8" symbolic="YES" id="9zv-aG-J41"/>
+                                        <constraint firstItem="Tfx-0F-5Au" firstAttribute="centerY" secondItem="06a-A2-7lV" secondAttribute="centerY" id="Iuj-Na-fYS"/>
+                                        <constraint firstItem="eKu-2E-VDV" firstAttribute="leading" secondItem="Tfx-0F-5Au" secondAttribute="leading" id="NLQ-C4-koa"/>
+                                        <constraint firstItem="Tfx-0F-5Au" firstAttribute="top" secondItem="h2N-Ij-fMW" secondAttribute="topMargin" constant="26" id="UQp-Vl-Xr5"/>
+                                        <constraint firstItem="eKu-2E-VDV" firstAttribute="trailing" secondItem="Tfx-0F-5Au" secondAttribute="trailing" id="ZlV-28-4m1"/>
+                                        <constraint firstItem="eKu-2E-VDV" firstAttribute="bottom" secondItem="06a-A2-7lV" secondAttribute="bottom" id="dvx-rx-RCt"/>
+                                        <constraint firstItem="06a-A2-7lV" firstAttribute="top" secondItem="h2N-Ij-fMW" secondAttribute="topMargin" id="mt9-te-60Y"/>
+                                        <constraint firstItem="06a-A2-7lV" firstAttribute="bottom" secondItem="h2N-Ij-fMW" secondAttribute="bottomMargin" id="sYb-wr-Qgj"/>
+                                        <constraint firstAttribute="trailingMargin" secondItem="Tfx-0F-5Au" secondAttribute="trailing" id="wct-qs-WuF"/>
+                                        <constraint firstItem="06a-A2-7lV" firstAttribute="leading" secondItem="h2N-Ij-fMW" secondAttribute="leadingMargin" id="xfk-dK-dHG"/>
                                     </constraints>
                                 </tableViewCellContentView>
                                 <connections>
@@ -2689,8 +2682,8 @@
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
         <segue reference="jqu-P0-wuD"/>
+        <segue reference="Crq-we-f5i"/>
         <segue reference="Drd-9N-wVI"/>
-        <segue reference="9hd-K2-6nC"/>
-        <segue reference="N8I-th-cy5"/>
+        <segue reference="0BH-Wf-kfd"/>
     </inferredMetricsTieBreakers>
 </document>

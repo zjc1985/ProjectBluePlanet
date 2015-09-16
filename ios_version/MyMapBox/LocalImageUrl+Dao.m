@@ -11,9 +11,9 @@
 
 @implementation LocalImageUrl (Dao)
 
-+(LocalImageUrl *)createLocalImageUrl:(NSString *)url inMarker:(MMMarker *)marker{
++(LocalImageUrl *)createLocalImageUrl:(NSString *)fileName inMarker:(MMMarker *)marker{
     LocalImageUrl *result=[NSEntityDescription insertNewObjectForEntityForName:@"LocalImageUrl" inManagedObjectContext:[CommonUtil getContext]];
-    result.url=url;
+    result.fileName=fileName;
     result.belongMarker=marker;
     return result;
 }
@@ -21,7 +21,12 @@
 -(void)prepareForDeletion{
     NSFileManager *fileManager=[NSFileManager defaultManager];
     NSError *error;
-    [fileManager removeItemAtPath:self.url error:&error];
+    NSArray *path=NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentDirectory=[path objectAtIndex:0];
+    NSString *filePath=[documentDirectory stringByAppendingPathComponent:self.fileName];
+    NSLog(@"delete file at %@",filePath);
+    [fileManager removeItemAtPath: filePath error:&error];
+    
     if(error){
         NSLog(@"error happen when deleting marker local image %@",error.localizedDescription);
     }

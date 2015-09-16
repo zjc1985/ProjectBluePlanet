@@ -8,12 +8,12 @@
 
 /* Begin PBXBuildFile section */
 		280F49211BA26F7600665B31 /* LocationTransform.swift in Sources */ = {isa = PBXBuildFile; fileRef = 280F49201BA26F7600665B31 /* LocationTransform.swift */; };
-		280F492A1BA6654B00665B31 /* LocalImageUrl.m in Sources */ = {isa = PBXBuildFile; fileRef = 280F49291BA6654B00665B31 /* LocalImageUrl.m */; };
 		280F492D1BA6654C00665B31 /* MMMarker.m in Sources */ = {isa = PBXBuildFile; fileRef = 280F492C1BA6654C00665B31 /* MMMarker.m */; };
 		280F49301BA66B7700665B31 /* LocalImageUrl+Dao.m in Sources */ = {isa = PBXBuildFile; fileRef = 280F492F1BA66B7700665B31 /* LocalImageUrl+Dao.m */; };
 		280F49711BA956DE00665B31 /* UserAlbumsTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 280F49701BA956DE00665B31 /* UserAlbumsTVC.m */; };
 		280F49741BA9575600665B31 /* SelectImageTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 280F49731BA9575600665B31 /* SelectImageTVC.m */; };
 		280F49771BA95C0800665B31 /* SelectImageCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 280F49761BA95C0800665B31 /* SelectImageCell.m */; };
+		280F497A1BA971D400665B31 /* LocalImageUrl.m in Sources */ = {isa = PBXBuildFile; fileRef = 280F49791BA971D400665B31 /* LocalImageUrl.m */; };
 		280FBA9F1B8DC6B700B2CBFC /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 280FBAA11B8DC6B700B2CBFC /* Localizable.strings */; };
 		280FBAA61B8EE71100B2CBFC /* PrivacyVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 280FBAA51B8EE71100B2CBFC /* PrivacyVC.m */; };
 		280FBAAE1B8EEDE900B2CBFC /* PrivacyPolicy.strings in Resources */ = {isa = PBXBuildFile; fileRef = 280FBAB01B8EEDE900B2CBFC /* PrivacyPolicy.strings */; };
@@ -95,8 +95,6 @@
 		21A0A51ABFCCA5850AF318AF /* Pods-MyMapBoxTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MyMapBoxTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-MyMapBoxTests/Pods-MyMapBoxTests.release.xcconfig"; sourceTree = "<group>"; };
 		280F491F1BA26F7500665B31 /* MyMapBox-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MyMapBox-Bridging-Header.h"; sourceTree = "<group>"; };
 		280F49201BA26F7600665B31 /* LocationTransform.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationTransform.swift; sourceTree = "<group>"; };
-		280F49281BA6654B00665B31 /* LocalImageUrl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalImageUrl.h; sourceTree = "<group>"; };
-		280F49291BA6654B00665B31 /* LocalImageUrl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocalImageUrl.m; sourceTree = "<group>"; };
 		280F492B1BA6654C00665B31 /* MMMarker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMMarker.h; sourceTree = "<group>"; };
 		280F492C1BA6654C00665B31 /* MMMarker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMMarker.m; sourceTree = "<group>"; };
 		280F492E1BA66B7700665B31 /* LocalImageUrl+Dao.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "LocalImageUrl+Dao.h"; sourceTree = "<group>"; };
@@ -107,6 +105,8 @@
 		280F49731BA9575600665B31 /* SelectImageTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SelectImageTVC.m; sourceTree = "<group>"; };
 		280F49751BA95C0800665B31 /* SelectImageCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelectImageCell.h; sourceTree = "<group>"; };
 		280F49761BA95C0800665B31 /* SelectImageCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SelectImageCell.m; sourceTree = "<group>"; };
+		280F49781BA971D400665B31 /* LocalImageUrl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalImageUrl.h; sourceTree = "<group>"; };
+		280F49791BA971D400665B31 /* LocalImageUrl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocalImageUrl.m; sourceTree = "<group>"; };
 		280FBAA01B8DC6B700B2CBFC /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		280FBAA21B8DC6BB00B2CBFC /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Localizable.strings; sourceTree = "<group>"; };
 		280FBAA41B8EE71100B2CBFC /* PrivacyVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrivacyVC.h; sourceTree = "<group>"; };
@@ -456,8 +456,8 @@
 				28F56C811B450B6B00CFC4AC /* PlaceSearchResult.m */,
 				280F492B1BA6654C00665B31 /* MMMarker.h */,
 				280F492C1BA6654C00665B31 /* MMMarker.m */,
-				280F49281BA6654B00665B31 /* LocalImageUrl.h */,
-				280F49291BA6654B00665B31 /* LocalImageUrl.m */,
+				280F49781BA971D400665B31 /* LocalImageUrl.h */,
+				280F49791BA971D400665B31 /* LocalImageUrl.m */,
 				280F492E1BA66B7700665B31 /* LocalImageUrl+Dao.h */,
 				280F492F1BA66B7700665B31 /* LocalImageUrl+Dao.m */,
 				28E261F51B0095CE0019611C /* MMOvMarker.h */,
@@ -674,7 +674,6 @@
 				28E4755A1AEF88C500449DBC /* SlideNumSelectTVC.m in Sources */,
 				283A21F81B3A482400F6DCA1 /* SettingTVC.m in Sources */,
 				280F49741BA9575600665B31 /* SelectImageTVC.m in Sources */,
-				280F492A1BA6654B00665B31 /* LocalImageUrl.m in Sources */,
 				283A21C61B2E6CF200F6DCA1 /* SearchRoutineInfoTVC.m in Sources */,
 				280F49211BA26F7600665B31 /* LocationTransform.swift in Sources */,
 				28E475571AEF2AAB00449DBC /* OfflineRoutineTableViewCell.m in Sources */,
@@ -721,6 +720,7 @@
 				2863907B1ADD136000A5B999 /* CommonUtil.m in Sources */,
 				288B09AD1B0320B200066C59 /* CloudManager.m in Sources */,
 				283A21EF1B328E2400F6DCA1 /* OtherUserRoutineInfoTVC.m in Sources */,
+				280F497A1BA971D400665B31 /* LocalImageUrl.m in Sources */,
 				283A21FB1B3A49D100F6DCA1 /* LikedWorldTVC.m in Sources */,
 				8421CB151ADBF8FA002046B9 /* RoutineInfoViewController.m in Sources */,
 				283A21E61B313B3A00F6DCA1 /* BaseDetailMapVC.m in Sources */,

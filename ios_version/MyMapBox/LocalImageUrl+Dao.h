@@ -10,6 +10,6 @@
 
 @interface LocalImageUrl (Dao)
 
-+(LocalImageUrl *)createLocalImageUrl:(NSString *)url inMarker:(MMMarker *)marker;
++(LocalImageUrl *)createLocalImageUrl:(NSString *)fileName inMarker:(MMMarker *)marker;
 
 @end

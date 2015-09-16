@@ -14,6 +14,7 @@
 #import "MarkerEditTVC.h"
 #import "CloudManager.h"
 #import "ApplePlaceSearchTVC.h"
+#import "SelectImageTVC.h"
 
 
 #import "MMRoutine+Dao.h"
@@ -23,6 +24,7 @@
 #import "MyMapBox-Swift.h"
 
 #define SHOW_SEARCH_MODAL_SEGUE @"showSearchModalSegue"
+#define SHOW_USER_ALBUMS_SEGUE @"showAlbumsSegue"
 
 @interface RoutineDetailMapViewController ()<RMMapViewDelegate,UIActionSheetDelegate,UIImagePickerControllerDelegate>
 
@@ -38,6 +40,7 @@
 @property (strong, nonatomic) IBOutlet UIToolbar *toolbar;
 @property (strong, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
 
+@property(strong,nonatomic)PHCachingImageManager *imageManager;
 
 @property(nonatomic,strong) GooglePlaceDetail *searchResult;
 @property(nonatomic,strong) NSMutableSet *lastSearchPredicts;
@@ -187,6 +190,13 @@
     return _navigationActionSheet;
 }
 
+-(PHCachingImageManager *)imageManager{
+    if(!_imageManager){
+        _imageManager=[[PHCachingImageManager alloc]init];
+    }
+    return _imageManager;
+}
+
 #pragma mark - override
 -(void)handleCurrentSlideMarkers:(NSArray *)currentSlideMarkers{
    
@@ -328,6 +338,38 @@
     }
 }
 
+-(IBAction)SelectImageAssetDone:(UIStoryboardSegue *)segue{
+    
+    if([segue.sourceViewController isKindOfClass:[SelectImageTVC class]]){
+        SelectImageTVC *selectImageTVC=segue.sourceViewController;
+        NSArray *assets=selectImageTVC.selectedAssetsOut;
+        for (PHAsset *imageAsset in assets) {
+            //do things
+            [self.imageManager requestImageForAsset:imageAsset targetSize:PHImageManagerMaximumSize contentMode:PHImageContentModeDefault options:nil resultHandler:^(UIImage *result, NSDictionary *info) {
+                //handle image
+                CLLocation *location=imageAsset.location;
+                if(location){
+                    MMMarker *newMarker=[MMMarker createMMMarkerInRoutine:self.routine
+                                                                  withLat:location.coordinate.latitude
+                                                                  withLng:location.coordinate.longitude];
+                    newMarker.category=[NSNumber numberWithUnsignedInteger:CategoryInfo];
+                    newMarker.iconUrl=@"event_2.png";
+                    newMarker.slideNum=[NSNumber numberWithUnsignedInteger:[self.routine maxSlideNum]+1];
+                    
+                    [self addMarkerWithTitle:@"new Image"
+                              withCoordinate:CLLocationCoordinate2DMake([newMarker.lat doubleValue], [newMarker.lng doubleValue])
+                              withCustomData:newMarker];
+                    
+                    NSString *imageUrl=[CommonUtil saveImage:result];
+                    //attachImage
+                    [LocalImageUrl createLocalImageUrl:imageUrl inMarker:newMarker];
+                }
+            }];
+        }
+    }
+    
+}
+
 
 #pragma mark - UIActionSheetDelegate
 
@@ -371,7 +413,10 @@
             }
             case addMarkerWithImage :{
                 NSLog(@"add marker with image");
-                [self showUIImagePicker];
+                
+                //[self showUIImagePicker];
+                [self performSegueWithIdentifier:SHOW_USER_ALBUMS_SEGUE sender:self];
+                
                 break;
             }
             case addMarkerInCurrentLocation:{

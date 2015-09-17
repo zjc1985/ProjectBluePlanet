@@ -52,6 +52,8 @@
 
 +(NSString *)saveImage:(UIImage *)image;
 
++(NSString *)saveImageByData:(NSData *)imageData;
+
 +(UIImage *)loadImage:(NSString *)filePath;
 
 +(void)alert:(NSString *)content;

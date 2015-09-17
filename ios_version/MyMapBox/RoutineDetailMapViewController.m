@@ -346,28 +346,27 @@
         for (PHAsset *imageAsset in assets) {
             //do things
             
-            //[self.imageManager request]
-            
-            
-            [self.imageManager requestImageForAsset:imageAsset targetSize:PHImageManagerMaximumSize contentMode:PHImageContentModeDefault options:nil resultHandler:^(UIImage *result, NSDictionary *info) {
-                //handle image
-                CLLocation *location=imageAsset.location;
-                if(location){
-                    MMMarker *newMarker=[MMMarker createMMMarkerInRoutine:self.routine
-                                                                  withLat:location.coordinate.latitude
-                                                                  withLng:location.coordinate.longitude];
-                    newMarker.category=[NSNumber numberWithUnsignedInteger:CategoryInfo];
-                    newMarker.iconUrl=@"event_2.png";
-                    newMarker.slideNum=[NSNumber numberWithUnsignedInteger:[self.routine maxSlideNum]+1];
-                    
-                    [self addMarkerWithTitle:@"new Image"
-                              withCoordinate:CLLocationCoordinate2DMake([newMarker.lat doubleValue], [newMarker.lng doubleValue])
-                              withCustomData:newMarker];
-                    NSLog(@"orientation %@",@(result.imageOrientation));
-                    NSString *imageUrl=[CommonUtil saveImage:result];
-                    //attachImage
-                    [LocalImageUrl createLocalImageUrl:imageUrl inMarker:newMarker];
-                }
+            [self.imageManager requestImageDataForAsset:imageAsset options:nil
+                                          resultHandler:^(NSData *imageData, NSString *dataUTI, UIImageOrientation orientation, NSDictionary *info) {
+                //do somthing
+                                              CLLocation *location=imageAsset.location;
+                                              if(location){
+                                                  MMMarker *newMarker=[MMMarker createMMMarkerInRoutine:self.routine
+                                                                                                withLat:location.coordinate.latitude
+                                                                                                withLng:location.coordinate.longitude];
+                                                  newMarker.category=[NSNumber numberWithUnsignedInteger:CategoryInfo];
+                                                  newMarker.iconUrl=@"event_2.png";
+                                                  newMarker.slideNum=[NSNumber numberWithUnsignedInteger:[self.routine maxSlideNum]+1];
+                                                  
+                                                  [self addMarkerWithTitle:@"new Image"
+                                                            withCoordinate:CLLocationCoordinate2DMake([newMarker.lat doubleValue], [newMarker.lng doubleValue])
+                                                            withCustomData:newMarker];
+                                                  //NSLog(@"orientation %@",@(result.imageOrientation));
+                                                  NSString *imageUrl=[CommonUtil saveImageByData:imageData];
+                                                  //attachImage
+                                                  [LocalImageUrl createLocalImageUrl:imageUrl inMarker:newMarker];
+                                              }
+                
             }];
         }
     }

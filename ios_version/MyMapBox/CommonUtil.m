@@ -30,10 +30,19 @@
     return fileName;
 }
 
++(NSString *)saveImageByData:(NSData *)imageData{
+    NSUUID *uuid=[[NSUUID alloc]init];
+    NSString *fileName=[NSString stringWithFormat:@"%@.png",[uuid UUIDString]];
+    NSString *filePath = [[self appDocumentDirectoryPath] stringByAppendingPathComponent:fileName];
+    
+    [imageData writeToFile:filePath atomically:YES];
+    return fileName;
+}
+
 +(UIImage *)loadImage:(NSString *)fileName{
     NSString *filePath = [[self appDocumentDirectoryPath] stringByAppendingPathComponent:fileName];
-    NSData *pngData = [NSData dataWithContentsOfFile:filePath];
-    UIImage *image = [UIImage imageWithData:pngData];
+    //NSData *pngData = [NSData dataWithContentsOfFile:filePath];
+    UIImage *image = [UIImage imageWithContentsOfFile:filePath];
     return image;
 }
 

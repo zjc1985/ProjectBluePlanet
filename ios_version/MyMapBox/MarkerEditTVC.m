@@ -12,6 +12,8 @@
 #import "CommonUtil.h"
 #import "MMMarkerIconInfo.h"
 
+#import "LocalImageUrl+Dao.h"
+
 #import <AVOSCloud/AVOSCloud.h>
 
 @interface MarkerEditTVC ()<UIActionSheetDelegate,UIImagePickerControllerDelegate>
@@ -21,6 +23,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *markerIconUrlLabel;
 @property (weak, nonatomic) IBOutlet UITextView *markerDescriptionTextView;
 @property (weak, nonatomic) IBOutlet UIImageView *iconImageView;
+@property (weak, nonatomic) IBOutlet UIButton *uploadImageBtn;
 
 @property (nonatomic, strong)NSMutableArray *uploadImageUrls; //of NSStrings
 
@@ -51,9 +54,23 @@
     if(iconImage){
         self.iconImageView.image=iconImage;
     }
+    
+    
+    
+    if ([self.marker.localImages allObjects].count>0) {
+        self.uploadImageBtn.enabled=YES;
+        
+        NSString *title=[NSString stringWithFormat:@"%@ %@ %@",NSLocalizedString(@"Upload", @"")
+                         ,@([self.marker.localImages allObjects].count)
+                         ,NSLocalizedString(@"Images", @"")];
+        
+        [self.uploadImageBtn setTitle:title forState:UIControlStateNormal];
+    }else{
+        self.uploadImageBtn.enabled=NO;
+    }
 }
 
-#pragma mark segue
+#pragma mark - Navigation
 
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
     if([segue.identifier isEqualToString:@"markerEditDoneSegue"]){
@@ -64,9 +81,11 @@
         self.marker.iconUrl=self.markerIconUrlLabel.text;
         self.marker.category=[NSNumber numberWithUnsignedInteger:[MMMarkerIconInfo findCategoryWithIconName:self.marker.iconUrl]];
         
+        /*
         for (NSString *newImageUrl in self.uploadImageUrls) {
             [self.marker addImageUrl:newImageUrl];
         }
+         */
     }
     
     if([segue.destinationViewController isKindOfClass:[SlideNumSelectTVC class]]){
@@ -93,7 +112,7 @@
     [actionSheet showInView:self.view];
 }
 
-- (IBAction)uploadImageClick:(id)sender {
+- (IBAction)attachImageClick:(id)sender {
     if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary]){
         UIImagePickerController *picker=[[UIImagePickerController alloc] init];
         picker.delegate=self;
@@ -108,7 +127,7 @@
 }
 
 - (IBAction)deleteImageClick:(id)sender {
-
+    
 }
 
 
@@ -123,6 +142,72 @@
     }
 }
 
+- (IBAction)uploadImageClick:(id)sender {
+    [self uploadMultiImages2LeanCLoud:[self.marker.localImages allObjects]];
+}
+
+-(void)uploadMultiImages2LeanCLoud:(NSArray *)localImageUrls // of LocalImageUrl
+{
+    
+    UIAlertView *alertView=[[UIAlertView alloc]initWithTitle:@"upload"
+                                                     message:[NSString stringWithFormat:@"upload %@ images, 0 complete",@(localImageUrls.count)]
+                                                    delegate:nil
+                                           cancelButtonTitle:@"Cancel"
+                                           otherButtonTitles:nil];
+    [alertView show];
+    
+    __block NSUInteger completeNum=0;
+    
+    NSMutableArray *progressArray=[[NSMutableArray alloc]init];
+    
+    for (NSUInteger i=0; i<localImageUrls.count; i++) {
+        [progressArray addObject:[NSNumber numberWithUnsignedInteger:0]];
+    }
+    
+    for (NSUInteger i=0; i<localImageUrls.count; i++) {
+        //upload
+        
+        LocalImageUrl *localImageUrl=localImageUrls[i];
+        
+        UIImage *compressImage=[CommonUtil compressForUpload:[CommonUtil loadImage:localImageUrl.fileName] scale:0.6];
+        
+        AVFile *imageFile=[AVFile fileWithName:@"iosUploadPic.png" data:UIImagePNGRepresentation(compressImage)];
+        
+        [imageFile saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+            completeNum++;
+            
+            alertView .message=[NSString stringWithFormat:@"upload %@ images, %@ complete",@(localImageUrls.count),@(completeNum)];
+            
+            if(succeeded){
+                NSLog(@"upload succeed %@",imageFile.url);
+                [self.marker addImageUrl:imageFile.url];
+                [LocalImageUrl remove:localImageUrl];
+            }
+            
+            if(error){
+                NSLog(@"%@",error.localizedDescription);
+            }
+            
+            if(completeNum==localImageUrls.count){
+                [alertView dismissWithClickedButtonIndex:alertView.cancelButtonIndex animated:YES];
+                [self updateUI];
+                self.uploadImageBtn.enabled=NO;
+            }
+        } progressBlock:^(NSInteger percentDone) {
+            progressArray[i]=[NSNumber numberWithUnsignedInteger:percentDone];
+            NSUInteger total=0;
+            for (NSNumber *progress in progressArray) {
+                total=total+[progress unsignedIntegerValue];
+            }
+            
+            
+            alertView.message=[NSString stringWithFormat:@"upload %@ images, %@ complete. progress:%@"
+                               ,@(localImageUrls.count),@(completeNum),@(total/localImageUrls.count)];
+        }];
+    }
+}
+
+
 #pragma mark UIImagePicker delegate
 -(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info{
     [picker dismissViewControllerAnimated:YES completion:^{
@@ -131,33 +216,11 @@
     
     UIImage *originalImage=info[UIImagePickerControllerEditedImage];
     
-    //compress image
-    CGFloat compressScale=0.6;
-    NSData *imageData=UIImagePNGRepresentation([CommonUtil compressForUpload:originalImage scale:compressScale]);
-    NSLog(@"upload image size : %u k",imageData.length/1000);
-    
-    
-    AVFile *imageFile=[AVFile fileWithName:@"iosUploadPic.png" data:imageData];
-    UIAlertView *alertView=[[UIAlertView alloc]initWithTitle:@"upload" message:@"progress:0%" delegate:nil cancelButtonTitle:@"Cancel" otherButtonTitles:nil];
-    [alertView show];
-    
-    [imageFile saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-        if (succeeded) {
-            NSLog(@"upload succeed %@",imageFile.url);
-            [self.uploadImageUrls addObject:imageFile.url];
-        }else{
-            NSLog(@"fail");
-            if(error){
-                NSLog(@"%@",error.localizedDescription);
-            }
-        }
-        
-        [alertView dismissWithClickedButtonIndex:alertView.cancelButtonIndex animated:YES];
-    } progressBlock:^(NSInteger percentDone) {
-        alertView.message=[NSString stringWithFormat:@"progress: %u%%",percentDone];
-    }];
-    
-    
+    NSString *imageUrl=[CommonUtil saveImage:originalImage];
+    //attachImage
+    [LocalImageUrl createLocalImageUrl:imageUrl inMarker:self.marker];
+    [CommonUtil alert:@"attach Complete"];
+    [self updateUI];
 }
 
 -(void)imagePickerControllerDidCancel:(UIImagePickerController *)picker{

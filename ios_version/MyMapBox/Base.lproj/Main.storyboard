@@ -1235,11 +1235,11 @@
                                             <subviews>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ebf-pM-Wsd">
                                                     <rect key="frame" x="0.0" y="9" width="320" height="30"/>
-                                                    <state key="normal" title="Upload Image">
+                                                    <state key="normal" title="Attach Image">
                                                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                     </state>
                                                     <connections>
-                                                        <action selector="uploadImageClick:" destination="ZbP-p6-o03" eventType="touchUpInside" id="g37-yP-fro"/>
+                                                        <action selector="attachImageClick:" destination="ZbP-p6-o03" eventType="touchUpInside" id="0V4-RA-iAx"/>
                                                     </connections>
                                                 </button>
                                             </subviews>
@@ -1247,6 +1247,29 @@
                                                 <constraint firstAttribute="trailing" secondItem="ebf-pM-Wsd" secondAttribute="trailing" id="28H-7U-Q0d"/>
                                                 <constraint firstItem="ebf-pM-Wsd" firstAttribute="bottom" secondItem="8E1-8N-jah" secondAttribute="bottomMargin" id="CsY-zn-EJA"/>
                                                 <constraint firstItem="ebf-pM-Wsd" firstAttribute="leading" secondItem="8E1-8N-jah" secondAttribute="leading" id="hy4-yY-RgA"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="zKv-kz-YHI">
+                                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="zKv-kz-YHI" id="ILJ-vk-6UU">
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Rd6-Nn-BB5">
+                                                    <rect key="frame" x="1" y="7" width="318" height="30"/>
+                                                    <state key="normal" title="Upload local Images">
+                                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                                    </state>
+                                                    <connections>
+                                                        <action selector="uploadImageClick:" destination="ZbP-p6-o03" eventType="touchUpInside" id="Sy8-f6-utm"/>
+                                                    </connections>
+                                                </button>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="Rd6-Nn-BB5" firstAttribute="leading" secondItem="ILJ-vk-6UU" secondAttribute="leadingMargin" constant="-7" id="1Of-Bi-89h"/>
+                                                <constraint firstItem="Rd6-Nn-BB5" firstAttribute="top" secondItem="ILJ-vk-6UU" secondAttribute="topMargin" constant="-1" id="B2I-07-LnS"/>
+                                                <constraint firstItem="Rd6-Nn-BB5" firstAttribute="centerX" secondItem="ILJ-vk-6UU" secondAttribute="centerX" id="yI1-Vq-rij"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
@@ -1306,6 +1329,7 @@
                         <outlet property="markerIconUrlLabel" destination="DcX-2u-4af" id="Kix-LG-RXf"/>
                         <outlet property="markerSlideNumLabel" destination="Zib-Wm-gRe" id="BvJ-BW-cgi"/>
                         <outlet property="markerTitleTextField" destination="U3E-6f-5Ka" id="v4t-6v-8Sj"/>
+                        <outlet property="uploadImageBtn" destination="Rd6-Nn-BB5" id="oPV-3g-CgV"/>
                         <segue destination="rWP-qB-qha" kind="unwind" identifier="deleteMarkerUnwindSegue" unwindAction="DeleteMarkerDone:" id="crs-8o-9b6"/>
                     </connections>
                 </tableViewController>
@@ -2372,7 +2396,7 @@
                     </connections>
                 </searchDisplayController>
             </objects>
-            <point key="canvasLocation" x="4441" y="1124"/>
+            <point key="canvasLocation" x="5230" y="1124"/>
         </scene>
         <!--User AlbumsTVC-->
         <scene sceneID="VgM-sO-ECd">
@@ -2583,7 +2607,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="uVL-ma-SxP" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3909" y="1124"/>
+            <point key="canvasLocation" x="4698" y="1124"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="iG2-Jn-gKk">

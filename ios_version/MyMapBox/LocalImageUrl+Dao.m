@@ -18,6 +18,10 @@
     return result;
 }
 
++(void)remove:(LocalImageUrl *)localImageUrl{
+    [[CommonUtil getContext] deleteObject:localImageUrl];
+}
+
 -(void)prepareForDeletion{
     NSFileManager *fileManager=[NSFileManager defaultManager];
     NSError *error;

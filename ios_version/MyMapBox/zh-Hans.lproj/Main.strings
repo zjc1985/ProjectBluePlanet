@@ -161,7 +161,7 @@
 "e6b-Ja-c6a.title" = "设置";
 
 /* Class = "UIButton"; normalTitle = "上传图片"; ObjectID = "ebf-pM-Wsd"; */
-"ebf-pM-Wsd.normalTitle" = "上传图片";
+"ebf-pM-Wsd.normalTitle" = "添加本地图片";
 
 /* Class = "UITextField"; placeholder = "请输入用户名"; ObjectID = "f2l-sH-Srw"; */
 "f2l-sH-Srw.placeholder" = "请输入用户名";

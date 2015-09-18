@@ -12,4 +12,5 @@
 
 +(LocalImageUrl *)createLocalImageUrl:(NSString *)fileName inMarker:(MMMarker *)marker;
 
++(void)remove:(LocalImageUrl *)localImageUrl;
 @end

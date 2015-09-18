@@ -91,6 +91,14 @@ static CGSize AssetThumbnailSize;
     
     PHAsset *asset=self.assetsWithLocation[indexPath.row];
     
+    
+    if([self.selectedAssets containsObject:asset]){
+        cell.accessoryType=UITableViewCellAccessoryCheckmark;
+    }else{
+        cell.accessoryType=UITableViewCellAccessoryNone;
+    }
+    
+    
     if(asset.location){
         cell.locationLabel.text=[NSString stringWithFormat:@"lat:%.3f lng:%.3f", asset.location.coordinate.latitude,asset.location.coordinate.longitude];
         cell.creationTimeLabel.text=[asset.creationDate description];

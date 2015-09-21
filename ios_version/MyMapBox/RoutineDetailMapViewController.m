@@ -26,7 +26,7 @@
 #define SHOW_SEARCH_MODAL_SEGUE @"showSearchModalSegue"
 #define SHOW_USER_ALBUMS_SEGUE @"showAlbumsSegue"
 
-@interface RoutineDetailMapViewController ()<RMMapViewDelegate,UIActionSheetDelegate>
+@interface RoutineDetailMapViewController ()<RMMapViewDelegate,UIActionSheetDelegate,RMTileCacheBackgroundDelegate,UIAlertViewDelegate>
 
 
 @property (weak, nonatomic) IBOutlet MarkerInfoView *markerInfoView;
@@ -47,6 +47,7 @@
 
 @property(nonatomic,strong) UIActionSheet *searchRMMarkerActionSheet;
 @property(nonatomic,strong) UIActionSheet *navigationActionSheet;
+@property(nonatomic,strong) UIAlertView *downloadProgressAlertView;
 
 @end
 
@@ -69,7 +70,7 @@
     [self.markerInfoView addGestureRecognizer:tapGesture];
     
     //init map
-    self.mapView.maxZoom=17;
+    self.mapView.maxZoom=16;
     
     self.mapView.zoom=15;
     
@@ -136,6 +137,17 @@
 }
 
 #pragma mark - getter and setter
+-(UIAlertView *)downloadProgressAlertView{
+    if(!_downloadProgressAlertView){
+        _downloadProgressAlertView=[[UIAlertView alloc]initWithTitle:NSLocalizedString(@"Download", @"")
+                                                         message:@"progress:0%"
+                                                        delegate:self
+                                               cancelButtonTitle:@"Cancel"
+                                               otherButtonTitles:nil];
+    }
+    return _downloadProgressAlertView;
+}
+
 -(NSMutableSet *)lastSearchPredicts{
     if(!_lastSearchPredicts){
         _lastSearchPredicts=[[NSMutableSet alloc]init];
@@ -268,6 +280,22 @@
     NSLog(@"Locate Button CLick");
     [self.mapView setCenterCoordinate:self.mapView.userLocation.coordinate animated:YES];
 }
+
+- (IBAction)downloadMapButtonClick:(id)sender {
+    CLLocationCoordinate2D southWest=self.mapView.latitudeLongitudeBoundingBox.southWest;
+    CLLocationCoordinate2D northEast=self.mapView.latitudeLongitudeBoundingBox.northEast;
+    
+    NSUInteger tileNums=[self.mapView.tileCache tileCountForSouthWest:southWest northEast:northEast minZoom:self.mapView.zoom maxZoom:self.mapView.maxZoom];
+    //[CommonUtil alert:[NSString stringWithFormat: @"zoom:%@ ,tileNum:%@",@(self.mapView.zoom),@(tileNums)]];
+    if (tileNums>1200) {
+        [CommonUtil alert:NSLocalizedString(@"Can not download. Too Large Size", @"")];
+    }else{
+        NSLog(@"prepare download tile num:%@",@(tileNums));
+        [self.downloadProgressAlertView show];
+    }
+    
+}
+
 
 - (IBAction)addMarker:(id)sender {
     UIActionSheet *sheet=[[UIActionSheet alloc] initWithTitle:nil
@@ -480,6 +508,15 @@
     
     [[UIApplication sharedApplication] openURL:
      [NSURL URLWithString:urlString]];
+}
+
+#pragma mark - UIAlertViewDelegate
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
+    if(alertView==self.downloadProgressAlertView){
+        if (buttonIndex==alertView.cancelButtonIndex) {
+            NSLog(@"Cancel download maps");
+        }
+    }
 }
 
 #pragma mark - RMMapViewDelegate

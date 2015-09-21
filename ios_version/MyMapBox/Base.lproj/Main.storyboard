@@ -799,6 +799,12 @@
                                             <action selector="locateButtonClick:" destination="alG-Kr-JdT" id="sxY-fG-ihj"/>
                                         </connections>
                                     </barButtonItem>
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="YoM-V1-fvb"/>
+                                    <barButtonItem image="icon_download" id="O5S-Z5-NsC">
+                                        <connections>
+                                            <action selector="downloadMapButtonClick:" destination="alG-Kr-JdT" id="uLs-jU-er8"/>
+                                        </connections>
+                                    </barButtonItem>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="mLa-Rx-Q0U"/>
                                     <barButtonItem systemItem="refresh" id="qGK-K8-efr">
                                         <connections>
@@ -2685,6 +2691,7 @@
     <resources>
         <image name="defaultMarkerImage" width="600" height="600"/>
         <image name="default_default" width="32" height="37"/>
+        <image name="icon_download" width="32" height="32"/>
         <image name="icon_earth" width="32" height="32"/>
         <image name="icon_less" width="32" height="32"/>
         <image name="icon_like" width="50" height="50"/>

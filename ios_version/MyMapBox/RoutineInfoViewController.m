@@ -18,6 +18,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *titleLabel;
 @property (weak, nonatomic) IBOutlet UITextView *descriptionTextField;
 @property (weak,nonatomic) MMRoutine *routine;
+@property (weak, nonatomic) IBOutlet UITableViewCell *offlineRoutineCell;
 
 @end
 
@@ -26,6 +27,9 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    self.offlineRoutineCell.hidden=YES;
+    
     NSLog(@"RoutineInfoVC did load");
 }
 

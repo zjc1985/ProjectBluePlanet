@@ -405,6 +405,7 @@
                     </navigationItem>
                     <connections>
                         <outlet property="descriptionTextField" destination="Daw-fV-MAO" id="XX8-1B-qrR"/>
+                        <outlet property="offlineRoutineCell" destination="3Fg-Pw-Ecv" id="Lep-Cu-G0R"/>
                         <outlet property="titleLabel" destination="rJ2-0I-Egl" id="YHw-N0-075"/>
                     </connections>
                 </tableViewController>

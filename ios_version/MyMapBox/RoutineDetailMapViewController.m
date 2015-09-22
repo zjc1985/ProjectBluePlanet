@@ -282,6 +282,10 @@
 }
 
 - (IBAction)downloadMapButtonClick:(id)sender {
+    if([self.mapView.tileCache isBackgroundCaching]){
+        return;
+    }
+    
     CLLocationCoordinate2D southWest=self.mapView.latitudeLongitudeBoundingBox.southWest;
     CLLocationCoordinate2D northEast=self.mapView.latitudeLongitudeBoundingBox.northEast;
     
@@ -290,10 +294,16 @@
     if (tileNums>1200) {
         [CommonUtil alert:NSLocalizedString(@"Can not download. Too Large Size", @"")];
     }else{
+        self.mapView.tileCache.backgroundCacheDelegate=self;
+        
         NSLog(@"prepare download tile num:%@",@(tileNums));
         [self.downloadProgressAlertView show];
+        [self.mapView.tileCache beginBackgroundCacheForTileSource:self.mapView.tileSource
+                                                        southWest:southWest
+                                                        northEast:northEast
+                                                          minZoom:self.mapView.zoom
+                                                          maxZoom:self.mapView.maxZoom];
     }
-    
 }
 
 
@@ -515,6 +525,7 @@
     if(alertView==self.downloadProgressAlertView){
         if (buttonIndex==alertView.cancelButtonIndex) {
             NSLog(@"Cancel download maps");
+            [self.mapView.tileCache cancelBackgroundCache];
         }
     }
 }
@@ -639,4 +650,33 @@
         return YES;
     }
 }
+
+#pragma mark - RMTileCacheBackgroundDelegate
+-(void)tileCache:(RMTileCache *)tileCache didBackgroundCacheTile:(RMTile)tile withIndex:(NSUInteger)tileIndex ofTotalTileCount:(NSUInteger)totalTileCount{
+    NSLog(@"MMRoutineCachHelper caching currrent num: %lu with total count %lu",(unsigned long)tileIndex,(unsigned long)totalTileCount);
+    float progress=(float)tileIndex/(float)totalTileCount;
+    
+    NSUInteger p=progress*100;
+    
+    NSLog(@"%@",@(p));
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self.downloadProgressAlertView.message=[NSString stringWithFormat:@"progress:%@ %%",@(p)];
+    });
+}
+
+-(void)tileCache:(RMTileCache *)tileCache didReceiveError:(NSError *)error whenCachingTile:(RMTile)tile{
+    NSLog(@"Cach error:%@",error.localizedDescription);
+}
+
+-(void)tileCacheDidCancelBackgroundCache:(RMTileCache *)tileCache{
+    NSLog(@"Cach cancel");
+}
+
+-(void)tileCacheDidFinishBackgroundCache:(RMTileCache *)tileCache{
+    NSLog(@"Cach did finish");
+    [self.downloadProgressAlertView dismissWithClickedButtonIndex:self.downloadProgressAlertView.cancelButtonIndex animated:YES];
+}
+
+
 @end

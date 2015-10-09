@@ -337,6 +337,8 @@
         MarkerInfoTVC *markerInfoTVC=segue.destinationViewController;
         markerInfoTVC.marker=sender;
         markerInfoTVC.markerCount=[[self.routine allMarks] count];
+        
+        markerInfoTVC.belongRoutine=self.routine;
     }else if ([segue.identifier isEqualToString:SHOW_SEARCH_MODAL_SEGUE]){
         UINavigationController *navController=(UINavigationController *)segue.destinationViewController;
         ApplePlaceSearchTVC *desTVC=navController.viewControllers[0];

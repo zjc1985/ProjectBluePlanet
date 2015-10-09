@@ -11,6 +11,7 @@
 #import "MMMarker+Dao.h"
 #import "LocalImageUrl+Dao.h"
 #import "CommonUtil.h"
+#import "RoutineDetailMapViewController.h"
 
 @interface MarkerInfoTVC ()
 
@@ -33,12 +34,17 @@
     //[self updateUI];
 }
 
+#pragma mark - Navigation
+
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
     if ([segue.identifier isEqualToString:@"editMarkerSegue"]) {
         UINavigationController *navController=(UINavigationController *)segue.destinationViewController;
         MarkerEditTVC *markerEditTVC=navController.viewControllers[0];
         markerEditTVC.marker=self.marker;
         markerEditTVC.markerCount=self.markerCount;
+    }else if ([segue.identifier isEqualToString:@"showDetailMapSegue"]){
+        RoutineDetailMapViewController *desVC=segue.destinationViewController;
+        desVC.routine=self.belongRoutine;
     }
 }
 
@@ -59,6 +65,12 @@
         }
     }
 
+}
+
+#pragma mark UI Action
+
+- (IBAction)showSubMarkerButtonClick:(id)sender {
+    [self performSegueWithIdentifier:@"showDetailMapSegue" sender:nil];
 }
 
 -(void)markerImageClicked{

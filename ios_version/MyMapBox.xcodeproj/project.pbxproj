@@ -64,13 +64,15 @@
 		28C442ED1B2AE70800DDC54C /* ExploreRoutineVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 28C442EC1B2AE70800DDC54C /* ExploreRoutineVC.m */; };
 		28E261CA1B00535A0019611C /* MyMapBox.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 28E261C81B00535A0019611C /* MyMapBox.xcdatamodeld */; };
 		28E261D61B007E920019611C /* MMRoutine+Dao.m in Sources */ = {isa = PBXBuildFile; fileRef = 28E261D51B007E920019611C /* MMRoutine+Dao.m */; };
-		28E261F41B0095CE0019611C /* MMRoutine.m in Sources */ = {isa = PBXBuildFile; fileRef = 28E261F31B0095CE0019611C /* MMRoutine.m */; };
 		28E261F71B0095CE0019611C /* MMOvMarker.m in Sources */ = {isa = PBXBuildFile; fileRef = 28E261F61B0095CE0019611C /* MMOvMarker.m */; };
 		28E475541AEF28C600449DBC /* OfflineRoutineTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 28E475531AEF28C600449DBC /* OfflineRoutineTVC.m */; };
 		28E475571AEF2AAB00449DBC /* OfflineRoutineTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 28E475561AEF2AAB00449DBC /* OfflineRoutineTableViewCell.m */; };
 		28E4755A1AEF88C500449DBC /* SlideNumSelectTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 28E475591AEF88C500449DBC /* SlideNumSelectTVC.m */; };
 		28F56C821B450B6B00CFC4AC /* PlaceSearchResult.m in Sources */ = {isa = PBXBuildFile; fileRef = 28F56C811B450B6B00CFC4AC /* PlaceSearchResult.m */; };
 		28F56CB71B5CFB9F00CFC4AC /* GooglePlaceManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 28F56CB61B5CFB9F00CFC4AC /* GooglePlaceManager.m */; };
+		28FF1B911BC7B4F800D95C75 /* MMRoutine.m in Sources */ = {isa = PBXBuildFile; fileRef = 28FF1B901BC7B4F800D95C75 /* MMRoutine.m */; };
+		28FF1B941BC7B54D00D95C75 /* MMTreeNode+Dao.m in Sources */ = {isa = PBXBuildFile; fileRef = 28FF1B931BC7B54D00D95C75 /* MMTreeNode+Dao.m */; };
+		28FF1B971BC7BB2900D95C75 /* MMTreeNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 28FF1B961BC7BB2900D95C75 /* MMTreeNode.m */; };
 		53ED110BC35C2D004D4FC1C8 /* libPods-MyMapBox.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DDCD2D0DA0362384E0FDE0D7 /* libPods-MyMapBox.a */; };
 		84107B4B1B85D16D007BFFB2 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 84107B4D1B85D16D007BFFB2 /* Main.storyboard */; };
 		8421CB151ADBF8FA002046B9 /* RoutineInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8421CB141ADBF8FA002046B9 /* RoutineInfoViewController.m */; };
@@ -205,8 +207,6 @@
 		28E261C91B00535A0019611C /* MyMapBox.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = MyMapBox.xcdatamodel; sourceTree = "<group>"; };
 		28E261D41B007E920019611C /* MMRoutine+Dao.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "MMRoutine+Dao.h"; path = "model/MMRoutine+Dao.h"; sourceTree = "<group>"; };
 		28E261D51B007E920019611C /* MMRoutine+Dao.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "MMRoutine+Dao.m"; path = "model/MMRoutine+Dao.m"; sourceTree = "<group>"; };
-		28E261F21B0095CE0019611C /* MMRoutine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMRoutine.h; path = model/MMRoutine.h; sourceTree = "<group>"; };
-		28E261F31B0095CE0019611C /* MMRoutine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMRoutine.m; path = model/MMRoutine.m; sourceTree = "<group>"; };
 		28E261F51B0095CE0019611C /* MMOvMarker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMOvMarker.h; path = model/MMOvMarker.h; sourceTree = "<group>"; };
 		28E261F61B0095CE0019611C /* MMOvMarker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMOvMarker.m; path = model/MMOvMarker.m; sourceTree = "<group>"; };
 		28E475521AEF28C600449DBC /* OfflineRoutineTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OfflineRoutineTVC.h; sourceTree = "<group>"; };
@@ -219,6 +219,12 @@
 		28F56C811B450B6B00CFC4AC /* PlaceSearchResult.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlaceSearchResult.m; sourceTree = "<group>"; };
 		28F56CB51B5CFB9F00CFC4AC /* GooglePlaceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GooglePlaceManager.h; sourceTree = "<group>"; };
 		28F56CB61B5CFB9F00CFC4AC /* GooglePlaceManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GooglePlaceManager.m; sourceTree = "<group>"; };
+		28FF1B8F1BC7B4F800D95C75 /* MMRoutine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMRoutine.h; sourceTree = "<group>"; };
+		28FF1B901BC7B4F800D95C75 /* MMRoutine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMRoutine.m; sourceTree = "<group>"; };
+		28FF1B921BC7B54D00D95C75 /* MMTreeNode+Dao.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MMTreeNode+Dao.h"; sourceTree = "<group>"; };
+		28FF1B931BC7B54D00D95C75 /* MMTreeNode+Dao.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MMTreeNode+Dao.m"; sourceTree = "<group>"; };
+		28FF1B951BC7BB2900D95C75 /* MMTreeNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMTreeNode.h; sourceTree = "<group>"; };
+		28FF1B961BC7BB2900D95C75 /* MMTreeNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMTreeNode.m; sourceTree = "<group>"; };
 		75CCC0929762C871D62FA854 /* Pods-MyMapBoxTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MyMapBoxTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-MyMapBoxTests/Pods-MyMapBoxTests.debug.xcconfig"; sourceTree = "<group>"; };
 		84107B4C1B85D16D007BFFB2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		84107B4F1B85D19F007BFFB2 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/LaunchScreen.strings"; sourceTree = "<group>"; };
@@ -462,8 +468,8 @@
 				280F492F1BA66B7700665B31 /* LocalImageUrl+Dao.m */,
 				28E261F51B0095CE0019611C /* MMOvMarker.h */,
 				28E261F61B0095CE0019611C /* MMOvMarker.m */,
-				28E261F21B0095CE0019611C /* MMRoutine.h */,
-				28E261F31B0095CE0019611C /* MMRoutine.m */,
+				28FF1B8F1BC7B4F800D95C75 /* MMRoutine.h */,
+				28FF1B901BC7B4F800D95C75 /* MMRoutine.m */,
 				28E261D41B007E920019611C /* MMRoutine+Dao.h */,
 				28E261D51B007E920019611C /* MMRoutine+Dao.m */,
 				288B09A31B00BC1500066C59 /* MMMarker+Dao.h */,
@@ -472,6 +478,10 @@
 				288B09A71B01A12C00066C59 /* MMOvMarker+Dao.m */,
 				28252EA71B40DB2F0057C51D /* PlaceSearchResult+Dao.h */,
 				28252EA81B40DB2F0057C51D /* PlaceSearchResult+Dao.m */,
+				28FF1B951BC7BB2900D95C75 /* MMTreeNode.h */,
+				28FF1B961BC7BB2900D95C75 /* MMTreeNode.m */,
+				28FF1B921BC7B54D00D95C75 /* MMTreeNode+Dao.h */,
+				28FF1B931BC7B54D00D95C75 /* MMTreeNode+Dao.m */,
 				288B09AB1B0320B200066C59 /* CloudManager.h */,
 				288B09AC1B0320B200066C59 /* CloudManager.m */,
 				28307D501B1D7E060050AA58 /* MMMarkerIconInfo.h */,
@@ -667,7 +677,6 @@
 				283A21CD1B2E715000F6DCA1 /* SearchMarkerInfoTVC.m in Sources */,
 				287D6D611B65D175009CFB56 /* BaseOvIconSelectTVC.m in Sources */,
 				286390841AE0D44D00A5B999 /* IconSelectTVC.m in Sources */,
-				28E261F41B0095CE0019611C /* MMRoutine.m in Sources */,
 				28307D551B1D881F0050AA58 /* IconSelectTableViewCell.m in Sources */,
 				845EB1F51AEE7B2500C719CA /* MMRoutineCachHelper.m in Sources */,
 				283A21D31B2ED1E100F6DCA1 /* BaseTourMapVC.m in Sources */,
@@ -687,9 +696,11 @@
 				288B09A81B01A12D00066C59 /* MMOvMarker+Dao.m in Sources */,
 				287D6D641B65D395009CFB56 /* AddRoutineOvIconSelectTVC.m in Sources */,
 				280FBAA61B8EE71100B2CBFC /* PrivacyVC.m in Sources */,
+				28FF1B971BC7BB2900D95C75 /* MMTreeNode.m in Sources */,
 				286390811AE0AD7600A5B999 /* RoutineEditTVC.m in Sources */,
 				8421CB181ADC04D0002046B9 /* RoutineDetailMapViewController.m in Sources */,
 				283A21FE1B3B9F0E00F6DCA1 /* LikedRoutinesTVC.m in Sources */,
+				28FF1B941BC7B54D00D95C75 /* MMTreeNode+Dao.m in Sources */,
 				28A1E92E1B5E5F9200DD0339 /* GooglePlaceDetail.m in Sources */,
 				84F46A801B0396E0008B7F13 /* SettingViewController.m in Sources */,
 				287D6D9C1B7B4E0A009CFB56 /* MarkerInfoView.m in Sources */,
@@ -725,6 +736,7 @@
 				8421CB151ADBF8FA002046B9 /* RoutineInfoViewController.m in Sources */,
 				283A21E61B313B3A00F6DCA1 /* BaseDetailMapVC.m in Sources */,
 				28C442ED1B2AE70800DDC54C /* ExploreRoutineVC.m in Sources */,
+				28FF1B911BC7B4F800D95C75 /* MMRoutine.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

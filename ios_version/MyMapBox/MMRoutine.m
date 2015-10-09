@@ -2,27 +2,29 @@
 //  MMRoutine.m
 //  MyMapBox
 //
-//  Created by bizappman on 5/11/15.
-//  Copyright (c) 2015 yufu. All rights reserved.
+//  Created by bizappman on 15/10/9.
+//  Copyright (c) 2015年 yufu. All rights reserved.
 //
 
 #import "MMRoutine.h"
 #import "MMMarker.h"
 #import "MMOvMarker.h"
+#import "MMTreeNode.h"
 
 
 @implementation MMRoutine
 
+@dynamic cachProgress;
+@dynamic isDelete;
+@dynamic isSync;
 @dynamic lat;
 @dynamic lng;
-@dynamic title;
 @dynamic mycomment;
-@dynamic isSync;
-@dynamic isDelete;
-@dynamic uuid;
+@dynamic title;
 @dynamic updateTimestamp;
-@dynamic cachProgress;
+@dynamic uuid;
 @dynamic markers;
 @dynamic ovMarkers;
+@dynamic treeNodes;
 
 @end

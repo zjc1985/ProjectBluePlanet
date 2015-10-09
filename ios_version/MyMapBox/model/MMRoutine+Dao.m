@@ -11,7 +11,7 @@
 #import "CommonUtil.h"
 #import "MMOvMarker+Dao.h"
 #import "MMMarker+Dao.h"
-
+#import "MMTreeNode+Dao.h"
 
 @import CoreData;
 
@@ -132,6 +132,10 @@
         [eachMarker markDelete];
     }
     
+    for (MMTreeNode *eachTreeNode in self.treeNodes) {
+        [eachTreeNode markDelete];
+    }
+    
 }
 
 -(void)updateLocation{
@@ -202,6 +206,16 @@
     for (MMMarker *each in markers) {
         if(![each.isDelete boolValue]){
             [result addObject:each];
+        }
+    }
+    return result;
+}
+
+-(NSArray *)headTreeNodes{
+    NSMutableArray *result=[[NSMutableArray alloc]init];
+    for (MMTreeNode *node in [self.treeNodes allObjects]) {
+        if((![node.isDelete boolValue]) && (!node.parentNode)){
+            [result addObject:node];
         }
     }
     return result;

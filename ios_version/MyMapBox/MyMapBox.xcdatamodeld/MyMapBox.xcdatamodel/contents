@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="7549" systemVersion="14E46" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="7701" systemVersion="14F27" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
     <entity name="LocalImageUrl" representedClassName="LocalImageUrl" syncable="YES">
         <attribute name="fileName" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="belongMarker" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MMMarker" inverseName="localImages" inverseEntity="MMMarker" syncable="YES"/>
@@ -47,7 +47,18 @@
         <attribute name="updateTimestamp" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
         <attribute name="uuid" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="markers" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="MMMarker" inverseName="belongRoutine" inverseEntity="MMMarker" syncable="YES"/>
-        <relationship name="ovMarkers" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MMOvMarker" inverseName="belongRoutine" inverseEntity="MMOvMarker" syncable="YES"/>
+        <relationship name="ovMarkers" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="MMOvMarker" inverseName="belongRoutine" inverseEntity="MMOvMarker" syncable="YES"/>
+        <relationship name="treeNodes" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="MMTreeNode" inverseName="belongRoutine" inverseEntity="MMTreeNode" syncable="YES"/>
+    </entity>
+    <entity name="MMTreeNode" representedClassName="MMTreeNode" syncable="YES">
+        <attribute name="isDelete" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="isSync" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="markerUuid" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="updateTimestamp" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
+        <attribute name="uuid" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="belongRoutine" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MMRoutine" inverseName="treeNodes" inverseEntity="MMRoutine" syncable="YES"/>
+        <relationship name="parentNode" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MMTreeNode" inverseName="subNodes" inverseEntity="MMTreeNode" syncable="YES"/>
+        <relationship name="subNodes" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="MMTreeNode" inverseName="parentNode" inverseEntity="MMTreeNode" syncable="YES"/>
     </entity>
     <entity name="PlaceSearchResult" representedClassName="PlaceSearchResult" syncable="YES">
         <attribute name="lat" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
@@ -57,9 +68,10 @@
     </entity>
     <elements>
         <element name="LocalImageUrl" positionX="189" positionY="-207" width="128" height="75"/>
-        <element name="MMMarker" positionX="-63" positionY="-207" width="128" height="283"/>
-        <element name="MMOvMarker" positionX="-65" positionY="333" width="128" height="223"/>
-        <element name="MMRoutine" positionX="-378" positionY="-18" width="128" height="208"/>
+        <element name="MMMarker" positionX="-63" positionY="-234" width="128" height="283"/>
+        <element name="MMOvMarker" positionX="178" positionY="-25" width="128" height="223"/>
+        <element name="MMRoutine" positionX="-378" positionY="-18" width="128" height="223"/>
         <element name="PlaceSearchResult" positionX="-380" positionY="-195" width="128" height="105"/>
+        <element name="MMTreeNode" positionX="18" positionY="308" width="128" height="163"/>
     </elements>
 </model>

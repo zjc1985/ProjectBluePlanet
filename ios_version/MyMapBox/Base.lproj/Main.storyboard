@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7531" systemVersion="14E46" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="NEI-FB-Adz">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7706" systemVersion="14F27" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="NEI-FB-Adz">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7520"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
@@ -1084,6 +1084,24 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="p2R-Vd-bZf">
+                                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="p2R-Vd-bZf" id="C3q-58-IoO">
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="XpD-Ov-18v">
+                                                    <rect key="frame" x="8" y="7" width="304" height="30"/>
+                                                    <state key="normal" title="ShowDetail">
+                                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                                    </state>
+                                                    <connections>
+                                                        <action selector="showSubMarkerButtonClick:" destination="tUP-zc-7Qb" eventType="touchUpInside" id="QIf-Tl-nb1"/>
+                                                    </connections>
+                                                </button>
+                                            </subviews>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
                                 </cells>
                             </tableViewSection>
                         </sections>
@@ -1106,6 +1124,7 @@
                         <outlet property="markerImage" destination="32a-Yv-bOg" id="qc5-7x-x0x"/>
                         <outlet property="markerSubInfoLabel" destination="6oQ-Zb-wrR" id="jbv-gV-1Cg"/>
                         <outlet property="markerTitleLabel" destination="NrQ-JG-r2F" id="LHR-Vq-LVU"/>
+                        <segue destination="alG-Kr-JdT" kind="push" identifier="showDetailMapSegue" id="ci2-9f-Z24"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="cew-lc-pSL" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -2713,9 +2732,10 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="jqu-P0-wuD"/>
-        <segue reference="Crq-we-f5i"/>
-        <segue reference="Drd-9N-wVI"/>
+        <segue reference="ci2-9f-Z24"/>
         <segue reference="0BH-Wf-kfd"/>
+        <segue reference="jqu-P0-wuD"/>
+        <segue reference="Drd-9N-wVI"/>
+        <segue reference="Crq-we-f5i"/>
     </inferredMetricsTieBreakers>
 </document>

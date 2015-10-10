@@ -8,21 +8,28 @@
 
 #import "MMTreeNode+Dao.h"
 #import "CommonUtil.h"
+#import "MMMarker+Dao.h"
 
 #define TREE_NODE_ENTITY_NAME @"MMTreeNode"
 @implementation MMTreeNode (Dao)
 
-+(MMTreeNode *)createNodeWithParentNode:(MMTreeNode *)parentNode withMarkerId:(NSString *)markerId{
+
+#pragma mark - public method
++(MMTreeNode *)createNodeWithParentNode:(MMTreeNode *)parentNode withMarkerId:(NSString *)markerId belongRoutine:(MMRoutine *)routine{
     NSUUID *uuid=[[NSUUID alloc]init];
-    return [self createNodeWithUUID:[uuid UUIDString] withParentNode:parentNode withMarkerId:markerId];
+    return [self createNodeWithUUID:[uuid UUIDString]
+                     withParentNode:parentNode
+                       withMarkerId:markerId
+                      belongRoutine:routine];
 }
 
-+(MMTreeNode *)createNodeWithUUID:(NSString *)uuid withParentNode:(MMTreeNode *)parentNode withMarkerId:(NSString *)markerId{
++(MMTreeNode *)createNodeWithUUID:(NSString *)uuid withParentNode:(MMTreeNode *)parentNode withMarkerId:(NSString *)markerId belongRoutine:(MMRoutine *)routine{
     MMTreeNode *result=[self queryMMTreeNodeWithUUID:uuid];
     if(!result){
         result=[NSEntityDescription insertNewObjectForEntityForName:TREE_NODE_ENTITY_NAME inManagedObjectContext:[CommonUtil getContext]];
         
         result.uuid=uuid;
+        result.belongRoutine=routine;
         result.parentNode=parentNode;
         result.markerUuid=markerId;
         result.isSync=[NSNumber numberWithBool:NO];
@@ -53,17 +60,7 @@
     [[CommonUtil getContext]deleteObject:treeNode];
 }
 
--(NSArray *)allSubTreeNodes{
-    NSMutableArray *results=[[NSMutableArray alloc]init];
-    
-    for (MMTreeNode *eachSubNode in [self.subNodes allObjects]) {
-        if(![eachSubNode.isDelete boolValue]){
-            [results addObject:eachSubNode];
-        }
-    }
-    
-    return results;
-}
+
 
 -(void)markDelete{
     self.isDelete=[NSNumber numberWithBool:YES];
@@ -82,6 +79,23 @@
         info=[info stringByAppendingString:[NSString stringWithFormat:@" %@",node.uuid]];
     }
     return info;
+}
+
+//protocal TreeNode method
+-(NSArray *)allSubTreeNodes{
+    NSMutableArray *results=[[NSMutableArray alloc]init];
+    
+    for (MMTreeNode *eachSubNode in [self.subNodes allObjects]) {
+        if(![eachSubNode.isDelete boolValue]){
+            [results addObject:eachSubNode];
+        }
+    }
+    
+    return results;
+}
+
+-(id<Marker>)belongMarker{
+    return [MMMarker queryMMMarkerWithUUID:self.markerUuid];
 }
 
 @end

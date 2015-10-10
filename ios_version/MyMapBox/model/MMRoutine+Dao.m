@@ -213,11 +213,21 @@
 
 -(NSArray *)headTreeNodes{
     NSMutableArray *result=[[NSMutableArray alloc]init];
+    
+    //for migration, if no treeNodes found, then create them according to markers
+    NSLog(@"%@",@([[self allMarks] count]));
+    if ([self.treeNodes allObjects].count==0) {
+        for (MMMarker *eachMark in [self allMarks]) {
+            [MMTreeNode createNodeWithParentNode:nil withMarkerId:eachMark.uuid belongRoutine:self];
+        }
+    }
+    
     for (MMTreeNode *node in [self.treeNodes allObjects]) {
         if((![node.isDelete boolValue]) && (!node.parentNode)){
             [result addObject:node];
         }
     }
+    
     return result;
 }
 

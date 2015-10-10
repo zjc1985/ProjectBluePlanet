@@ -7,12 +7,12 @@
 //
 
 #import "MMTreeNode.h"
+#import "CommonUtil.h"
+@interface MMTreeNode (Dao)<TreeNode>
 
-@interface MMTreeNode (Dao)
++(MMTreeNode *)createNodeWithParentNode:(MMTreeNode *)parentNode withMarkerId:(NSString *)markerId belongRoutine:(MMRoutine *)routine;
 
-+(MMTreeNode *)createNodeWithParentNode:(MMTreeNode *)parentNode withMarkerId:(NSString *)markerId;
-
-+(MMTreeNode *)createNodeWithUUID:(NSString *)uuid withParentNode:(MMTreeNode *)parentNode withMarkerId:(NSString *)markerId;
++(MMTreeNode *)createNodeWithUUID:(NSString *)uuid withParentNode:(MMTreeNode *)parentNode withMarkerId:(NSString *)markerId belongRoutine:(MMRoutine *)routine;
 
 +(MMTreeNode *)queryMMTreeNodeWithUUID:(NSString *)uuid;
 

@@ -44,7 +44,6 @@
         markerEditTVC.markerCount=self.markerCount;
     }else if ([segue.identifier isEqualToString:@"showDetailMapSegue"]){
         RoutineDetailMapViewController *desVC=segue.destinationViewController;
-        desVC.routine=self.belongRoutine;
     }
 }
 

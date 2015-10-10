@@ -12,6 +12,8 @@
 
 @interface BaseMarkerInfoVC ()
 
+
+
 @end
 
 @implementation BaseMarkerInfoVC
@@ -92,6 +94,11 @@
     if (index < self.photos.count)
         return [self.photos objectAtIndex:index];
     return nil;
+}
+
+#pragma mark - getter and setter
+-(id <Marker>)marker{
+    return [self.node belongMarker];
 }
 
 @end

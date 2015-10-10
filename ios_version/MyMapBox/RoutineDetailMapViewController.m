@@ -18,6 +18,7 @@
 
 
 #import "MMRoutine+Dao.h"
+#import "MMTreeNode+Dao.h"
 #import "LocalImageUrl+Dao.h"
 #import "MarkerInfoView.h"
 
@@ -101,7 +102,6 @@
     if([CommonUtil isFastNetWork]){
         [self syncMarkers];
     }
-    
 }
 
 -(void)viewWillAppear:(BOOL)animated{
@@ -240,7 +240,7 @@
 - (IBAction)PlayButtonClick:(id)sender {
     [self slidePlayClick];
     
-    if(!self.currentMarker){
+    if(!self.currentNode){
         [self.markerInfoView setHidden:YES];
     }
 }
@@ -265,6 +265,10 @@
         if(!error){
             self.routine=[MMRoutine queryMMRoutineWithUUID:currentRoutineUUID];
             if(self.routine){
+                if(self.treeNodeArray==nil ||[self.treeNodeArray count]==0){
+                    self.treeNodeArray=[self.routine headTreeNodes];
+                }
+                
                 [self updateMapUI];
             }
         }
@@ -324,8 +328,8 @@
 }
 
 -(void)markerInfoViewClick{
-    if(self.currentMarker){
-        [self performSegueWithIdentifier:@"markerDetailSegue" sender:self.currentMarker];
+    if(self.currentNode){
+        [self performSegueWithIdentifier:@"markerDetailSegue" sender:self.currentNode];
     }
 }
 
@@ -335,10 +339,8 @@
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([segue.identifier isEqualToString:@"markerDetailSegue"]) {
         MarkerInfoTVC *markerInfoTVC=segue.destinationViewController;
-        markerInfoTVC.marker=sender;
+        markerInfoTVC.node=(MMTreeNode *)sender;
         markerInfoTVC.markerCount=[[self.routine allMarks] count];
-        
-        markerInfoTVC.belongRoutine=self.routine;
     }else if ([segue.identifier isEqualToString:SHOW_SEARCH_MODAL_SEGUE]){
         UINavigationController *navController=(UINavigationController *)segue.destinationViewController;
         ApplePlaceSearchTVC *desTVC=navController.viewControllers[0];
@@ -361,7 +363,7 @@
 }
 
 -(IBAction)DeleteMarkerDone:(UIStoryboardSegue *)segue{
-    self.currentMarker=nil;
+    self.currentNode=nil;
     //stop slide mode
     self.slideIndicator=-1;
     
@@ -459,7 +461,7 @@
                 
                 //[self showUIImagePicker];
                 [self performSegueWithIdentifier:SHOW_USER_ALBUMS_SEGUE sender:self];
-                self.currentMarker=nil;
+                self.currentNode=nil;
                 break;
             }
             case addMarkerInCurrentLocation:{
@@ -482,11 +484,11 @@
 }
 
 -(void)openUrlForNavigationBy:(ActionSheetIndexForNavigation)navType{
-    if(!self.currentMarker){
+    if(!self.currentNode){
         return;
     }
     
-    MMMarker *currentMarker=self.currentMarker;
+    MMMarker *currentMarker=[self.currentNode belongMarker];
     NSString *urlString=nil;
     
     NSDictionary *saddrDic=[LocationTransform wgs2gcj:self.mapView.userLocation.coordinate.latitude
@@ -540,8 +542,10 @@
     
     
     
-    if ([annotation.userInfo isKindOfClass:[MMMarker class]]){
-        MMMarker *modelMarker=annotation.userInfo;
+    if ([annotation.userInfo isKindOfClass:[MMTreeNode class]]){
+        MMTreeNode *mmTreeNode=annotation.userInfo;
+        
+        MMMarker *modelMarker=[mmTreeNode belongMarker];
         
         CGPoint anchorPoint;
         anchorPoint.x=0.32;
@@ -563,6 +567,8 @@
         //marker.rightCalloutAccessoryView=[UIButton buttonWithType:UIButtonTypeDetailDisclosure];
         
         return marker;
+
+    
     }else if ([annotation.userInfo isKindOfClass:[GooglePlaceDetail class]]){
         CGPoint anchorPoint;
         anchorPoint.x=0.32;
@@ -593,10 +599,10 @@
     NSLog(@"change drag state %u",newState);
     
     if(newState==RMMapLayerDragStateNone){
-        NSString *subTitle=[NSString stringWithFormat:@"lat: %f lng: %f",annotation.coordinate.latitude,annotation.coordinate.longitude];
-        annotation.subtitle=subTitle;
-        if ([annotation.userInfo isKindOfClass:[MMMarker class]]) {
-            MMMarker *marker=(MMMarker *)annotation.userInfo;
+        //NSString *subTitle=[NSString stringWithFormat:@"lat: %f lng: %f",annotation.coordinate.latitude,annotation.coordinate.longitude];
+        if ([annotation.userInfo isKindOfClass:[MMTreeNode class]]) {
+            MMTreeNode *mmNode=(MMTreeNode *)annotation.userInfo;
+            MMMarker *marker=[mmNode belongMarker];
             marker.lat=[NSNumber numberWithDouble:annotation.coordinate.latitude];
             marker.lng=[NSNumber numberWithDouble:annotation.coordinate.longitude];
             marker.updateTimestamp=[NSNumber numberWithLongLong:[CommonUtil currentUTCTimeStamp]];
@@ -610,8 +616,8 @@
 -(void)tapOnCalloutAccessoryControl:(UIControl *)control forAnnotation:(RMAnnotation *)annotation onMap:(RMMapView *)map{
     if ([annotation.userInfo isKindOfClass:[GooglePlaceDetail class]]) {
         [self.searchRMMarkerActionSheet showInView:self.view];
-    }else if ([annotation.userInfo isKindOfClass:[MMMarker class]]){
-        self.currentMarker=annotation.userInfo;
+    }else if ([annotation.userInfo isKindOfClass:[MMTreeNode class]]){
+        self.currentNode=annotation.userInfo;
         [self performSegueWithIdentifier:@"markerDetailSegue" sender:annotation.userInfo];
     }
 }
@@ -624,10 +630,11 @@
     if(annotation.isUserLocationAnnotation)
         return;
     
-    if ([annotation.userInfo isKindOfClass:[MMMarker class]]){
-        MMMarker *modelMarker=annotation.userInfo;
+    if ([annotation.userInfo isKindOfClass:[MMTreeNode class]]){
+        MMTreeNode *modelNode=annotation.userInfo;
+        MMMarker *modelMarker=[modelNode belongMarker];
         [self showMarkInfoViewByMMMarker:modelMarker];
-        self.currentMarker=modelMarker;
+        self.currentNode=modelNode;
         [self.mapView setCenterCoordinate:CLLocationCoordinate2DMake([modelMarker.lat doubleValue], [modelMarker.lng doubleValue]) animated:YES];
     }
     

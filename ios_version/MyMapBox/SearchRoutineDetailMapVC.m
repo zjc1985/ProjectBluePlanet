@@ -93,7 +93,7 @@
 - (IBAction)PlayButtonClick:(id)sender {
     [self slidePlayClick];
     
-    if(!self.currentMarker){
+    if(!self.currentNode){
         [self.markerInfoView setHidden:YES];
     }
 }
@@ -107,8 +107,8 @@
 }
 
 -(void)markerInfoViewClick{
-    if(self.currentMarker){
-        [self performSegueWithIdentifier:SHOW_SEARCH_MARKER_DETAIL_SEGUE sender:self.currentMarker];
+    if(self.currentNode){
+        [self performSegueWithIdentifier:SHOW_SEARCH_MARKER_DETAIL_SEGUE sender:self.currentNode];
     }
 }
 
@@ -161,7 +161,7 @@
 
 -(void)tapOnCalloutAccessoryControl:(UIControl *)control forAnnotation:(RMAnnotation *)annotation onMap:(RMMapView *)map{
     if ([annotation.userInfo isKindOfClass:[MMSearchdeMarker class]]) {
-        self.currentMarker=annotation.userInfo;
+        self.currentNode=annotation.userInfo;
         [self performSegueWithIdentifier:SHOW_SEARCH_MARKER_DETAIL_SEGUE sender:annotation.userInfo];
     }
 }
@@ -177,7 +177,7 @@
     if ([annotation.userInfo isKindOfClass:[MMSearchdeMarker class]]){
         MMSearchdeMarker *modelMarker=annotation.userInfo;
         [self showMarkInfoViewByMMMarker:modelMarker];
-        self.currentMarker=modelMarker;
+        self.currentNode=modelMarker;
     }
 }
 

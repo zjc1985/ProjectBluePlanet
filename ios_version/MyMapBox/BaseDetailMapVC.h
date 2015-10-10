@@ -12,9 +12,13 @@
 
 @interface BaseDetailMapVC : UIViewController
 
-@property(nonatomic,strong) RMMapView *mapView;
+//in
 @property(nonatomic,strong) id<Routine> routine;
-@property(nonatomic,strong) id currentMarker;
+@property(nonatomic,strong) NSArray *treeNodeArray; //of id TreeNode
+
+
+@property(nonatomic,strong) id<TreeNode> currentNode;
+@property(nonatomic,strong) RMMapView *mapView;
 
 //slide show related
 @property (nonatomic, assign) NSInteger slideIndicator;

@@ -18,22 +18,24 @@
 #define tileJsonDetailMap @"tileJSONDetailMap"
 
 @protocol Marker <NSObject>
-
 @required
 -(NSArray *)imageUrlsArray;
 -(NSString *)iconUrl;
 -(NSString *)title;
 -(NSString *)subDescription;
 -(NSString *)mycomment;
-
+-(NSNumber *)lat;
+-(NSNumber *)lng;
+-(NSNumber *)slideNum;
 @end
 
 @protocol Routine <NSObject>
-
 @required
 -(NSString *)title;
 -(NSArray *)allOvMarks;
 -(NSArray *)allMarks;
+//return node whose parentNode==nil and isDelete=NO
+-(NSArray *)headTreeNodes;
 -(double)minLatInMarkers;
 -(double)minLngInMarkers;
 -(double)maxLatInMarkers;
@@ -43,7 +45,13 @@
 -(NSString *)uuid;
 -(void)updateLocation;
 -(NSUInteger)maxSlideNum;
+@end
 
+@protocol TreeNode <NSObject>
+@required
+-(id<Routine>)belongRoutine;
+-(id<Marker>)belongMarker;
+-(NSArray *)allSubTreeNodes; //of id<TreeNode>
 @end
 
 @interface CommonUtil : NSObject

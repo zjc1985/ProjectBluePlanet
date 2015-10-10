@@ -2732,10 +2732,10 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="ci2-9f-Z24"/>
-        <segue reference="0BH-Wf-kfd"/>
+        <segue reference="C1s-0k-kVI"/>
         <segue reference="jqu-P0-wuD"/>
         <segue reference="Drd-9N-wVI"/>
         <segue reference="Crq-we-f5i"/>
+        <segue reference="0BH-Wf-kfd"/>
     </inferredMetricsTieBreakers>
 </document>

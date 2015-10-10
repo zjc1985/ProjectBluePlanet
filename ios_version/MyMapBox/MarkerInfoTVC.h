@@ -14,6 +14,4 @@
 
 @property(nonatomic)NSUInteger markerCount;
 
-@property(nonatomic,strong)MMRoutine *belongRoutine;
-
 @end

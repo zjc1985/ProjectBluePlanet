@@ -38,6 +38,24 @@
     return result;
 }
 
++(NSArray *)queryMMTreeNodeWithMarkerId:(NSString *)markerId{
+    NSFetchRequest *request=[[NSFetchRequest alloc]init];
+    NSEntityDescription *e=[NSEntityDescription entityForName:TREE_NODE_ENTITY_NAME
+                                       inManagedObjectContext:[CommonUtil getContext]];
+    request.entity=e;
+    //NSSortDescriptor *sd=[NSSortDescriptor sortDescriptorWithKey:@"markerId" ascending:YES];
+    //request.sortDescriptors=@[sd];
+    request.predicate= [NSPredicate predicateWithFormat:@"markerUuid == %@",markerId];
+    NSError *error;
+    NSArray *result=[[CommonUtil getContext] executeFetchRequest:request error:&error];
+    if(!result){
+        [NSException raise:@"Fetch failed"
+                    format:@"Reason: %@", [error localizedDescription]];
+    }
+    
+    return result;
+}
+
 +(MMTreeNode *)queryMMTreeNodeWithUUID:(NSString *)uuid{
     NSFetchRequest *request=[[NSFetchRequest alloc]init];
     NSEntityDescription *e=[NSEntityDescription entityForName:TREE_NODE_ENTITY_NAME
@@ -61,14 +79,27 @@
 }
 
 
-
--(void)markDelete{
-    self.isDelete=[NSNumber numberWithBool:YES];
-    NSNumber *timestamp=[NSNumber numberWithLongLong:[CommonUtil currentUTCTimeStamp]];
-    self.updateTimestamp=timestamp;
+-(void)deleteSelf{
+    for (MMTreeNode *subNode in [self allSubTreeNodes]) {
+        [subNode deleteSelf];
+    }
     
-    for (MMTreeNode *eachSubNode in self.subNodes) {
-        [eachSubNode markDelete];
+    //handle relatedMarker
+    NSArray *nodesWithSameMarkerId=[MMTreeNode queryMMTreeNodeWithMarkerId:self.markerUuid];
+    if ([nodesWithSameMarkerId count]<=1) {
+        //if only self have this MarkerId, then delete this marker
+        MMMarker *belongMarker=[self belongMarker];
+        [belongMarker deleteSelf];
+    }
+    
+    if (self.isSync) {
+        //mark delete for later sync
+        self.isDelete=[NSNumber numberWithBool:YES];
+        NSNumber *timestamp=[NSNumber numberWithLongLong:[CommonUtil currentUTCTimeStamp]];
+        self.updateTimestamp=timestamp;
+    }else{
+        //directly remove
+        [MMTreeNode removeTreeNode:self];
     }
 }
 

@@ -70,6 +70,11 @@
     }
 }
 
+#pragma mark - getter and setter
+-(MMMarker *)marker{
+    return [self.node belongMarker];
+}
+
 #pragma mark - Navigation
 
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
@@ -226,5 +231,6 @@
 -(void)imagePickerControllerDidCancel:(UIImagePickerController *)picker{
     [picker dismissViewControllerAnimated:YES completion:NULL];
 }
+
 
 @end

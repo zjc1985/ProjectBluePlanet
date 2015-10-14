@@ -14,7 +14,8 @@
 
 //in
 @property(nonatomic,strong) id<Routine> routine;
-@property(nonatomic,strong) NSArray *treeNodeArray; //of id TreeNode
+@property(nonatomic,strong) id<TreeNode> parentNode;
+@property(nonatomic,strong,readonly) NSArray *treeNodeArray; //of id TreeNode
 
 
 @property(nonatomic,strong) id<TreeNode> currentNode;

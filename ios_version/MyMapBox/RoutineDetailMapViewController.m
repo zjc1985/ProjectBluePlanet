@@ -41,7 +41,7 @@
 @property (strong, nonatomic) IBOutlet UIToolbar *toolbar;
 @property (strong, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
 
-@property(strong,nonatomic)PHCachingImageManager *imageManager;
+@property(strong,nonatomic) PHCachingImageManager *imageManager;
 
 @property(nonatomic,strong) GooglePlaceDetail *searchResult;
 @property(nonatomic,strong) NSMutableSet *lastSearchPredicts;
@@ -137,6 +137,15 @@
 }
 
 #pragma mark - getter and setter
+-(MMTreeNode *)parentMMTreeNode{
+    if ([self.treeNodeArray count]>0) {
+        MMTreeNode *firstObject=[self.treeNodeArray firstObject];
+        return firstObject.parentNode;
+    }else{
+        return nil;
+    }
+}
+
 -(UIAlertView *)downloadProgressAlertView{
     if(!_downloadProgressAlertView){
         _downloadProgressAlertView=[[UIAlertView alloc]initWithTitle:NSLocalizedString(@"Download", @"")
@@ -265,10 +274,11 @@
         if(!error){
             self.routine=[MMRoutine queryMMRoutineWithUUID:currentRoutineUUID];
             if(self.routine){
+                /*
                 if(self.treeNodeArray==nil ||[self.treeNodeArray count]==0){
                     self.treeNodeArray=[self.routine headTreeNodes];
                 }
-                
+                */
                 [self updateMapUI];
             }
         }
@@ -369,14 +379,9 @@
     
     NSLog(@"prepare delete marker");
     MarkerEditTVC *markerEditTVC=segue.sourceViewController;
-    MMMarker *marker=markerEditTVC.marker;
-    if(marker){
-        if([marker.isSync boolValue]){
-            NSLog(@"mark delete marker id %@",marker.uuid);
-            [marker markDelete];
-        }else{
-            [MMMarker removeMMMarker:marker];
-        }
+    MMTreeNode *node=markerEditTVC.node;
+    if(node){
+        [node deleteSelf];
     }
 }
 
@@ -399,6 +404,11 @@
                                                   newMarker.category=[NSNumber numberWithUnsignedInteger:CategoryInfo];
                                                   newMarker.iconUrl=@"event_2.png";
                                                   newMarker.slideNum=[NSNumber numberWithUnsignedInteger:[self.routine maxSlideNum]+1];
+                                                  
+                                                  [MMTreeNode createNodeWithParentNode:[self parentMMTreeNode]
+                                                                                              withMarkerId:newMarker.uuid
+                                                                                             belongRoutine:self.routine];
+                                                  
                                                   
                                                   [self addMarkerWithTitle:@"new Image"
                                                             withCoordinate:CLLocationCoordinate2DMake([newMarker.lat doubleValue], [newMarker.lng doubleValue])
@@ -426,14 +436,18 @@
                 MMMarker *newMarker=[MMMarker createMMMarkerInRoutine:self.routine
                                                               withLat:[self.searchResult.lat doubleValue]
                                                               withLng:[self.searchResult.lng doubleValue]];
+               
                 newMarker.title=self.searchResult.name;
                 newMarker.category=[NSNumber numberWithUnsignedInteger:CategorySight];
                 newMarker.iconUrl=@"sight_default.png";
                 newMarker.mycomment=self.searchResult.address;
+                
+                [MMTreeNode createNodeWithParentNode:[self parentMMTreeNode]
+                                        withMarkerId:newMarker.uuid
+                                       belongRoutine:self.routine];
                 break;
             }
             case clearSearchResult:{
-                
                 break;
             }
             default:
@@ -443,17 +457,19 @@
         self.searchResult=nil;
         [self updateMapUI];
     }else if (actionSheet==self.navigationActionSheet){
-        
         [self openUrlForNavigationBy:buttonIndex];
     }else{
-        MMMarker *newMarker=nil;
+        MMTreeNode *newNode;
         switch (buttonIndex) {
             case addMarkerInCenter:{
                 NSLog(@"add marker in center");
-                newMarker=[MMMarker createMMMarkerInRoutine:self.routine
+                MMMarker *newMarker=[MMMarker createMMMarkerInRoutine:self.routine
                                                     withLat:self.mapView.centerCoordinate.latitude
                                                     withLng:self.mapView.centerCoordinate.longitude];
                 newMarker.slideNum=[NSNumber numberWithUnsignedInteger:[self.routine maxSlideNum]+1];
+                
+                newNode=[MMTreeNode createNodeWithParentNode:[self parentMMTreeNode] withMarkerId:newMarker.uuid belongRoutine:self.routine];
+                
                 break;
             }
             case addMarkerWithImage :{
@@ -466,18 +482,20 @@
             }
             case addMarkerInCurrentLocation:{
                 NSLog(@"add marker in current location");
-                newMarker=[MMMarker createMMMarkerInRoutine:self.routine
+                MMMarker *newMarker=[MMMarker createMMMarkerInRoutine:self.routine
                                                     withLat:self.mapView.userLocation.coordinate.latitude
                                                     withLng:self.mapView.userLocation.coordinate.longitude];
                 newMarker.slideNum=[NSNumber numberWithUnsignedInteger:[self.routine maxSlideNum]+1];
+                newNode=[MMTreeNode createNodeWithParentNode:[self parentMMTreeNode] withMarkerId:newMarker.uuid belongRoutine:self.routine];
+                
                 break;
             }
             default:
                 break;
         }
-        if(newMarker){
-            [self addMarkerWithTitle:newMarker.title withCoordinate:CLLocationCoordinate2DMake([newMarker.lat doubleValue], [newMarker.lng doubleValue])
-                      withCustomData:newMarker];
+        
+        if(newNode){
+            [self updateMapUI];
         }
     }
     

@@ -991,7 +991,7 @@
             <objects>
                 <tableViewController id="tUP-zc-7Qb" customClass="MarkerInfoTVC" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="plain" separatorStyle="none" allowsSelection="NO" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="Bza-KI-oRX">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="504"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <color key="sectionIndexBackgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -1111,25 +1111,22 @@
                         </connections>
                     </tableView>
                     <extendedEdge key="edgesForExtendedLayout" bottom="YES"/>
-                    <navigationItem key="navigationItem" id="X4d-c7-clU">
-                        <barButtonItem key="rightBarButtonItem" systemItem="edit" id="RuE-gQ-6Eg">
-                            <connections>
-                                <segue destination="0YG-aS-obc" kind="modal" identifier="editMarkerSegue" id="tOI-pf-wvb"/>
-                            </connections>
-                        </barButtonItem>
-                    </navigationItem>
+                    <navigationItem key="navigationItem" id="X4d-c7-clU"/>
                     <connections>
                         <outlet property="markerDescription" destination="FnV-ih-QUN" id="fTP-Y8-Wrg"/>
                         <outlet property="markerIconImage" destination="Sz3-1n-FQx" id="XVr-kI-7JW"/>
                         <outlet property="markerImage" destination="32a-Yv-bOg" id="qc5-7x-x0x"/>
                         <outlet property="markerSubInfoLabel" destination="6oQ-Zb-wrR" id="jbv-gV-1Cg"/>
                         <outlet property="markerTitleLabel" destination="NrQ-JG-r2F" id="LHR-Vq-LVU"/>
+                        <outlet property="showSubNodesButtonCell" destination="p2R-Vd-bZf" id="XvT-KO-iuE"/>
                         <segue destination="alG-Kr-JdT" kind="push" identifier="showDetailMapSegue" id="ci2-9f-Z24"/>
+                        <segue destination="0YG-aS-obc" kind="modal" identifier="editMarkerSegue" id="Azb-AM-BVx"/>
+                        <segue destination="BiE-rH-CfN" kind="modal" identifier="pinToCurrentRoutineSegue" id="jql-qn-cPZ"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="cew-lc-pSL" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2745" y="406"/>
+            <point key="canvasLocation" x="3960" y="406"/>
         </scene>
         <!--Marker EditTVC-->
         <scene sceneID="us2-CZ-N4J">
@@ -1362,7 +1359,55 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="KEr-vB-MOc" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <exit id="rWP-qB-qha" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="3909" y="406"/>
+            <point key="canvasLocation" x="5263" y="-987"/>
+        </scene>
+        <!--Pin Marker To RoutineTVC-->
+        <scene sceneID="j0S-Y2-cgS">
+            <objects>
+                <tableViewController id="Nqt-hH-DSD" customClass="PinMarkerToRoutineTVC" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="SXc-hG-oLa">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <prototypes>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="nodeCell" textLabel="ah7-WV-ETV" detailTextLabel="1HS-ba-lKm" style="IBUITableViewCellStyleValue1" id="LUu-d6-ket">
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="LUu-d6-ket" id="rmO-Uq-VuF">
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Title" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="ah7-WV-ETV">
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Detail" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="1HS-ba-lKm">
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                            <color key="textColor" red="0.55686274509803924" green="0.55686274509803924" blue="0.57647058823529407" alpha="1" colorSpace="calibratedRGB"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="Nqt-hH-DSD" id="CmP-Ht-WwZ"/>
+                            <outlet property="delegate" destination="Nqt-hH-DSD" id="ITw-Or-Gyf"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" id="HWt-mD-b7v">
+                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="YVd-D0-EAE">
+                            <connections>
+                                <action selector="cancel:" destination="Nqt-hH-DSD" id="GoM-d2-jz5"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" systemItem="done" id="oKD-lJ-bO4"/>
+                    </navigationItem>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="sLv-7O-qAC" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="5125" y="-232"/>
         </scene>
         <!--Icon SelectTVC-->
         <scene sceneID="BNK-mh-Voe">
@@ -1403,7 +1448,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Mt7-v8-pX0" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="4696" y="406"/>
+            <point key="canvasLocation" x="6050" y="-987"/>
         </scene>
         <!--Slide Num SelectTVC-->
         <scene sceneID="P7L-Lt-9eq">
@@ -1440,7 +1485,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="1aA-XP-BgO" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="4964" y="-263"/>
+            <point key="canvasLocation" x="6318" y="-1656"/>
         </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="ckR-pl-J3W">
@@ -2351,7 +2396,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="hVI-dJ-37X" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3245" y="406"/>
+            <point key="canvasLocation" x="4599" y="-987"/>
         </scene>
         <!--Apple Place SearchTVC-->
         <scene sceneID="Sxj-b8-Bqj">
@@ -2707,6 +2752,24 @@
             </objects>
             <point key="canvasLocation" x="3909" y="1842"/>
         </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="1hF-kc-Rwv">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="BiE-rH-CfN" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="BYh-Nv-D4W">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="Nqt-hH-DSD" kind="relationship" relationship="rootViewController" id="lBg-XU-tys"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="rcB-nS-RBz" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="4593" y="-232"/>
+        </scene>
     </scenes>
     <resources>
         <image name="defaultMarkerImage" width="600" height="600"/>
@@ -2732,10 +2795,10 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="C1s-0k-kVI"/>
+        <segue reference="Crq-we-f5i"/>
         <segue reference="jqu-P0-wuD"/>
         <segue reference="Drd-9N-wVI"/>
-        <segue reference="Crq-we-f5i"/>
+        <segue reference="ci2-9f-Z24"/>
         <segue reference="0BH-Wf-kfd"/>
     </inferredMetricsTieBreakers>
 </document>

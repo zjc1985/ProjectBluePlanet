@@ -46,6 +46,12 @@
 }
 
 -(void)updateUI{
+    if([[self.node allSubTreeNodes] count]>0){
+        [self.showSubNodesButtonCell setHidden:NO];
+    }else{
+        [self.showSubNodesButtonCell setHidden:YES];
+    }
+    
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
     self.markerIconImage.image=[UIImage imageNamed:[self.marker iconUrl]];
     self.markerTitleLabel.text=[self.marker title];

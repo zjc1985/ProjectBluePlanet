@@ -251,4 +251,12 @@
     return _mapView;
 }
 
+-(NSArray *)treeNodeArray{
+    if(self.parentNode){
+        return [self.parentNode allSubTreeNodes];
+    }else{
+        return [self.routine headTreeNodes];
+    }
+}
+
 @end

@@ -23,6 +23,6 @@
 //return subTreeNodes whose isDelete=No
 -(NSArray *)allSubTreeNodes;
 
--(void)markDelete;
+-(void)deleteSelf;
 
 @end

@@ -160,11 +160,14 @@
     }
 }
 
--(void)markDelete{
-    self.isDelete=[NSNumber numberWithBool:YES];
-    self.updateTimestamp=[NSNumber numberWithLongLong:[CommonUtil currentUTCTimeStamp]];
+-(void)deleteSelf{
+    if(self.isSync){
+        self.isDelete=[NSNumber numberWithBool:YES];
+        self.updateTimestamp=[NSNumber numberWithLongLong:[CommonUtil currentUTCTimeStamp]];
+    }else{
+        [MMMarker removeMMMarker:self];
+    }
 }
-
 
 -(NSString *)categoryName{
     return [MMMarker CategoryNameWithMMMarkerCategory:[self.category integerValue]];

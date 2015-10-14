@@ -41,14 +41,11 @@
 //return all markers whose isDelete is NO
 -(NSArray *)allMarks;
 
-//return node whose parentNode==nil and isDelete=NO
--(NSArray *)headTreeNodes;
-
 -(NSUInteger)maxSlideNum;
 
 -(BOOL)isMarkersSyncWithCloud;
 
--(void)markDelete;
+-(void)deleteSelf;
 
 -(double)minLatInMarkers;
 

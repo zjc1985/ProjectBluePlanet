@@ -82,7 +82,6 @@
     if([segue.destinationViewController isKindOfClass:[RoutineDetailMapViewController class]]){
         RoutineDetailMapViewController *routineDetailMapVC=(RoutineDetailMapViewController *)segue.destinationViewController;
         routineDetailMapVC.routine=self.routine;
-        routineDetailMapVC.treeNodeArray=self.routine.headTreeNodes;
     }
     
     if([segue.destinationViewController isKindOfClass:[OfflineRoutineTVC class]]){

@@ -73,10 +73,13 @@
     return result;
 }
 
-
--(void)markDelete{
-    self.isDelete=[NSNumber numberWithBool:YES];
-    self.updateTimestamp=[NSNumber numberWithLongLong:[CommonUtil currentUTCTimeStamp]];
+-(void)deleteSelf{
+    if(self.isSync){
+        self.isDelete=[NSNumber numberWithBool:YES];
+        self.updateTimestamp=[NSNumber numberWithLongLong:[CommonUtil currentUTCTimeStamp]];
+    }else{
+        [MMOvMarker removeMMOvMarker:self];
+    }
 }
 
 -(NSDictionary *)convertToDictionary{

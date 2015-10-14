@@ -118,24 +118,22 @@
     return result;
 }
 
--(void)markDelete{
-    self.isDelete=[NSNumber numberWithBool:YES];
-    NSNumber *timestamp=[NSNumber numberWithLongLong:[CommonUtil currentUTCTimeStamp]];
-    self.updateTimestamp=timestamp;
-    
+-(void)deleteSelf{
     for (MMOvMarker *eachOvMarker in self.ovMarkers) {
-        [eachOvMarker markDelete];
-        
-    }
-    
-    for (MMMarker *eachMarker in self.markers) {
-        [eachMarker markDelete];
+        [eachOvMarker deleteSelf];
     }
     
     for (MMTreeNode *eachTreeNode in self.treeNodes) {
-        [eachTreeNode markDelete];
+        [eachTreeNode deleteSelf];
     }
     
+    if(self.isSync){
+        self.isDelete=[NSNumber numberWithBool:YES];
+        NSNumber *timestamp=[NSNumber numberWithLongLong:[CommonUtil currentUTCTimeStamp]];
+        self.updateTimestamp=timestamp;
+    }else{
+        [MMRoutine removeRoutine:self];
+    }
 }
 
 -(void)updateLocation{

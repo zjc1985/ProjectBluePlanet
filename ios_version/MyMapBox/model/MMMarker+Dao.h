@@ -50,7 +50,7 @@ typedef enum : NSUInteger {
 
 +(NSString *)CategoryNameWithMMMarkerCategory:(MMMarkerCategory)categoryNum;
 
--(void)markDelete;
+-(void)deleteSelf;
 
 -(NSString *)categoryName;
 

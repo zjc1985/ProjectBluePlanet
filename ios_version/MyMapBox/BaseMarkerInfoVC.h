@@ -19,6 +19,8 @@
 @property (weak, nonatomic) IBOutlet UIImageView *markerIconImage;
 @property (weak, nonatomic) IBOutlet UITextView *markerDescription;
 @property (weak, nonatomic) IBOutlet UIImageView *markerImage;
+@property (weak, nonatomic) IBOutlet UITableViewCell *showSubNodesButtonCell;
+
 
 @property (nonatomic, strong) NSMutableArray *photos; //of MWPhotos
 

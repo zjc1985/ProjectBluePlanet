@@ -12,6 +12,8 @@
 #import "LocalImageUrl+Dao.h"
 #import "CommonUtil.h"
 #import "RoutineDetailMapViewController.h"
+#import "PinMarkerToRoutineTVC.h"
+
 
 @interface MarkerInfoTVC ()
 
@@ -23,6 +25,12 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    UIBarButtonItem *editButton=[[UIBarButtonItem alloc]initWithTitle:NSLocalizedString(@"Edit", nil) style:UIBarButtonItemStylePlain target:self action:@selector(editButtonClick:)];
+    
+    UIBarButtonItem *pinButton=[[UIBarButtonItem alloc]initWithTitle:NSLocalizedString(@"Pin", nil) style:UIBarButtonItemStylePlain target:self action:@selector(pinButtonClick:)];
+    
+    self.navigationItem.rightBarButtonItems = [NSArray arrayWithObjects:editButton, pinButton, nil];
 }
 
 -(void)viewWillAppear:(BOOL)animated{
@@ -40,10 +48,16 @@
     if ([segue.identifier isEqualToString:@"editMarkerSegue"]) {
         UINavigationController *navController=(UINavigationController *)segue.destinationViewController;
         MarkerEditTVC *markerEditTVC=navController.viewControllers[0];
-        markerEditTVC.marker=self.marker;
+        markerEditTVC.node=self.node;
         markerEditTVC.markerCount=self.markerCount;
     }else if ([segue.identifier isEqualToString:@"showDetailMapSegue"]){
         RoutineDetailMapViewController *desVC=segue.destinationViewController;
+        desVC.parentNode=self.node;
+        desVC.routine=[self.node belongRoutine];
+    }else if([segue.identifier isEqualToString:@"pinToCurrentRoutineSegue"]){
+        UINavigationController *navController=(UINavigationController *)segue.destinationViewController;
+        PinMarkerToRoutineTVC *pinTVC=navController.viewControllers[0];
+        //do something
     }
 }
 
@@ -67,6 +81,13 @@
 }
 
 #pragma mark UI Action
+-(IBAction)editButtonClick:(id)sender{
+    [self performSegueWithIdentifier:@"editMarkerSegue" sender:nil];
+}
+
+-(IBAction)pinButtonClick:(id)sender{
+    [self performSegueWithIdentifier:@"pinToCurrentRoutineSegue" sender:nil];
+}
 
 - (IBAction)showSubMarkerButtonClick:(id)sender {
     [self performSegueWithIdentifier:@"showDetailMapSegue" sender:nil];

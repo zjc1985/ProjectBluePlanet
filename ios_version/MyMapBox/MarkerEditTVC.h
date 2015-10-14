@@ -8,10 +8,12 @@
 
 #import <UIKit/UIKit.h>
 #import "MMMarker+Dao.h"
+#import "MMTreeNode+Dao.h"
 
 @interface MarkerEditTVC : UITableViewController
 
-@property(nonatomic)NSUInteger markerCount;
-@property(nonatomic,strong)MMMarker *marker;
+@property(nonatomic) NSUInteger markerCount;
+@property(nonatomic) MMTreeNode *node;
+@property(nonatomic,strong,readonly)MMMarker *marker;
 
 @end

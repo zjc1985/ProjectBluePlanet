@@ -112,6 +112,16 @@
     return info;
 }
 
+-(void)copySelfTo:(MMTreeNode *)parentNode inRoutine:(MMRoutine *)routine{
+    MMTreeNode *copyNode=[MMTreeNode createNodeWithParentNode:parentNode
+                                                 withMarkerId:self.markerUuid
+                                                belongRoutine:routine];
+    
+    for (MMTreeNode *eachSubNode in [self allSubTreeNodes]) {
+        [eachSubNode copySelfTo:copyNode inRoutine:routine];
+    }
+}
+
 //protocal TreeNode method
 -(NSArray *)allSubTreeNodes{
     NSMutableArray *results=[[NSMutableArray alloc]init];

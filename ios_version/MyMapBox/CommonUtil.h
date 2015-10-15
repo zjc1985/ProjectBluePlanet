@@ -36,6 +36,7 @@
 -(NSArray *)allMarks;
 //return node whose parentNode==nil and isDelete=NO
 -(NSArray *)headTreeNodes;
+-(NSArray *)allTreeNodes;//of id<TreeNode>
 -(double)minLatInMarkers;
 -(double)minLngInMarkers;
 -(double)maxLatInMarkers;

@@ -1,5 +1,4 @@
 import Foundation
-
 @objc public class LocationTransform {
     static let π = M_PI, latKey = "lat", lonKey = "lon"
 

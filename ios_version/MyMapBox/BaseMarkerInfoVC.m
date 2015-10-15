@@ -47,9 +47,9 @@
 
 -(void)updateUI{
     if([[self.node allSubTreeNodes] count]>0){
-        [self.showSubNodesButtonCell setHidden:NO];
+        [self.showDetailButton setHidden:NO];
     }else{
-        [self.showSubNodesButtonCell setHidden:YES];
+        [self.showDetailButton setHidden:YES];
     }
     
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;

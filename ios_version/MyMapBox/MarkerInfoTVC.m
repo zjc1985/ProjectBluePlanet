@@ -12,7 +12,7 @@
 #import "LocalImageUrl+Dao.h"
 #import "CommonUtil.h"
 #import "RoutineDetailMapViewController.h"
-#import "PinMarkerToRoutineTVC.h"
+#import "PinMarkerRoutineSelectTVC.h"
 
 
 @interface MarkerInfoTVC ()
@@ -25,12 +25,6 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
-    UIBarButtonItem *editButton=[[UIBarButtonItem alloc]initWithTitle:NSLocalizedString(@"Edit", nil) style:UIBarButtonItemStylePlain target:self action:@selector(editButtonClick:)];
-    
-    UIBarButtonItem *pinButton=[[UIBarButtonItem alloc]initWithTitle:NSLocalizedString(@"Pin", nil) style:UIBarButtonItemStylePlain target:self action:@selector(pinButtonClick:)];
-    
-    self.navigationItem.rightBarButtonItems = [NSArray arrayWithObjects:editButton, pinButton, nil];
 }
 
 -(void)viewWillAppear:(BOOL)animated{
@@ -54,10 +48,11 @@
         RoutineDetailMapViewController *desVC=segue.destinationViewController;
         desVC.parentNode=self.node;
         desVC.routine=[self.node belongRoutine];
-    }else if([segue.identifier isEqualToString:@"pinToCurrentRoutineSegue"]){
+    }else if([segue.identifier isEqualToString:@"pinMarkerSelectRoutineSegue"]){
         UINavigationController *navController=(UINavigationController *)segue.destinationViewController;
-        PinMarkerToRoutineTVC *pinTVC=navController.viewControllers[0];
-        //do something
+        PinMarkerRoutineSelectTVC *pinRoutineSelectTVC=navController.viewControllers[0];
+        
+        pinRoutineSelectTVC.nodeNeedPin=self.node;
     }
 }
 
@@ -86,7 +81,7 @@
 }
 
 -(IBAction)pinButtonClick:(id)sender{
-    [self performSegueWithIdentifier:@"pinToCurrentRoutineSegue" sender:nil];
+    [self performSegueWithIdentifier:@"pinMarkerSelectRoutineSegue" sender:nil];
 }
 
 - (IBAction)showSubMarkerButtonClick:(id)sender {

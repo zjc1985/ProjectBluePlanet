@@ -25,4 +25,6 @@
 
 -(void)deleteSelf;
 
+-(void)copySelfTo:(MMTreeNode *)parentNode inRoutine:(MMRoutine *)routine;
+
 @end

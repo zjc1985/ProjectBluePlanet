@@ -372,6 +372,10 @@
     }
 }
 
+-(IBAction)detailMapViewPinDone:(UIStoryboardSegue *)segue{
+    
+}
+
 -(IBAction)DeleteMarkerDone:(UIStoryboardSegue *)segue{
     self.currentNode=nil;
     //stop slide mode

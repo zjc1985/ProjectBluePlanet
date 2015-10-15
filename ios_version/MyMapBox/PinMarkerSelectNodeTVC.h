@@ -9,10 +9,10 @@
 #import <UIKit/UIKit.h>
 #import "CommonUtil.h"
 
-@interface PinMarkerToRoutineTVC : UITableViewController
+@interface PinMarkerSelectNodeTVC : UITableViewController
 
 //in
-@property (nonatomic,strong)id<TreeNode> nodeNeedPin;
-@property (nonatomic,strong)MMRoutine *desRoutine;
+@property (nonatomic,strong) id<TreeNode> nodeNeedPin;
+@property (nonatomic,strong) MMRoutine *desRoutine;
 
 @end

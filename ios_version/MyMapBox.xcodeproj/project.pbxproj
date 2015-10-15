@@ -73,7 +73,8 @@
 		28FF1B911BC7B4F800D95C75 /* MMRoutine.m in Sources */ = {isa = PBXBuildFile; fileRef = 28FF1B901BC7B4F800D95C75 /* MMRoutine.m */; };
 		28FF1B941BC7B54D00D95C75 /* MMTreeNode+Dao.m in Sources */ = {isa = PBXBuildFile; fileRef = 28FF1B931BC7B54D00D95C75 /* MMTreeNode+Dao.m */; };
 		28FF1B971BC7BB2900D95C75 /* MMTreeNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 28FF1B961BC7BB2900D95C75 /* MMTreeNode.m */; };
-		28FF1B9D1BCE61B900D95C75 /* PinMarkerToRoutineTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 28FF1B9C1BCE61B900D95C75 /* PinMarkerToRoutineTVC.m */; };
+		28FF1B9D1BCE61B900D95C75 /* PinMarkerSelectNodeTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 28FF1B9C1BCE61B900D95C75 /* PinMarkerSelectNodeTVC.m */; };
+		28FF1BA01BCF3EA900D95C75 /* PinMarkerRoutineSelectTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 28FF1B9F1BCF3EA900D95C75 /* PinMarkerRoutineSelectTVC.m */; };
 		53ED110BC35C2D004D4FC1C8 /* libPods-MyMapBox.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DDCD2D0DA0362384E0FDE0D7 /* libPods-MyMapBox.a */; };
 		84107B4B1B85D16D007BFFB2 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 84107B4D1B85D16D007BFFB2 /* Main.storyboard */; };
 		8421CB151ADBF8FA002046B9 /* RoutineInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8421CB141ADBF8FA002046B9 /* RoutineInfoViewController.m */; };
@@ -226,8 +227,10 @@
 		28FF1B931BC7B54D00D95C75 /* MMTreeNode+Dao.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MMTreeNode+Dao.m"; sourceTree = "<group>"; };
 		28FF1B951BC7BB2900D95C75 /* MMTreeNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMTreeNode.h; sourceTree = "<group>"; };
 		28FF1B961BC7BB2900D95C75 /* MMTreeNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMTreeNode.m; sourceTree = "<group>"; };
-		28FF1B9B1BCE61B900D95C75 /* PinMarkerToRoutineTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PinMarkerToRoutineTVC.h; sourceTree = "<group>"; };
-		28FF1B9C1BCE61B900D95C75 /* PinMarkerToRoutineTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PinMarkerToRoutineTVC.m; sourceTree = "<group>"; };
+		28FF1B9B1BCE61B900D95C75 /* PinMarkerSelectNodeTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PinMarkerSelectNodeTVC.h; sourceTree = "<group>"; };
+		28FF1B9C1BCE61B900D95C75 /* PinMarkerSelectNodeTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PinMarkerSelectNodeTVC.m; sourceTree = "<group>"; };
+		28FF1B9E1BCF3EA900D95C75 /* PinMarkerRoutineSelectTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PinMarkerRoutineSelectTVC.h; sourceTree = "<group>"; };
+		28FF1B9F1BCF3EA900D95C75 /* PinMarkerRoutineSelectTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PinMarkerRoutineSelectTVC.m; sourceTree = "<group>"; };
 		75CCC0929762C871D62FA854 /* Pods-MyMapBoxTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MyMapBoxTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-MyMapBoxTests/Pods-MyMapBoxTests.debug.xcconfig"; sourceTree = "<group>"; };
 		84107B4C1B85D16D007BFFB2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		84107B4F1B85D19F007BFFB2 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/LaunchScreen.strings"; sourceTree = "<group>"; };
@@ -441,8 +444,10 @@
 				287D6D661B678D25009CFB56 /* RegisterVC.m */,
 				280FBAA41B8EE71100B2CBFC /* PrivacyVC.h */,
 				280FBAA51B8EE71100B2CBFC /* PrivacyVC.m */,
-				28FF1B9B1BCE61B900D95C75 /* PinMarkerToRoutineTVC.h */,
-				28FF1B9C1BCE61B900D95C75 /* PinMarkerToRoutineTVC.m */,
+				28FF1B9B1BCE61B900D95C75 /* PinMarkerSelectNodeTVC.h */,
+				28FF1B9C1BCE61B900D95C75 /* PinMarkerSelectNodeTVC.m */,
+				28FF1B9E1BCF3EA900D95C75 /* PinMarkerRoutineSelectTVC.h */,
+				28FF1B9F1BCF3EA900D95C75 /* PinMarkerRoutineSelectTVC.m */,
 			);
 			name = Controller;
 			sourceTree = "<group>";
@@ -712,6 +717,7 @@
 				28E261CA1B00535A0019611C /* MyMapBox.xcdatamodeld in Sources */,
 				280F49771BA95C0800665B31 /* SelectImageCell.m in Sources */,
 				280F49711BA956DE00665B31 /* UserAlbumsTVC.m in Sources */,
+				28FF1BA01BCF3EA900D95C75 /* PinMarkerRoutineSelectTVC.m in Sources */,
 				283A21E91B316E9300F6DCA1 /* BaseMarkerInfoVC.m in Sources */,
 				28252EA91B40DB2F0057C51D /* PlaceSearchResult+Dao.m in Sources */,
 				283A21D01B2E742C00F6DCA1 /* PinMarkerTVC.m in Sources */,
@@ -737,7 +743,7 @@
 				288B09AD1B0320B200066C59 /* CloudManager.m in Sources */,
 				283A21EF1B328E2400F6DCA1 /* OtherUserRoutineInfoTVC.m in Sources */,
 				280F497A1BA971D400665B31 /* LocalImageUrl.m in Sources */,
-				28FF1B9D1BCE61B900D95C75 /* PinMarkerToRoutineTVC.m in Sources */,
+				28FF1B9D1BCE61B900D95C75 /* PinMarkerSelectNodeTVC.m in Sources */,
 				283A21FB1B3A49D100F6DCA1 /* LikedWorldTVC.m in Sources */,
 				8421CB151ADBF8FA002046B9 /* RoutineInfoViewController.m in Sources */,
 				283A21E61B313B3A00F6DCA1 /* BaseDetailMapVC.m in Sources */,

@@ -69,29 +69,46 @@ typedef enum : NSUInteger {
     return _nodesWithSubNodes;
 }
 
-#pragma mark - UI Action
-- (IBAction)cancel:(id)sender {
-    [self.presentingViewController dismissViewControllerAnimated:YES completion:nil];
+-(BOOL)isPinToOtherRoutine{
+    if ([[[self.nodeNeedPin belongRoutine] uuid] isEqualToString:self.desRoutine.uuid]) {
+        return NO;
+    }else{
+        return YES;
+    }
 }
+
+#pragma mark - UI Action
 
 - (IBAction)doneClick:(id)sender {
     if(self.selectNode==nil && self.isSetToRoot==NO){
         [CommonUtil alert:NSLocalizedString(@"Please Select one marker pin to", nil)];
     }else{
-        UIActionSheet *sheet=[[UIActionSheet alloc] initWithTitle:nil
-                                                         delegate:self
-                                                cancelButtonTitle:NSLocalizedString(@"Cancel", nil)
-                                           destructiveButtonTitle:nil
-                                                otherButtonTitles:NSLocalizedString(@"Copy",nil),
-                              NSLocalizedString(@"Move",nil),
-                              nil];
-        [sheet showInView:self.view];
+        
+        if([self isPinToOtherRoutine]){
+#warning not finished
+            NSLog(@"Pin to other routine");
+            [self performSegueWithIdentifier:@"pinDoneSegue" sender:nil];
+        }else{
+            UIActionSheet *sheet=[[UIActionSheet alloc] initWithTitle:nil
+                                                             delegate:self
+                                                    cancelButtonTitle:NSLocalizedString(@"Cancel", nil)
+                                               destructiveButtonTitle:nil
+                                                    otherButtonTitles:NSLocalizedString(@"Copy",nil),
+                                  NSLocalizedString(@"Move",nil),
+                                  nil];
+            [sheet showInView:self.view];
+        }
+        
     }
 }
 
 #pragma mark - UIActionSheetDelegate
 
 -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex{
+    if(actionSheet.cancelButtonIndex==buttonIndex){
+        return;
+    }
+    
     switch (buttonIndex) {
         case copyPin:{
             if([self.nodeNeedPin isKindOfClass:[MMTreeNode class]]){

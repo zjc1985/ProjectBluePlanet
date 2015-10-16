@@ -33,6 +33,11 @@
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
 }
 
+#pragma mark - UI Action
+- (IBAction)cancel:(id)sender {
+    [self.presentingViewController dismissViewControllerAnimated:YES completion:nil];
+}
+
 #pragma mark - getter and setter
 -(NSArray *)allRoutines{
     if(!_allRoutines){

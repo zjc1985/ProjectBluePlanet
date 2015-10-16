@@ -573,24 +573,24 @@
         anchorPoint.x=0.32;
         anchorPoint.y=0.8;
         
-        UIImage *iconImage=[UIImage imageNamed:modelMarker.iconUrl];
+        UIImage *iconImage=nil;
+        
+        if ([mmTreeNode allSubTreeNodes].count>0) {
+            iconImage=[UIImage imageNamed:@"collection_default.png"];
+        }else{
+            iconImage=[UIImage imageNamed:modelMarker.iconUrl];
+        }
         
         if(!iconImage){
             iconImage=[UIImage imageNamed:@"default_default.png"];
         }
         
         RMMarker *marker = [[RMMarker alloc] initWithUIImage:iconImage anchorPoint:anchorPoint];
-        //RMMarker *marker = [[RMMarker alloc] initWithUIImage:[UIImage imageNamed:@"default_default"]anchorPoint:anchorPoint];
-        
-        
-        
+
         marker.canShowCallout=YES;
-        
-        //marker.rightCalloutAccessoryView=[UIButton buttonWithType:UIButtonTypeDetailDisclosure];
         
         return marker;
 
-    
     }else if ([annotation.userInfo isKindOfClass:[GooglePlaceDetail class]]){
         CGPoint anchorPoint;
         anchorPoint.x=0.32;

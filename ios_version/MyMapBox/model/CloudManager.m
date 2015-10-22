@@ -410,7 +410,8 @@
             MMMarker *marker=[MMMarker createMMMarkerInRoutine:routine
                                                        withLat:[lat doubleValue]
                                                        withLng:[lng doubleValue]
-                                                      withUUID:[markerDic objectForKey:KEY_MARKER_UUID]];
+                                                      withUUID:[markerDic objectForKey:KEY_MARKER_UUID]
+                                              withParentMarker:nil];
             marker.iconUrl=[self iconUrlToName:[markerDic objectForKey:KEY_MARKER_ICON_URL]];
             marker.category=[markerDic objectForKey:KEY_MARKER_CATEGORY];
             marker.title=[markerDic objectForKey:KEY_MARKER_TITLE];

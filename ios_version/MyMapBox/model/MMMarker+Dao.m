@@ -9,6 +9,7 @@
 #import "MMMarker+Dao.h"
 #import "CommonUtil.h"
 #import "MMRoutine.h"
+#import "LocalImageUrl+Dao.h"
 
 @implementation MMMarker (Dao)
 
@@ -30,7 +31,7 @@
     return result.firstObject;
 }
 
-+(MMMarker *)createMMMarkerInRoutine:(MMRoutine *)routine withLat:(double)lat withLng:(double)lng withUUID:(NSString *)uuid{
++(MMMarker *)createMMMarkerInRoutine:(MMRoutine *)routine withLat:(double)lat withLng:(double)lng withUUID:(NSString *)uuid withParentMarker:(MMMarker *)parentMarker{
     MMMarker *result=[self queryMMMarkerWithUUID:uuid];
     if(result){
         return result;
@@ -53,22 +54,26 @@
         result.offsetX=[NSNumber numberWithDouble:0];
         result.offsetY=[NSNumber numberWithDouble:0];
         result.slideNum=[NSNumber numberWithInt:1];
-        
+        result.parentMarker=parentMarker;
         return result;
     }
 
 }
 
-+(MMMarker *)createMMMarkerInRoutine:(MMRoutine *)routine withLat:(double)lat withLng:(double)lng{
++(MMMarker *)createMMMarkerInRoutine:(MMRoutine *)routine withLat:(double)lat withLng:(double)lng withParentMarker:(MMMarker *)parentMarker{
     NSUUID *uuid=[[NSUUID alloc]init];
     return [self createMMMarkerInRoutine:routine
                                  withLat:lat
                                  withLng:lng
-                                withUUID:[uuid UUIDString]];
+                                withUUID:[uuid UUIDString]
+                                withParentMarker:parentMarker];
 }
 
-+(MMMarker *)createMMMarkerInRoutine:(MMRoutine *)routine withSearchMarker:(MMSearchdeMarker *)searchedMarker{
-    MMMarker *marker=[self createMMMarkerInRoutine:routine withLat:[searchedMarker.lat doubleValue] withLng:[searchedMarker.lng doubleValue]];
++(MMMarker *)createMMMarkerInRoutine:(MMRoutine *)routine withSearchMarker:(MMSearchdeMarker *)searchedMarker withParentMarker:(MMMarker *)parentMarker{
+    MMMarker *marker=[self createMMMarkerInRoutine:routine
+                                           withLat:[searchedMarker.lat doubleValue]
+                                           withLng:[searchedMarker.lng doubleValue]
+                                  withParentMarker:parentMarker];
     
     marker.title=searchedMarker.title;
     marker.iconUrl=searchedMarker.iconUrl;
@@ -107,6 +112,17 @@
             break;
     }
     return categoryName;
+}
+
+-(NSArray *)allSubMarkers{
+    NSMutableArray *results=[[NSMutableArray alloc]init];
+    
+    for(MMMarker *marker in [self.subMarkers allObjects]){
+        if(![marker.isDelete boolValue]){
+            [results addObject:marker];
+        }
+    }
+    return results;
 }
 
 -(NSArray *)imageUrlsArray{
@@ -163,6 +179,9 @@
 -(void)deleteSelf{
     if(self.isSync){
         self.isDelete=[NSNumber numberWithBool:YES];
+        for (MMMarker *each in self.subMarkers) {
+            [each deleteSelf];
+        }
         self.updateTimestamp=[NSNumber numberWithLongLong:[CommonUtil currentUTCTimeStamp]];
     }else{
         [MMMarker removeMMMarker:self];
@@ -174,7 +193,7 @@
 }
 
 -(NSString *)subDescription{
-    return [NSString stringWithFormat:@"%@ %u",[self categoryName],[self.slideNum integerValue]];
+    return [NSString stringWithFormat:@"%@ %@",[self categoryName],@([self.slideNum integerValue])];
 }
 
 -(NSDictionary *)convertToDictionary{
@@ -198,6 +217,34 @@
     [dic setValue:self.imgUrls forKey:KEY_MARKER_IMAGE_URLS];
     
     return dic;
+}
+
+-(void)copySelfTo:(MMMarker *)parentMarker inRoutine:(MMRoutine *)routine{
+    MMRoutine *belongRoutine;
+    if (parentMarker) {
+        belongRoutine=parentMarker.belongRoutine;
+    }else{
+        belongRoutine=routine;
+    }
+    MMMarker *copyMarker=[MMMarker createMMMarkerInRoutine:belongRoutine
+                                                   withLat:[self.lat doubleValue]
+                                                   withLng:[self.lng doubleValue] withParentMarker:parentMarker];
+    copyMarker.title=self.title;
+    copyMarker.mycomment=self.mycomment;
+    copyMarker.iconUrl=self.iconUrl;
+    copyMarker.imgUrls=self.imgUrls;
+    //copy local image
+    if([[self.localImages allObjects] count]>0){
+        for (NSString *imgUrl in [self.localImages allObjects]) {
+            UIImage *copyImage=[CommonUtil loadImage:imgUrl];
+            NSString *copyImgUrl=[CommonUtil saveImage:copyImage];
+            [LocalImageUrl createLocalImageUrl:copyImgUrl inMarker:copyMarker];
+        }
+    }
+    
+    for (MMMarker *eachSubMarker in [self allSubMarkers]) {
+        [eachSubMarker copySelfTo:copyMarker inRoutine:belongRoutine];
+    }
 }
 
 

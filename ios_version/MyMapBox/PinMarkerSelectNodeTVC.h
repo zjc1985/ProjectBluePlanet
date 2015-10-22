@@ -12,7 +12,7 @@
 @interface PinMarkerSelectNodeTVC : UITableViewController
 
 //in
-@property (nonatomic,strong) id<TreeNode> nodeNeedPin;
+@property (nonatomic,strong) id<Marker> markerNeedPin;
 @property (nonatomic,strong) MMRoutine *desRoutine;
 
 @end

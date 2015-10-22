@@ -25,12 +25,6 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
-    
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
 }
 
 #pragma mark - UI Action
@@ -48,7 +42,7 @@
 
 -(id<Routine>)currentRoutine{
     if(!_currentRoutine){
-        _currentRoutine=[self.nodeNeedPin belongRoutine];
+        _currentRoutine=[self.markerNeedPin belongRoutine];
     }
     
     return _currentRoutine;
@@ -60,7 +54,7 @@
     if([segue.identifier isEqualToString:@"pinMarkerSelectNodeSegue"]){
         if(sender){
             PinMarkerSelectNodeTVC *selectNodeTVC=segue.destinationViewController;
-            selectNodeTVC.nodeNeedPin=self.nodeNeedPin;
+            selectNodeTVC.markerNeedPin=self.markerNeedPin;
             selectNodeTVC.desRoutine=sender;
         }
     }

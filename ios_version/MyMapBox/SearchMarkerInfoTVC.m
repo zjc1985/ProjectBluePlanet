@@ -35,6 +35,8 @@
 }
 
 -(IBAction)pinMarkerDone:(UIStoryboardSegue *)segue{
+#warning needFix here
+    /*
     if([segue.sourceViewController isKindOfClass:[PinMarkerTVC class]]){
         PinMarkerTVC *out=segue.sourceViewController;
         MMMarker *mmmarker=[MMMarker createMMMarkerInRoutine:out.selectedRoutine withSearchMarker:self.marker];
@@ -48,6 +50,7 @@
         }
         [CommonUtil alert:@"pin complete"];
     }
+     */
 }
 
 

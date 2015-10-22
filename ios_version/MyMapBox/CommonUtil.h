@@ -17,26 +17,15 @@
 #define tileJsonTourMap @"tileJSONTourMap"
 #define tileJsonDetailMap @"tileJSONDetailMap"
 
-@protocol Marker <NSObject>
-@required
--(NSArray *)imageUrlsArray;
--(NSString *)iconUrl;
--(NSString *)title;
--(NSString *)subDescription;
--(NSString *)mycomment;
--(NSNumber *)lat;
--(NSNumber *)lng;
--(NSNumber *)slideNum;
-@end
+
 
 @protocol Routine <NSObject>
 @required
 -(NSString *)title;
 -(NSArray *)allOvMarks;
 -(NSArray *)allMarks;
-//return node whose parentNode==nil and isDelete=NO
--(NSArray *)headTreeNodes;
--(NSArray *)allTreeNodes;//of id<TreeNode>
+//return mark whose parentNode==nil and isDelete=NO
+-(NSArray *)headMarkers;
 -(double)minLatInMarkers;
 -(double)minLngInMarkers;
 -(double)maxLatInMarkers;
@@ -48,7 +37,21 @@
 -(NSUInteger)maxSlideNum;
 @end
 
-@protocol TreeNode <NSObject>
+@protocol Marker <NSObject>
+@required
+-(NSArray *)imageUrlsArray;
+-(NSString *)iconUrl;
+-(NSString *)title;
+-(NSString *)subDescription;
+-(NSString *)mycomment;
+-(NSNumber *)lat;
+-(NSNumber *)lng;
+-(NSNumber *)slideNum;
+-(NSArray *) allSubMarkers;
+-(id<Routine>)belongRoutine;
+@end
+
+@protocol TreeNod <NSObject>
 @required
 -(id<Routine>)belongRoutine;
 -(id<Marker>)belongMarker;

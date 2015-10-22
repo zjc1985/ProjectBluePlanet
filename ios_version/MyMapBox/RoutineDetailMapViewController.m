@@ -18,7 +18,6 @@
 
 
 #import "MMRoutine+Dao.h"
-#import "MMTreeNode+Dao.h"
 #import "LocalImageUrl+Dao.h"
 #import "MarkerInfoView.h"
 
@@ -137,10 +136,10 @@
 }
 
 #pragma mark - getter and setter
--(MMTreeNode *)parentMMTreeNode{
-    if ([self.treeNodeArray count]>0) {
-        MMTreeNode *firstObject=[self.treeNodeArray firstObject];
-        return firstObject.parentNode;
+-(MMMarker *)parentMMMarker{
+    if ([self.markArray count]>0) {
+        MMMarker *firstObject=[self.markArray firstObject];
+        return firstObject.parentMarker;
     }else{
         return nil;
     }
@@ -249,7 +248,7 @@
 - (IBAction)PlayButtonClick:(id)sender {
     [self slidePlayClick];
     
-    if(!self.currentNode){
+    if(!self.currentMarker){
         [self.markerInfoView setHidden:YES];
     }
 }
@@ -274,11 +273,6 @@
         if(!error){
             self.routine=[MMRoutine queryMMRoutineWithUUID:currentRoutineUUID];
             if(self.routine){
-                /*
-                if(self.treeNodeArray==nil ||[self.treeNodeArray count]==0){
-                    self.treeNodeArray=[self.routine headTreeNodes];
-                }
-                */
                 [self updateMapUI];
             }
         }
@@ -338,8 +332,8 @@
 }
 
 -(void)markerInfoViewClick{
-    if(self.currentNode){
-        [self performSegueWithIdentifier:@"markerDetailSegue" sender:self.currentNode];
+    if(self.currentMarker){
+        [self performSegueWithIdentifier:@"markerDetailSegue" sender:self.currentMarker];
     }
 }
 
@@ -349,7 +343,7 @@
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([segue.identifier isEqualToString:@"markerDetailSegue"]) {
         MarkerInfoTVC *markerInfoTVC=segue.destinationViewController;
-        markerInfoTVC.node=(MMTreeNode *)sender;
+        markerInfoTVC.marker=(MMMarker *)sender;
         markerInfoTVC.markerCount=[[self.routine allMarks] count];
     }else if ([segue.identifier isEqualToString:SHOW_SEARCH_MODAL_SEGUE]){
         UINavigationController *navController=(UINavigationController *)segue.destinationViewController;
@@ -377,15 +371,15 @@
 }
 
 -(IBAction)DeleteMarkerDone:(UIStoryboardSegue *)segue{
-    self.currentNode=nil;
+    self.currentMarker=nil;
     //stop slide mode
     self.slideIndicator=-1;
     
     NSLog(@"prepare delete marker");
     MarkerEditTVC *markerEditTVC=segue.sourceViewController;
-    MMTreeNode *node=markerEditTVC.node;
-    if(node){
-        [node deleteSelf];
+    MMMarker *marker=markerEditTVC.marker;
+    if(marker){
+        [marker deleteSelf];
     }
 }
 
@@ -404,14 +398,12 @@
                                               if(location){
                                                   MMMarker *newMarker=[MMMarker createMMMarkerInRoutine:self.routine
                                                                                                 withLat:location.coordinate.latitude
-                                                                                                withLng:location.coordinate.longitude];
+                                                                                                withLng:location.coordinate.longitude
+                                                                       withParentMarker:[self parentMarker]];
                                                   newMarker.category=[NSNumber numberWithUnsignedInteger:CategoryInfo];
                                                   newMarker.iconUrl=@"event_2.png";
-                                                  newMarker.slideNum=[NSNumber numberWithUnsignedInteger:[self.routine maxSlideNum]+1];
                                                   
-                                                  [MMTreeNode createNodeWithParentNode:[self parentMMTreeNode]
-                                                                                              withMarkerId:newMarker.uuid
-                                                                                             belongRoutine:self.routine];
+                                                  //newMarker.slideNum=[NSNumber numberWithUnsignedInteger:[self.routine maxSlideNum]+1];
                                                   
                                                   
                                                   [self addMarkerWithTitle:@"new Image"
@@ -439,16 +431,13 @@
             case addSearchResult2Routine:{
                 MMMarker *newMarker=[MMMarker createMMMarkerInRoutine:self.routine
                                                               withLat:[self.searchResult.lat doubleValue]
-                                                              withLng:[self.searchResult.lng doubleValue]];
+                                                              withLng:[self.searchResult.lng doubleValue]
+                                                     withParentMarker:[self parentMarker]];
                
                 newMarker.title=self.searchResult.name;
                 newMarker.category=[NSNumber numberWithUnsignedInteger:CategorySight];
                 newMarker.iconUrl=@"sight_default.png";
                 newMarker.mycomment=self.searchResult.address;
-                
-                [MMTreeNode createNodeWithParentNode:[self parentMMTreeNode]
-                                        withMarkerId:newMarker.uuid
-                                       belongRoutine:self.routine];
                 break;
             }
             case clearSearchResult:{
@@ -463,17 +452,16 @@
     }else if (actionSheet==self.navigationActionSheet){
         [self openUrlForNavigationBy:buttonIndex];
     }else{
-        MMTreeNode *newNode;
+        MMMarker *newMarker;
         switch (buttonIndex) {
             case addMarkerInCenter:{
                 NSLog(@"add marker in center");
-                MMMarker *newMarker=[MMMarker createMMMarkerInRoutine:self.routine
+                newMarker=[MMMarker createMMMarkerInRoutine:self.routine
                                                     withLat:self.mapView.centerCoordinate.latitude
-                                                    withLng:self.mapView.centerCoordinate.longitude];
-                newMarker.slideNum=[NSNumber numberWithUnsignedInteger:[self.routine maxSlideNum]+1];
+                                                    withLng:self.mapView.centerCoordinate.longitude
+                                           withParentMarker:[self parentMarker]];
                 
-                newNode=[MMTreeNode createNodeWithParentNode:[self parentMMTreeNode] withMarkerId:newMarker.uuid belongRoutine:self.routine];
-                
+                //newMarker.slideNum=[NSNumber numberWithUnsignedInteger:[self.routine maxSlideNum]+1];
                 break;
             }
             case addMarkerWithImage :{
@@ -481,16 +469,17 @@
                 
                 //[self showUIImagePicker];
                 [self performSegueWithIdentifier:SHOW_USER_ALBUMS_SEGUE sender:self];
-                self.currentNode=nil;
+                self.currentMarker=nil;
                 break;
             }
             case addMarkerInCurrentLocation:{
                 NSLog(@"add marker in current location");
-                MMMarker *newMarker=[MMMarker createMMMarkerInRoutine:self.routine
+                newMarker=[MMMarker createMMMarkerInRoutine:self.routine
                                                     withLat:self.mapView.userLocation.coordinate.latitude
-                                                    withLng:self.mapView.userLocation.coordinate.longitude];
-                newMarker.slideNum=[NSNumber numberWithUnsignedInteger:[self.routine maxSlideNum]+1];
-                newNode=[MMTreeNode createNodeWithParentNode:[self parentMMTreeNode] withMarkerId:newMarker.uuid belongRoutine:self.routine];
+                                                    withLng:self.mapView.userLocation.coordinate.longitude
+                                           withParentMarker:[self parentMarker]];
+                
+                //newMarker.slideNum=[NSNumber numberWithUnsignedInteger:[self.routine maxSlideNum]+1];
                 
                 break;
             }
@@ -498,7 +487,7 @@
                 break;
         }
         
-        if(newNode){
+        if(newMarker){
             [self updateMapUI];
         }
     }
@@ -506,11 +495,10 @@
 }
 
 -(void)openUrlForNavigationBy:(ActionSheetIndexForNavigation)navType{
-    if(!self.currentNode){
+    if(!self.currentMarker){
         return;
     }
     
-    MMMarker *currentMarker=[self.currentNode belongMarker];
     NSString *urlString=nil;
     
     NSDictionary *saddrDic=[LocationTransform wgs2gcj:self.mapView.userLocation.coordinate.latitude
@@ -518,8 +506,8 @@
     NSNumber *sLat=[saddrDic objectForKey:@"lat"];
     NSNumber *sLng=[saddrDic objectForKey:@"lon"];
     
-    NSDictionary *daddrDic=[LocationTransform wgs2gcj:[currentMarker.lat doubleValue]
-                                               wgsLon:[currentMarker.lng doubleValue]];
+    NSDictionary *daddrDic=[LocationTransform wgs2gcj:[self.currentMarker.lat doubleValue]
+                                               wgsLon:[self.currentMarker.lng doubleValue]];
     
     NSNumber *dLat=[daddrDic objectForKey:@"lat"];
     NSNumber *dLng=[daddrDic objectForKey:@"lon"];
@@ -562,12 +550,8 @@
     if(annotation.isUserLocationAnnotation)
         return nil;
     
-    
-    
-    if ([annotation.userInfo isKindOfClass:[MMTreeNode class]]){
-        MMTreeNode *mmTreeNode=annotation.userInfo;
-        
-        MMMarker *modelMarker=[mmTreeNode belongMarker];
+    if ([annotation.userInfo isKindOfClass:[MMMarker class]]){
+        MMMarker *modelMarker=annotation.userInfo;
         
         CGPoint anchorPoint;
         anchorPoint.x=0.32;
@@ -575,7 +559,7 @@
         
         UIImage *iconImage=nil;
         
-        if ([mmTreeNode allSubTreeNodes].count>0) {
+        if ([modelMarker allSubMarkers].count>0) {
             iconImage=[UIImage imageNamed:@"collection_default.png"];
         }else{
             iconImage=[UIImage imageNamed:modelMarker.iconUrl];
@@ -618,13 +602,12 @@
 
 -(void) mapView:(RMMapView *)mapView annotation:(RMAnnotation *)annotation didChangeDragState:(RMMapLayerDragState)newState fromOldState:(RMMapLayerDragState)oldState{
     
-    NSLog(@"change drag state %u",newState);
+    NSLog(@"change drag state %@",@(newState));
     
     if(newState==RMMapLayerDragStateNone){
         //NSString *subTitle=[NSString stringWithFormat:@"lat: %f lng: %f",annotation.coordinate.latitude,annotation.coordinate.longitude];
-        if ([annotation.userInfo isKindOfClass:[MMTreeNode class]]) {
-            MMTreeNode *mmNode=(MMTreeNode *)annotation.userInfo;
-            MMMarker *marker=[mmNode belongMarker];
+        if ([annotation.userInfo isKindOfClass:[MMMarker class]]) {
+            MMMarker *marker=annotation.userInfo;
             marker.lat=[NSNumber numberWithDouble:annotation.coordinate.latitude];
             marker.lng=[NSNumber numberWithDouble:annotation.coordinate.longitude];
             marker.updateTimestamp=[NSNumber numberWithLongLong:[CommonUtil currentUTCTimeStamp]];
@@ -638,8 +621,8 @@
 -(void)tapOnCalloutAccessoryControl:(UIControl *)control forAnnotation:(RMAnnotation *)annotation onMap:(RMMapView *)map{
     if ([annotation.userInfo isKindOfClass:[GooglePlaceDetail class]]) {
         [self.searchRMMarkerActionSheet showInView:self.view];
-    }else if ([annotation.userInfo isKindOfClass:[MMTreeNode class]]){
-        self.currentNode=annotation.userInfo;
+    }else if ([annotation.userInfo isKindOfClass:[MMMarker class]]){
+        self.currentMarker=annotation.userInfo;
         [self performSegueWithIdentifier:@"markerDetailSegue" sender:annotation.userInfo];
     }
 }
@@ -652,11 +635,10 @@
     if(annotation.isUserLocationAnnotation)
         return;
     
-    if ([annotation.userInfo isKindOfClass:[MMTreeNode class]]){
-        MMTreeNode *modelNode=annotation.userInfo;
-        MMMarker *modelMarker=[modelNode belongMarker];
+    if ([annotation.userInfo isKindOfClass:[MMMarker class]]){
+        MMMarker *modelMarker=annotation.userInfo;
         [self showMarkInfoViewByMMMarker:modelMarker];
-        self.currentNode=modelNode;
+        self.currentMarker=modelMarker;
         [self.mapView setCenterCoordinate:CLLocationCoordinate2DMake([modelMarker.lat doubleValue], [modelMarker.lng doubleValue]) animated:YES];
     }
     

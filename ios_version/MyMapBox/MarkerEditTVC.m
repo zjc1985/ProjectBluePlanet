@@ -45,7 +45,7 @@
 
 -(void)updateUI{
     self.markerTitleTextField.text=self.marker.title;
-    self.markerSlideNumLabel.text=[NSString stringWithFormat:@"%u",[self.marker.slideNum integerValue]];
+    self.markerSlideNumLabel.text=[NSString stringWithFormat:@"%@",@([self.marker.slideNum integerValue])];
     self.markerIconUrlLabel.text=[self.marker iconUrl];
     
     self.markerDescriptionTextView.text=self.marker.mycomment;
@@ -71,9 +71,7 @@
 }
 
 #pragma mark - getter and setter
--(MMMarker *)marker{
-    return [self.node belongMarker];
-}
+
 
 #pragma mark - Navigation
 

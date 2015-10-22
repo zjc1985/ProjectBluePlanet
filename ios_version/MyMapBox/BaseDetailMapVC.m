@@ -108,9 +108,9 @@
     }
     
     
-    if(self.currentNode){
+    if(self.currentMarker){
         NSLog(@"center to currentMarker");
-        [self.mapView setCenterCoordinate:CLLocationCoordinate2DMake([[[self.currentNode belongMarker] lat] doubleValue], [[[self.currentNode belongMarker] lng] doubleValue]) animated:YES];
+        [self.mapView setCenterCoordinate:CLLocationCoordinate2DMake([[self.currentMarker lat] doubleValue], [[self.currentMarker lng] doubleValue]) animated:YES];
     }else{
         
         [self.mapView zoomWithLatitudeLongitudeBoundsSouthWest:[CommonUtil minLocationInMMMarkers:markersNeedInView]
@@ -160,12 +160,11 @@
 
 -(NSArray *)markersSortedBySlideNum{
     NSMutableArray *result=[[NSMutableArray alloc]init];
-    NSArray *treeNodes=self.treeNodeArray;
+    NSArray *markers=self.markArray;
     
-    for (NSUInteger i=1; i<treeNodes.count+1; i++) {
+    for (NSUInteger i=1; i<markers.count+1; i++) {
         NSMutableArray *markersWithSameSlideNum=[[NSMutableArray alloc]init];
-        for (id<TreeNode> node in treeNodes) {
-            id<Marker> marker=[node belongMarker];
+        for (id<Marker> marker in markers) {
             if ([[marker slideNum] unsignedIntegerValue] ==i) {
                 [markersWithSameSlideNum addObject:marker];
             }
@@ -183,17 +182,16 @@
     
     [self.mapView removeAllAnnotations];
     
-    for (id<TreeNode> treeNode in self.treeNodeArray) {
-        id<Marker> marker=[treeNode belongMarker];
+    for (id<Marker> marker in self.markArray) {
         [self addMarkerWithTitle:[marker title]
                   withCoordinate:CLLocationCoordinate2DMake([[marker lat] doubleValue], [[marker lng] doubleValue])
-                  withCustomData:treeNode];
+                  withCustomData:marker];
     }
     
-    if ([self.treeNodeArray count]>0) {
-        if(self.currentNode){
+    if ([self.markArray count]>0) {
+        if(self.currentMarker){
             NSLog(@"center to currentMarker");
-            [self.mapView setCenterCoordinate:CLLocationCoordinate2DMake([[[self.currentNode belongMarker] lat] doubleValue], [[[self.currentNode belongMarker] lng] doubleValue]) animated:YES];
+            [self.mapView setCenterCoordinate:CLLocationCoordinate2DMake([[self.currentMarker lat] doubleValue], [[self.currentMarker lng] doubleValue]) animated:YES];
         }else{
             NSLog(@"zoom to fit all markers");
             
@@ -216,18 +214,18 @@
 }
 
 -(void)slidePlayClick{
-    self.currentNode=nil;
+    self.currentMarker=nil;
     if(self.slideIndicator<0){
         self.slideIndicator=0;
     }else{
-        self.currentNode=nil;
+        self.currentMarker=nil;
         self.slideIndicator=-1;
     }
     [self updateMapUI];
 }
 
 -(void)slideNextClick{
-    self.currentNode=nil;
+    self.currentMarker=nil;
     if(self.slideIndicator>=0 && self.slideIndicator<[self markersSortedBySlideNum].count-1){
         self.slideIndicator++;
         [self updateMapUI];
@@ -235,7 +233,7 @@
 }
 
 -(void)slidePrevClick{
-    self.currentNode=nil;
+    self.currentMarker=nil;
     if(self.slideIndicator>0){
         self.slideIndicator--;
         [self updateMapUI];
@@ -251,11 +249,11 @@
     return _mapView;
 }
 
--(NSArray *)treeNodeArray{
-    if(self.parentNode){
-        return [self.parentNode allSubTreeNodes];
+-(NSArray *)markArray{
+    if(self.parentMarker){
+        return [self.parentMarker allSubMarkers];
     }else{
-        return [self.routine headTreeNodes];
+        return [self.routine headMarkers];
     }
 }
 

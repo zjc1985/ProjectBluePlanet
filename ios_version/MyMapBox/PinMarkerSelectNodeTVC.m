@@ -118,6 +118,7 @@ typedef enum : NSUInteger {
             if([self.markerNeedPin isKindOfClass:[MMMarker class]]){
                 MMMarker *markerNeedPin=self.markerNeedPin;
                 markerNeedPin.parentMarker=self.selectMarker;
+                markerNeedPin.updateTimestamp=[NSNumber numberWithLongLong:[CommonUtil currentUTCTimeStamp]];
             }
             break;
         }

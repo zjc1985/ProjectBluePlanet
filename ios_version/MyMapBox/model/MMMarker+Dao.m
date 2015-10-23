@@ -215,7 +215,9 @@
     [dic setValue:self.isSync forKey:KEY_MARKER_IS_SYNCED];
     [dic setValue:self.updateTimestamp forKey:KEY_MARKER_UPDATE_TIME];
     [dic setValue:self.imgUrls forKey:KEY_MARKER_IMAGE_URLS];
-    
+    if(self.parentMarker){
+        [dic setValue:self.parentMarker.uuid forKey:KEY_MARKER_PARENT_UUID];
+    }
     return dic;
 }
 
@@ -246,6 +248,9 @@
         [eachSubMarker copySelfTo:copyMarker inRoutine:belongRoutine];
     }
 }
+
+#pragma mark - setters
+
 
 
 @end

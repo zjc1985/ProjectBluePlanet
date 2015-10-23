@@ -26,6 +26,7 @@
 #define KEY_MARKER_IS_SYNCED @"isSynced"
 #define KEY_MARKER_UPDATE_TIME @"updateTime"
 #define KEY_MARKER_IMAGE_URLS @"imgUrls"
+#define KEY_MARKER_PARENT_UUID @"parentMarkerUuid"
 
 typedef enum : NSUInteger {
     CategoryArrivalLeave = 1,

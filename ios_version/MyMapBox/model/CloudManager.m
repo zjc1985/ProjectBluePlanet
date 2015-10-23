@@ -372,8 +372,8 @@
         if(!error){
             NSDictionary *response=object;
             
-            [self handleMarkersUpdate:[response objectForKey:KEY_RESPONSE_MARKERS_UPDATED]];
             [self handleMarkersNew:[response objectForKey:KEY_RESPONSE_MARKERS_NEW]];
+            [self handleMarkersUpdate:[response objectForKey:KEY_RESPONSE_MARKERS_UPDATED]];
             [self handleMarkersDelete:[response objectForKey:KEY_RESPONSE_MARKERS_DELETE]];
             
             //server will not return client new object when sync, so need set these objects isSynced to YES after sync
@@ -424,7 +424,15 @@
             marker.imgUrls=[markerDic objectForKey:KEY_MARKER_IMAGE_URLS];
         }
     }
-
+    
+    //handle parent marker
+    for (NSDictionary *markerDic in array) {
+        MMMarker *marker=[MMMarker queryMMMarkerWithUUID:[markerDic objectForKey:KEY_MARKER_UUID]];
+        MMMarker *parentMarker=[MMMarker queryMMMarkerWithUUID:[markerDic objectForKey:KEY_MARKER_PARENT_UUID]];
+        if(parentMarker){
+            marker.parentMarker=parentMarker;
+        }
+    }
 }
 
 +(void)handleMarkersUpdate:(NSArray *)array{
@@ -447,6 +455,15 @@
             if(routine){
                 marker.belongRoutine=routine;
             }
+        }
+    }
+    
+    //handle parent marker
+    for (NSDictionary *markerDic in array) {
+        MMMarker *marker=[MMMarker queryMMMarkerWithUUID:[markerDic objectForKey:KEY_MARKER_UUID]];
+        MMMarker *parentMarker=[MMMarker queryMMMarkerWithUUID:[markerDic objectForKey:KEY_MARKER_PARENT_UUID]];
+        if(parentMarker){
+            marker.parentMarker=parentMarker;
         }
     }
 }

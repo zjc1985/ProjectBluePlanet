@@ -32,8 +32,13 @@
      NSUInteger minZoom=8;
      NSUInteger maxZoom=16;
      
-     CLLocationCoordinate2D southwest=CLLocationCoordinate2DMake([routine minLatInMarkers],[routine minLngInMarkers]);
-     CLLocationCoordinate2D northEast=CLLocationCoordinate2DMake([routine maxLatInMarkers],[routine maxLngInMarkers]);
+     double minLat=[CommonUtil minLatInMarkers:[routine allMarks]];
+     double minLng=[CommonUtil minLngInMarkers:[routine allMarks]];
+     double maxLat=[CommonUtil maxLatInMarkers:[routine allMarks]];
+     double maxLng=[CommonUtil maxLngInMarkers:[routine allMarks]];
+     
+     CLLocationCoordinate2D southwest=CLLocationCoordinate2DMake(minLat,minLng);
+     CLLocationCoordinate2D northEast=CLLocationCoordinate2DMake(maxLat,maxLng);
      
      NSLog(@"south west %f %f",southwest.latitude,southwest.longitude);
      NSLog(@"north east %f %f",northEast.latitude,southwest.longitude);

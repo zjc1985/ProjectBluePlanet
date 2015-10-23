@@ -26,10 +26,6 @@
 -(NSArray *)allMarks;
 //return mark whose parentNode==nil and isDelete=NO
 -(NSArray *)headMarkers;
--(double)minLatInMarkers;
--(double)minLngInMarkers;
--(double)maxLatInMarkers;
--(double)maxLngInMarkers;
 -(NSNumber *)lat;
 -(NSNumber *)lng;
 -(NSString *)uuid;
@@ -51,14 +47,13 @@
 -(id<Routine>)belongRoutine;
 @end
 
-@protocol TreeNod <NSObject>
-@required
--(id<Routine>)belongRoutine;
--(id<Marker>)belongMarker;
--(NSArray *)allSubTreeNodes; //of id<TreeNode>
-@end
 
 @interface CommonUtil : NSObject
+
++(double)minLatInMarkers:(NSArray *)markerArray;
++(double)minLngInMarkers:(NSArray *)markerArray;
++(double)maxLatInMarkers:(NSArray *)markerArray;
++(double)maxLngInMarkers:(NSArray *)markerArray;
 
 +(NSString *)dataFilePath;
 

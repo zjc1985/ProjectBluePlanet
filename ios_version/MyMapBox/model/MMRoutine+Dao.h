@@ -47,14 +47,6 @@
 
 -(void)deleteSelf;
 
--(double)minLatInMarkers;
-
--(double)maxLatInMarkers;
-
--(double)minLngInMarkers;
-
--(double)maxLngInMarkers;
-
 -(void)updateLocation;
 
 -(NSDictionary *)convertToDictionary;

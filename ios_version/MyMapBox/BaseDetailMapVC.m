@@ -195,16 +195,17 @@
         }else{
             NSLog(@"zoom to fit all markers");
             
-            CLLocationCoordinate2D minLocation=CLLocationCoordinate2DMake([self.routine minLatInMarkers], [self.routine minLngInMarkers]);
-            CLLocationCoordinate2D maxLocation=CLLocationCoordinate2DMake([self.routine maxLatInMarkers], [self.routine maxLngInMarkers]);
+            double minLat=[CommonUtil minLatInMarkers:[self markArray]];
+            double minLng=[CommonUtil minLngInMarkers:[self markArray]];
+            double maxLat=[CommonUtil maxLatInMarkers:[self markArray]];
+            double maxLng=[CommonUtil maxLngInMarkers:[self markArray]];
             
-            //[self addMarkerWithTitle:@"southweat" withCoordinate:minLocation withCustomData:nil];
-            //[self addMarkerWithTitle:@"northEast" withCoordinate:maxLocation withCustomData:nil];
+            CLLocationCoordinate2D minLocation=CLLocationCoordinate2DMake(minLat, minLng);
+            CLLocationCoordinate2D maxLocation=CLLocationCoordinate2DMake(maxLat, maxLng);
             
             [self.mapView zoomWithLatitudeLongitudeBoundsSouthWest:minLocation
                                                          northEast:maxLocation
                                                           animated:YES];
-            
             
             [self.mapView setZoom:self.mapView.zoom-0.5 animated:YES];
         }

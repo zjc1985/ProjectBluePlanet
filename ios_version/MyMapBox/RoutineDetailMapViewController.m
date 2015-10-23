@@ -348,8 +348,14 @@
     }else if ([segue.identifier isEqualToString:SHOW_SEARCH_MODAL_SEGUE]){
         UINavigationController *navController=(UINavigationController *)segue.destinationViewController;
         ApplePlaceSearchTVC *desTVC=navController.viewControllers[0];
-        desTVC.minLocation=CLLocationCoordinate2DMake([self.routine minLatInMarkers], [self.routine minLngInMarkers]);
-        desTVC.maxLocation=CLLocationCoordinate2DMake([self.routine maxLatInMarkers], [self.routine maxLngInMarkers]);
+        
+        double minLat=[CommonUtil minLatInMarkers:[self markArray]];
+        double minLng=[CommonUtil minLngInMarkers:[self markArray]];
+        double maxLat=[CommonUtil maxLatInMarkers:[self markArray]];
+        double maxLng=[CommonUtil maxLngInMarkers:[self markArray]];
+        
+        desTVC.minLocation=CLLocationCoordinate2DMake(minLat, minLng);
+        desTVC.maxLocation=CLLocationCoordinate2DMake(maxLat, maxLng);
         if(self.lastSearchPredicts){
             desTVC.historyResults=[self.lastSearchPredicts allObjects];
         }

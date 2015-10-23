@@ -147,52 +147,6 @@
     self.updateTimestamp=timestamp;
 }
 
--(double)minLatInMarkers{
-    MMMarker *first=[[self.markers allObjects] firstObject];
-    double minLat=[first.lat doubleValue];
-    
-    for (MMMarker *each in [self headMarkers]) {
-        if([each.lat doubleValue]<minLat){
-            minLat=[each.lat doubleValue];
-        }
-    }
-    
-    return minLat;
-}
-
--(double)minLngInMarkers{
-    MMMarker *first=[[self.markers allObjects] firstObject];
-    double minLng=[first.lng doubleValue];
-    for (MMMarker *each in [self headMarkers]) {
-        if([each.lng doubleValue]<minLng){
-            minLng=[each.lng doubleValue];
-        }
-    }
-    return minLng;
-}
-
--(double)maxLatInMarkers{
-    MMMarker *first=[[self.markers allObjects] firstObject];
-    double maxLat=[first.lat doubleValue];
-    for (MMMarker *each in [self headMarkers]) {
-        if([each.lat doubleValue]>maxLat){
-            maxLat=[each.lat doubleValue];
-        }
-    }
-    return maxLat;
-}
-
--(double)maxLngInMarkers{
-    MMMarker *first=[[self.markers allObjects] firstObject];
-    double maxLng=[first.lng doubleValue];
-    for (MMMarker *each in [self headMarkers]) {
-        if([each.lng doubleValue]>maxLng){
-            maxLng=[each.lng doubleValue];
-        }
-    }
-    return maxLng;
-}
-
 -(NSArray *)allMarks{
     NSArray *markers=[self.markers allObjects];
     NSMutableArray *result=[[NSMutableArray alloc]init];

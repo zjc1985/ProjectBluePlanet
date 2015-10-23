@@ -2910,10 +2910,10 @@
         <image name="refresh" width="225" height="225"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="Crq-we-f5i"/>
         <segue reference="jqu-P0-wuD"/>
+        <segue reference="Crq-we-f5i"/>
         <segue reference="Drd-9N-wVI"/>
-        <segue reference="ci2-9f-Z24"/>
+        <segue reference="C1s-0k-kVI"/>
         <segue reference="0BH-Wf-kfd"/>
     </inferredMetricsTieBreakers>
 </document>

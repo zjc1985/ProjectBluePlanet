@@ -10,6 +10,52 @@
 #import "AppDelegate.h"
 
 @implementation CommonUtil
++(double)minLatInMarkers:(NSArray *)markerArray{
+    MMMarker *first=[markerArray firstObject];
+    double minLat=[first.lat doubleValue];
+    
+    for (MMMarker *each in markerArray) {
+        if([each.lat doubleValue]<minLat){
+            minLat=[each.lat doubleValue];
+        }
+    }
+    
+    return minLat;
+}
+
++(double)minLngInMarkers:(NSArray *)markerArray{
+    MMMarker *first=[markerArray firstObject];
+    double minLng=[first.lng doubleValue];
+    for (MMMarker *each in markerArray) {
+        if([each.lng doubleValue]<minLng){
+            minLng=[each.lng doubleValue];
+        }
+    }
+    return minLng;
+}
+
++(double)maxLatInMarkers:(NSArray *)markerArray{
+    MMMarker *first=[markerArray firstObject];
+    double maxLat=[first.lat doubleValue];
+    for (MMMarker *each in markerArray) {
+        if([each.lat doubleValue]>maxLat){
+            maxLat=[each.lat doubleValue];
+        }
+    }
+    return maxLat;
+}
+
++(double)maxLngInMarkers:(NSArray *)markerArray{
+    MMMarker *first=[markerArray firstObject];
+    double maxLng=[first.lng doubleValue];
+    for (MMMarker *each in markerArray) {
+        if([each.lng doubleValue]>maxLng){
+            maxLng=[each.lng doubleValue];
+        }
+    }
+    return maxLng;
+}
+
 +(NSString *)appDocumentDirectoryPath{
     NSArray *path=NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *documentDirectory=[path objectAtIndex:0];

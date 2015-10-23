@@ -79,8 +79,11 @@ typedef enum : NSUInteger {
     }else{
         
         if([self isPinToOtherRoutine]){
-#warning not finished
             NSLog(@"Pin to other routine");
+            if([self.markerNeedPin isKindOfClass:[MMMarker class]]){
+                MMMarker *markerNeedPin=self.markerNeedPin;
+                [markerNeedPin copySelfTo:self.selectMarker inRoutine:self.desRoutine];
+            }
             [self performSegueWithIdentifier:@"pinDoneSegue" sender:nil];
         }else{
             UIActionSheet *sheet=[[UIActionSheet alloc] initWithTitle:nil

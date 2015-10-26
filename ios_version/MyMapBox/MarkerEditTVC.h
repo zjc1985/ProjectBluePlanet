@@ -13,5 +13,6 @@
 
 @property(nonatomic) NSUInteger markerCount;
 @property(nonatomic,strong)MMMarker *marker;
+@property(nonatomic,strong)NSArray *allSubMarkers;
 
 @end

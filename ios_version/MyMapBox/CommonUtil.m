@@ -206,4 +206,42 @@
     return NO;
 }
 
++(double)refineAverage:(NSMutableArray*)numbers{
+    NSMutableArray *refineArray=[[NSMutableArray alloc]init];
+    double e=[self average:numbers];
+    double d=[self sDeviation:numbers];
+    
+    for (NSNumber *number in numbers) {
+        if (fabs([number doubleValue]-e)<=d) {
+            [refineArray addObject:number];
+        }
+    }
+    
+    return [self average:refineArray];
+}
+
++(double)average:(NSMutableArray *)numbers{
+    double sum=0;
+    double result=0;
+    
+    for (NSNumber *number in numbers) {
+        sum=sum+[number doubleValue];
+    }
+    
+    result=sum/[numbers count];
+    return result;
+}
+
++(double)sDeviation:(NSMutableArray *)numbers{
+    if([numbers count]==0){
+        return 0;
+    }
+    double e=[self average:numbers];
+    double sum=0;
+    for (NSNumber *number in numbers) {
+        sum=sum+([number doubleValue]-e)*([number doubleValue]-e);
+    }
+    return pow(sum/[numbers count], 0.5);
+}
+
 @end

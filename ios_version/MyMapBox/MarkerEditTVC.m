@@ -45,7 +45,7 @@
 
 -(void)updateUI{
     self.markerTitleTextField.text=self.marker.title;
-    self.markerSlideNumLabel.text=[NSString stringWithFormat:@"%@",@([self.marker.slideNum integerValue])];
+    //self.markerSlideNumLabel.text=[NSString stringWithFormat:@"%@",@([self.marker.slideNum integerValue])];
     self.markerIconUrlLabel.text=[self.marker iconUrl];
     
     self.markerDescriptionTextView.text=self.marker.mycomment;
@@ -54,7 +54,6 @@
     if(iconImage){
         self.iconImageView.image=iconImage;
     }
-    
     
     
     if ([self.marker.localImages allObjects].count>0) {
@@ -79,7 +78,6 @@
     if([segue.identifier isEqualToString:@"markerEditDoneSegue"]){
         self.marker.title=self.markerTitleTextField.text;
         self.marker.mycomment=self.markerDescriptionTextView.text;
-        self.marker.slideNum=[NSNumber numberWithInteger:[self.markerSlideNumLabel.text integerValue]];
         self.marker.updateTimestamp=[NSNumber numberWithLongLong:[CommonUtil currentUTCTimeStamp]];
         self.marker.iconUrl=self.markerIconUrlLabel.text;
         self.marker.category=[NSNumber numberWithUnsignedInteger:[MMMarkerIconInfo findCategoryWithIconName:self.marker.iconUrl]];
@@ -93,8 +91,10 @@
     
     if([segue.destinationViewController isKindOfClass:[SlideNumSelectTVC class]]){
         SlideNumSelectTVC *slideNumSelectTVC=segue.destinationViewController;
-        slideNumSelectTVC.slideNumLabel=self.markerSlideNumLabel;
-        slideNumSelectTVC.markerCount=self.markerCount;
+        
+        NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"slideNum" ascending:YES];
+        NSMutableArray *mutableArray=[NSMutableArray arrayWithArray:[self.allSubMarkers sortedArrayUsingDescriptors:@[sortDescriptor]]];
+        slideNumSelectTVC.markersArray=mutableArray;
     }
     
     if([segue.destinationViewController isKindOfClass:[IconSelectTVC class]]){
@@ -105,6 +105,12 @@
 }
 
 #pragma mark ui action
+
+- (IBAction)updateMarkerLocation:(id)sender {
+    [self.marker updateLocationAccording2SubMarkers];
+    [CommonUtil alert:@"Update Location Done"];
+}
+
 
 - (IBAction)deleteClick:(id)sender {
     UIActionSheet *actionSheet= [[UIActionSheet alloc]initWithTitle:@"Delete Routine"

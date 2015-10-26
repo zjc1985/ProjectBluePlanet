@@ -83,4 +83,6 @@
 
 +(BOOL)isBlankString:(NSString *)string;
 
++(double)refineAverage:(NSMutableArray*)numbers;
+
 @end

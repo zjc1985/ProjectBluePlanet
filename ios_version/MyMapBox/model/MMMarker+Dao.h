@@ -70,4 +70,6 @@ typedef enum : NSUInteger {
 //if parentNode is nil copy mmarker to given routine root position
 -(void)copySelfTo:(MMMarker *)parentNode inRoutine:(MMRoutine *)routine;
 
+-(void)updateLocationAccording2SubMarkers;
+
 @end

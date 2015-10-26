@@ -249,6 +249,26 @@
     }
 }
 
+-(void)updateLocationAccording2SubMarkers{
+    if(self.allSubMarkers==0){
+        return;
+    }
+    
+    NSMutableArray *latArray=[[NSMutableArray alloc]init];
+    NSMutableArray *lngArray=[[NSMutableArray alloc]init];
+    
+    for (MMMarker *eachMarker in self.allSubMarkers) {
+        [latArray addObject:eachMarker.lat];
+        [lngArray addObject:eachMarker.lng];
+    }
+    
+    self.lat=[NSNumber numberWithDouble: [CommonUtil refineAverage:latArray]];
+    self.lng=[NSNumber numberWithDouble: [CommonUtil refineAverage:lngArray]];
+    
+    NSNumber *timestamp=[NSNumber numberWithLongLong:[CommonUtil currentUTCTimeStamp]];
+    self.updateTimestamp=timestamp;
+}
+
 #pragma mark - setters
 
 

@@ -217,11 +217,19 @@
     return _imageManager;
 }
 
+@synthesize currentMarker=_currentMarker;
+-(void)setCurrentMarker:(id<Marker>)currentMarker{
+    _currentMarker=currentMarker;
+    if (currentMarker) {
+        [self showMarkInfoViewByMMMarker:currentMarker];
+    }else{
+        [self.markerInfoView setHidden:YES];
+    }
+}
+
 #pragma mark - override
 -(void)handleCurrentSlideMarkers:(NSArray *)currentSlideMarkers{
-   
-    [self.markerInfoView setHidden:YES];
-    
+    self.currentMarker=currentSlideMarkers.firstObject;
 }
 
 #pragma mark - UI action
@@ -345,6 +353,7 @@
         MarkerInfoTVC *markerInfoTVC=segue.destinationViewController;
         markerInfoTVC.marker=(MMMarker *)sender;
         markerInfoTVC.markerCount=[[self.routine allMarks] count];
+        markerInfoTVC.allSubMarkers=[self markArray];
     }else if ([segue.identifier isEqualToString:SHOW_SEARCH_MODAL_SEGUE]){
         UINavigationController *navController=(UINavigationController *)segue.destinationViewController;
         ApplePlaceSearchTVC *desTVC=navController.viewControllers[0];
@@ -643,7 +652,6 @@
     
     if ([annotation.userInfo isKindOfClass:[MMMarker class]]){
         MMMarker *modelMarker=annotation.userInfo;
-        [self showMarkInfoViewByMMMarker:modelMarker];
         self.currentMarker=modelMarker;
         [self.mapView setCenterCoordinate:CLLocationCoordinate2DMake([modelMarker.lat doubleValue], [modelMarker.lng doubleValue]) animated:YES];
     }
@@ -658,7 +666,7 @@
 }
 
 -(void)singleTapOnMap:(RMMapView *)map at:(CGPoint)point{
-    [self.markerInfoView setHidden:YES];
+    self.currentMarker=nil;
 }
 
 

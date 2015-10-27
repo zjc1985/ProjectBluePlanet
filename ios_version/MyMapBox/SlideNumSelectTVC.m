@@ -34,6 +34,7 @@
     
     MMMarker *marker=[self.markersArray objectAtIndex:indexPath.row];
     marker.slideNum=[NSNumber numberWithInteger:indexPath.row+1];
+    marker.updateTimestamp=[NSNumber numberWithLongLong:[CommonUtil currentUTCTimeStamp]];
     cell.textLabel.text=marker.title;
     cell.detailTextLabel.text=[marker.slideNum description];
     return cell;

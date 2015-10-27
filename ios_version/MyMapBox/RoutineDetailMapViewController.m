@@ -15,7 +15,9 @@
 #import "CloudManager.h"
 #import "ApplePlaceSearchTVC.h"
 #import "SelectImageTVC.h"
+#import <SDWebImage/UIImageView+WebCache.h>
 
+#import "NSMutableArray+StackExtension.h"
 
 #import "MMRoutine+Dao.h"
 #import "LocalImageUrl+Dao.h"
@@ -28,8 +30,12 @@
 
 @interface RoutineDetailMapViewController ()<RMMapViewDelegate,UIActionSheetDelegate,RMTileCacheBackgroundDelegate,UIAlertViewDelegate>
 
-
+//marker Info View
 @property (weak, nonatomic) IBOutlet MarkerInfoView *markerInfoView;
+@property (strong, nonatomic) IBOutletCollection(UIImageView) NSArray *markerInfoImages;
+
+
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *markerInfoHeightConstraint;
 
 @property (weak, nonatomic) IBOutlet UIToolbar *playRoutineToolBar;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *SlidePlayButton;
@@ -68,6 +74,8 @@
     UITapGestureRecognizer *tapGesture=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(markerInfoViewClick)];
     tapGesture.numberOfTapsRequired=1;
     [self.markerInfoView addGestureRecognizer:tapGesture];
+    
+    self.markerInfoHeightConstraint.constant=110;
     
     //init map
     self.mapView.maxZoom=16;
@@ -657,11 +665,64 @@
     
 }
 
+#define MARKER_INFO_HEIGHT_CONSTRAINT_FULL 170;
+#define MARKER_INFO_HEIGHT_CONSTRAINT_IMAGE_ONLY 130;
+#define MARKER_INFO_HEIGHT_CONSTRAINT_COMMENT_ONLY 120;
+
 -(void)showMarkInfoViewByMMMarker:(MMMarker *)marker{
     self.markerInfoView.markerInfoTitleLabel.text=marker.title;
     self.markerInfoView.markerInfoSubLabel.text=[NSString stringWithFormat:@"%@ %@",marker.categoryName,marker.slideNum];
     self.markerInfoView.markerInfoContentLabel.text=marker.mycomment;
+    
+    
+    [self setMarkerInfoImageHidden:YES];
+    if([marker.imageUrlsArray count]>0 || [marker.localImages count]>0){
+        
+        if([CommonUtil isBlankString:marker.mycomment]){
+            self.markerInfoHeightConstraint.constant=MARKER_INFO_HEIGHT_CONSTRAINT_IMAGE_ONLY;
+        }else{
+            self.markerInfoHeightConstraint.constant=MARKER_INFO_HEIGHT_CONSTRAINT_FULL;
+        }
+        
+        //show Image here
+        NSMutableArray *localImageArray=[[NSMutableArray alloc]initWithArray:[marker.localImages allObjects]];
+        NSMutableArray *httpImageUrlArray=[[NSMutableArray alloc]initWithArray:marker.imageUrlsArray];
+        for (NSUInteger i=0; i<3; i++) {
+            LocalImageUrl *localImage=[localImageArray pop];
+            if (localImage) {
+                UIImageView *imageView=[self.markerInfoImages objectAtIndex:i];
+                imageView.image=[CommonUtil loadImage:localImage.fileName];
+                [imageView setHidden:NO];
+            }else{
+                NSString *urlString=[httpImageUrlArray pop];
+                if(urlString){
+                    UIImageView *imageView=[self.markerInfoImages objectAtIndex:i];
+                    NSURL *url=[NSURL URLWithString:urlString];
+                    [imageView sd_setImageWithURL:url
+                                        placeholderImage:[UIImage imageNamed:@"defaultMarkerImage"]
+                                               completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
+                                                       if(!error){
+                                                           [imageView setHidden:NO];
+                                                           imageView.contentMode=UIViewContentModeScaleAspectFill;
+                                                       }
+                                                   }
+                         ];
+                }
+            }
+        }
+        
+        
+    }else{
+        self.markerInfoHeightConstraint.constant=MARKER_INFO_HEIGHT_CONSTRAINT_COMMENT_ONLY;
+    }
+    
     [self.markerInfoView setHidden:NO];
+}
+
+-(void)setMarkerInfoImageHidden:(BOOL)needHide{
+    for (UIImageView *imageView in self.markerInfoImages) {
+        [imageView setHidden:needHide];
+    }
 }
 
 -(void)singleTapOnMap:(RMMapView *)map at:(CGPoint)point{

@@ -17,6 +17,7 @@
     self.layer.borderColor=[UIColor lightGrayColor].CGColor;
     self.layer.borderWidth=0.7;
     self.layer.masksToBounds=YES;
+    self.layer.opacity=0.93;
     
     self.layer.shadowColor=[UIColor blackColor].CGColor;
     self.layer.shadowOpacity=0.3;

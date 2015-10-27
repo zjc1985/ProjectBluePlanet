@@ -71,6 +71,7 @@
 		28E475541AEF28C600449DBC /* OfflineRoutineTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 28E475531AEF28C600449DBC /* OfflineRoutineTVC.m */; };
 		28E475571AEF2AAB00449DBC /* OfflineRoutineTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 28E475561AEF2AAB00449DBC /* OfflineRoutineTableViewCell.m */; };
 		28E4755A1AEF88C500449DBC /* SlideNumSelectTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 28E475591AEF88C500449DBC /* SlideNumSelectTVC.m */; };
+		28F4FB4E1BDF94BD0020A8A6 /* NSMutableArray+StackExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = 28F4FB4D1BDF94BD0020A8A6 /* NSMutableArray+StackExtension.m */; settings = {ASSET_TAGS = (); }; };
 		28F56C821B450B6B00CFC4AC /* PlaceSearchResult.m in Sources */ = {isa = PBXBuildFile; fileRef = 28F56C811B450B6B00CFC4AC /* PlaceSearchResult.m */; };
 		28F56CB71B5CFB9F00CFC4AC /* GooglePlaceManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 28F56CB61B5CFB9F00CFC4AC /* GooglePlaceManager.m */; };
 		28FF1B9D1BCE61B900D95C75 /* PinMarkerSelectNodeTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 28FF1B9C1BCE61B900D95C75 /* PinMarkerSelectNodeTVC.m */; };
@@ -223,6 +224,8 @@
 		28E475561AEF2AAB00449DBC /* OfflineRoutineTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OfflineRoutineTableViewCell.m; sourceTree = "<group>"; };
 		28E475581AEF88C500449DBC /* SlideNumSelectTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SlideNumSelectTVC.h; sourceTree = "<group>"; };
 		28E475591AEF88C500449DBC /* SlideNumSelectTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SlideNumSelectTVC.m; sourceTree = "<group>"; };
+		28F4FB4C1BDF94BD0020A8A6 /* NSMutableArray+StackExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSMutableArray+StackExtension.h"; sourceTree = "<group>"; };
+		28F4FB4D1BDF94BD0020A8A6 /* NSMutableArray+StackExtension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMutableArray+StackExtension.m"; sourceTree = "<group>"; };
 		28F56C801B450B6B00CFC4AC /* PlaceSearchResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlaceSearchResult.h; sourceTree = "<group>"; };
 		28F56C811B450B6B00CFC4AC /* PlaceSearchResult.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlaceSearchResult.m; sourceTree = "<group>"; };
 		28F56CB51B5CFB9F00CFC4AC /* GooglePlaceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GooglePlaceManager.h; sourceTree = "<group>"; };
@@ -325,6 +328,8 @@
 		285E431B1AD61E720030A274 /* MyMapBox */ = {
 			isa = PBXGroup;
 			children = (
+				28F4FB4C1BDF94BD0020A8A6 /* NSMutableArray+StackExtension.h */,
+				28F4FB4D1BDF94BD0020A8A6 /* NSMutableArray+StackExtension.m */,
 				28307D531B1D881F0050AA58 /* IconSelectTableViewCell.h */,
 				28307D541B1D881F0050AA58 /* IconSelectTableViewCell.m */,
 				28E475551AEF2AAB00449DBC /* OfflineRoutineTableViewCell.h */,
@@ -687,6 +692,7 @@
 			files = (
 				28E261D61B007E920019611C /* MMRoutine+Dao.m in Sources */,
 				283A21CD1B2E715000F6DCA1 /* SearchMarkerInfoTVC.m in Sources */,
+				28F4FB4E1BDF94BD0020A8A6 /* NSMutableArray+StackExtension.m in Sources */,
 				287D6D611B65D175009CFB56 /* BaseOvIconSelectTVC.m in Sources */,
 				286390841AE0D44D00A5B999 /* IconSelectTVC.m in Sources */,
 				28307D551B1D881F0050AA58 /* IconSelectTableViewCell.m in Sources */,

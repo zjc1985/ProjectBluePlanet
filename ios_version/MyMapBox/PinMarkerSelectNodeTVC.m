@@ -7,7 +7,7 @@
 //
 
 #import "PinMarkerSelectNodeTVC.h"
-#import "MMTreeNode+Dao.h"
+#import "MMMarker+Dao.h"
 #import "MMRoutine+Dao.h"
 
 typedef enum : NSUInteger {
@@ -17,10 +17,10 @@ typedef enum : NSUInteger {
 
 @interface PinMarkerSelectNodeTVC ()<UIActionSheetDelegate>
 
-@property (nonatomic,strong,readonly)NSArray *nodesWithNoSubNodes; //of MMTreeNode>
-@property (nonatomic,strong,readonly)NSArray *nodesWithSubNodes; //of MMTreeNode>
+@property (nonatomic,strong,readonly)NSArray *markersWithNoSubMarkers; //of MMTreeNode>
+@property (nonatomic,strong,readonly)NSArray *markersWithSubMarkers; //of MMTreeNode>
 
-@property (nonatomic,strong)id<TreeNode> selectNode;
+@property (nonatomic,strong) id<Marker> selectMarker;
 @property (nonatomic,assign) BOOL isSetToRoot;
 
 @end
@@ -30,47 +30,41 @@ typedef enum : NSUInteger {
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.isSetToRoot=NO;
-    
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
-    
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
 }
 
 #pragma mark - getter and setter
 
-@synthesize nodesWithNoSubNodes=_nodesWithNoSubNodes;
-@synthesize nodesWithSubNodes=_nodesWithSubNodes;
+@synthesize markersWithNoSubMarkers=_markersWithNoSubMarkers;
+@synthesize markersWithSubMarkers=_markersWithSubMarkers;
 
--(NSArray *)nodesWithNoSubNodes{
-    if(!_nodesWithNoSubNodes){
+-(NSArray *)markersWithNoSubMarkers{
+    if(!_markersWithNoSubMarkers){
         NSMutableArray *result=[[NSMutableArray alloc]init];
-        for (MMTreeNode *node in [self.desRoutine allTreeNodes]) {
-            if([[node allSubTreeNodes] count]==0){
-                [result addObject:node];
+        for (MMMarker *marker in [self.desRoutine allMarks]) {
+            if([[marker allSubMarkers] count]==0){
+                [result addObject:marker];
             }
         }
-        _nodesWithNoSubNodes=result;
+        _markersWithNoSubMarkers=result;
     }
-    return _nodesWithNoSubNodes;
+    return _markersWithNoSubMarkers;
 }
 
--(NSArray *)nodesWithSubNodes{
-    if(!_nodesWithSubNodes){
+-(NSArray *)markersWithSubMarkers{
+    if(!_markersWithSubMarkers){
         NSMutableArray *result=[[NSMutableArray alloc]init];
-        for (MMTreeNode *node in [self.desRoutine allTreeNodes]) {
-            if([[node allSubTreeNodes] count]>0){
-                [result addObject:node];
+        for (MMMarker *marker in [self.desRoutine allMarks]) {
+            if([[marker allSubMarkers] count]>0){
+                [result addObject:marker];
             }
         }
-        _nodesWithSubNodes=result;
+        _markersWithSubMarkers=result;
     }
-    return _nodesWithSubNodes;
+    return _markersWithSubMarkers;
 }
 
 -(BOOL)isPinToOtherRoutine{
-    if ([[[self.nodeNeedPin belongRoutine] uuid] isEqualToString:self.desRoutine.uuid]) {
+    if ([[[self.markerNeedPin belongRoutine] uuid] isEqualToString:self.desRoutine.uuid]) {
         return NO;
     }else{
         return YES;
@@ -80,13 +74,16 @@ typedef enum : NSUInteger {
 #pragma mark - UI Action
 
 - (IBAction)doneClick:(id)sender {
-    if(self.selectNode==nil && self.isSetToRoot==NO){
+    if(self.selectMarker==nil && self.isSetToRoot==NO){
         [CommonUtil alert:NSLocalizedString(@"Please Select one marker pin to", nil)];
     }else{
         
         if([self isPinToOtherRoutine]){
-#warning not finished
             NSLog(@"Pin to other routine");
+            if([self.markerNeedPin isKindOfClass:[MMMarker class]]){
+                MMMarker *markerNeedPin=self.markerNeedPin;
+                [markerNeedPin copySelfTo:self.selectMarker inRoutine:self.desRoutine];
+            }
             [self performSegueWithIdentifier:@"pinDoneSegue" sender:nil];
         }else{
             UIActionSheet *sheet=[[UIActionSheet alloc] initWithTitle:nil
@@ -111,16 +108,17 @@ typedef enum : NSUInteger {
     
     switch (buttonIndex) {
         case copyPin:{
-            if([self.nodeNeedPin isKindOfClass:[MMTreeNode class]]){
-                MMTreeNode *nodeNeedPin=self.nodeNeedPin;
-                [nodeNeedPin copySelfTo:self.selectNode inRoutine:self.desRoutine];
+            if([self.markerNeedPin isKindOfClass:[MMMarker class]]){
+                MMMarker *markerNeedPin=self.markerNeedPin;
+                [markerNeedPin copySelfTo:self.selectMarker inRoutine:self.desRoutine];
             }
             break;
         }
         case movePin:{
-            if([self.nodeNeedPin isKindOfClass:[MMTreeNode class]]){
-                MMTreeNode *nodeNeedPin=self.nodeNeedPin;
-                nodeNeedPin.parentNode=self.selectNode;
+            if([self.markerNeedPin isKindOfClass:[MMMarker class]]){
+                MMMarker *markerNeedPin=self.markerNeedPin;
+                markerNeedPin.parentMarker=self.selectMarker;
+                markerNeedPin.updateTimestamp=[NSNumber numberWithLongLong:[CommonUtil currentUTCTimeStamp]];
             }
             break;
         }
@@ -133,13 +131,13 @@ typedef enum : NSUInteger {
 #pragma mark - Table view data source
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     if (indexPath.section==0) {
-        self.selectNode=self.nodesWithSubNodes[indexPath.row];
+        self.selectMarker=self.markersWithSubMarkers[indexPath.row];
         self.isSetToRoot=NO;
     }else if(indexPath.section==1){
-        self.selectNode=self.nodesWithNoSubNodes[indexPath.row];
+        self.selectMarker=self.markersWithNoSubMarkers[indexPath.row];
         self.isSetToRoot=NO;
     }else{
-        self.selectNode=nil;
+        self.selectMarker=nil;
         self.isSetToRoot=YES;
     }
 }
@@ -153,11 +151,11 @@ typedef enum : NSUInteger {
     
     switch (section) {
         case 0:{
-            returnValue=[self.nodesWithSubNodes count];
+            returnValue=[self.markersWithSubMarkers count];
             break;
         }
         case 1:{
-            returnValue=[self.nodesWithNoSubNodes count];
+            returnValue=[self.markersWithNoSubMarkers count];
             break;
         }
         case 2:{
@@ -176,14 +174,14 @@ typedef enum : NSUInteger {
     
     switch (indexPath.section) {
         case 0:{
-            id<TreeNode> node=self.nodesWithSubNodes[indexPath.row];
-            cell.textLabel.text=[[node belongMarker] title];
-            cell.detailTextLabel.text=[NSString stringWithFormat:@"%@",@([node allSubTreeNodes].count)];
+            id<Marker> marker=self.markersWithSubMarkers[indexPath.row];
+            cell.textLabel.text=[marker title];
+            cell.detailTextLabel.text=[NSString stringWithFormat:@"%@",@([marker allSubMarkers].count)];
             break;
         }
         case 1:{
-            id<TreeNode> node=self.nodesWithNoSubNodes[indexPath.row];
-            cell.textLabel.text=[[node belongMarker] title];
+            id<Marker> marker=self.markersWithNoSubMarkers[indexPath.row];
+            cell.textLabel.text=[marker title];
             cell.detailTextLabel.text=@"0";
             break;
         }

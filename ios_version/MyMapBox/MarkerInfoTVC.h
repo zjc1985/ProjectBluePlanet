@@ -13,5 +13,6 @@
 @interface MarkerInfoTVC : BaseMarkerInfoVC
 
 @property(nonatomic)NSUInteger markerCount;
+@property(nonatomic,strong)NSArray *allSubMarkers;
 
 @end

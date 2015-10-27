@@ -46,7 +46,7 @@
 }
 
 -(void)updateUI{
-    if([[self.node allSubTreeNodes] count]>0){
+    if([[self.marker allSubMarkers] count]>0){
         [self.showDetailButton setHidden:NO];
     }else{
         [self.showDetailButton setHidden:YES];
@@ -103,8 +103,5 @@
 }
 
 #pragma mark - getter and setter
--(id <Marker>)marker{
-    return [self.node belongMarker];
-}
 
 @end

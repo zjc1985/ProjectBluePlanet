@@ -41,21 +41,11 @@
 //return all markers whose isDelete is NO
 -(NSArray *)allMarks;
 
--(NSArray *)allTreeNodes;
-
 -(NSUInteger)maxSlideNum;
 
 -(BOOL)isMarkersSyncWithCloud;
 
 -(void)deleteSelf;
-
--(double)minLatInMarkers;
-
--(double)maxLatInMarkers;
-
--(double)minLngInMarkers;
-
--(double)maxLngInMarkers;
 
 -(void)updateLocation;
 

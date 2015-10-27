@@ -17,6 +17,22 @@
 #define tileJsonTourMap @"tileJSONTourMap"
 #define tileJsonDetailMap @"tileJSONDetailMap"
 
+
+
+@protocol Routine <NSObject>
+@required
+-(NSString *)title;
+-(NSArray *)allOvMarks;
+-(NSArray *)allMarks;
+//return mark whose parentNode==nil and isDelete=NO
+-(NSArray *)headMarkers;
+-(NSNumber *)lat;
+-(NSNumber *)lng;
+-(NSString *)uuid;
+-(void)updateLocation;
+-(NSUInteger)maxSlideNum;
+@end
+
 @protocol Marker <NSObject>
 @required
 -(NSArray *)imageUrlsArray;
@@ -27,35 +43,17 @@
 -(NSNumber *)lat;
 -(NSNumber *)lng;
 -(NSNumber *)slideNum;
-@end
-
-@protocol Routine <NSObject>
-@required
--(NSString *)title;
--(NSArray *)allOvMarks;
--(NSArray *)allMarks;
-//return node whose parentNode==nil and isDelete=NO
--(NSArray *)headTreeNodes;
--(NSArray *)allTreeNodes;//of id<TreeNode>
--(double)minLatInMarkers;
--(double)minLngInMarkers;
--(double)maxLatInMarkers;
--(double)maxLngInMarkers;
--(NSNumber *)lat;
--(NSNumber *)lng;
--(NSString *)uuid;
--(void)updateLocation;
--(NSUInteger)maxSlideNum;
-@end
-
-@protocol TreeNode <NSObject>
-@required
+-(NSArray *) allSubMarkers;
 -(id<Routine>)belongRoutine;
--(id<Marker>)belongMarker;
--(NSArray *)allSubTreeNodes; //of id<TreeNode>
 @end
+
 
 @interface CommonUtil : NSObject
+
++(double)minLatInMarkers:(NSArray *)markerArray;
++(double)minLngInMarkers:(NSArray *)markerArray;
++(double)maxLatInMarkers:(NSArray *)markerArray;
++(double)maxLngInMarkers:(NSArray *)markerArray;
 
 +(NSString *)dataFilePath;
 
@@ -84,5 +82,7 @@
 +(UIImage *)compressForUpload:(UIImage *)original scale:(CGFloat)scale;
 
 +(BOOL)isBlankString:(NSString *)string;
+
++(double)refineAverage:(NSMutableArray*)numbers;
 
 @end

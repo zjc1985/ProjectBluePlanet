@@ -24,6 +24,7 @@
 @property (weak, nonatomic) IBOutlet UITextView *markerDescriptionTextView;
 @property (weak, nonatomic) IBOutlet UIImageView *iconImageView;
 @property (weak, nonatomic) IBOutlet UIButton *uploadImageBtn;
+@property (weak, nonatomic) IBOutlet UITableViewCell *updateLoactionCell;
 
 @property (nonatomic, strong)NSMutableArray *uploadImageUrls; //of NSStrings
 
@@ -44,8 +45,14 @@
 }
 
 -(void)updateUI{
+    if ([[self.marker allSubMarkers] count]>0) {
+        [self.updateLoactionCell setHidden:NO];
+    }else{
+        [self.updateLoactionCell setHidden:YES];
+    }
+    
     self.markerTitleTextField.text=self.marker.title;
-    self.markerSlideNumLabel.text=[NSString stringWithFormat:@"%u",[self.marker.slideNum integerValue]];
+    //self.markerSlideNumLabel.text=[NSString stringWithFormat:@"%@",@([self.marker.slideNum integerValue])];
     self.markerIconUrlLabel.text=[self.marker iconUrl];
     
     self.markerDescriptionTextView.text=self.marker.mycomment;
@@ -54,7 +61,6 @@
     if(iconImage){
         self.iconImageView.image=iconImage;
     }
-    
     
     
     if ([self.marker.localImages allObjects].count>0) {
@@ -71,9 +77,7 @@
 }
 
 #pragma mark - getter and setter
--(MMMarker *)marker{
-    return [self.node belongMarker];
-}
+
 
 #pragma mark - Navigation
 
@@ -81,7 +85,6 @@
     if([segue.identifier isEqualToString:@"markerEditDoneSegue"]){
         self.marker.title=self.markerTitleTextField.text;
         self.marker.mycomment=self.markerDescriptionTextView.text;
-        self.marker.slideNum=[NSNumber numberWithInteger:[self.markerSlideNumLabel.text integerValue]];
         self.marker.updateTimestamp=[NSNumber numberWithLongLong:[CommonUtil currentUTCTimeStamp]];
         self.marker.iconUrl=self.markerIconUrlLabel.text;
         self.marker.category=[NSNumber numberWithUnsignedInteger:[MMMarkerIconInfo findCategoryWithIconName:self.marker.iconUrl]];
@@ -95,8 +98,10 @@
     
     if([segue.destinationViewController isKindOfClass:[SlideNumSelectTVC class]]){
         SlideNumSelectTVC *slideNumSelectTVC=segue.destinationViewController;
-        slideNumSelectTVC.slideNumLabel=self.markerSlideNumLabel;
-        slideNumSelectTVC.markerCount=self.markerCount;
+        
+        NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"slideNum" ascending:YES];
+        NSMutableArray *mutableArray=[NSMutableArray arrayWithArray:[self.allSubMarkers sortedArrayUsingDescriptors:@[sortDescriptor]]];
+        slideNumSelectTVC.markersArray=mutableArray;
     }
     
     if([segue.destinationViewController isKindOfClass:[IconSelectTVC class]]){
@@ -107,6 +112,12 @@
 }
 
 #pragma mark ui action
+
+- (IBAction)updateMarkerLocation:(id)sender {
+    [self.marker updateLocationAccording2SubMarkers];
+    [CommonUtil alert:@"Update Location Done"];
+}
+
 
 - (IBAction)deleteClick:(id)sender {
     UIActionSheet *actionSheet= [[UIActionSheet alloc]initWithTitle:@"Delete Routine"

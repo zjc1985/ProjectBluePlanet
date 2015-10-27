@@ -23,9 +23,7 @@
 
 
 @property (nonatomic, strong) NSMutableArray *photos; //of MWPhotos
-
-@property(nonatomic,strong)id<TreeNode> node;
-@property(nonatomic,strong,readonly)id<Marker> marker;
+@property (nonatomic, strong) id<Marker> marker;
 
 -(void)updateUI;
 

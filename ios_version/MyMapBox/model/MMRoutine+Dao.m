@@ -11,7 +11,6 @@
 #import "CommonUtil.h"
 #import "MMOvMarker+Dao.h"
 #import "MMMarker+Dao.h"
-#import "MMTreeNode+Dao.h"
 
 @import CoreData;
 
@@ -123,10 +122,6 @@
         [eachOvMarker deleteSelf];
     }
     
-    for (MMTreeNode *eachTreeNode in self.treeNodes) {
-        [eachTreeNode deleteSelf];
-    }
-    
     if(self.isSync){
         self.isDelete=[NSNumber numberWithBool:YES];
         NSNumber *timestamp=[NSNumber numberWithLongLong:[CommonUtil currentUTCTimeStamp]];
@@ -145,57 +140,11 @@
         [lngArray addObject:eachMarker.lng];
     }
     
-    self.lat=[NSNumber numberWithDouble: [self refineAverage:latArray]];
-    self.lng=[NSNumber numberWithDouble: [self refineAverage:lngArray]];
+    self.lat=[NSNumber numberWithDouble: [CommonUtil refineAverage:latArray]];
+    self.lng=[NSNumber numberWithDouble: [CommonUtil refineAverage:lngArray]];
     
     NSNumber *timestamp=[NSNumber numberWithLongLong:[CommonUtil currentUTCTimeStamp]];
     self.updateTimestamp=timestamp;
-}
-
--(double)minLatInMarkers{
-    MMMarker *first=[[self.markers allObjects] firstObject];
-    double minLat=[first.lat doubleValue];
-    
-    for (MMMarker *each in self.markers) {
-        if([each.lat doubleValue]<minLat){
-            minLat=[each.lat doubleValue];
-        }
-    }
-    
-    return minLat;
-}
-
--(double)minLngInMarkers{
-    MMMarker *first=[[self.markers allObjects] firstObject];
-    double minLng=[first.lng doubleValue];
-    for (MMMarker *each in self.markers) {
-        if([each.lng doubleValue]<minLng){
-            minLng=[each.lng doubleValue];
-        }
-    }
-    return minLng;
-}
-
--(double)maxLatInMarkers{
-    MMMarker *first=[[self.markers allObjects] firstObject];
-    double maxLat=[first.lat doubleValue];
-    for (MMMarker *each in self.markers) {
-        if([each.lat doubleValue]>maxLat){
-            maxLat=[each.lat doubleValue];
-        }
-    }
-    return maxLat;
-}
-
--(double)maxLngInMarkers{
-    MMMarker *first=[[self.markers allObjects] firstObject];
-    double maxLng=[first.lng doubleValue];
-    for (MMMarker *each in self.markers) {
-        if([each.lng doubleValue]>maxLng){
-            maxLng=[each.lng doubleValue];
-        }
-    }
-    return maxLng;
 }
 
 -(NSArray *)allMarks{
@@ -209,41 +158,14 @@
     return result;
 }
 
--(NSArray *)headTreeNodes{
+-(NSArray *)headMarkers{
     NSMutableArray *result=[[NSMutableArray alloc]init];
     
-    //for migration, if no treeNodes found, then create them according to markers
-    if ([self.treeNodes allObjects].count==0) {
-        for (MMMarker *eachMark in [self allMarks]) {
-            [MMTreeNode createNodeWithParentNode:nil withMarkerId:eachMark.uuid belongRoutine:self];
+    for (MMMarker *marker in self.allMarks) {
+        if((![marker.isDelete boolValue]) && (!marker.parentMarker)){
+            [result addObject:marker];
         }
     }
-    
-    for (MMTreeNode *node in [self.treeNodes allObjects]) {
-        if((![node.isDelete boolValue]) && (!node.parentNode)){
-            [result addObject:node];
-        }
-    }
-    
-    return result;
-}
-
--(NSArray *)allTreeNodes{
-    NSMutableArray *result=[[NSMutableArray alloc]init];
-    
-    //for migration, if no treeNodes found, then create them according to markers
-    if ([self.treeNodes allObjects].count==0) {
-        for (MMMarker *eachMark in [self allMarks]) {
-            [MMTreeNode createNodeWithParentNode:nil withMarkerId:eachMark.uuid belongRoutine:self];
-        }
-    }
-    
-    for (MMTreeNode *node in [self.treeNodes allObjects]) {
-        if((![node.isDelete boolValue])){
-            [result addObject:node];
-        }
-    }
-    
     return result;
 }
 
@@ -286,44 +208,6 @@
 }
 
 #pragma mark - private method
-
--(double)refineAverage:(NSMutableArray*)numbers{
-    NSMutableArray *refineArray=[[NSMutableArray alloc]init];
-    double e=[self average:numbers];
-    double d=[self sDeviation:numbers];
-    
-    for (NSNumber *number in numbers) {
-        if (fabs([number doubleValue]-e)<=d) {
-            [refineArray addObject:number];
-        }
-    }
-    
-    return [self average:refineArray];
-}
-
--(double)average:(NSMutableArray *)numbers{
-    double sum=0;
-    double result=0;
-    
-    for (NSNumber *number in numbers) {
-        sum=sum+[number doubleValue];
-    }
-    
-    result=sum/[numbers count];
-    return result;
-}
-
--(double)sDeviation:(NSMutableArray *)numbers{
-    if([numbers count]==0){
-        return 0;
-    }
-    double e=[self average:numbers];
-    double sum=0;
-    for (NSNumber *number in numbers) {
-        sum=sum+([number doubleValue]-e)*([number doubleValue]-e);
-    }
-    return pow(sum/[numbers count], 0.5);
-}
 
 -(NSDictionary *)convertToDictionary{
     NSMutableDictionary *dic=[[NSMutableDictionary alloc]init];

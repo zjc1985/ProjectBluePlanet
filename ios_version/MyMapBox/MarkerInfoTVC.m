@@ -9,6 +9,7 @@
 #import "MarkerInfoTVC.h"
 #import "MarkerEditTVC.h"
 #import "MMMarker+Dao.h"
+#import "MMRoutine+Dao.h"
 #import "LocalImageUrl+Dao.h"
 #import "CommonUtil.h"
 #import "RoutineDetailMapViewController.h"
@@ -42,17 +43,19 @@
     if ([segue.identifier isEqualToString:@"editMarkerSegue"]) {
         UINavigationController *navController=(UINavigationController *)segue.destinationViewController;
         MarkerEditTVC *markerEditTVC=navController.viewControllers[0];
-        markerEditTVC.node=self.node;
+        markerEditTVC.marker=self.marker;
         markerEditTVC.markerCount=self.markerCount;
+        markerEditTVC.allSubMarkers=self.allSubMarkers;
     }else if ([segue.identifier isEqualToString:@"showDetailMapSegue"]){
         RoutineDetailMapViewController *desVC=segue.destinationViewController;
-        desVC.parentNode=self.node;
-        desVC.routine=[self.node belongRoutine];
+        desVC.parentMarker=self.marker;
+        MMMarker *marker=self.marker;
+        desVC.routine=marker.belongRoutine;
     }else if([segue.identifier isEqualToString:@"pinMarkerSelectRoutineSegue"]){
         UINavigationController *navController=(UINavigationController *)segue.destinationViewController;
         PinMarkerRoutineSelectTVC *pinRoutineSelectTVC=navController.viewControllers[0];
         
-        pinRoutineSelectTVC.nodeNeedPin=self.node;
+        pinRoutineSelectTVC.markerNeedPin=self.marker;
     }
 }
 

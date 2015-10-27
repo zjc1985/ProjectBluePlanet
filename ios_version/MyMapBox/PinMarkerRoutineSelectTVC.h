@@ -12,6 +12,6 @@
 @interface PinMarkerRoutineSelectTVC : UITableViewController
 
 //in
-@property(nonatomic,strong) id<TreeNode> nodeNeedPin;
+@property(nonatomic,strong) id<Marker> markerNeedPin;
 
 @end

@@ -14,11 +14,11 @@
 
 //in
 @property(nonatomic,strong) id<Routine> routine;
-@property(nonatomic,strong) id<TreeNode> parentNode;
-@property(nonatomic,strong,readonly) NSArray *treeNodeArray; //of id TreeNode
+@property(nonatomic,strong) id<Marker> parentMarker;
+@property(nonatomic,strong,readonly) NSArray *markArray; //of id Marker
 
 
-@property(nonatomic,strong) id<TreeNode> currentNode;
+@property(nonatomic,strong) id<Marker> currentMarker;
 @property(nonatomic,strong) RMMapView *mapView;
 
 //slide show related

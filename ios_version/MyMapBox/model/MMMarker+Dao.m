@@ -250,7 +250,7 @@
 }
 
 -(void)updateLocationAccording2SubMarkers{
-    if(self.allSubMarkers==0){
+    if(self.allSubMarkers.count==0){
         return;
     }
     

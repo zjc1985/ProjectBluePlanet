@@ -24,6 +24,7 @@
 @property (weak, nonatomic) IBOutlet UITextView *markerDescriptionTextView;
 @property (weak, nonatomic) IBOutlet UIImageView *iconImageView;
 @property (weak, nonatomic) IBOutlet UIButton *uploadImageBtn;
+@property (weak, nonatomic) IBOutlet UITableViewCell *updateLoactionCell;
 
 @property (nonatomic, strong)NSMutableArray *uploadImageUrls; //of NSStrings
 
@@ -44,6 +45,12 @@
 }
 
 -(void)updateUI{
+    if ([[self.marker allSubMarkers] count]>0) {
+        [self.updateLoactionCell setHidden:NO];
+    }else{
+        [self.updateLoactionCell setHidden:YES];
+    }
+    
     self.markerTitleTextField.text=self.marker.title;
     //self.markerSlideNumLabel.text=[NSString stringWithFormat:@"%@",@([self.marker.slideNum integerValue])];
     self.markerIconUrlLabel.text=[self.marker iconUrl];

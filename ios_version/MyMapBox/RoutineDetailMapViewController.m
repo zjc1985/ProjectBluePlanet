@@ -418,13 +418,12 @@
                                                   newMarker.category=[NSNumber numberWithUnsignedInteger:CategoryInfo];
                                                   newMarker.iconUrl=@"event_2.png";
                                                   
-                                                  //newMarker.slideNum=[NSNumber numberWithUnsignedInteger:[self.routine maxSlideNum]+1];
+                                                  newMarker.slideNum=[NSNumber numberWithUnsignedInteger:self.markArray.count+1];
+                                                  newMarker.title=NSLocalizedString(@"View", nil);
                                                   
-                                                  
-                                                  [self addMarkerWithTitle:@"new Image"
+                                                  [self addMarkerWithTitle:newMarker.title
                                                             withCoordinate:CLLocationCoordinate2DMake([newMarker.lat doubleValue], [newMarker.lng doubleValue])
                                                             withCustomData:newMarker];
-                                                  //NSLog(@"orientation %@",@(result.imageOrientation));
                                                   NSString *imageUrl=[CommonUtil saveImageByData:imageData];
                                                   //attachImage
                                                   [LocalImageUrl createLocalImageUrl:imageUrl inMarker:newMarker];
@@ -476,7 +475,7 @@
                                                     withLng:self.mapView.centerCoordinate.longitude
                                            withParentMarker:[self parentMarker]];
                 
-                //newMarker.slideNum=[NSNumber numberWithUnsignedInteger:[self.routine maxSlideNum]+1];
+                newMarker.slideNum=[NSNumber numberWithUnsignedInteger:self.markArray.count+1];
                 break;
             }
             case addMarkerWithImage :{
@@ -494,7 +493,7 @@
                                                     withLng:self.mapView.userLocation.coordinate.longitude
                                            withParentMarker:[self parentMarker]];
                 
-                //newMarker.slideNum=[NSNumber numberWithUnsignedInteger:[self.routine maxSlideNum]+1];
+                newMarker.slideNum=[NSNumber numberWithUnsignedInteger:self.markArray.count+1];
                 
                 break;
             }

@@ -1427,6 +1427,7 @@
                         <outlet property="markerIconUrlLabel" destination="DcX-2u-4af" id="Kix-LG-RXf"/>
                         <outlet property="markerSlideNumLabel" destination="Zib-Wm-gRe" id="BvJ-BW-cgi"/>
                         <outlet property="markerTitleTextField" destination="U3E-6f-5Ka" id="v4t-6v-8Sj"/>
+                        <outlet property="updateLoactionCell" destination="gtf-3T-IqW" id="kbE-1P-u8R"/>
                         <outlet property="uploadImageBtn" destination="Rd6-Nn-BB5" id="oPV-3g-CgV"/>
                         <segue destination="rWP-qB-qha" kind="unwind" identifier="deleteMarkerUnwindSegue" unwindAction="DeleteMarkerDone:" id="crs-8o-9b6"/>
                     </connections>

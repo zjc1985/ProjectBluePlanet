@@ -65,6 +65,8 @@ typedef enum : NSUInteger {
 
 -(void)removeImageUrl:(NSString *)imgUrl;
 
+-(NSArray *)localImagesIncludingSubMarkers;
+
 -(NSDictionary *)convertToDictionary;
 
 //if parentNode is nil copy mmarker to given routine root position

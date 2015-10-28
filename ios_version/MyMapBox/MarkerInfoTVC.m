@@ -65,9 +65,9 @@
     
     
     //if no http image found,use local image instead
-    if([self.marker isKindOfClass:[MMMarker class]]&& [self.marker imageUrlsArray].count==0){
+    if([self.marker isKindOfClass:[MMMarker class]]&& [self.marker imageUrlsArrayIncludeSubMarkers].count==0){
         MMMarker *marker=self.marker;
-        LocalImageUrl *localImageUrl=[[marker.localImages allObjects]firstObject];
+        LocalImageUrl *localImageUrl=[[marker localImagesIncludingSubMarkers] firstObject];
         NSLog(@"load image from local url:%@",localImageUrl.fileName);
         UIImage *image=[CommonUtil loadImage:localImageUrl.fileName];
         if(image){
@@ -96,17 +96,17 @@
         
         MMMarker *marker=self.marker;
         
-        if ([marker imageUrlsArray].count>0||marker.localImages.count>0) {
+        if ([marker imageUrlsArrayIncludeSubMarkers].count>0||[marker localImagesIncludingSubMarkers].count>0) {
             self.photos=[NSMutableArray array];
             
             //http image
-            for (NSString *urlString in [marker imageUrlsArray]) {
+            for (NSString *urlString in [marker imageUrlsArrayIncludeSubMarkers]) {
                 NSURL *url=[NSURL URLWithString:urlString];
                 [self.photos addObject:[MWPhoto photoWithURL:url]];
             }
             
             //local image
-            for (LocalImageUrl *localImageUrl in marker.localImages) {
+            for (LocalImageUrl *localImageUrl in [marker localImagesIncludingSubMarkers]) {
                 UIImage *image=[CommonUtil loadImage:localImageUrl.fileName];
                 if(image){
                     [self.photos addObject:[MWPhoto photoWithImage:image]];

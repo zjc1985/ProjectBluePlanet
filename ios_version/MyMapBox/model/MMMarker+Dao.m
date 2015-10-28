@@ -176,6 +176,25 @@
     }
 }
 
+-(NSArray *)imageUrlsArrayIncludeSubMarkers{
+    NSMutableArray *results=[[NSMutableArray alloc]initWithArray:self.imageUrlsArray];
+    
+    for (MMMarker *marker in self.allSubMarkers) {
+        [results addObjectsFromArray:[marker imageUrlsArrayIncludeSubMarkers]];
+    }
+    
+    return results;
+}
+
+-(NSArray *)localImagesIncludingSubMarkers{
+    NSMutableArray *result=[[NSMutableArray alloc]initWithArray:[self.localImages allObjects]];
+    
+    for (MMMarker *marker in self.allSubMarkers) {
+        [result addObjectsFromArray:[marker localImagesIncludingSubMarkers]];
+    }
+    return result;
+}
+
 -(void)deleteSelf{
     if(self.isSync){
         self.isDelete=[NSNumber numberWithBool:YES];

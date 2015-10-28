@@ -106,7 +106,7 @@
     
     [self updateMapUI];
     
-    if([CommonUtil isFastNetWork]){
+    if([CommonUtil isFastNetWork] && self.parentMarker==nil){
         [self syncMarkers];
     }
 }
@@ -282,6 +282,7 @@
 }
 
 -(void)syncMarkers{
+    NSLog(@"Sync Markers");
     [self updateToolBarButtonNeedRefreshing:YES];
     NSString *currentRoutineUUID=[self.routine uuid];
     [CloudManager syncMarkersByRoutineUUID:[self.routine uuid] withBlockWhenDone:^(NSError *error) {
@@ -676,7 +677,7 @@
     
     
     [self setMarkerInfoImageHidden:YES];
-    if([marker.imageUrlsArray count]>0 || [marker.localImages count]>0){
+    if([[marker imageUrlsArrayIncludeSubMarkers] count]>0 || [[marker localImagesIncludingSubMarkers] count]>0){
         
         if([CommonUtil isBlankString:marker.mycomment]){
             self.markerInfoHeightConstraint.constant=MARKER_INFO_HEIGHT_CONSTRAINT_IMAGE_ONLY;
@@ -685,8 +686,8 @@
         }
         
         //show Image here
-        NSMutableArray *localImageArray=[[NSMutableArray alloc]initWithArray:[marker.localImages allObjects]];
-        NSMutableArray *httpImageUrlArray=[[NSMutableArray alloc]initWithArray:marker.imageUrlsArray];
+        NSMutableArray *localImageArray=[[NSMutableArray alloc]initWithArray:[marker localImagesIncludingSubMarkers]];
+        NSMutableArray *httpImageUrlArray=[[NSMutableArray alloc]initWithArray:[marker imageUrlsArrayIncludeSubMarkers]];
         for (NSUInteger i=0; i<3; i++) {
             LocalImageUrl *localImage=[localImageArray pop];
             if (localImage) {

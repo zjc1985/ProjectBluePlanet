@@ -36,6 +36,7 @@
 @protocol Marker <NSObject>
 @required
 -(NSArray *)imageUrlsArray;
+-(NSArray *)imageUrlsArrayIncludeSubMarkers;
 -(NSString *)iconUrl;
 -(NSString *)title;
 -(NSString *)subDescription;

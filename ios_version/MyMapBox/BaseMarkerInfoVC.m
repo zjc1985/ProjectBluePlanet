@@ -28,9 +28,11 @@
 }
 
 -(void)markerImageClicked{
-    if ([self.marker imageUrlsArray].count>0) {
+    NSLog(@"marker Image Clicked");
+    
+    if ([self.marker imageUrlsArrayIncludeSubMarkers].count>0) {
         self.photos=[NSMutableArray array];
-        for (NSString *urlString in [self.marker imageUrlsArray]) {
+        for (NSString *urlString in [self.marker imageUrlsArrayIncludeSubMarkers]) {
             NSURL *url=[NSURL URLWithString:urlString];
             [self.photos addObject:[MWPhoto photoWithURL:url]];
         }
@@ -57,7 +59,7 @@
     self.markerTitleLabel.text=[self.marker title];
     self.markerSubInfoLabel.text=[self.marker subDescription];
     
-    NSString *imageUrlString=[[self.marker imageUrlsArray] firstObject];
+    NSString *imageUrlString=[[self.marker imageUrlsArrayIncludeSubMarkers] firstObject];
     if(imageUrlString){
         NSURL *url=[NSURL URLWithString:imageUrlString];
         [self.markerImage sd_setImageWithURL:url

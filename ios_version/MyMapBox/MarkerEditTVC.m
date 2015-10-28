@@ -11,12 +11,15 @@
 #import "IconSelectTVC.h"
 #import "CommonUtil.h"
 #import "MMMarkerIconInfo.h"
-
+#import "SelectImageTVC.h"
 #import "LocalImageUrl+Dao.h"
+#import "UserAlbumsTVC.h"
 
 #import <AVOSCloud/AVOSCloud.h>
 
-@interface MarkerEditTVC ()<UIActionSheetDelegate,UIImagePickerControllerDelegate>
+#define MARKER_EDIT_VIEW_SHOW_ALBUMS_SEGUE @"markerEditShowAlbumsSegue"
+
+@interface MarkerEditTVC ()<UIActionSheetDelegate>
 
 @property (weak, nonatomic) IBOutlet UITextField *markerTitleTextField;
 @property (weak, nonatomic) IBOutlet UILabel *markerSlideNumLabel;
@@ -27,6 +30,8 @@
 @property (weak, nonatomic) IBOutlet UITableViewCell *updateLoactionCell;
 
 @property (nonatomic, strong)NSMutableArray *uploadImageUrls; //of NSStrings
+
+@property(strong,nonatomic) PHCachingImageManager *imageManager;
 
 @end
 
@@ -77,7 +82,12 @@
 }
 
 #pragma mark - getter and setter
-
+-(PHCachingImageManager *)imageManager{
+    if(!_imageManager){
+        _imageManager=[[PHCachingImageManager alloc]init];
+    }
+    return _imageManager;
+}
 
 #pragma mark - Navigation
 
@@ -96,6 +106,12 @@
          */
     }
     
+    if([segue.identifier isEqualToString:MARKER_EDIT_VIEW_SHOW_ALBUMS_SEGUE]){
+        UINavigationController *navController=(UINavigationController *)segue.destinationViewController;
+        UserAlbumsTVC *userAlbumsTVC=navController.viewControllers[0];
+        userAlbumsTVC.incomingSegueName=MARKER_EDIT_VIEW_SHOW_ALBUMS_SEGUE;
+    }
+    
     if([segue.destinationViewController isKindOfClass:[SlideNumSelectTVC class]]){
         SlideNumSelectTVC *slideNumSelectTVC=segue.destinationViewController;
         
@@ -108,6 +124,26 @@
         IconSelectTVC *iconSelectTVC=segue.destinationViewController;
         iconSelectTVC.iconNameLabel=self.markerIconUrlLabel;
         iconSelectTVC.iconImageView=self.iconImageView;
+    }
+}
+
+-(IBAction)markerEditViewSelectImageAssetDone:(UIStoryboardSegue *)segue{
+    if([segue.sourceViewController isKindOfClass:[SelectImageTVC class]]){
+        SelectImageTVC *selectImageTVC=segue.sourceViewController;
+        NSArray *assets=selectImageTVC.selectedAssetsOut;
+        for (PHAsset *imageAsset in assets) {
+            //do things
+            [self.imageManager requestImageDataForAsset:imageAsset options:nil
+                                          resultHandler:^(NSData *imageData, NSString *dataUTI, UIImageOrientation orientation, NSDictionary *info) {
+                                              //do somthing
+
+                                              NSString *imageUrl=[CommonUtil saveImageByData:imageData];
+                                              //attachImage
+                                              [LocalImageUrl createLocalImageUrl:imageUrl inMarker:self.marker];
+                                              [self updateUI];
+                                          }];
+        }
+        [CommonUtil alert:@"attach Complete"];
     }
 }
 
@@ -129,17 +165,7 @@
 }
 
 - (IBAction)attachImageClick:(id)sender {
-    if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary]){
-        UIImagePickerController *picker=[[UIImagePickerController alloc] init];
-        picker.delegate=self;
-        picker.sourceType=UIImagePickerControllerSourceTypePhotoLibrary;
-        
-        picker.allowsEditing=YES;
-        
-        [self presentViewController:picker animated:YES completion:nil];
-    }else{
-        [CommonUtil alert:@"Not support photo library"];
-    }
+    [self performSegueWithIdentifier:MARKER_EDIT_VIEW_SHOW_ALBUMS_SEGUE sender:nil];
 }
 
 - (IBAction)deleteImageClick:(id)sender {
@@ -221,26 +247,6 @@
                                ,@(localImageUrls.count),@(completeNum),@(total/localImageUrls.count)];
         }];
     }
-}
-
-
-#pragma mark UIImagePicker delegate
--(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info{
-    [picker dismissViewControllerAnimated:YES completion:^{
-        
-    }];
-    
-    UIImage *originalImage=info[UIImagePickerControllerEditedImage];
-    
-    NSString *imageUrl=[CommonUtil saveImage:originalImage];
-    //attachImage
-    [LocalImageUrl createLocalImageUrl:imageUrl inMarker:self.marker];
-    [CommonUtil alert:@"attach Complete"];
-    [self updateUI];
-}
-
--(void)imagePickerControllerDidCancel:(UIImagePickerController *)picker{
-    [picker dismissViewControllerAnimated:YES completion:NULL];
 }
 
 

@@ -943,7 +943,7 @@
                         <outletCollection property="markerInfoImages" destination="Dl1-rV-sw1" id="74s-It-ZAr"/>
                         <segue destination="tUP-zc-7Qb" kind="push" identifier="markerDetailSegue" id="Aud-Jo-fKc"/>
                         <segue destination="u97-SW-acq" kind="modal" identifier="showSearchModalSegue" id="7fp-y1-XAs"/>
-                        <segue destination="xMc-fW-RHy" kind="modal" identifier="showAlbumsSegue" id="ciT-DX-0ey"/>
+                        <segue destination="xMc-fW-RHy" kind="modal" identifier="routineDetailShowAlbumsSegue" id="ciT-DX-0ey"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="KKc-hD-maq" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -1467,12 +1467,13 @@
                         <outlet property="updateLoactionCell" destination="gtf-3T-IqW" id="kbE-1P-u8R"/>
                         <outlet property="uploadImageBtn" destination="Rd6-Nn-BB5" id="oPV-3g-CgV"/>
                         <segue destination="rWP-qB-qha" kind="unwind" identifier="deleteMarkerUnwindSegue" unwindAction="DeleteMarkerDone:" id="crs-8o-9b6"/>
+                        <segue destination="xMc-fW-RHy" kind="modal" identifier="markerEditShowAlbumsSegue" id="nz2-dv-mDh"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="KEr-vB-MOc" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <exit id="rWP-qB-qha" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="5263" y="-987"/>
+            <point key="canvasLocation" x="5270" y="-987"/>
         </scene>
         <!--Pin Marker Select NodeTVC-->
         <scene sceneID="j0S-Y2-cgS">
@@ -1527,7 +1528,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="sLv-7O-qAC" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <exit id="h96-6K-RfL" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="5649" y="-234"/>
+            <point key="canvasLocation" x="6183" y="-234"/>
         </scene>
         <!--Pin Marker Routine SelectTVC-->
         <scene sceneID="YXc-3R-qfd">
@@ -1574,7 +1575,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ZhR-ft-0Eh" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="5131" y="-234"/>
+            <point key="canvasLocation" x="5665" y="-234"/>
         </scene>
         <!--Icon SelectTVC-->
         <scene sceneID="BNK-mh-Voe">
@@ -2655,7 +2656,7 @@
                     </connections>
                 </searchDisplayController>
             </objects>
-            <point key="canvasLocation" x="5230" y="1124"/>
+            <point key="canvasLocation" x="5892" y="1124"/>
         </scene>
         <!--User AlbumsTVC-->
         <scene sceneID="VgM-sO-ECd">
@@ -2667,7 +2668,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="AllPhotosCell" id="UGb-fU-KpN">
-                                <rect key="frame" x="0.0" y="22" width="320" height="44"/>
+                                <rect key="frame" x="0.0" y="86" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="UGb-fU-KpN" id="Y48-aD-BBK">
                                     <rect key="frame" x="0.0" y="0.0" width="287" height="43"/>
@@ -2678,7 +2679,7 @@
                                 </connections>
                             </tableViewCell>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="CollectionCell" id="PXC-Bm-uye">
-                                <rect key="frame" x="0.0" y="66" width="320" height="44"/>
+                                <rect key="frame" x="0.0" y="130" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="PXC-Bm-uye" id="Okr-6S-MEy">
                                     <rect key="frame" x="0.0" y="0.0" width="287" height="43"/>
@@ -2716,7 +2717,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="thumbCell" rowHeight="90" id="i7f-c5-g42" customClass="SelectImageCell">
-                                <rect key="frame" x="0.0" y="22" width="320" height="90"/>
+                                <rect key="frame" x="0.0" y="86" width="320" height="90"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="i7f-c5-g42" id="h2N-Ij-fMW">
                                     <rect key="frame" x="0.0" y="0.0" width="320" height="89"/>
@@ -2770,10 +2771,14 @@
                     <navigationItem key="navigationItem" id="6ee-rh-lse">
                         <barButtonItem key="rightBarButtonItem" systemItem="done" id="D0F-4d-PpN">
                             <connections>
-                                <segue destination="MIe-WM-Be8" kind="unwind" unwindAction="SelectImageAssetDone:" id="fGu-0h-CCv"/>
+                                <action selector="doneClick:" destination="3SM-Hm-fC6" id="fra-Dk-zw6"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
+                    <connections>
+                        <segue destination="MIe-WM-Be8" kind="unwind" identifier="unwindRoutineDetailShowAlbumsSegue" unwindAction="SelectImageAssetDone:" id="qbO-nH-do5"/>
+                        <segue destination="MIe-WM-Be8" kind="unwind" identifier="unwindMarkerEditShowAlbumsSegue" unwindAction="markerEditViewSelectImageAssetDone:" id="EcK-ah-fTp"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="z7Y-bH-bwL" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <exit id="MIe-WM-Be8" userLabel="Exit" sceneMemberID="exit"/>
@@ -2871,7 +2876,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="uVL-ma-SxP" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="4698" y="1124"/>
+            <point key="canvasLocation" x="5360" y="1124"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="iG2-Jn-gKk">
@@ -2987,6 +2992,7 @@
         <segue reference="Drd-9N-wVI"/>
         <segue reference="Crq-we-f5i"/>
         <segue reference="ci2-9f-Z24"/>
-        <segue reference="0BH-Wf-kfd"/>
+        <segue reference="nz2-dv-mDh"/>
+        <segue reference="N8I-th-cy5"/>
     </inferredMetricsTieBreakers>
 </document>

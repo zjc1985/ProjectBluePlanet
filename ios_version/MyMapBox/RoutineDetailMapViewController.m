@@ -15,6 +15,7 @@
 #import "CloudManager.h"
 #import "ApplePlaceSearchTVC.h"
 #import "SelectImageTVC.h"
+#import "UserAlbumsTVC.h"
 #import <SDWebImage/UIImageView+WebCache.h>
 
 #import "NSMutableArray+StackExtension.h"
@@ -26,7 +27,7 @@
 #import "MyMapBox-Swift.h"
 
 #define SHOW_SEARCH_MODAL_SEGUE @"showSearchModalSegue"
-#define SHOW_USER_ALBUMS_SEGUE @"showAlbumsSegue"
+#define SHOW_USER_ALBUMS_SEGUE @"routineDetailShowAlbumsSegue"
 
 @interface RoutineDetailMapViewController ()<RMMapViewDelegate,UIActionSheetDelegate,RMTileCacheBackgroundDelegate,UIAlertViewDelegate>
 
@@ -377,6 +378,10 @@
         if(self.lastSearchPredicts){
             desTVC.historyResults=[self.lastSearchPredicts allObjects];
         }
+    }else if ([segue.identifier isEqualToString:SHOW_USER_ALBUMS_SEGUE]){
+        UINavigationController *navController=(UINavigationController *)segue.destinationViewController;
+        UserAlbumsTVC *userAlbumsTVC=navController.viewControllers[0];
+        userAlbumsTVC.incomingSegueName=SHOW_USER_ALBUMS_SEGUE;
     }
 }
 

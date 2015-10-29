@@ -9,8 +9,6 @@
 #import "SettingTVC.h"
 #import <AVOSCloud/AVOSCloud.h>
 #import "CommonUtil.h"
-#import <MapKit/MapKit.h>
-#import <GoogleMaps/GoogleMaps.h>
 #import "CloudManager.h"
 
 @interface SettingTVC ()

@@ -7,7 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <GoogleMaps/GoogleMaps.h>
 #import <MapKit/MapKit.h>
 #import "GooglePlaceDetail.h"
 

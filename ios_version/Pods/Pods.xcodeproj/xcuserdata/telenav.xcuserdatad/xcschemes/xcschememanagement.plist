@@ -4,62 +4,47 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
-		<key>Pods-MyMapBox-AVOSCloud.xcscheme</key>
+		<key>DACircularProgress.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>Pods-MyMapBox-DACircularProgress.xcscheme</key>
+		<key>FMDB.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>Pods-MyMapBox-FMDB.xcscheme</key>
+		<key>GRMustache.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>Pods-MyMapBox-GRMustache.xcscheme</key>
+		<key>JRSwizzle.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>Pods-MyMapBox-JRSwizzle.xcscheme</key>
+		<key>MBProgressHUD.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>Pods-MyMapBox-MBProgressHUD.xcscheme</key>
+		<key>MWPhotoBrowser-MWPhotoBrowser.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>Pods-MyMapBox-MWPhotoBrowser.xcscheme</key>
+		<key>MWPhotoBrowser.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>Pods-MyMapBox-Mapbox-iOS-SDK-Mapbox.xcscheme</key>
+		<key>Mapbox-iOS-SDK-Mapbox.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>Pods-MyMapBox-Mapbox-iOS-SDK.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
-		<key>Pods-MyMapBox-PSTCollectionView.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
-		<key>Pods-MyMapBox-SDWebImage.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
-		<key>Pods-MyMapBox-SMCalloutView.xcscheme</key>
+		<key>Mapbox-iOS-SDK.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
@@ -69,12 +54,17 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>Pods-MyMapBoxTests-AVOSCloud.xcscheme</key>
+		<key>Pods-MyMapBoxTests.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>Pods-MyMapBoxTests.xcscheme</key>
+		<key>SDWebImage.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>SMCalloutView.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
@@ -82,77 +72,67 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>18D9C7CE0123513D47ACDE0C</key>
+		<key>17E03C5BE53F4A8313CFA4E78AC914D1</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>304B49BA4FF6A20DC1EF6A38</key>
+		<key>276ADD3C46B8F39A0ADCF7597B1A91E9</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>4C593168F88C3352542AA665</key>
+		<key>3496A2F9BF156E31D912609B11116937</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>73FBE5388168102133914590</key>
+		<key>4B9B74B1D63B58F82B1AA0944343D037</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>79AC1E03FD26C84B14B37606</key>
+		<key>5813251FEA21E4AEE97385709F1912DE</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>7EB557D8B38C19951AB6621B</key>
+		<key>860E2AB078952599B7EC7ADA288C7CE3</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>992B797DD5EAECA3EF3123F1</key>
+		<key>9775596B3CA16905FC8F66DA8E2A3C67</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>9BC209F9243256C69BF8B8C7</key>
+		<key>9F12FB4A63E20F601CFB2E64A65B57C1</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>9F7D6C635AAD4625F29DBC6F</key>
+		<key>DE3B07ED7FF04F506B0C5E00F4973589</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>A4DCEF7872CA1D92BF4BED2A</key>
+		<key>E27EBF430C46ED42D12B9A6063120384</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>B1261A7E456D72708D7AA088</key>
+		<key>E2FE87384A67337831E53490EEA8BF11</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>BDA57322CDD4C9B90C6F658D</key>
+		<key>F9A7EFA0D888B483542D968CB4D7EF17</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>C0F1C376BAEABDEA8719DE0D</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>D93EF7A7D717557C4694FEA6</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>EE0811B84AEFDBE9EB579A83</key>
+		<key>FE2F1D7B9D9FCEA148517E4657B243F4</key>
 		<dict>
 			<key>primary</key>
 			<true/>

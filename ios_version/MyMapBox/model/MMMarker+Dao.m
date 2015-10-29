@@ -256,8 +256,8 @@
     copyMarker.imgUrls=self.imgUrls;
     //copy local image
     if([[self.localImages allObjects] count]>0){
-        for (NSString *imgUrl in [self.localImages allObjects]) {
-            UIImage *copyImage=[CommonUtil loadImage:imgUrl];
+        for (LocalImageUrl *imgUrl in [self.localImages allObjects]) {
+            UIImage *copyImage=[CommonUtil loadImage:imgUrl.fileName];
             NSString *copyImgUrl=[CommonUtil saveImage:copyImage];
             [LocalImageUrl createLocalImageUrl:copyImgUrl inMarker:copyMarker];
         }

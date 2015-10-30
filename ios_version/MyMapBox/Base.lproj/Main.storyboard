@@ -2988,11 +2988,11 @@
         <image name="refresh" width="225" height="225"/>
     </resources>
     <inferredMetricsTieBreakers>
+        <segue reference="Crq-we-f5i"/>
         <segue reference="jqu-P0-wuD"/>
         <segue reference="Drd-9N-wVI"/>
-        <segue reference="Crq-we-f5i"/>
         <segue reference="ci2-9f-Z24"/>
-        <segue reference="nz2-dv-mDh"/>
+        <segue reference="ciT-DX-0ey"/>
         <segue reference="N8I-th-cy5"/>
     </inferredMetricsTieBreakers>
 </document>

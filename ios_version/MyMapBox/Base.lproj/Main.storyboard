@@ -875,19 +875,15 @@
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="defaultMarkerImage" translatesAutoresizingMaskIntoConstraints="NO" id="tQy-W4-gVH" userLabel="MarkerImage2">
                                         <rect key="frame" x="89" y="89" width="73" height="73"/>
                                         <constraints>
-                                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="73" id="D84-Oc-8cF"/>
                                             <constraint firstAttribute="height" constant="73" id="dvD-Ue-TNS"/>
-                                            <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="73" id="iFz-hd-ZZh"/>
                                             <constraint firstAttribute="width" constant="73" id="yXv-Ed-Bgw"/>
                                         </constraints>
                                     </imageView>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="defaultMarkerImage" translatesAutoresizingMaskIntoConstraints="NO" id="Dl1-rV-sw1" userLabel="defaultMarkerImage2">
                                         <rect key="frame" x="170" y="89" width="73" height="73"/>
                                         <constraints>
-                                            <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="73" id="3TJ-K4-XaL"/>
                                             <constraint firstAttribute="height" constant="73" id="RlK-wB-ZWR"/>
                                             <constraint firstAttribute="width" constant="73" id="UgR-hf-GhG"/>
-                                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="73" id="l4D-hU-xX3"/>
                                         </constraints>
                                     </imageView>
                                 </subviews>
@@ -1640,7 +1636,7 @@
                                             <rect key="frame" x="15" y="12" width="10" height="20"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="16"/>
-                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Detail" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="pXt-kd-hsV">
@@ -2668,7 +2664,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="AllPhotosCell" id="UGb-fU-KpN">
-                                <rect key="frame" x="0.0" y="86" width="320" height="44"/>
+                                <rect key="frame" x="0.0" y="22" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="UGb-fU-KpN" id="Y48-aD-BBK">
                                     <rect key="frame" x="0.0" y="0.0" width="287" height="43"/>
@@ -2679,7 +2675,7 @@
                                 </connections>
                             </tableViewCell>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="CollectionCell" id="PXC-Bm-uye">
-                                <rect key="frame" x="0.0" y="130" width="320" height="44"/>
+                                <rect key="frame" x="0.0" y="66" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="PXC-Bm-uye" id="Okr-6S-MEy">
                                     <rect key="frame" x="0.0" y="0.0" width="287" height="43"/>
@@ -2717,7 +2713,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="thumbCell" rowHeight="90" id="i7f-c5-g42" customClass="SelectImageCell">
-                                <rect key="frame" x="0.0" y="86" width="320" height="90"/>
+                                <rect key="frame" x="0.0" y="22" width="320" height="90"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="i7f-c5-g42" id="h2N-Ij-fMW">
                                     <rect key="frame" x="0.0" y="0.0" width="320" height="89"/>

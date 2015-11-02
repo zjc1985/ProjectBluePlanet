@@ -696,6 +696,7 @@
             LocalImageUrl *localImage=[localImageArray pop];
             if (localImage) {
                 UIImageView *imageView=[self.markerInfoImages objectAtIndex:i];
+                imageView.clipsToBounds=YES;
                 imageView.contentMode=UIViewContentModeScaleAspectFill;
                 imageView.image=[CommonUtil loadImage:localImage.fileName];
                 [imageView setHidden:NO];
@@ -703,6 +704,7 @@
                 NSString *urlString=[httpImageUrlArray pop];
                 if(urlString){
                     UIImageView *imageView=[self.markerInfoImages objectAtIndex:i];
+                    imageView.clipsToBounds=YES;
                     imageView.contentMode=UIViewContentModeScaleAspectFill;
                     NSURL *url=[NSURL URLWithString:urlString];
                     [imageView sd_setImageWithURL:url

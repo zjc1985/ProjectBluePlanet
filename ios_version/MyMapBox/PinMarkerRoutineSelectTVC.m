@@ -85,7 +85,11 @@
     switch (section)
     {
         case 0:
-            sectionName = NSLocalizedString(@"Current Routine", @"Current Routine");
+            if(self.needShowCurrentRoutine){
+                sectionName = NSLocalizedString(@"Current Routine", @"Current Routine");
+            }else{
+                sectionName=@"";
+            }
             break;
         case 1:
             sectionName = NSLocalizedString(@"My Other Routine", @"My Other Routine");
@@ -122,6 +126,13 @@
     switch (indexPath.section) {
         case 0:{
             cell.textLabel.text=[self.currentRoutine title];
+            
+            if(self.needShowCurrentRoutine){
+                [cell setHidden:NO];
+            }else{
+                [cell setHidden:YES];
+            }
+            
             break;
         }
         case 1:{

@@ -116,7 +116,7 @@
         [self.mapView zoomWithLatitudeLongitudeBoundsSouthWest:[CommonUtil minLocationInMMMarkers:markersNeedInView]
                                                      northEast:[CommonUtil maxLocationInMMMarkers:markersNeedInView]
                                                       animated:NO];
-        [self.mapView setZoom:self.mapView.zoom-0.8 animated:YES];
+        [self.mapView setZoom:self.mapView.zoom-1.8 animated:YES];
          
     }
     
@@ -241,6 +241,13 @@
     }
 }
 
+-(void)hideMarkerInfoView{
+    NSAssert(false, @"need implement in sub class");
+}
+
+-(void)showMarkInfoViewByMMMarker:(id<Marker>)marker{
+    NSAssert(false, @"need implement in sub class");
+}
 
 #pragma mark - getter and setter
 -(RMMapView *)mapView{
@@ -255,6 +262,16 @@
         return [self.parentMarker allSubMarkers];
     }else{
         return [self.routine headMarkers];
+    }
+}
+
+@synthesize currentMarker=_currentMarker;
+-(void)setCurrentMarker:(id<Marker>)currentMarker{
+    _currentMarker=currentMarker;
+    if (currentMarker) {
+        [self showMarkInfoViewByMMMarker:currentMarker];
+    }else{
+        [self hideMarkerInfoView];
     }
 }
 

@@ -9,6 +9,7 @@
 #import "PinMarkerSelectNodeTVC.h"
 #import "MMMarker+Dao.h"
 #import "MMRoutine+Dao.h"
+#import "MMSearchdeMarker.h"
 
 typedef enum : NSUInteger {
     copyPin = 0,
@@ -64,7 +65,7 @@ typedef enum : NSUInteger {
 }
 
 -(BOOL)isPinToOtherRoutine{
-    if ([[[self.markerNeedPin belongRoutine] uuid] isEqualToString:self.desRoutine.uuid]) {
+    if ([[[self.markerNeedPin belongRoutine] uuid] isEqualToString:[self.desRoutine uuid]]) {
         return NO;
     }else{
         return YES;
@@ -80,11 +81,16 @@ typedef enum : NSUInteger {
         
         if([self isPinToOtherRoutine]){
             NSLog(@"Pin to other routine");
+            
             if([self.markerNeedPin isKindOfClass:[MMMarker class]]){
                 MMMarker *markerNeedPin=self.markerNeedPin;
                 [markerNeedPin copySelfTo:self.selectMarker inRoutine:self.desRoutine];
+                [self performSegueWithIdentifier:@"pinDoneSegue" sender:nil];
+            }else if ([self.markerNeedPin isKindOfClass:[MMSearchdeMarker class]]){
+                MMSearchdeMarker *markerNeedPin=self.markerNeedPin;
+                [markerNeedPin copySelfTo:self.selectMarker inRoutine:self.desRoutine];
+                [self performSegueWithIdentifier:@"searchPinDoneSegue" sender:nil];
             }
-            [self performSegueWithIdentifier:@"pinDoneSegue" sender:nil];
         }else{
             UIActionSheet *sheet=[[UIActionSheet alloc] initWithTitle:nil
                                                              delegate:self

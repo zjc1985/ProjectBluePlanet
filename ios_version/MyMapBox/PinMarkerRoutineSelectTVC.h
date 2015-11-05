@@ -13,5 +13,6 @@
 
 //in
 @property(nonatomic,strong) id<Marker> markerNeedPin;
+@property(nonatomic) BOOL needShowCurrentRoutine;
 
 @end

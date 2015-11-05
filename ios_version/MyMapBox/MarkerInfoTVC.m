@@ -54,8 +54,8 @@
     }else if([segue.identifier isEqualToString:@"pinMarkerSelectRoutineSegue"]){
         UINavigationController *navController=(UINavigationController *)segue.destinationViewController;
         PinMarkerRoutineSelectTVC *pinRoutineSelectTVC=navController.viewControllers[0];
-        
         pinRoutineSelectTVC.markerNeedPin=self.marker;
+        pinRoutineSelectTVC.needShowCurrentRoutine=YES;
     }
 }
 

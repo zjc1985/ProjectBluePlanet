@@ -221,7 +221,10 @@
             NSDictionary *response=object;
             NSArray *markersDic=[response objectForKey:@"returnValue"];
             for (NSDictionary *markerDic in markersDic) {
-                MMSearchdeMarker *searchMarker=[[MMSearchdeMarker alloc]initWithUUID:[markerDic objectForKey:@"id"]withLat:[markerDic objectForKey:@"lat"] withLng:[markerDic objectForKey:@"lng"]];
+                MMSearchdeMarker *searchMarker=[[MMSearchdeMarker alloc]initWithUUID:[markerDic objectForKey:@"id"]
+                                                                             withParentUuid:[markerDic objectForKey:@"parentMarkerUuid"]
+                                                                             withLat:[markerDic objectForKey:@"lat"]
+                                                                             withLng:[markerDic objectForKey:@"lng"]];
                 
                 searchMarker.title=[markerDic objectForKey:@"title"];
                 searchMarker.mycomment=[markerDic objectForKey:@"mycomment"];

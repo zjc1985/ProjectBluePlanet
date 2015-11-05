@@ -24,9 +24,12 @@
 @property (nonatomic, strong) NSNumber * lat;
 @property (nonatomic, strong) NSNumber * lng;
 @property (nonatomic, strong) NSArray  * imgUrls;
+@property (nonatomic, strong,readonly) NSString * parentMarkerUuid;
 
 @property (nonatomic, weak) MMSearchedRoutine *belongRoutine;
 
--(instancetype)initWithUUID:(NSString *)uuid withLat:(NSNumber *)lat withLng:(NSNumber *)lng;
+-(instancetype)initWithUUID:(NSString *)uuid withParentUuid:(NSString *)parentMarkerUuid withLat:(NSNumber *)lat withLng:(NSNumber *)lng;
+
+-(void)copySelfTo:(MMMarker *)parentMarker inRoutine:(MMRoutine *)routine;
 
 @end

@@ -254,6 +254,8 @@
     copyMarker.mycomment=self.mycomment;
     copyMarker.iconUrl=self.iconUrl;
     copyMarker.imgUrls=self.imgUrls;
+    copyMarker.slideNum=self.slideNum;
+    
     //copy local image
     if([[self.localImages allObjects] count]>0){
         for (LocalImageUrl *imgUrl in [self.localImages allObjects]) {

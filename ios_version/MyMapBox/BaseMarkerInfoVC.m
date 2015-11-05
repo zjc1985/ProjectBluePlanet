@@ -25,6 +25,10 @@
     singleTap.numberOfTapsRequired = 1;
     [self.markerImage setUserInteractionEnabled:YES];
     [self.markerImage addGestureRecognizer:singleTap];
+    
+    [self.pinButton setTitle:NSLocalizedString(@"Pin", nil) forState:UIControlStateNormal];
+    [self.showDetailButton setTitle:NSLocalizedString(@"Detail", nil) forState:UIControlStateNormal];
+    
 }
 
 -(void)markerImageClicked{

@@ -42,4 +42,8 @@
 
 -(void)handleCurrentSlideMarkers:(NSArray *)currentSlideMarkers;
 
+-(void)showMarkInfoViewByMMMarker:(id<Marker>)marker;
+
+-(void)hideMarkerInfoView;
+
 @end

@@ -33,8 +33,6 @@
 //marker Info View
 @property (weak, nonatomic) IBOutlet MarkerInfoView *markerInfoView;
 @property (strong, nonatomic) IBOutletCollection(UIImageView) NSArray *markerInfoImages;
-
-
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *markerInfoHeightConstraint;
 
 @property (weak, nonatomic) IBOutlet UIToolbar *playRoutineToolBar;
@@ -225,19 +223,13 @@
     return _imageManager;
 }
 
-@synthesize currentMarker=_currentMarker;
--(void)setCurrentMarker:(id<Marker>)currentMarker{
-    _currentMarker=currentMarker;
-    if (currentMarker) {
-        [self showMarkInfoViewByMMMarker:currentMarker];
-    }else{
-        [self.markerInfoView setHidden:YES];
-    }
-}
-
 #pragma mark - override
 -(void)handleCurrentSlideMarkers:(NSArray *)currentSlideMarkers{
     self.currentMarker=currentSlideMarkers.firstObject;
+}
+
+-(void)hideMarkerInfoView{
+    [self.markerInfoView setHidden:YES];
 }
 
 #pragma mark - UI action
@@ -674,7 +666,8 @@
 #define MARKER_INFO_HEIGHT_CONSTRAINT_IMAGE_ONLY 130;
 #define MARKER_INFO_HEIGHT_CONSTRAINT_COMMENT_ONLY 120;
 
--(void)showMarkInfoViewByMMMarker:(MMMarker *)marker{
+-(void)showMarkInfoViewByMMMarker:(id<Marker>)inComingMarker{
+    MMMarker *marker=(MMMarker *)inComingMarker;
     self.markerInfoView.markerInfoTitleLabel.text=marker.title;
     self.markerInfoView.markerInfoSubLabel.text=[NSString stringWithFormat:@"%@ %@",marker.categoryName,marker.slideNum];
     self.markerInfoView.markerInfoContentLabel.text=marker.mycomment;

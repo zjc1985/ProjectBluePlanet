@@ -13,6 +13,7 @@
 #import "MMSearchedOvMarker.h"
 #import "CloudManager.h"
 #import "SearchRoutineInfoTVC.h"
+#import "NSMutableArray+StackExtension.h"
 
 #define SHOW_SEARCH_ROUTINE_INFO_SEGUE @"showSearchRoutineInfoSegue"
 
@@ -173,7 +174,11 @@ typedef enum : NSUInteger {
                                 if(!error){
                                     self.centerToolBarItem.title=[NSString stringWithFormat:@"Page %lu",(unsigned long)self.currentPageNum];
                                     [self.searchCach setObject:routines forKey:[NSNumber numberWithUnsignedInteger:1]];
+                                    
+                                    [self refineOffset:routines];
+                                    
                                     self.searchedRoutines=routines;
+                                    
                                     [self updateMapUI];
                                 }else{
                                     [CommonUtil alert:[error localizedDescription]];
@@ -185,6 +190,67 @@ typedef enum : NSUInteger {
         default:
             break;
     }
+}
+
+-(void)refineOffset:(NSArray *)searchRoutinesArray{
+    if (SEARCH_RESULTS_EACH_PAGE_NUM!=5) {
+        return;
+    }
+    
+    //let markers together in the same dic
+    NSMutableArray *clusterMarkerArray=[[NSMutableArray alloc]init];
+    
+    for (MMSearchedRoutine *routine in searchRoutinesArray) {
+        
+        NSMutableArray *arrayNeedAdd=[self routine:routine findNearedClusteredIn:clusterMarkerArray];
+        if (arrayNeedAdd) {
+            [arrayNeedAdd addObject:routine];
+        }else{
+            [clusterMarkerArray addObject:[[NSMutableArray alloc]initWithObjects:routine, nil]];
+        }
+    }
+    
+    //adjust itsOvMarker offset
+    for (NSMutableArray *eachArray in clusterMarkerArray) {
+        [self adjustOffSet:eachArray];
+    }
+}
+
+-(void)adjustOffSet:(NSArray *)routineArray{
+    NSInteger r=50;
+    for (NSUInteger i=0; i<routineArray.count; i++) {
+        MMSearchedRoutine *routine=[routineArray objectAtIndex:i];
+        MMSearchedOvMarker *ovMarker=[routine.ovMarkers allObjects].firstObject;
+        switch (i) {
+            case 0:
+                ovMarker.offsetY=[NSNumber numberWithInteger:(0-r)];
+                break;
+            case 1:
+                ovMarker.offsetX=[NSNumber numberWithInteger:(0-r)];
+                break;
+            case 2:
+                ovMarker.offsetX=[NSNumber numberWithInteger:(0+r)];
+                break;
+            default:
+                break;
+        }
+    }
+}
+
+-(NSMutableArray *)routine:(MMSearchedRoutine *)routine findNearedClusteredIn:(NSArray *)clusterMarkerArray{
+    
+    for (NSMutableArray *clusterArray in clusterMarkerArray) {
+        if ([self routine:routine isNearTo:clusterMarkerArray.firstObject]) {
+            return clusterArray;
+        }
+    }
+    
+    return nil;
+}
+
+-(BOOL)routine:(MMSearchedRoutine *)from isNearTo:(MMSearchedRoutine *)to{
+#warning not implemented
+    return YES;
 }
 
 //override

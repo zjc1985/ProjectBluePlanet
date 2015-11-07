@@ -145,6 +145,7 @@ typedef enum : NSUInteger {
                                 self.centerToolBarItem.title=[NSString stringWithFormat:@"Page %u",self.currentPageNum];
                                 if(!error){
                                     [self.searchCach setObject:routines forKey:[NSNumber numberWithUnsignedInteger:self.currentPageNum]];
+                                    [self refineOffset:routines];
                                     self.searchedRoutines=routines;
                                     [self updateMapUI];
                                 }else{

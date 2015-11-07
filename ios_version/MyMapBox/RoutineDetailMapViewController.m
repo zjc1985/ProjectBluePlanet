@@ -457,6 +457,7 @@
                 newMarker.category=[NSNumber numberWithUnsignedInteger:CategorySight];
                 newMarker.iconUrl=@"sight_default.png";
                 newMarker.mycomment=self.searchResult.address;
+                newMarker.slideNum=[NSNumber numberWithUnsignedInteger:self.markArray.count+1];
                 break;
             }
             case clearSearchResult:{

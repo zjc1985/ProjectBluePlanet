@@ -58,6 +58,14 @@
     [self.tabBarController.tabBar setHidden:NO];
 }
 
+-(void)addLineFrom:(CLLocation *)from to:(CLLocation *)to{
+    NSArray *pointArray=[[NSArray alloc]initWithObjects:from,to,nil];
+    RMPolylineAnnotation *line=[[RMPolylineAnnotation alloc]initWithMapView:self.mapView points:pointArray];
+    [line setLineWidth:0.8];
+    
+    [self.mapView addAnnotation:line];
+}
+
 #pragma mark - getter and setter
 -(NSArray *)searchedRoutines{
     if(!_searchedRoutines){
@@ -217,7 +225,7 @@ typedef enum : NSUInteger {
 }
 
 -(void)adjustOffSet:(NSArray *)routineArray{
-    NSInteger r=50;
+    NSInteger r=35;
     for (NSUInteger i=0; i<routineArray.count; i++) {
         MMSearchedRoutine *routine=[routineArray objectAtIndex:i];
         MMSearchedOvMarker *ovMarker=[routine.ovMarkers allObjects].firstObject;
@@ -227,9 +235,18 @@ typedef enum : NSUInteger {
                 break;
             case 1:
                 ovMarker.offsetX=[NSNumber numberWithInteger:(0-r)];
+                ovMarker.offsetY=[NSNumber numberWithInteger:-0.25*r];
                 break;
             case 2:
                 ovMarker.offsetX=[NSNumber numberWithInteger:(0+r)];
+                ovMarker.offsetY=[NSNumber numberWithInteger:-0.25*r];                break;
+            case 3:
+                ovMarker.offsetX=[NSNumber numberWithInteger:(-0.7*r)];
+                ovMarker.offsetY=[NSNumber numberWithInteger:1.2*r];
+                break;
+            case 4:
+                ovMarker.offsetX=[NSNumber numberWithInteger:0.7*r];
+                ovMarker.offsetY=[NSNumber numberWithInteger:1.2*r];
                 break;
             default:
                 break;

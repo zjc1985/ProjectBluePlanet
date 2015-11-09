@@ -206,7 +206,7 @@ typedef enum : NSUInteger {
         return;
     }
     
-    //let markers together in the same dic
+    //let markers together in the same array
     NSMutableArray *clusterMarkerArray=[[NSMutableArray alloc]init];
     
     for (MMSearchedRoutine *routine in searchRoutinesArray) {
@@ -258,7 +258,7 @@ typedef enum : NSUInteger {
 -(NSMutableArray *)routine:(MMSearchedRoutine *)routine findNearedClusteredIn:(NSArray *)clusterMarkerArray{
     
     for (NSMutableArray *clusterArray in clusterMarkerArray) {
-        if ([self routine:routine isNearTo:clusterMarkerArray.firstObject]) {
+        if ([self routine:routine isNearTo:clusterArray.firstObject]) {
             return clusterArray;
         }
     }
@@ -267,8 +267,25 @@ typedef enum : NSUInteger {
 }
 
 -(BOOL)routine:(MMSearchedRoutine *)from isNearTo:(MMSearchedRoutine *)to{
-#warning not implemented
-    return YES;
+
+    CGPoint fromPoint=[self.mapView coordinateToPixel:CLLocationCoordinate2DMake([[from lat] doubleValue],
+                                                                                   [[from lng] doubleValue])];
+    CGPoint toPoint=[self.mapView coordinateToPixel:CLLocationCoordinate2DMake([[to lat] doubleValue],
+                                                                                [[to lng] doubleValue])];
+    CGFloat xM=fromPoint.x-toPoint.x;
+    CGFloat yM=fromPoint.y-toPoint.y;
+    
+    CGFloat r=xM*xM+yM*yM;
+    
+    //NSLog(@"distance is %@",@(r));
+    
+    CGFloat BASE=50;
+    
+    if(r<BASE*BASE){
+        return YES;
+    }else{
+        return NO;
+    }
 }
 
 //override

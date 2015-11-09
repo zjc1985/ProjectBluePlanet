@@ -12,9 +12,14 @@
 
 @interface BaseDetailMapVC : UIViewController
 
-@property(nonatomic,strong) RMMapView *mapView;
+//in
 @property(nonatomic,strong) id<Routine> routine;
-@property(nonatomic,strong) id currentMarker;
+@property(nonatomic,strong) id<Marker> parentMarker;
+@property(nonatomic,strong,readonly) NSArray *markArray; //of id Marker
+
+
+@property(nonatomic,strong) id<Marker> currentMarker;
+@property(nonatomic,strong) RMMapView *mapView;
 
 //slide show related
 @property (nonatomic, assign) NSInteger slideIndicator;
@@ -36,5 +41,9 @@
 -(void)slidePrevClick;
 
 -(void)handleCurrentSlideMarkers:(NSArray *)currentSlideMarkers;
+
+-(void)showMarkInfoViewByMMMarker:(id<Marker>)marker;
+
+-(void)hideMarkerInfoView;
 
 @end

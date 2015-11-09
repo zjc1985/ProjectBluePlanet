@@ -13,6 +13,7 @@
 #import "MMSearchedOvMarker.h"
 #import "CloudManager.h"
 #import "SearchRoutineInfoTVC.h"
+#import "NSMutableArray+StackExtension.h"
 
 #define SHOW_SEARCH_ROUTINE_INFO_SEGUE @"showSearchRoutineInfoSegue"
 
@@ -55,6 +56,14 @@
 
 -(void)viewWillAppear:(BOOL)animated{
     [self.tabBarController.tabBar setHidden:NO];
+}
+
+-(void)addLineFrom:(CLLocation *)from to:(CLLocation *)to{
+    NSArray *pointArray=[[NSArray alloc]initWithObjects:from,to,nil];
+    RMPolylineAnnotation *line=[[RMPolylineAnnotation alloc]initWithMapView:self.mapView points:pointArray];
+    [line setLineWidth:0.8];
+    
+    [self.mapView addAnnotation:line];
 }
 
 #pragma mark - getter and setter
@@ -136,6 +145,7 @@ typedef enum : NSUInteger {
                                 self.centerToolBarItem.title=[NSString stringWithFormat:@"Page %u",self.currentPageNum];
                                 if(!error){
                                     [self.searchCach setObject:routines forKey:[NSNumber numberWithUnsignedInteger:self.currentPageNum]];
+                                    [self refineOffset:routines];
                                     self.searchedRoutines=routines;
                                     [self updateMapUI];
                                 }else{
@@ -173,7 +183,11 @@ typedef enum : NSUInteger {
                                 if(!error){
                                     self.centerToolBarItem.title=[NSString stringWithFormat:@"Page %lu",(unsigned long)self.currentPageNum];
                                     [self.searchCach setObject:routines forKey:[NSNumber numberWithUnsignedInteger:1]];
+                                    
+                                    [self refineOffset:routines];
+                                    
                                     self.searchedRoutines=routines;
+                                    
                                     [self updateMapUI];
                                 }else{
                                     [CommonUtil alert:[error localizedDescription]];
@@ -184,6 +198,93 @@ typedef enum : NSUInteger {
         }
         default:
             break;
+    }
+}
+
+-(void)refineOffset:(NSArray *)searchRoutinesArray{
+    if (SEARCH_RESULTS_EACH_PAGE_NUM!=5) {
+        return;
+    }
+    
+    //let markers together in the same array
+    NSMutableArray *clusterMarkerArray=[[NSMutableArray alloc]init];
+    
+    for (MMSearchedRoutine *routine in searchRoutinesArray) {
+        
+        NSMutableArray *arrayNeedAdd=[self routine:routine findNearedClusteredIn:clusterMarkerArray];
+        if (arrayNeedAdd) {
+            [arrayNeedAdd addObject:routine];
+        }else{
+            [clusterMarkerArray addObject:[[NSMutableArray alloc]initWithObjects:routine, nil]];
+        }
+    }
+    
+    //adjust itsOvMarker offset
+    for (NSMutableArray *eachArray in clusterMarkerArray) {
+        [self adjustOffSet:eachArray];
+    }
+}
+
+-(void)adjustOffSet:(NSArray *)routineArray{
+    NSInteger r=35;
+    for (NSUInteger i=0; i<routineArray.count; i++) {
+        MMSearchedRoutine *routine=[routineArray objectAtIndex:i];
+        MMSearchedOvMarker *ovMarker=[routine.ovMarkers allObjects].firstObject;
+        switch (i) {
+            case 0:
+                ovMarker.offsetY=[NSNumber numberWithInteger:(0-r)];
+                break;
+            case 1:
+                ovMarker.offsetX=[NSNumber numberWithInteger:(0-r)];
+                ovMarker.offsetY=[NSNumber numberWithInteger:-0.25*r];
+                break;
+            case 2:
+                ovMarker.offsetX=[NSNumber numberWithInteger:(0+r)];
+                ovMarker.offsetY=[NSNumber numberWithInteger:-0.25*r];                break;
+            case 3:
+                ovMarker.offsetX=[NSNumber numberWithInteger:(-0.7*r)];
+                ovMarker.offsetY=[NSNumber numberWithInteger:1.2*r];
+                break;
+            case 4:
+                ovMarker.offsetX=[NSNumber numberWithInteger:0.7*r];
+                ovMarker.offsetY=[NSNumber numberWithInteger:1.2*r];
+                break;
+            default:
+                break;
+        }
+    }
+}
+
+-(NSMutableArray *)routine:(MMSearchedRoutine *)routine findNearedClusteredIn:(NSArray *)clusterMarkerArray{
+    
+    for (NSMutableArray *clusterArray in clusterMarkerArray) {
+        if ([self routine:routine isNearTo:clusterArray.firstObject]) {
+            return clusterArray;
+        }
+    }
+    
+    return nil;
+}
+
+-(BOOL)routine:(MMSearchedRoutine *)from isNearTo:(MMSearchedRoutine *)to{
+
+    CGPoint fromPoint=[self.mapView coordinateToPixel:CLLocationCoordinate2DMake([[from lat] doubleValue],
+                                                                                   [[from lng] doubleValue])];
+    CGPoint toPoint=[self.mapView coordinateToPixel:CLLocationCoordinate2DMake([[to lat] doubleValue],
+                                                                                [[to lng] doubleValue])];
+    CGFloat xM=fromPoint.x-toPoint.x;
+    CGFloat yM=fromPoint.y-toPoint.y;
+    
+    CGFloat r=xM*xM+yM*yM;
+    
+    //NSLog(@"distance is %@",@(r));
+    
+    CGFloat BASE=50;
+    
+    if(r<BASE*BASE){
+        return YES;
+    }else{
+        return NO;
     }
 }
 

@@ -32,6 +32,22 @@
     return [self.ovMarkers allObjects];
 }
 
+-(NSArray *)headMarkers{
+    NSMutableArray *result=[[NSMutableArray alloc]init];
+    
+    for (MMSearchdeMarker *marker in [self allMarks]) {
+        if (!marker.parentMarkerUuid) {
+            [result addObject:marker];
+        }
+    }
+    return result;
+}
+
+-(NSUInteger)maxSlideNum{
+    NSAssert(false, @"MMSearchRoutine shouldn't call maxSlideNum");
+    return 0;
+}
+
 -(void)updateLocation{
     
 }
@@ -48,6 +64,8 @@
     
     return minLat;
 }
+
+
 
 -(double)minLngInMarkers{
     MMSearchdeMarker *first=[[self.markers allObjects] firstObject];

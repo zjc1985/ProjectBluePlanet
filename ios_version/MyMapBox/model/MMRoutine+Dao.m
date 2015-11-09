@@ -12,7 +12,6 @@
 #import "MMOvMarker+Dao.h"
 #import "MMMarker+Dao.h"
 
-
 @import CoreData;
 
 @implementation MMRoutine (Dao)
@@ -118,20 +117,18 @@
     return result;
 }
 
--(void)markDelete{
-    self.isDelete=[NSNumber numberWithBool:YES];
-    NSNumber *timestamp=[NSNumber numberWithLongLong:[CommonUtil currentUTCTimeStamp]];
-    self.updateTimestamp=timestamp;
-    
+-(void)deleteSelf{
     for (MMOvMarker *eachOvMarker in self.ovMarkers) {
-        [eachOvMarker markDelete];
-        
+        [eachOvMarker deleteSelf];
     }
     
-    for (MMMarker *eachMarker in self.markers) {
-        [eachMarker markDelete];
+    if(self.isSync){
+        self.isDelete=[NSNumber numberWithBool:YES];
+        NSNumber *timestamp=[NSNumber numberWithLongLong:[CommonUtil currentUTCTimeStamp]];
+        self.updateTimestamp=timestamp;
+    }else{
+        [MMRoutine removeRoutine:self];
     }
-    
 }
 
 -(void)updateLocation{
@@ -143,57 +140,11 @@
         [lngArray addObject:eachMarker.lng];
     }
     
-    self.lat=[NSNumber numberWithDouble: [self refineAverage:latArray]];
-    self.lng=[NSNumber numberWithDouble: [self refineAverage:lngArray]];
+    self.lat=[NSNumber numberWithDouble: [CommonUtil refineAverage:latArray]];
+    self.lng=[NSNumber numberWithDouble: [CommonUtil refineAverage:lngArray]];
     
     NSNumber *timestamp=[NSNumber numberWithLongLong:[CommonUtil currentUTCTimeStamp]];
     self.updateTimestamp=timestamp;
-}
-
--(double)minLatInMarkers{
-    MMMarker *first=[[self.markers allObjects] firstObject];
-    double minLat=[first.lat doubleValue];
-    
-    for (MMMarker *each in self.markers) {
-        if([each.lat doubleValue]<minLat){
-            minLat=[each.lat doubleValue];
-        }
-    }
-    
-    return minLat;
-}
-
--(double)minLngInMarkers{
-    MMMarker *first=[[self.markers allObjects] firstObject];
-    double minLng=[first.lng doubleValue];
-    for (MMMarker *each in self.markers) {
-        if([each.lng doubleValue]<minLng){
-            minLng=[each.lng doubleValue];
-        }
-    }
-    return minLng;
-}
-
--(double)maxLatInMarkers{
-    MMMarker *first=[[self.markers allObjects] firstObject];
-    double maxLat=[first.lat doubleValue];
-    for (MMMarker *each in self.markers) {
-        if([each.lat doubleValue]>maxLat){
-            maxLat=[each.lat doubleValue];
-        }
-    }
-    return maxLat;
-}
-
--(double)maxLngInMarkers{
-    MMMarker *first=[[self.markers allObjects] firstObject];
-    double maxLng=[first.lng doubleValue];
-    for (MMMarker *each in self.markers) {
-        if([each.lng doubleValue]>maxLng){
-            maxLng=[each.lng doubleValue];
-        }
-    }
-    return maxLng;
 }
 
 -(NSArray *)allMarks{
@@ -202,6 +153,17 @@
     for (MMMarker *each in markers) {
         if(![each.isDelete boolValue]){
             [result addObject:each];
+        }
+    }
+    return result;
+}
+
+-(NSArray *)headMarkers{
+    NSMutableArray *result=[[NSMutableArray alloc]init];
+    
+    for (MMMarker *marker in self.allMarks) {
+        if((![marker.isDelete boolValue]) && (!marker.parentMarker)){
+            [result addObject:marker];
         }
     }
     return result;
@@ -246,44 +208,6 @@
 }
 
 #pragma mark - private method
-
--(double)refineAverage:(NSMutableArray*)numbers{
-    NSMutableArray *refineArray=[[NSMutableArray alloc]init];
-    double e=[self average:numbers];
-    double d=[self sDeviation:numbers];
-    
-    for (NSNumber *number in numbers) {
-        if (fabs([number doubleValue]-e)<=d) {
-            [refineArray addObject:number];
-        }
-    }
-    
-    return [self average:refineArray];
-}
-
--(double)average:(NSMutableArray *)numbers{
-    double sum=0;
-    double result=0;
-    
-    for (NSNumber *number in numbers) {
-        sum=sum+[number doubleValue];
-    }
-    
-    result=sum/[numbers count];
-    return result;
-}
-
--(double)sDeviation:(NSMutableArray *)numbers{
-    if([numbers count]==0){
-        return 0;
-    }
-    double e=[self average:numbers];
-    double sum=0;
-    for (NSNumber *number in numbers) {
-        sum=sum+([number doubleValue]-e)*([number doubleValue]-e);
-    }
-    return pow(sum/[numbers count], 0.5);
-}
 
 -(NSDictionary *)convertToDictionary{
     NSMutableDictionary *dic=[[NSMutableDictionary alloc]init];

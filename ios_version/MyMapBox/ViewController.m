@@ -182,7 +182,10 @@
     }
     
     if (routine) {
+        [routine deleteSelf];
+        /*
         if([routine.isSync boolValue]){
+            
             NSLog(@"prepare to mark delete routine id: %@",routine.uuid);
             if (routine.isMarkersSyncWithCloud) {
                 [routine markDelete];
@@ -201,6 +204,7 @@
             NSLog(@"prepare to mark remove routine id: %@",routine.uuid);
             [MMRoutine removeRoutine:routine];
         }
+         */
     }
 }
 

@@ -17,36 +17,44 @@
 #define tileJsonTourMap @"tileJSONTourMap"
 #define tileJsonDetailMap @"tileJSONDetailMap"
 
-@protocol Marker <NSObject>
 
-@required
--(NSArray *)imageUrlsArray;
--(NSString *)iconUrl;
--(NSString *)title;
--(NSString *)subDescription;
--(NSString *)mycomment;
-
-@end
 
 @protocol Routine <NSObject>
-
 @required
 -(NSString *)title;
 -(NSArray *)allOvMarks;
 -(NSArray *)allMarks;
--(double)minLatInMarkers;
--(double)minLngInMarkers;
--(double)maxLatInMarkers;
--(double)maxLngInMarkers;
+//return mark whose parentNode==nil and isDelete=NO
+-(NSArray *)headMarkers;
 -(NSNumber *)lat;
 -(NSNumber *)lng;
 -(NSString *)uuid;
 -(void)updateLocation;
 -(NSUInteger)maxSlideNum;
-
 @end
 
+@protocol Marker <NSObject>
+@required
+-(NSArray *)imageUrlsArray;
+-(NSArray *)imageUrlsArrayIncludeSubMarkers;
+-(NSString *)iconUrl;
+-(NSString *)title;
+-(NSString *)subDescription;
+-(NSString *)mycomment;
+-(NSNumber *)lat;
+-(NSNumber *)lng;
+-(NSNumber *)slideNum;
+-(NSArray *) allSubMarkers;
+-(id<Routine>)belongRoutine;
+@end
+
+
 @interface CommonUtil : NSObject
+
++(double)minLatInMarkers:(NSArray *)markerArray;
++(double)minLngInMarkers:(NSArray *)markerArray;
++(double)maxLatInMarkers:(NSArray *)markerArray;
++(double)maxLngInMarkers:(NSArray *)markerArray;
 
 +(NSString *)dataFilePath;
 
@@ -75,5 +83,7 @@
 +(UIImage *)compressForUpload:(UIImage *)original scale:(CGFloat)scale;
 
 +(BOOL)isBlankString:(NSString *)string;
+
++(double)refineAverage:(NSMutableArray*)numbers;
 
 @end

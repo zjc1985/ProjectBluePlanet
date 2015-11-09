@@ -11,7 +11,6 @@
 
 @interface SlideNumSelectTVC : UITableViewController
 
-@property(nonatomic)NSUInteger markerCount;
-@property(nonatomic,weak)UILabel *slideNumLabel;
+@property(nonatomic,strong)NSMutableArray *markersArray; //of MMMarker
 
 @end

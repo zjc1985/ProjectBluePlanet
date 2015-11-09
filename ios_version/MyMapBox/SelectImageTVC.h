@@ -13,6 +13,7 @@
 
 //in
 @property (strong) PHFetchResult *assetsFetchResults;
+@property (nonatomic,strong)NSString *incomingSegueName;
 
 //out
 @property(strong,nonatomic)NSArray *selectedAssetsOut;//of PHAssets

@@ -45,6 +45,7 @@ static NSString * const CollectionSegue = @"showCollection";
         options.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"creationDate" ascending:NO]];
         
         thumbNailImageTVC.assetsFetchResults=[PHAsset fetchAssetsWithOptions:options];
+        thumbNailImageTVC.incomingSegueName=self.incomingSegueName;
     }else if ([segue.identifier isEqualToString:CollectionSegue]){
         SelectImageTVC * thumbNailImageTVC=segue.destinationViewController;
         NSIndexPath *indexPath=[self.tableView indexPathForCell:sender];
@@ -59,6 +60,7 @@ static NSString * const CollectionSegue = @"showCollection";
             PHFetchResult *assetsFetchResult=[PHAsset fetchAssetsInAssetCollection:assetCollection options:options];
             thumbNailImageTVC.assetsFetchResults=assetsFetchResult;
         }
+        thumbNailImageTVC.incomingSegueName=self.incomingSegueName;
     }
 }
 

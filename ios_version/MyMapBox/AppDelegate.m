@@ -11,8 +11,6 @@
 #import <Mapbox-iOS-SDK/Mapbox.h>
 #import "CloudManager.h"
 
-#import <GoogleMaps/GoogleMaps.h>
-
 @interface AppDelegate ()
 
 @end
@@ -28,7 +26,7 @@
     [[RMConfiguration sharedInstance] setAccessToken:@"pk.eyJ1IjoibGlvbmhhcnQ1ODYiLCJhIjoiR1JHd2NnYyJ9.iCg5vA7qQaRxf2Z-T_vEjg"];
     
 
-    [GMSServices provideAPIKey:@"AIzaSyBiEjbTXAdzCjgCxmka5whdGeAAZidLQmY"];
+    //[GMSServices provideAPIKey:@"AIzaSyBiEjbTXAdzCjgCxmka5whdGeAAZidLQmY"];
     /*
     [[NSNotificationCenter defaultCenter] addObserver:[CloudManager class]
                                              selector:@selector(contextWillSave:)

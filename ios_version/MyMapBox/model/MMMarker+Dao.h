@@ -26,6 +26,7 @@
 #define KEY_MARKER_IS_SYNCED @"isSynced"
 #define KEY_MARKER_UPDATE_TIME @"updateTime"
 #define KEY_MARKER_IMAGE_URLS @"imgUrls"
+#define KEY_MARKER_PARENT_UUID @"parentMarkerUuid"
 
 typedef enum : NSUInteger {
     CategoryArrivalLeave = 1,
@@ -38,11 +39,11 @@ typedef enum : NSUInteger {
 
 @interface MMMarker (Dao)<Marker>
 
-+(MMMarker *)createMMMarkerInRoutine:(MMRoutine *)routine withLat:(double)lat withLng:(double)lng;
++(MMMarker *)createMMMarkerInRoutine:(MMRoutine *)routine withLat:(double)lat withLng:(double)lng withParentMarker:(MMMarker *)parentMarker;
 
-+(MMMarker *)createMMMarkerInRoutine:(MMRoutine *)routine withLat:(double)lat withLng:(double)lng withUUID:(NSString *)uuid;
++(MMMarker *)createMMMarkerInRoutine:(MMRoutine *)routine withLat:(double)lat withLng:(double)lng withUUID:(NSString *)uuid withParentMarker:(MMMarker *)parentMarker;
 
-+(MMMarker *)createMMMarkerInRoutine:(MMRoutine *)routine withSearchMarker:(MMSearchdeMarker *)searchedMarker;
++(MMMarker *)createMMMarkerInRoutine:(MMRoutine *)routine withSearchMarker:(MMSearchdeMarker *)searchedMarker withParentMarker:(MMMarker *)parentMarker;
 
 +(MMMarker *)queryMMMarkerWithUUID:(NSString *)uuid;
 
@@ -50,7 +51,9 @@ typedef enum : NSUInteger {
 
 +(NSString *)CategoryNameWithMMMarkerCategory:(MMMarkerCategory)categoryNum;
 
--(void)markDelete;
+-(NSArray *)allSubMarkers;
+
+-(void)deleteSelf;
 
 -(NSString *)categoryName;
 
@@ -62,6 +65,13 @@ typedef enum : NSUInteger {
 
 -(void)removeImageUrl:(NSString *)imgUrl;
 
+-(NSArray *)localImagesIncludingSubMarkers;
+
 -(NSDictionary *)convertToDictionary;
+
+//if parentNode is nil copy mmarker to given routine root position
+-(void)copySelfTo:(MMMarker *)parentNode inRoutine:(MMRoutine *)routine;
+
+-(void)updateLocationAccording2SubMarkers;
 
 @end

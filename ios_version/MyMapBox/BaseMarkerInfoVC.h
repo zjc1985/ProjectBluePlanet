@@ -19,10 +19,12 @@
 @property (weak, nonatomic) IBOutlet UIImageView *markerIconImage;
 @property (weak, nonatomic) IBOutlet UITextView *markerDescription;
 @property (weak, nonatomic) IBOutlet UIImageView *markerImage;
+@property (weak, nonatomic) IBOutlet UIButton *showDetailButton;
+@property (weak, nonatomic) IBOutlet UIButton *pinButton;
+
 
 @property (nonatomic, strong) NSMutableArray *photos; //of MWPhotos
-
-@property(nonatomic,strong)id<Marker> marker;
+@property (nonatomic, strong) id<Marker> marker;
 
 -(void)updateUI;
 

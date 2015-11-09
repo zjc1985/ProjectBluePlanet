@@ -12,6 +12,12 @@
 
 static NSString * const ThumbImageCell = @"thumbCell";
 
+#define SHOW_USER_ALBUMS_SEGUE @"routineDetailShowAlbumsSegue"
+#define UNWIND_SHOW_USER_ALBUMS_SEGUE @"unwindRoutineDetailShowAlbumsSegue"
+
+#define MARKER_EDIT_VIEW_SHOW_ALBUMS_SEGUE @"markerEditShowAlbumsSegue"
+#define UNWIND_MARKER_EDIT_VIEW_SHOW_ALBUMS_SEGUE @"unwindMarkerEditShowAlbumsSegue"
+
 @interface SelectImageTVC ()
 
 @property(strong,nonatomic)PHCachingImageManager *imageManager;
@@ -67,6 +73,15 @@ static CGSize AssetThumbnailSize;
 }
 
 #pragma mark - ui action
+- (IBAction)doneClick:(id)sender {
+    NSLog(@"incoming segue name:%@",self.incomingSegueName);
+    
+    if([self.incomingSegueName isEqualToString:SHOW_USER_ALBUMS_SEGUE]){
+        [self performSegueWithIdentifier:UNWIND_SHOW_USER_ALBUMS_SEGUE sender:nil];
+    }else if ([self.incomingSegueName isEqualToString:MARKER_EDIT_VIEW_SHOW_ALBUMS_SEGUE]){
+        [self performSegueWithIdentifier:UNWIND_MARKER_EDIT_VIEW_SHOW_ALBUMS_SEGUE sender:nil];
+    }
+}
 
 
 #pragma mark - Table view data source

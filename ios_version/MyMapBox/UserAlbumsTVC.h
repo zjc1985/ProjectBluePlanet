@@ -10,4 +10,6 @@
 
 @interface UserAlbumsTVC : UITableViewController
 
+@property(nonatomic,strong)NSString *incomingSegueName;
+
 @end

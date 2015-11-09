@@ -12,6 +12,8 @@
 
 @interface BaseMarkerInfoVC ()
 
+
+
 @end
 
 @implementation BaseMarkerInfoVC
@@ -23,12 +25,18 @@
     singleTap.numberOfTapsRequired = 1;
     [self.markerImage setUserInteractionEnabled:YES];
     [self.markerImage addGestureRecognizer:singleTap];
+    
+    [self.pinButton setTitle:NSLocalizedString(@"Pin", nil) forState:UIControlStateNormal];
+    [self.showDetailButton setTitle:NSLocalizedString(@"Detail", nil) forState:UIControlStateNormal];
+    
 }
 
 -(void)markerImageClicked{
-    if ([self.marker imageUrlsArray].count>0) {
+    NSLog(@"marker Image Clicked");
+    
+    if ([self.marker imageUrlsArrayIncludeSubMarkers].count>0) {
         self.photos=[NSMutableArray array];
-        for (NSString *urlString in [self.marker imageUrlsArray]) {
+        for (NSString *urlString in [self.marker imageUrlsArrayIncludeSubMarkers]) {
             NSURL *url=[NSURL URLWithString:urlString];
             [self.photos addObject:[MWPhoto photoWithURL:url]];
         }
@@ -44,12 +52,18 @@
 }
 
 -(void)updateUI{
+    if([[self.marker allSubMarkers] count]>0){
+        [self.showDetailButton setHidden:NO];
+    }else{
+        [self.showDetailButton setHidden:YES];
+    }
+    
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
     self.markerIconImage.image=[UIImage imageNamed:[self.marker iconUrl]];
     self.markerTitleLabel.text=[self.marker title];
     self.markerSubInfoLabel.text=[self.marker subDescription];
     
-    NSString *imageUrlString=[[self.marker imageUrlsArray] firstObject];
+    NSString *imageUrlString=[[self.marker imageUrlsArrayIncludeSubMarkers] firstObject];
     if(imageUrlString){
         NSURL *url=[NSURL URLWithString:imageUrlString];
         [self.markerImage sd_setImageWithURL:url
@@ -93,5 +107,7 @@
         return [self.photos objectAtIndex:index];
     return nil;
 }
+
+#pragma mark - getter and setter
 
 @end

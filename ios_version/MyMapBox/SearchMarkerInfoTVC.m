@@ -11,8 +11,11 @@
 #import "MWPhotoBrowser.h"
 #import "PinMarkerTVC.h"
 #import "MMMarker+Dao.h"
+#import "SearchRoutineDetailMapVC.h"
+#import "PinMarkerRoutineSelectTVC.h"
 
 @interface SearchMarkerInfoTVC ()
+
 
 @end
 
@@ -28,26 +31,29 @@
 
 #pragma mark - Navigation
 
-// In a storyboard-based application, you will often want to do a little preparation before navigation
+
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+    if ([segue.identifier isEqualToString:@"showSearchDetailMapSegue"]){
+        SearchRoutineDetailMapVC *desVC=segue.destinationViewController;
+        desVC.parentMarker=self.marker;
+        MMSearchdeMarker *marker=self.marker;
+        desVC.routine=marker.belongRoutine;
+    }else if ([segue.identifier isEqualToString:@"searchPinMarkerSegue"]){
+        UINavigationController *navController=(UINavigationController *)segue.destinationViewController;
+        PinMarkerRoutineSelectTVC *pinRoutineSelectTVC=navController.viewControllers[0];
+        
+        pinRoutineSelectTVC.markerNeedPin=self.marker;
+        pinRoutineSelectTVC.needShowCurrentRoutine=NO;
+    }
 }
 
--(IBAction)pinMarkerDone:(UIStoryboardSegue *)segue{
-    if([segue.sourceViewController isKindOfClass:[PinMarkerTVC class]]){
-        PinMarkerTVC *out=segue.sourceViewController;
-        MMMarker *mmmarker=[MMMarker createMMMarkerInRoutine:out.selectedRoutine withSearchMarker:self.marker];
-        if (out.needImage) {
-            for (NSString *imgUrl in self.marker.imgUrls) {
-                [mmmarker addImageUrl:imgUrl];
-            }
-        }
-        if (out.needContent) {
-            mmmarker.mycomment=self.marker.mycomment;
-        }
-        [CommonUtil alert:@"pin complete"];
-    }
+#pragma mark - ui action
+- (IBAction)pinClick:(id)sender {
+    [self performSegueWithIdentifier:@"searchPinMarkerSegue" sender:nil];
+}
+
+- (IBAction)detailClick:(id)sender {
+    [self performSegueWithIdentifier:@"showSearchDetailMapSegue" sender:nil];
 }
 
 

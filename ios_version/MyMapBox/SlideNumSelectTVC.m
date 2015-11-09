@@ -19,82 +19,57 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-}
-
--(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
-    //Uncheck the previous checked row
-    if(self.checkedIndexPath){
-        UITableViewCell* uncheckCell = [tableView
-                                        cellForRowAtIndexPath:self.checkedIndexPath];
-        uncheckCell.accessoryType = UITableViewCellAccessoryNone;
-    }
-    
-    UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
-    cell.accessoryType = UITableViewCellAccessoryCheckmark;
-    self.checkedIndexPath = indexPath;
-    self.slideNumLabel.text=[NSString stringWithFormat:@"%ld",indexPath.row+1];
-    
-    [self.navigationController popViewControllerAnimated:YES];
+    self.editing=YES;
 }
 
 #pragma mark - Table view data source
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return self.markerCount;
+    return self.markersArray.count;
 }
 
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"slideNumTableViewCell" forIndexPath:indexPath];
     
-    cell.textLabel.text=[NSString stringWithFormat:@"%ld",indexPath.row+1];
-    
-    if([self.slideNumLabel.text integerValue]==(indexPath.row+1)){
-        cell.accessoryType = UITableViewCellAccessoryCheckmark;
-        self.checkedIndexPath=indexPath;
-    }else{
-        cell.accessoryType= UITableViewCellAccessoryNone;
-    }
-    
+    MMMarker *marker=[self.markersArray objectAtIndex:indexPath.row];
+    marker.slideNum=[NSNumber numberWithInteger:indexPath.row+1];
+    marker.updateTimestamp=[NSNumber numberWithLongLong:[CommonUtil currentUTCTimeStamp]];
+    cell.textLabel.text=marker.title;
+    cell.detailTextLabel.text=[marker.slideNum description];
     return cell;
 }
 
-
-
-/*
 // Override to support conditional editing of the table view.
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
     // Return NO if you do not want the specified item to be editable.
     return YES;
 }
-*/
 
-/*
-// Override to support editing the table view.
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        // Delete the row from the data source
-        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    } else if (editingStyle == UITableViewCellEditingStyleInsert) {
-        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-    }   
+- (UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath{
+    return UITableViewCellEditingStyleNone;
 }
-*/
 
-/*
+- (BOOL)tableView:(UITableView *)tableview shouldIndentWhileEditingRowAtIndexPath:(NSIndexPath *)indexPath {
+    return NO;
+}
+
 // Override to support rearranging the table view.
 - (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath {
+    NSLog(@"move row from %@ to %@",@(fromIndexPath.row),@(toIndexPath.row));
+    
+    MMMarker *marker=[self.markersArray objectAtIndex:fromIndexPath.row];
+    NSLog(@"from Marker %@",marker.title);
+    
+    [self.markersArray removeObjectAtIndex:fromIndexPath.row];
+    [self.markersArray insertObject:marker atIndex:toIndexPath.row];
+    [self.tableView reloadData];
 }
-*/
 
-/*
 // Override to support conditional rearranging of the table view.
 - (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Return NO if you do not want the item to be re-orderable.
     return YES;
 }
-*/
-
 
 #pragma mark - Navigation
 

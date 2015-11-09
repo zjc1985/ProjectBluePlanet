@@ -221,7 +221,10 @@
             NSDictionary *response=object;
             NSArray *markersDic=[response objectForKey:@"returnValue"];
             for (NSDictionary *markerDic in markersDic) {
-                MMSearchdeMarker *searchMarker=[[MMSearchdeMarker alloc]initWithUUID:[markerDic objectForKey:@"id"]withLat:[markerDic objectForKey:@"lat"] withLng:[markerDic objectForKey:@"lng"]];
+                MMSearchdeMarker *searchMarker=[[MMSearchdeMarker alloc]initWithUUID:[markerDic objectForKey:@"id"]
+                                                                             withParentUuid:[markerDic objectForKey:@"parentMarkerUuid"]
+                                                                             withLat:[markerDic objectForKey:@"lat"]
+                                                                             withLng:[markerDic objectForKey:@"lng"]];
                 
                 searchMarker.title=[markerDic objectForKey:@"title"];
                 searchMarker.mycomment=[markerDic objectForKey:@"mycomment"];
@@ -372,8 +375,8 @@
         if(!error){
             NSDictionary *response=object;
             
-            [self handleMarkersUpdate:[response objectForKey:KEY_RESPONSE_MARKERS_UPDATED]];
             [self handleMarkersNew:[response objectForKey:KEY_RESPONSE_MARKERS_NEW]];
+            [self handleMarkersUpdate:[response objectForKey:KEY_RESPONSE_MARKERS_UPDATED]];
             [self handleMarkersDelete:[response objectForKey:KEY_RESPONSE_MARKERS_DELETE]];
             
             //server will not return client new object when sync, so need set these objects isSynced to YES after sync
@@ -410,7 +413,8 @@
             MMMarker *marker=[MMMarker createMMMarkerInRoutine:routine
                                                        withLat:[lat doubleValue]
                                                        withLng:[lng doubleValue]
-                                                      withUUID:[markerDic objectForKey:KEY_MARKER_UUID]];
+                                                      withUUID:[markerDic objectForKey:KEY_MARKER_UUID]
+                                              withParentMarker:nil];
             marker.iconUrl=[self iconUrlToName:[markerDic objectForKey:KEY_MARKER_ICON_URL]];
             marker.category=[markerDic objectForKey:KEY_MARKER_CATEGORY];
             marker.title=[markerDic objectForKey:KEY_MARKER_TITLE];
@@ -423,7 +427,15 @@
             marker.imgUrls=[markerDic objectForKey:KEY_MARKER_IMAGE_URLS];
         }
     }
-
+    
+    //handle parent marker
+    for (NSDictionary *markerDic in array) {
+        MMMarker *marker=[MMMarker queryMMMarkerWithUUID:[markerDic objectForKey:KEY_MARKER_UUID]];
+        MMMarker *parentMarker=[MMMarker queryMMMarkerWithUUID:[markerDic objectForKey:KEY_MARKER_PARENT_UUID]];
+        if(parentMarker){
+            marker.parentMarker=parentMarker;
+        }
+    }
 }
 
 +(void)handleMarkersUpdate:(NSArray *)array{
@@ -446,6 +458,15 @@
             if(routine){
                 marker.belongRoutine=routine;
             }
+        }
+    }
+    
+    //handle parent marker
+    for (NSDictionary *markerDic in array) {
+        MMMarker *marker=[MMMarker queryMMMarkerWithUUID:[markerDic objectForKey:KEY_MARKER_UUID]];
+        MMMarker *parentMarker=[MMMarker queryMMMarkerWithUUID:[markerDic objectForKey:KEY_MARKER_PARENT_UUID]];
+        if(parentMarker){
+            marker.parentMarker=parentMarker;
         }
     }
 }

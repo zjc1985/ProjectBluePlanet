@@ -1,9 +1,8 @@
 import Foundation
-
-@objc public class LocationTransform {
+@objc public class LocationTransform :NSObject{
     static let π = M_PI, latKey = "lat", lonKey = "lon"
 
-    class func isOutOfChina(#lat: Double, lon: Double) -> Bool {
+    class func isOutOfChina(lat lat: Double, lon: Double) -> Bool {
         if lon < 72.004 || lon > 137.8347 {
             return true
         }
@@ -13,7 +12,7 @@ import Foundation
         return false
     }
     
-    class func transformLat(#x: Double, y: Double) -> Double {
+    class func transformLat(x x: Double, y: Double) -> Double {
         var ret = -100.0 + 2.0 * x + 3.0 * y + 0.2 * y * y
         ret += 0.1 * x * y + 0.2 * sqrt(abs(x))
         ret += (20.0 * sin(6.0 * x * π) + 20.0 * sin(2.0 * x * π)) * 2.0 / 3.0
@@ -22,7 +21,7 @@ import Foundation
         return ret
     }
     
-    class func transformLon(#x: Double, y: Double) -> Double {
+    class func transformLon(x x: Double, y: Double) -> Double {
         var ret = 300.0 + x + 2.0 * y + 0.1 * x * x
         ret += 0.1 * x * y + 0.1 * sqrt(abs(x))
         ret += (20.0 * sin(6.0 * x * π) + 20.0 * sin(2.0 * x * π)) * 2.0 / 3.0
@@ -31,7 +30,7 @@ import Foundation
         return ret
     }
     
-    class func delta(#lat: Double, lon: Double) -> (Double, Double) {
+    class func delta(lat lat: Double, lon: Double) -> (Double, Double) {
         let r = 6378245.0
         let ee = 0.00669342162296594323
         let radLat = lat / 180.0 * π

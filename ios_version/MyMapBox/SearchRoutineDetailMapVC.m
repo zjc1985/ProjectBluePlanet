@@ -12,13 +12,18 @@
 #import "CloudManager.h"
 #import "MarkerInfoView.h"
 #import "MMMarker+Dao.h"
+#import "NSMutableArray+StackExtension.h"
 
 #define SHOW_SEARCH_MARKER_DETAIL_SEGUE @"showSearchMarkerDetailSegue"
 
 @interface SearchRoutineDetailMapVC ()<RMMapViewDelegate>
 
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *slidePlayButton;
+
 @property (weak, nonatomic) IBOutlet MarkerInfoView *markerInfoView;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *markerInfoHeightConstraint;
+@property (strong, nonatomic) IBOutletCollection(UIImageView) NSArray *markerInfoImages;
+
 
 @end
 
@@ -112,10 +117,17 @@
     }
 }
 
-#pragma mark - override
+-(void)hideMarkerInfoView{
+    [self.markerInfoView setHidden:YES];
+}
+
+
+
+#pragma mark - getter and setter
+
 #pragma mark - override
 -(void)handleCurrentSlideMarkers:(NSArray *)currentSlideMarkers{
-    [self.markerInfoView setHidden:YES];
+    self.currentMarker=currentSlideMarkers.firstObject;
 }
 
 #pragma mark - RMMapViewDelegate
@@ -131,7 +143,13 @@
         anchorPoint.x=0.5;
         anchorPoint.y=1;
         
-        UIImage *iconImage=[UIImage imageNamed:modelMarker.iconUrl];
+        UIImage *iconImage;
+        
+        if ([modelMarker allSubMarkers].count>0) {
+            iconImage=[UIImage imageNamed:@"collection_default.png"];
+        }else{
+            iconImage=[UIImage imageNamed:modelMarker.iconUrl];
+        }
         
         if(!iconImage){
             iconImage=[UIImage imageNamed:@"default_default.png"];
@@ -139,8 +157,6 @@
         
         RMMarker *marker = [[RMMarker alloc] initWithUIImage:iconImage anchorPoint:anchorPoint];
         //RMMarker *marker = [[RMMarker alloc] initWithUIImage:[UIImage imageNamed:@"default_default"]anchorPoint:anchorPoint];
-        
-        
         
         marker.canShowCallout=YES;
         
@@ -181,11 +197,58 @@
     }
 }
 
--(void)showMarkInfoViewByMMMarker:(MMSearchdeMarker *)marker{
+#define MARKER_INFO_HEIGHT_CONSTRAINT_FULL 170;
+#define MARKER_INFO_HEIGHT_CONSTRAINT_IMAGE_ONLY 130;
+#define MARKER_INFO_HEIGHT_CONSTRAINT_COMMENT_ONLY 120;
+
+-(void)showMarkInfoViewByMMMarker:(id<Marker>)inComingMarker{
+    MMSearchdeMarker *marker=(MMSearchdeMarker *)inComingMarker;
     self.markerInfoView.markerInfoTitleLabel.text=marker.title;
     self.markerInfoView.markerInfoSubLabel.text=[NSString stringWithFormat:@"%@ %@",[MMMarker CategoryNameWithMMMarkerCategory:[marker.category unsignedIntegerValue]],marker.slideNum];
     self.markerInfoView.markerInfoContentLabel.text=marker.mycomment;
+    
+    [self setMarkerInfoImageHidden:YES];
+    
+    if([[marker imageUrlsArrayIncludeSubMarkers] count]>0){
+        if([CommonUtil isBlankString:marker.mycomment]){
+            self.markerInfoHeightConstraint.constant=MARKER_INFO_HEIGHT_CONSTRAINT_IMAGE_ONLY;
+        }else{
+            self.markerInfoHeightConstraint.constant=MARKER_INFO_HEIGHT_CONSTRAINT_FULL;
+        }
+        
+        NSMutableArray *httpImageUrlArray=[[NSMutableArray alloc]initWithArray:[marker imageUrlsArrayIncludeSubMarkers]];
+        for (NSUInteger i=0; i<3; i++) {
+            NSString *urlString=[httpImageUrlArray pop];
+            if(urlString){
+                UIImageView *imageView=[self.markerInfoImages objectAtIndex:i];
+                imageView.clipsToBounds=YES;
+                imageView.contentMode=UIViewContentModeScaleAspectFill;
+                NSURL *url=[NSURL URLWithString:urlString];
+                [imageView sd_setImageWithURL:url
+                             placeholderImage:[UIImage imageNamed:@"defaultMarkerImage"]
+                                    completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
+                                        if(!error){
+                                            [imageView setHidden:NO];
+                                            imageView.contentMode=UIViewContentModeScaleAspectFill;
+                                        }
+                                    }
+                 ];
+            }
+        }
+        
+    }else{
+        self.markerInfoHeightConstraint.constant=MARKER_INFO_HEIGHT_CONSTRAINT_COMMENT_ONLY;
+    }
+    
+    
+    
     [self.markerInfoView setHidden:NO];
+}
+
+-(void)setMarkerInfoImageHidden:(BOOL)needHide{
+    for (UIImageView *imageView in self.markerInfoImages) {
+        [imageView setHidden:needHide];
+    }
 }
 
 -(void)singleTapOnMap:(RMMapView *)map at:(CGPoint)point{

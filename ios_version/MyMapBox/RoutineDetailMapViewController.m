@@ -5,7 +5,6 @@
 //  Created by yufu on 15/4/13.
 //  Copyright (c) 2015年 yufu. All rights reserved.
 //
-#import <GoogleMaps/GoogleMaps.h>
 #import <AssetsLibrary/AssetsLibrary.h>
 #import <ImageIO/ImageIO.h>
 #import "RoutineDetailMapViewController.h"
@@ -15,7 +14,10 @@
 #import "CloudManager.h"
 #import "ApplePlaceSearchTVC.h"
 #import "SelectImageTVC.h"
+#import "UserAlbumsTVC.h"
+#import <SDWebImage/UIImageView+WebCache.h>
 
+#import "NSMutableArray+StackExtension.h"
 
 #import "MMRoutine+Dao.h"
 #import "LocalImageUrl+Dao.h"
@@ -24,12 +26,14 @@
 #import "MyMapBox-Swift.h"
 
 #define SHOW_SEARCH_MODAL_SEGUE @"showSearchModalSegue"
-#define SHOW_USER_ALBUMS_SEGUE @"showAlbumsSegue"
+#define SHOW_USER_ALBUMS_SEGUE @"routineDetailShowAlbumsSegue"
 
 @interface RoutineDetailMapViewController ()<RMMapViewDelegate,UIActionSheetDelegate,RMTileCacheBackgroundDelegate,UIAlertViewDelegate>
 
-
+//marker Info View
 @property (weak, nonatomic) IBOutlet MarkerInfoView *markerInfoView;
+@property (strong, nonatomic) IBOutletCollection(UIImageView) NSArray *markerInfoImages;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *markerInfoHeightConstraint;
 
 @property (weak, nonatomic) IBOutlet UIToolbar *playRoutineToolBar;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *SlidePlayButton;
@@ -40,7 +44,7 @@
 @property (strong, nonatomic) IBOutlet UIToolbar *toolbar;
 @property (strong, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
 
-@property(strong,nonatomic)PHCachingImageManager *imageManager;
+@property(strong,nonatomic) PHCachingImageManager *imageManager;
 
 @property(nonatomic,strong) GooglePlaceDetail *searchResult;
 @property(nonatomic,strong) NSMutableSet *lastSearchPredicts;
@@ -68,6 +72,8 @@
     UITapGestureRecognizer *tapGesture=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(markerInfoViewClick)];
     tapGesture.numberOfTapsRequired=1;
     [self.markerInfoView addGestureRecognizer:tapGesture];
+    
+    self.markerInfoHeightConstraint.constant=110;
     
     //init map
     self.mapView.maxZoom=16;
@@ -98,10 +104,9 @@
     
     [self updateMapUI];
     
-    if([CommonUtil isFastNetWork]){
+    if([CommonUtil isFastNetWork] && self.parentMarker==nil){
         [self syncMarkers];
     }
-    
 }
 
 -(void)viewWillAppear:(BOOL)animated{
@@ -137,6 +142,15 @@
 }
 
 #pragma mark - getter and setter
+-(MMMarker *)parentMMMarker{
+    if ([self.markArray count]>0) {
+        MMMarker *firstObject=[self.markArray firstObject];
+        return firstObject.parentMarker;
+    }else{
+        return nil;
+    }
+}
+
 -(UIAlertView *)downloadProgressAlertView{
     if(!_downloadProgressAlertView){
         _downloadProgressAlertView=[[UIAlertView alloc]initWithTitle:NSLocalizedString(@"Download", @"")
@@ -211,9 +225,11 @@
 
 #pragma mark - override
 -(void)handleCurrentSlideMarkers:(NSArray *)currentSlideMarkers{
-   
+    self.currentMarker=currentSlideMarkers.firstObject;
+}
+
+-(void)hideMarkerInfoView{
     [self.markerInfoView setHidden:YES];
-    
 }
 
 #pragma mark - UI action
@@ -258,6 +274,7 @@
 }
 
 -(void)syncMarkers{
+    NSLog(@"Sync Markers");
     [self updateToolBarButtonNeedRefreshing:YES];
     NSString *currentRoutineUUID=[self.routine uuid];
     [CloudManager syncMarkersByRoutineUUID:[self.routine uuid] withBlockWhenDone:^(NSError *error) {
@@ -335,16 +352,27 @@
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([segue.identifier isEqualToString:@"markerDetailSegue"]) {
         MarkerInfoTVC *markerInfoTVC=segue.destinationViewController;
-        markerInfoTVC.marker=sender;
+        markerInfoTVC.marker=(MMMarker *)sender;
         markerInfoTVC.markerCount=[[self.routine allMarks] count];
+        markerInfoTVC.allSubMarkers=[self markArray];
     }else if ([segue.identifier isEqualToString:SHOW_SEARCH_MODAL_SEGUE]){
         UINavigationController *navController=(UINavigationController *)segue.destinationViewController;
         ApplePlaceSearchTVC *desTVC=navController.viewControllers[0];
-        desTVC.minLocation=CLLocationCoordinate2DMake([self.routine minLatInMarkers], [self.routine minLngInMarkers]);
-        desTVC.maxLocation=CLLocationCoordinate2DMake([self.routine maxLatInMarkers], [self.routine maxLngInMarkers]);
+        
+        double minLat=[CommonUtil minLatInMarkers:[self markArray]];
+        double minLng=[CommonUtil minLngInMarkers:[self markArray]];
+        double maxLat=[CommonUtil maxLatInMarkers:[self markArray]];
+        double maxLng=[CommonUtil maxLngInMarkers:[self markArray]];
+        
+        desTVC.minLocation=CLLocationCoordinate2DMake(minLat, minLng);
+        desTVC.maxLocation=CLLocationCoordinate2DMake(maxLat, maxLng);
         if(self.lastSearchPredicts){
             desTVC.historyResults=[self.lastSearchPredicts allObjects];
         }
+    }else if ([segue.identifier isEqualToString:SHOW_USER_ALBUMS_SEGUE]){
+        UINavigationController *navController=(UINavigationController *)segue.destinationViewController;
+        UserAlbumsTVC *userAlbumsTVC=navController.viewControllers[0];
+        userAlbumsTVC.incomingSegueName=SHOW_USER_ALBUMS_SEGUE;
     }
 }
 
@@ -358,6 +386,10 @@
     }
 }
 
+-(IBAction)detailMapViewPinDone:(UIStoryboardSegue *)segue{
+    
+}
+
 -(IBAction)DeleteMarkerDone:(UIStoryboardSegue *)segue{
     self.currentMarker=nil;
     //stop slide mode
@@ -367,12 +399,7 @@
     MarkerEditTVC *markerEditTVC=segue.sourceViewController;
     MMMarker *marker=markerEditTVC.marker;
     if(marker){
-        if([marker.isSync boolValue]){
-            NSLog(@"mark delete marker id %@",marker.uuid);
-            [marker markDelete];
-        }else{
-            [MMMarker removeMMMarker:marker];
-        }
+        [marker deleteSelf];
     }
 }
 
@@ -391,15 +418,17 @@
                                               if(location){
                                                   MMMarker *newMarker=[MMMarker createMMMarkerInRoutine:self.routine
                                                                                                 withLat:location.coordinate.latitude
-                                                                                                withLng:location.coordinate.longitude];
+                                                                                                withLng:location.coordinate.longitude
+                                                                       withParentMarker:[self parentMarker]];
                                                   newMarker.category=[NSNumber numberWithUnsignedInteger:CategoryInfo];
                                                   newMarker.iconUrl=@"event_2.png";
-                                                  newMarker.slideNum=[NSNumber numberWithUnsignedInteger:[self.routine maxSlideNum]+1];
                                                   
-                                                  [self addMarkerWithTitle:@"new Image"
+                                                  newMarker.slideNum=[NSNumber numberWithUnsignedInteger:self.markArray.count+1];
+                                                  newMarker.title=NSLocalizedString(@"View", nil);
+                                                  
+                                                  [self addMarkerWithTitle:newMarker.title
                                                             withCoordinate:CLLocationCoordinate2DMake([newMarker.lat doubleValue], [newMarker.lng doubleValue])
                                                             withCustomData:newMarker];
-                                                  //NSLog(@"orientation %@",@(result.imageOrientation));
                                                   NSString *imageUrl=[CommonUtil saveImageByData:imageData];
                                                   //attachImage
                                                   [LocalImageUrl createLocalImageUrl:imageUrl inMarker:newMarker];
@@ -421,15 +450,17 @@
             case addSearchResult2Routine:{
                 MMMarker *newMarker=[MMMarker createMMMarkerInRoutine:self.routine
                                                               withLat:[self.searchResult.lat doubleValue]
-                                                              withLng:[self.searchResult.lng doubleValue]];
+                                                              withLng:[self.searchResult.lng doubleValue]
+                                                     withParentMarker:[self parentMarker]];
+               
                 newMarker.title=self.searchResult.name;
                 newMarker.category=[NSNumber numberWithUnsignedInteger:CategorySight];
                 newMarker.iconUrl=@"sight_default.png";
                 newMarker.mycomment=self.searchResult.address;
+                newMarker.slideNum=[NSNumber numberWithUnsignedInteger:self.markArray.count+1];
                 break;
             }
             case clearSearchResult:{
-                
                 break;
             }
             default:
@@ -439,17 +470,18 @@
         self.searchResult=nil;
         [self updateMapUI];
     }else if (actionSheet==self.navigationActionSheet){
-        
         [self openUrlForNavigationBy:buttonIndex];
     }else{
-        MMMarker *newMarker=nil;
+        MMMarker *newMarker;
         switch (buttonIndex) {
             case addMarkerInCenter:{
                 NSLog(@"add marker in center");
                 newMarker=[MMMarker createMMMarkerInRoutine:self.routine
                                                     withLat:self.mapView.centerCoordinate.latitude
-                                                    withLng:self.mapView.centerCoordinate.longitude];
-                newMarker.slideNum=[NSNumber numberWithUnsignedInteger:[self.routine maxSlideNum]+1];
+                                                    withLng:self.mapView.centerCoordinate.longitude
+                                           withParentMarker:[self parentMarker]];
+                
+                newMarker.slideNum=[NSNumber numberWithUnsignedInteger:self.markArray.count+1];
                 break;
             }
             case addMarkerWithImage :{
@@ -464,16 +496,19 @@
                 NSLog(@"add marker in current location");
                 newMarker=[MMMarker createMMMarkerInRoutine:self.routine
                                                     withLat:self.mapView.userLocation.coordinate.latitude
-                                                    withLng:self.mapView.userLocation.coordinate.longitude];
-                newMarker.slideNum=[NSNumber numberWithUnsignedInteger:[self.routine maxSlideNum]+1];
+                                                    withLng:self.mapView.userLocation.coordinate.longitude
+                                           withParentMarker:[self parentMarker]];
+                
+                newMarker.slideNum=[NSNumber numberWithUnsignedInteger:self.markArray.count+1];
+                
                 break;
             }
             default:
                 break;
         }
+        
         if(newMarker){
-            [self addMarkerWithTitle:newMarker.title withCoordinate:CLLocationCoordinate2DMake([newMarker.lat doubleValue], [newMarker.lng doubleValue])
-                      withCustomData:newMarker];
+            [self updateMapUI];
         }
     }
     
@@ -484,7 +519,6 @@
         return;
     }
     
-    MMMarker *currentMarker=self.currentMarker;
     NSString *urlString=nil;
     
     NSDictionary *saddrDic=[LocationTransform wgs2gcj:self.mapView.userLocation.coordinate.latitude
@@ -492,8 +526,8 @@
     NSNumber *sLat=[saddrDic objectForKey:@"lat"];
     NSNumber *sLng=[saddrDic objectForKey:@"lon"];
     
-    NSDictionary *daddrDic=[LocationTransform wgs2gcj:[currentMarker.lat doubleValue]
-                                               wgsLon:[currentMarker.lng doubleValue]];
+    NSDictionary *daddrDic=[LocationTransform wgs2gcj:[self.currentMarker.lat doubleValue]
+                                               wgsLon:[self.currentMarker.lng doubleValue]];
     
     NSNumber *dLat=[daddrDic objectForKey:@"lat"];
     NSNumber *dLng=[daddrDic objectForKey:@"lon"];
@@ -536,8 +570,6 @@
     if(annotation.isUserLocationAnnotation)
         return nil;
     
-    
-    
     if ([annotation.userInfo isKindOfClass:[MMMarker class]]){
         MMMarker *modelMarker=annotation.userInfo;
         
@@ -545,22 +577,24 @@
         anchorPoint.x=0.32;
         anchorPoint.y=0.8;
         
-        UIImage *iconImage=[UIImage imageNamed:modelMarker.iconUrl];
+        UIImage *iconImage=nil;
+        
+        if ([modelMarker allSubMarkers].count>0) {
+            iconImage=[UIImage imageNamed:@"collection_default.png"];
+        }else{
+            iconImage=[UIImage imageNamed:modelMarker.iconUrl];
+        }
         
         if(!iconImage){
             iconImage=[UIImage imageNamed:@"default_default.png"];
         }
         
         RMMarker *marker = [[RMMarker alloc] initWithUIImage:iconImage anchorPoint:anchorPoint];
-        //RMMarker *marker = [[RMMarker alloc] initWithUIImage:[UIImage imageNamed:@"default_default"]anchorPoint:anchorPoint];
-        
-        
-        
+
         marker.canShowCallout=YES;
         
-        //marker.rightCalloutAccessoryView=[UIButton buttonWithType:UIButtonTypeDetailDisclosure];
-        
         return marker;
+
     }else if ([annotation.userInfo isKindOfClass:[GooglePlaceDetail class]]){
         CGPoint anchorPoint;
         anchorPoint.x=0.32;
@@ -588,13 +622,12 @@
 
 -(void) mapView:(RMMapView *)mapView annotation:(RMAnnotation *)annotation didChangeDragState:(RMMapLayerDragState)newState fromOldState:(RMMapLayerDragState)oldState{
     
-    NSLog(@"change drag state %u",newState);
+    NSLog(@"change drag state %@",@(newState));
     
     if(newState==RMMapLayerDragStateNone){
-        NSString *subTitle=[NSString stringWithFormat:@"lat: %f lng: %f",annotation.coordinate.latitude,annotation.coordinate.longitude];
-        annotation.subtitle=subTitle;
+        //NSString *subTitle=[NSString stringWithFormat:@"lat: %f lng: %f",annotation.coordinate.latitude,annotation.coordinate.longitude];
         if ([annotation.userInfo isKindOfClass:[MMMarker class]]) {
-            MMMarker *marker=(MMMarker *)annotation.userInfo;
+            MMMarker *marker=annotation.userInfo;
             marker.lat=[NSNumber numberWithDouble:annotation.coordinate.latitude];
             marker.lng=[NSNumber numberWithDouble:annotation.coordinate.longitude];
             marker.updateTimestamp=[NSNumber numberWithLongLong:[CommonUtil currentUTCTimeStamp]];
@@ -624,22 +657,79 @@
     
     if ([annotation.userInfo isKindOfClass:[MMMarker class]]){
         MMMarker *modelMarker=annotation.userInfo;
-        [self showMarkInfoViewByMMMarker:modelMarker];
         self.currentMarker=modelMarker;
         [self.mapView setCenterCoordinate:CLLocationCoordinate2DMake([modelMarker.lat doubleValue], [modelMarker.lng doubleValue]) animated:YES];
     }
     
 }
 
--(void)showMarkInfoViewByMMMarker:(MMMarker *)marker{
+#define MARKER_INFO_HEIGHT_CONSTRAINT_FULL 170;
+#define MARKER_INFO_HEIGHT_CONSTRAINT_IMAGE_ONLY 130;
+#define MARKER_INFO_HEIGHT_CONSTRAINT_COMMENT_ONLY 120;
+
+-(void)showMarkInfoViewByMMMarker:(id<Marker>)inComingMarker{
+    MMMarker *marker=(MMMarker *)inComingMarker;
     self.markerInfoView.markerInfoTitleLabel.text=marker.title;
     self.markerInfoView.markerInfoSubLabel.text=[NSString stringWithFormat:@"%@ %@",marker.categoryName,marker.slideNum];
     self.markerInfoView.markerInfoContentLabel.text=marker.mycomment;
+    
+    
+    [self setMarkerInfoImageHidden:YES];
+    if([[marker imageUrlsArrayIncludeSubMarkers] count]>0 || [[marker localImagesIncludingSubMarkers] count]>0){
+        
+        if([CommonUtil isBlankString:marker.mycomment]){
+            self.markerInfoHeightConstraint.constant=MARKER_INFO_HEIGHT_CONSTRAINT_IMAGE_ONLY;
+        }else{
+            self.markerInfoHeightConstraint.constant=MARKER_INFO_HEIGHT_CONSTRAINT_FULL;
+        }
+        
+        //show Image here
+        NSMutableArray *localImageArray=[[NSMutableArray alloc]initWithArray:[marker localImagesIncludingSubMarkers]];
+        NSMutableArray *httpImageUrlArray=[[NSMutableArray alloc]initWithArray:[marker imageUrlsArrayIncludeSubMarkers]];
+        for (NSUInteger i=0; i<3; i++) {
+            LocalImageUrl *localImage=[localImageArray pop];
+            if (localImage) {
+                UIImageView *imageView=[self.markerInfoImages objectAtIndex:i];
+                imageView.clipsToBounds=YES;
+                imageView.contentMode=UIViewContentModeScaleAspectFill;
+                imageView.image=[CommonUtil loadImage:localImage.fileName];
+                [imageView setHidden:NO];
+            }else{
+                NSString *urlString=[httpImageUrlArray pop];
+                if(urlString){
+                    UIImageView *imageView=[self.markerInfoImages objectAtIndex:i];
+                    imageView.clipsToBounds=YES;
+                    imageView.contentMode=UIViewContentModeScaleAspectFill;
+                    NSURL *url=[NSURL URLWithString:urlString];
+                    [imageView sd_setImageWithURL:url
+                                        placeholderImage:[UIImage imageNamed:@"defaultMarkerImage"]
+                                               completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
+                                                       if(!error){
+                                                           [imageView setHidden:NO];
+                                                           imageView.contentMode=UIViewContentModeScaleAspectFill;
+                                                       }
+                                                   }
+                         ];
+                }
+            }
+        }
+        
+        
+    }else{
+        self.markerInfoHeightConstraint.constant=MARKER_INFO_HEIGHT_CONSTRAINT_COMMENT_ONLY;
+    }
+    
     [self.markerInfoView setHidden:NO];
 }
 
+-(void)setMarkerInfoImageHidden:(BOOL)needHide{
+    for (UIImageView *imageView in self.markerInfoImages) {
+        [imageView setHidden:needHide];
+    }
+}
+
 -(void)singleTapOnMap:(RMMapView *)map at:(CGPoint)point{
-    [self.markerInfoView setHidden:YES];
+    self.currentMarker=nil;
 }
 
 

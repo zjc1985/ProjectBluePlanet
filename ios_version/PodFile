@@ -1,11 +1,10 @@
 # Uncomment this line to define a global platform for your project
-platform :ios, '5.1.1'
+platform :ios, '7.0.0'
 
 target 'MyMapBox' do
 pod "Mapbox-iOS-SDK",'1.6.0'
 pod "AVOSCloud"
-pod "MWPhotoBrowser"
-pod "GoogleMaps"
+pod "MWPhotoBrowser",'2.1.1'
 end
 
 target 'MyMapBoxTests' do

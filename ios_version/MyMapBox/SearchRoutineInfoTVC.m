@@ -93,6 +93,10 @@
     }
 }
 
+-(IBAction)searchPinDone:(UIStoryboardSegue *)sender{
+    
+}
+
 #pragma mark - getter and setter
 -(void)setIsLiked:(BOOL)isLiked{
     _isLiked=isLiked;

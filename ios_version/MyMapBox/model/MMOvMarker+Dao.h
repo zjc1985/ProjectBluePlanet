@@ -29,8 +29,7 @@
 
 +(NSArray *)fetchAllMMovMarkersIncludeMarkDelete;
 
-
--(void)markDelete;
+-(void)deleteSelf;
 
 -(NSDictionary *)convertToDictionary;
 

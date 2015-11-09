@@ -11,6 +11,8 @@
 
 @interface BaseDetailMapVC ()
 
+
+
 @end
 
 @implementation BaseDetailMapVC
@@ -114,7 +116,7 @@
         [self.mapView zoomWithLatitudeLongitudeBoundsSouthWest:[CommonUtil minLocationInMMMarkers:markersNeedInView]
                                                      northEast:[CommonUtil maxLocationInMMMarkers:markersNeedInView]
                                                       animated:NO];
-        [self.mapView setZoom:self.mapView.zoom-0.8 animated:YES];
+        [self.mapView setZoom:self.mapView.zoom-1.8 animated:YES];
          
     }
     
@@ -158,11 +160,11 @@
 
 -(NSArray *)markersSortedBySlideNum{
     NSMutableArray *result=[[NSMutableArray alloc]init];
-    NSArray *allMarkers=[self.routine allMarks];
+    NSArray *markers=self.markArray;
     
-    for (NSUInteger i=1; i<allMarkers.count+1; i++) {
+    for (NSUInteger i=1; i<markers.count+1; i++) {
         NSMutableArray *markersWithSameSlideNum=[[NSMutableArray alloc]init];
-        for (id marker in allMarkers) {
+        for (id<Marker> marker in markers) {
             if ([[marker slideNum] unsignedIntegerValue] ==i) {
                 [markersWithSameSlideNum addObject:marker];
             }
@@ -180,29 +182,30 @@
     
     [self.mapView removeAllAnnotations];
     
-    for (id marker in [self.routine allMarks]) {
+    for (id<Marker> marker in self.markArray) {
         [self addMarkerWithTitle:[marker title]
                   withCoordinate:CLLocationCoordinate2DMake([[marker lat] doubleValue], [[marker lng] doubleValue])
                   withCustomData:marker];
     }
     
-    if ([[self.routine allMarks] count]>0) {
+    if ([self.markArray count]>0) {
         if(self.currentMarker){
             NSLog(@"center to currentMarker");
             [self.mapView setCenterCoordinate:CLLocationCoordinate2DMake([[self.currentMarker lat] doubleValue], [[self.currentMarker lng] doubleValue]) animated:YES];
         }else{
             NSLog(@"zoom to fit all markers");
             
-            CLLocationCoordinate2D minLocation=CLLocationCoordinate2DMake([self.routine minLatInMarkers], [self.routine minLngInMarkers]);
-            CLLocationCoordinate2D maxLocation=CLLocationCoordinate2DMake([self.routine maxLatInMarkers], [self.routine maxLngInMarkers]);
+            double minLat=[CommonUtil minLatInMarkers:[self markArray]];
+            double minLng=[CommonUtil minLngInMarkers:[self markArray]];
+            double maxLat=[CommonUtil maxLatInMarkers:[self markArray]];
+            double maxLng=[CommonUtil maxLngInMarkers:[self markArray]];
             
-            //[self addMarkerWithTitle:@"southweat" withCoordinate:minLocation withCustomData:nil];
-            //[self addMarkerWithTitle:@"northEast" withCoordinate:maxLocation withCustomData:nil];
+            CLLocationCoordinate2D minLocation=CLLocationCoordinate2DMake(minLat, minLng);
+            CLLocationCoordinate2D maxLocation=CLLocationCoordinate2DMake(maxLat, maxLng);
             
             [self.mapView zoomWithLatitudeLongitudeBoundsSouthWest:minLocation
                                                          northEast:maxLocation
                                                           animated:YES];
-            
             
             [self.mapView setZoom:self.mapView.zoom-0.5 animated:YES];
         }
@@ -238,6 +241,13 @@
     }
 }
 
+-(void)hideMarkerInfoView{
+    NSAssert(false, @"need implement in sub class");
+}
+
+-(void)showMarkInfoViewByMMMarker:(id<Marker>)marker{
+    NSAssert(false, @"need implement in sub class");
+}
 
 #pragma mark - getter and setter
 -(RMMapView *)mapView{
@@ -247,6 +257,22 @@
     return _mapView;
 }
 
+-(NSArray *)markArray{
+    if(self.parentMarker){
+        return [self.parentMarker allSubMarkers];
+    }else{
+        return [self.routine headMarkers];
+    }
+}
 
+@synthesize currentMarker=_currentMarker;
+-(void)setCurrentMarker:(id<Marker>)currentMarker{
+    _currentMarker=currentMarker;
+    if (currentMarker) {
+        [self showMarkInfoViewByMMMarker:currentMarker];
+    }else{
+        [self hideMarkerInfoView];
+    }
+}
 
 @end

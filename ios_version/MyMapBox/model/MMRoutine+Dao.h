@@ -45,15 +45,7 @@
 
 -(BOOL)isMarkersSyncWithCloud;
 
--(void)markDelete;
-
--(double)minLatInMarkers;
-
--(double)maxLatInMarkers;
-
--(double)minLngInMarkers;
-
--(double)maxLngInMarkers;
+-(void)deleteSelf;
 
 -(void)updateLocation;
 
